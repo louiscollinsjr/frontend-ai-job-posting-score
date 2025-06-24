@@ -7,169 +7,188 @@
   // Props for the results display
   export let results = null; // Results data from the audit
   export let loading = false; // Loading state
-  export let visible = false; // Visibility toggle
+  export let visible = true; // Visibility toggle - defaults to true
   
-  // Sample score colors based on ranges
+  // Format the API response scores (0-5 scale) to display format
+  $: processedResults = results && {
+    ...results,
+    clarityScore: results.scores?.clarity || results.clarityScore || 0,
+    inclusivityScore: results.scores?.inclusivity || results.inclusivityScore || 0,
+    fairnessScore: results.scores?.fairness || results.fairnessScore || 0,
+    // Use existing overallScore or calculate from API response
+    overallScore: results.overallScore || 
+      (((results.scores?.clarity || 0) + 
+        (results.scores?.inclusivity || 0) + 
+        (results.scores?.fairness || 0)) / 3)
+  };
+  
+  // Function to get score color
   function getScoreColor(score) {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
+    if (score >= 4) return 'text-green-600';
+    if (score >= 3) return 'text-yellow-600';
+    if (score >= 2) return 'text-orange-500';
     return 'text-red-600';
   }
   
-  // Function to close results
-  function closeResults() {
+  // Function to analyze another job posting
+  function analyzeAnother() {
     dispatch('close');
+    // Navigate back to form
+    window.history.back();
   }
   
-  // Function to export results as PDF or text
-  function exportResults(format) {
-    dispatch('export', { format });
+  // Function to download report
+  function downloadReport() {
+    dispatch('export', { format: 'pdf' });
+  }
+  
+  // Function to get improvement tips
+  function getImprovementTips() {
+    dispatch('tips');
   }
 </script>
 
-{#if visible}
-<div class="results-container fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-4">
-  <div class="results-modal bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-auto">
-    <!-- Header with close button -->
-    <div class="flex justify-between items-center p-6 border-b">
-      <h2 class="text-2xl font-bold text-gray-800">Job Posting Audit Results</h2>
-      <button 
-        class="text-gray-500 hover:text-gray-700 focus:outline-none" 
-        on:click={closeResults}
-        aria-label="Close results"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+<div class="results-page pb-32">
+  <!-- Main content area -->
+  <div class="max-w-2xl mx-auto py-8 px-4">  
+    <h1 class="text-3xl text-center mb-2">Your Reach<b class="text-black">Score</b> Analysis</h1>
+    <p class="text-center text-gray-600 mb-8 text-sm">Here's how your job posting performed across key metrics</p>
+    
+    <!-- Overall Score Circle -->
+    <div class="bg-white rounded-lg p-6 mb-8 text-center max-w-md mx-auto">
+      <div class="relative h-36 w-36 mx-auto">
+        <svg class="w-full h-full" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+          <!-- Background circle -->
+          <circle cx="18" cy="18" r="16" fill="none" stroke="#e0e0e0" stroke-width="2"></circle>
+          
+          <!-- Progress circle - dynamically calculated -->
+          <circle 
+            cx="18" cy="18" r="16" 
+            fill="none" 
+            stroke="#F97316" 
+            stroke-width="2"
+            stroke-dasharray="100.53 100.53"
+            stroke-dashoffset="{100.53 - (processedResults?.overallScore / 5 * 100.53) || 0}"
+            transform="rotate(-90 18 18)"
+          ></circle>
         </svg>
-      </button>
+        <div class="absolute inset-0 flex flex-col items-center justify-center">
+          <span class="text-3xl font-bold text-orange-500">{processedResults?.overallScore?.toFixed(1) || '0'}</span>
+          <span class="text-sm text-gray-600">out of 5</span>
+        </div>
+      </div>
+      <h3 class="text-lg font-bold mt-4 mb-1">Overall ReachScore</h3>
+      <p class="text-sm text-gray-600">Comprehensive posting quality</p>
     </div>
-
-    <!-- Results Content -->
-    <div class="p-6">
-      {#if loading}
-        <div class="flex flex-col items-center justify-center py-12">
-          <svg class="animate-spin h-10 w-10 text-indigo-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          <p class="text-lg text-gray-600">Analyzing your job posting...</p>
-        </div>
-      {:else if results}
-        <!-- Overall Score -->
-        <div class="mb-8 text-center">
-          <h3 class="text-xl font-semibold mb-2">Overall Effectiveness</h3>
-          <div class="relative h-32 w-32 mx-auto">
-            <svg class="w-full h-full" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
-              <!-- Background circle -->
-              <circle cx="18" cy="18" r="16" fill="none" stroke="#e0e0e0" stroke-width="2"></circle>
-              
-              <!-- Progress circle - dynamically calculated -->
-              <circle 
-                cx="18" cy="18" r="16" 
-                fill="none" 
-                stroke="{results.overallScore >= 80 ? '#10B981' : results.overallScore >= 60 ? '#FBBF24' : '#EF4444'}" 
-                stroke-width="2"
-                stroke-dasharray="{100.53} {100.53}"
-                stroke-dashoffset="{100.53 - (results.overallScore / 100 * 100.53)}"
-                transform="rotate(-90 18 18)"
-              ></circle>
-              
-              <!-- Score text -->
-              <text x="18" y="18" font-family="Arial" font-size="8" text-anchor="middle" dy=".3em" class="font-bold">
-                {results.overallScore}%
-              </text>
-            </svg>
+    
+    {#if loading}
+      <div class="flex flex-col items-center justify-center py-12">
+        <svg class="animate-spin h-10 w-10 text-indigo-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-lg text-gray-600">Analyzing your job posting...</p>
+      </div>
+    {:else if processedResults}
+      <!-- Individual Scores -->
+      <div class="space-y-4 mb-8">
+        <!-- Clarity Score -->
+        <div class="border rounded-lg overflow-hidden">
+          <div class="flex items-center p-4 gap-3">
+            <div class="font-normal text-2xl">Clarity</div>
+            <div class="ml-auto flex items-center">
+              <span class="font-bold text-xl">{processedResults.clarityScore}</span>
+              <span class="text-gray-500 text-sm">/5</span>
+            </div>
+            <div class="w-6 h-6 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center">
+              <span class="text-xs text-gray-600 font-bold">!</span>
+            </div>
+          </div>
+          <div class="bg-white p-4 text-sm">
+            Measures how clear, structured, and easy to digest your posting is.
           </div>
         </div>
         
-        <!-- Category Scores -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <!-- Inclusivity Score -->
-          <div class="bg-gray-50 p-4 rounded-lg">
-            <h4 class="font-medium text-gray-800 mb-2">Inclusivity</h4>
-            <div class="flex items-center">
-              <div class="w-full bg-gray-200 rounded-full h-2.5 mr-2">
-                <div class="bg-blue-600 h-2.5 rounded-full" style="width: {results.inclusivityScore}%"></div>
-              </div>
-              <span class={getScoreColor(results.inclusivityScore)}>{results.inclusivityScore}%</span>
+        <!-- Inclusivity Score -->
+        <div class="border rounded-lg overflow-hidden">
+          <div class="flex items-center p-4 gap-3">
+            <div class="font-normal text-2xl">Inclusivity</div>
+            <div class="ml-auto flex items-center">
+              <span class="font-bold text-xl">{processedResults.inclusivityScore}</span>
+              <span class="text-gray-500 text-sm">/5</span>
             </div>
-            <p class="text-sm text-gray-600 mt-2">{results.inclusivityNotes}</p>
+            <div class="w-6 h-6 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center">
+              <span class="text-xs font-bold">!</span>
+            </div>
           </div>
+          <div class="bg-white p-4 text-sm">
+            How open and welcoming your language is to people from diverse backgrounds.
+          </div>
+        </div>
+        
+        <!-- Fairness Score -->
+        <div class="border rounded-lg overflow-hidden">
+          <div class="flex items-center p-4 gap-3">
+            <div class="font-normal text-2xl">Fairness</div>
+            <div class="ml-auto flex items-center">
+              <span class="font-bold text-xl">{processedResults.fairnessScore}</span>
+              <span class="text-gray-500 text-sm">/5</span>
+            </div>
+            <div class="w-6 h-6 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center">
+              <span class="text-xs font-bold">✓</span>
+            </div>
+          </div>
+          <div class="bg-white p-4 text-sm">
+            Evaluates whether expectations and offers are fair, realistic, and transparent.
+          </div>
+        </div>
+      </div>
+      
+      <!-- Detailed Analysis -->
+      <div class="border rounded-lg p-6 mb-8">
+        <h2 class="flex items-center gap-2 text-xl mb-6">
           
-          <!-- Clarity Score -->
-          <div class="bg-gray-50 p-4 rounded-lg">
-            <h4 class="font-medium text-gray-800 mb-2">Clarity</h4>
-            <div class="flex items-center">
-              <div class="w-full bg-gray-200 rounded-full h-2.5 mr-2">
-                <div class="bg-purple-600 h-2.5 rounded-full" style="width: {results.clarityScore}%"></div>
-              </div>
-              <span class={getScoreColor(results.clarityScore)}>{results.clarityScore}%</span>
-            </div>
-            <p class="text-sm text-gray-600 mt-2">{results.clarityNotes}</p>
-          </div>
+          Detailed Analysis & Recommendations
+        </h2>
+        
+        <!-- Render the feedback directly from the API response -->
+        <div class="space-y-4 text-gray-700 leading-relaxed text-sm">
+          <p>{processedResults.feedback || ''}</p>
           
-          <!-- Effectiveness Score -->
-          <div class="bg-gray-50 p-4 rounded-lg">
-            <h4 class="font-medium text-gray-800 mb-2">Effectiveness</h4>
-            <div class="flex items-center">
-              <div class="w-full bg-gray-200 rounded-full h-2.5 mr-2">
-                <div class="bg-green-600 h-2.5 rounded-full" style="width: {results.effectivenessScore}%"></div>
-              </div>
-              <span class={getScoreColor(results.effectivenessScore)}>{results.effectivenessScore}%</span>
-            </div>
-            <p class="text-sm text-gray-600 mt-2">{results.effectivenessNotes}</p>
-          </div>
+          {#if processedResults.jobTitle}
+          <p class="font-medium">Job Title: {processedResults.jobTitle}</p>
+          {/if}
         </div>
+      </div>
+      
+      <!-- Action buttons -->
+      <div class="flex flex-wrap justify-center gap-4 mt-8">
+        <button 
+          on:click={downloadReport}
+          class="px-6 py-3 bg-black text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Download Report
+        </button>
         
-        <!-- Recommendations -->
-        <div class="mb-8">
-          <h3 class="text-xl font-semibold mb-4">Recommendations</h3>
-          <ul class="space-y-2">
-            {#each results.recommendations as recommendation}
-              <li class="flex items-start">
-                <span class="text-indigo-500 mr-2">•</span>
-                <span>{recommendation}</span>
-              </li>
-            {/each}
-          </ul>
-        </div>
+        <button 
+          on:click={analyzeAnother}
+          class="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition-colors"
+        >
+          Analyze Another Posting
+        </button>
         
-        <!-- Highlighted Issues -->
-        {#if results.highlights && results.highlights.length}
-          <div class="mb-8">
-            <h3 class="text-xl font-semibold mb-4">Highlighted Issues</h3>
-            <div class="bg-gray-50 p-4 rounded-lg">
-              {#each results.highlights as highlight}
-                <div class="mb-4 last:mb-0">
-                  <p class="text-gray-800 font-medium">{highlight.text}</p>
-                  <p class="text-sm text-gray-600 mt-1">{highlight.suggestion}</p>
-                </div>
-              {/each}
-            </div>
-          </div>
-        {/if}
-        
-        <!-- Export Options -->
-        <div class="flex justify-end space-x-4 border-t pt-4 mt-8">
-          <button 
-            class="px-4 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-800 focus:outline-none"
-            on:click={() => exportResults('pdf')}
-          >
-            Export as PDF
-          </button>
-          <button 
-            class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            on:click={() => exportResults('text')}
-          >
-            Export as Text
-          </button>
-        </div>
-      {:else}
-        <div class="text-center py-12">
-          <p class="text-gray-600">No results available</p>
-        </div>
-      {/if}
-    </div>
+        <button 
+          on:click={getImprovementTips}
+          class="px-6 py-3 bg-white font-medium rounded-lg hover:bg-gray-100 transition-colors premium-btn"
+        >
+          <span class="text-sm text-gray-500">Upgrade for improvement tips</span>
+        </button>
+      </div>
+    {/if}
   </div>
 </div>
-{/if}
+<!-- Fallback for no results shown inside component -->
+
+<style>
+  
+</style>

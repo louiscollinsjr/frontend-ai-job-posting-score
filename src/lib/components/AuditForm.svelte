@@ -1,6 +1,8 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { auditJobUrl, auditJobText } from '$lib/api/audit.js';
+  import { goto } from '$app/navigation';
+  import { auditStore } from '$lib/stores/audit.js';
   
   // Create a dispatcher to send events to parent components
   const dispatch = createEventDispatcher();
@@ -72,6 +74,18 @@
         data: inputType === 'url' ? jobUrl : jobDescription,
         results
       });
+      
+      // Store results in auditStore
+      auditStore.update(state => ({
+        ...state,
+        results,
+        isLoading: false,
+        showResults: true,
+        error: null
+      }));
+      
+      // Navigate to results page
+      goto('/results');
       
     } catch (e) {
       error = 'An error occurred while analyzing the job posting. Please try again.';
