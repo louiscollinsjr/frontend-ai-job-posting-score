@@ -92,26 +92,27 @@
 <!-- Hero Section with Audit Form -->
 <section class="mb-8">
   <div class="container">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-      <div class="bg-gray-100 px-16 lg:px-16 py-6 rounded-3xl h-[580px]">
-        <h1 class="text-4xl md:text-6xl font-black text-gray-900 mb-6 text-left leading-[1.1] font-normal">
+    <div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-center">
+      <div class="bg-gray-1000 px-16 lg:px-16 py-6 rounded-3xl min-h-[580px]">
+        <h1 class="text-4xl md:text-6xl font-black text-gray-900 mb-6 text-center leading-[1.1] font-normal">
           Your job post deserves to be seen
         </h1>
-        <p class="text-sm text-gray-600 text-left leading-relaxed">
+        <p class="text-sm text-gray-600 text-center leading-relaxed mb-24">
           ReachScore analyzes and optimizes every line — so you attract the right talent, faster.
         </p>
-        <AuditForm on:audit={handleAudit}  class="mt-8"/>
+        <AuditForm on:audit={handleAudit} />
       </div>
       
-      <div class="hero-image-container rounded-3xl overflow-hidden h-[580px] relative">
-        <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('/rainbowkitten._Friendly_female_immigration_lawyer_speaking_with_c6ad1ee4-174d-423c-80a7-96cdca7a75b7.png');"></div>
-      </div>
+     
     </div>
   </div>
 </section>
 
 <!-- What We Do Section -->
 <WhatWeDo />
+
+
+<HowWeDo />
 
 <!-- Newsletter Signup Section -->
 <div class="container my-16">
@@ -120,14 +121,14 @@
     subheading="Get the latest news and updates about our inclusive job posting tools and features."
   />
 </div>
-<HowWeDo />
+
 <LearnMoreAboutUs subtitle="WANT TO SEE MORE ABOUT US?" />
 
 <!-- Results Modal -->
-<ResultsDisplay 
+<!-- <ResultsDisplay 
   results={results} 
   loading={isLoading} 
   visible={showResults} 
   on:close={handleCloseResults} 
   on:export={handleExport} 
-/>
+/> -->
