@@ -17,6 +17,7 @@ const createAuditStore = () => {
 
   return {
     subscribe,
+    update,
     
     // Set loading state
     setLoading: (isLoading) => update(state => ({ ...state, isLoading })),

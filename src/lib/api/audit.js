@@ -10,16 +10,15 @@
  */
 export async function auditJobUrl(url) {
   try {
-    // In a production environment, this would be an actual API call
-    // For now, we'll simulate a delay and return mock data
-    
-    console.log(`Analyzing job posting URL: ${url}`);
-    
-    // Simulate API call with 1.5s delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Return mock data (will be replaced with actual API response)
-    return generateMockResults('url', url);
+    const response = await fetch('https://ai-audit-api.fly.dev/api/audit-job-post', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    return await response.json();
   } catch (error) {
     console.error('Error auditing job URL:', error);
     throw new Error('Failed to analyze job posting URL. Please try again.');
@@ -33,16 +32,15 @@ export async function auditJobUrl(url) {
  */
 export async function auditJobText(text) {
   try {
-    // In a production environment, this would be an actual API call
-    // For now, we'll simulate a delay and return mock data
-    
-    console.log(`Analyzing job description text (${text.length} characters)`);
-    
-    // Simulate API call with 1.5s delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Return mock data (will be replaced with actual API response)
-    return generateMockResults('text', text);
+    const response = await fetch('https://ai-audit-api.fly.dev/api/audit-job-post', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    return await response.json();
   } catch (error) {
     console.error('Error auditing job text:', error);
     throw new Error('Failed to analyze job description. Please try again.');
