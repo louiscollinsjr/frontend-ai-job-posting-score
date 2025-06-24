@@ -82,13 +82,13 @@
   }
 </script>
 
-<section class="audit-form-container bg-white shadow-md rounded-lg p-6 md:p-8 max-w-3xl mx-auto">
+<section class="audit-form-container rounded-lg p-6 md:p-8 max-w-3xl mx-auto">
   <div class="mb-8">
     <div class="flex justify-center mb-4">
       <div class="inline-flex rounded-md shadow-sm" role="group" aria-label="Input type selection">
         <button 
           type="button"
-          class="px-4 py-2 text-sm font-medium rounded-l-lg {inputType === 'url' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'}"
+          class="px-4 py-2 text-sm font-medium rounded-l-lg {inputType === 'url' ? 'bg-black text-white' : 'bg-gray-200 text-gray-700'}"
           on:click={() => setInputType('url')}
           aria-pressed={inputType === 'url'}
         >
@@ -96,7 +96,7 @@
         </button>
         <button 
           type="button"
-          class="px-4 py-2 text-sm font-medium rounded-r-lg {inputType === 'text' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'}"
+          class="px-4 py-2 text-sm font-medium rounded-r-lg {inputType === 'text' ? 'bg-black text-white' : 'bg-gray-200 text-gray-700'}"
           on:click={() => setInputType('text')}
           aria-pressed={inputType === 'text'}
         >
@@ -113,7 +113,7 @@
             type="text"
             id="job-url"
             placeholder="https://example.com/job-posting"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all {!isUrlValid ? 'border-red-500' : ''}"
+            class="w-full px-4 py-3 border bg-white border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all {!isUrlValid ? 'border-red-500' : ''}"
             bind:value={jobUrl}
             disabled={isLoading}
           />
@@ -127,7 +127,7 @@
           <textarea
             id="job-description"
             placeholder="Paste your job description here..."
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all min-h-[200px] {!isDescriptionValid ? 'border-red-500' : ''}"
+            class="w-full px-4 py-3 border bg-white border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all min-h-[200px] {!isDescriptionValid ? 'border-red-500' : ''}"
             bind:value={jobDescription}
             disabled={isLoading}
           ></textarea>
@@ -146,7 +146,7 @@
       <div class="form-submit">
         <button
           type="submit"
-          class="w-full py-3 px-6 text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex justify-center items-center"
+          class="w-full py-3 px-6 text-white bg-black hover:bg-black rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black flex justify-center items-center"
           disabled={isLoading}
         >
           {#if isLoading}
