@@ -7,7 +7,6 @@
   // Props for the results display
   export let results = null; // Results data from the audit
   export let loading = false; // Loading state
-  export let visible = true; // Visibility toggle - defaults to true
   
   // Format the API response for new 7-category, 100-point rubric
   $: processedResults = results && {
