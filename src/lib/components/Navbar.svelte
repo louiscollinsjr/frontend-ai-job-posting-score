@@ -64,24 +64,26 @@
     
     <!-- Auth Buttons -->
     <div class="flex items-center space-x-4">
-      {#if !justLogo && !hideLoginButton}
-        {#if isLoggedIn}
-          <div class="flex items-center gap-4">
-            <a href="/dashboard" class="text-sm font-medium text-gray-700 hover:text-gray-900">Dashboard</a>
-            <button 
-              on:click={handleLogout} 
-              class="text-sm font-medium text-gray-600 hover:text-gray-900 inline-flex items-center gap-1"
-            >
-              <span>Log out</span>
-            </button>
-            <!-- <div class="text-xs bg-gray-100 px-3 py-1 rounded-full text-gray-600">
-              {userEmail ? userEmail.split('@')[0] : ''}
-            </div> -->
-          </div>
-        {:else}
-          <a href="/login" class="inline-flex items-center justify-center px-4 py-1.5 text-sm font-medium text-black bg-gray-200 rounded-full hover:bg-gray-800 hover:text-white transition-colors">
-            Log in
-          </a>
+      {#if !justLogo}
+        {#if !hideLoginButton}
+          {#if isLoggedIn}
+            <div class="flex items-center gap-4">
+              <a href="/dashboard" class="text-sm font-medium text-gray-700 hover:text-gray-900">Dashboard</a>
+              <button 
+                on:click={handleLogout} 
+                class="text-sm font-medium text-gray-600 hover:text-gray-900 inline-flex items-center gap-1"
+              >
+                <span>Log out</span>
+              </button>
+              <!-- <div class="text-xs bg-gray-100 px-3 py-1 rounded-full text-gray-600">
+                {userEmail ? userEmail.split('@')[0] : ''}
+              </div> -->
+            </div>
+          {:else}
+            <a href="/login" class="inline-flex items-center justify-center px-4 py-1.5 text-sm font-medium text-black bg-gray-200 rounded-full hover:bg-gray-800 hover:text-white transition-colors">
+              Log in
+            </a>
+          {/if}
         {/if}
       {/if}
     </div>

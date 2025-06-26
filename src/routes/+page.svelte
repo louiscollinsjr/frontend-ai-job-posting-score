@@ -1,5 +1,5 @@
 <script>
-  import AuditForm from '$lib/components/AuditForm.svelte';
+  import ChatAuditForm from '$lib/components/ChatAuditForm.svelte';
   import FeatureCard from '$lib/components/FeatureCard.svelte';
   import ResultsDisplay from '$lib/components/ResultsDisplay.svelte';
   import WhatWeDo from '$lib/components/WhatWeDo.svelte';
@@ -100,7 +100,7 @@
         <p class="text-sm text-gray-600 text-center leading-relaxed mb-24">
           ReachScore analyzes and optimizes every line — so you attract the right talent, faster.
         </p>
-        <AuditForm on:audit={handleAudit} />
+        <ChatAuditForm on:audit={handleAudit} />
       </div>
       
      

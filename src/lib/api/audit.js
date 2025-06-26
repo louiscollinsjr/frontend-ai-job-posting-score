@@ -48,6 +48,38 @@ export async function auditJobText(text) {
 }
 
 /**
+ * Submit a job posting file (PDF/DOCX) for audit
+ * @param {File} file - The file object containing the job posting to analyze
+ * @returns {Promise<object>} - The audit results
+ */
+export async function auditJobFile(file) {
+  try {
+    // Create a FormData object for file upload
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    // In a production environment, this would send the file to the backend
+    // For now, we'll use the mock data for demonstration purposes
+    
+    // Simulate API call with delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Use the generateMockResults function to create demo data
+    // In production, we'd make an actual API call like this:
+    // const response = await fetch('https://ai-audit-api.fly.dev/api/audit-job-file', {
+    //   method: 'POST',
+    //   body: formData
+    // });
+    // return await response.json();
+    
+    return generateMockResults('file', file.name);
+  } catch (error) {
+    console.error('Error auditing job file:', error);
+    throw new Error('Failed to analyze job posting file. Please try again.');
+  }
+}
+
+/**
  * Generate mock results for demonstration purposes
  * This function would be replaced with actual API responses
  * @param {string} type - The type of input ('url' or 'text')

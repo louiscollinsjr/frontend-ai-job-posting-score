@@ -12,6 +12,9 @@
   // Check if current route is login or auth callback using $derived (Svelte 5 syntax)
   let isLoginRoute = $derived($page?.route?.id === '/login' || $page?.route?.id?.startsWith('/auth/'));
   
+  // Check if current route is results page
+  let isResultsRoute = $derived($page?.route?.id === '/results' || $page?.route?.id?.startsWith('/results/'));
+  
   onMount(() => {
     // Initialize the user auth store
     user.init();
@@ -28,7 +31,7 @@
 {:else}
   <Sidebar.Provider>
     <div class="flex flex-col min-h-screen w-full">
-      <Navbar hideLoginButton={isLoginRoute} />
+      <Navbar hideLoginButton={isLoginRoute || isResultsRoute} justLogo={false} />
       
       <!-- Empty space to offset the fixed navbar -->
       <div class="h-16"></div>
