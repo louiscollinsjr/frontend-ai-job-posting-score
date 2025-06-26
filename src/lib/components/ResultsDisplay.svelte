@@ -9,18 +9,33 @@
   export let loading = false; // Loading state
   export let visible = true; // Visibility toggle - defaults to true
   
-  // Format the API response scores (0-5 scale) to display format
+  // Format the API response for new 7-category, 100-point rubric
   $: processedResults = results && {
     ...results,
-    clarityScore: results.scores?.clarity || results.clarityScore || 0,
-    inclusivityScore: results.scores?.inclusivity || results.inclusivityScore || 0,
-    fairnessScore: results.scores?.fairness || results.fairnessScore || 0,
-    // Use existing overallScore or calculate from API response
-    overallScore: results.overallScore || 
-      (((results.scores?.clarity || 0) + 
-        (results.scores?.inclusivity || 0) + 
-        (results.scores?.fairness || 0)) / 3)
+    overallScore: results.totalScore || results.overallScore || 0,
+    categories: results.categories || {},
+    redFlags: results.redFlags || [],
+    recommendations: results.recommendations || []
   };
+
+  // Category display order and labels
+  const categoryLabels = [
+    { key: 'clarity', label: 'Clarity & Readability', max: 20 },
+    { key: 'promptAlignment', label: 'Prompt Alignment', max: 20 },
+    { key: 'structuredData', label: 'Structured Data Presence', max: 15 },
+    { key: 'recency', label: 'Recency & Freshness', max: 10 },
+    { key: 'keywordTargeting', label: 'Keyword Targeting', max: 15 },
+    { key: 'compensation', label: 'Compensation Transparency', max: 10 },
+    { key: 'pageContext', label: 'Page Context & Cleanliness', max: 10 }
+  ];
+
+  function getScoreColor100(score, max) {
+    const pct = score / max;
+    if (pct >= 0.85) return 'text-green-600';
+    if (pct >= 0.6) return 'text-yellow-600';
+    if (pct >= 0.4) return 'text-orange-500';
+    return 'text-red-600';
+  }
   
   // Function to get score color
   function getScoreColor(score) {
@@ -54,30 +69,29 @@
     <h1 class="text-3xl text-center mb-2">Your Reach<b class="text-black">Score</b> Analysis</h1>
     <p class="text-center text-gray-600 mb-8 text-sm">Here's how your job posting performed across key metrics</p>
     
-    <!-- Overall Score Circle -->
+    <!-- Overall Score Circle (100-point scale) -->
     <div class="bg-white rounded-lg p-6 mb-8 text-center max-w-md mx-auto">
       <div class="relative h-36 w-36 mx-auto">
         <svg class="w-full h-full" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
           <!-- Background circle -->
           <circle cx="18" cy="18" r="16" fill="none" stroke="#e0e0e0" stroke-width="2"></circle>
-          
-          <!-- Progress circle - dynamically calculated -->
+          <!-- Progress circle -->
           <circle 
             cx="18" cy="18" r="16" 
             fill="none" 
             stroke="#F97316" 
             stroke-width="2"
             stroke-dasharray="100.53 100.53"
-            stroke-dashoffset="{100.53 - (processedResults?.overallScore / 5 * 100.53) || 0}"
+            stroke-dashoffset="{100.53 - (processedResults?.overallScore / 100 * 100.53) || 0}"
             transform="rotate(-90 18 18)"
           ></circle>
         </svg>
         <div class="absolute inset-0 flex flex-col items-center justify-center">
           <span class="text-3xl font-bold text-orange-500">{processedResults?.overallScore?.toFixed(1) || '0'}</span>
-          <span class="text-sm text-gray-600">out of 5</span>
+          <span class="text-sm text-gray-600">out of 100</span>
         </div>
       </div>
-      <h3 class="text-lg font-bold mt-4 mb-1">Overall ReachScore</h3>
+      <h3 class="text-lg font-bold mt-4 mb-1">GPT Visibility Score™</h3>
       <p class="text-sm text-gray-600">Comprehensive posting quality</p>
     </div>
     
@@ -90,59 +104,63 @@
         <p class="text-lg text-gray-600">Analyzing your job posting...</p>
       </div>
     {:else if processedResults}
-      <!-- Individual Scores -->
+      <!-- Category Breakdown Table -->
       <div class="space-y-4 mb-8">
-        <!-- Clarity Score -->
-        <div class="border rounded-lg overflow-hidden">
-          <div class="flex items-center p-4 gap-3">
-            <div class="font-normal text-2xl">Clarity</div>
-            <div class="ml-auto flex items-center">
-              <span class="font-bold text-xl">{processedResults.clarityScore}</span>
-              <span class="text-gray-500 text-sm">/5</span>
-            </div>
-            <div class="w-6 h-6 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center">
-              <span class="text-xs text-gray-600 font-bold">!</span>
-            </div>
-          </div>
-          <div class="bg-white p-4 text-sm">
-            Measures how clear, structured, and easy to digest your posting is.
-          </div>
-        </div>
-        
-        <!-- Inclusivity Score -->
-        <div class="border rounded-lg overflow-hidden">
-          <div class="flex items-center p-4 gap-3">
-            <div class="font-normal text-2xl">Inclusivity</div>
-            <div class="ml-auto flex items-center">
-              <span class="font-bold text-xl">{processedResults.inclusivityScore}</span>
-              <span class="text-gray-500 text-sm">/5</span>
-            </div>
-            <div class="w-6 h-6 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center">
-              <span class="text-xs font-bold">!</span>
-            </div>
-          </div>
-          <div class="bg-white p-4 text-sm">
-            How open and welcoming your language is to people from diverse backgrounds.
-          </div>
-        </div>
-        
-        <!-- Fairness Score -->
-        <div class="border rounded-lg overflow-hidden">
-          <div class="flex items-center p-4 gap-3">
-            <div class="font-normal text-2xl">Fairness</div>
-            <div class="ml-auto flex items-center">
-              <span class="font-bold text-xl">{processedResults.fairnessScore}</span>
-              <span class="text-gray-500 text-sm">/5</span>
-            </div>
-            <div class="w-6 h-6 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center">
-              <span class="text-xs font-bold">✓</span>
-            </div>
-          </div>
-          <div class="bg-white p-4 text-sm">
-            Evaluates whether expectations and offers are fair, realistic, and transparent.
-          </div>
-        </div>
+        <table class="w-full text-left border rounded-lg overflow-hidden">
+          <thead>
+            <tr class="bg-gray-50">
+              <th class="py-2 px-4">Category</th>
+              <th class="py-2 px-4">Score</th>
+              <th class="py-2 px-4">Max</th>
+              <th class="py-2 px-4">Suggestions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each categoryLabels as cat}
+              <tr class="border-b">
+                <td class="py-2 px-4 font-medium">{cat.label}</td>
+                <td class="py-2 px-4 {getScoreColor100(processedResults.categories?.[cat.key]?.score || 0, cat.max)}">
+                  {processedResults.categories?.[cat.key]?.score ?? '-'}
+                </td>
+                <td class="py-2 px-4 text-gray-500">{cat.max}</td>
+                <td class="py-2 px-4 text-xs text-gray-600">
+                  {#if processedResults.categories?.[cat.key]?.suggestions?.length}
+                    <ul class="list-disc pl-4">
+                      {#each processedResults.categories[cat.key].suggestions as sugg}
+                        <li>{sugg}</li>
+                      {/each}
+                    </ul>
+                  {:else}-{/if}
+                </td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
       </div>
+
+      <!-- Red Flags -->
+      {#if processedResults.redFlags?.length}
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+          <div class="font-semibold text-red-700 mb-1">Red Flags</div>
+          <ul class="list-disc pl-5 text-sm text-red-700">
+            {#each processedResults.redFlags as flag}
+              <li>{categoryLabels.find(c => c.key === flag)?.label || flag}</li>
+            {/each}
+          </ul>
+        </div>
+      {/if}
+
+      <!-- Recommendations -->
+      {#if processedResults.recommendations?.length}
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div class="font-semibold text-blue-700 mb-1">Optimization Suggestions</div>
+          <ul class="list-disc pl-5 text-sm text-blue-700">
+            {#each processedResults.recommendations as rec}
+              <li>{rec}</li>
+            {/each}
+          </ul>
+        </div>
+      {/if}
       
       <!-- Detailed Analysis -->
       <div class="border rounded-lg p-6 mb-8">
