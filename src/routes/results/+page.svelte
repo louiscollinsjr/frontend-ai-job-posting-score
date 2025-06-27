@@ -17,24 +17,29 @@ onMount(() => {
   return unsubscribe; // Clean up subscription when component is destroyed
 });
 
-  // Dummy data following API response format
+  // Dummy data following new API response format
   const results = {
     jobTitle: "Senior Frontend Developer",
     jobBody: "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
     timestamp: "2025-06-24T12:00:00Z",
-    scores: {
-      clarity: 3,
-      inclusivity: 3,
-      fairness: 4
+    totalScore: 82,
+    categories: {
+      clarity: { score: 16, maxScore: 20, suggestions: ["Shorten sentences"] },
+      promptAlignment: { score: 18, maxScore: 20, suggestions: ["Group skills more logically"] },
+      structuredData: { score: 11, maxScore: 15, suggestions: ["Add schema.org/JobPosting JSON-LD"] },
+      recency: { score: 8, maxScore: 10, suggestions: [] },
+      keywordTargeting: { score: 13, maxScore: 15, suggestions: ["Add more relevant keywords"] },
+      compensation: { score: 8, maxScore: 10, suggestions: ["Include salary range"] },
+      pageContext: { score: 8, maxScore: 10, suggestions: [] }
     },
-    overallScore: 3.33,
-    feedback: "The job posting is clear in terms of specifying required skills, experience, and education. However, the requirement of a PhD may unnecessarily exclude qualified candidates who have equivalent experience and skillsets but do not hold such a degree, negatively impacting inclusivity. Additionally, expecting candidates to work 80 hours per week is not reasonable or fair, as it could negatively affect work-life balance and may disproportionately exclude individuals with family or personal responsibilities, potentially creating bias and limiting diversity in your applicant pool. Consider revising the posting to allow for equivalent experience rather than strictly requiring a PhD, and reduce or clarify expectations around work hours to promote fairness and inclusivity.",
+    redFlags: ["structuredData"],
     recommendations: [
-      "Use gender-neutral pronouns consistently",
-      "Replace terms like 'rockstar' with more inclusive alternatives like 'experienced' or 'skilled'",
-      "Consider adding a salary range for transparency",
-      "Be more specific about the years of experience required"
-    ]
+      "Add schema.org/JobPosting JSON-LD for better visibility",
+      "Include a salary range for transparency",
+      "Group skills and requirements more logically",
+      "Shorten overly long sentences"
+    ],
+    feedback: "The job posting is clear in terms of specifying required skills, experience, and education. However, the clarity could be improved by shortening sentences and grouping requirements more logically. Adding structured data and a salary range would further increase visibility and transparency."
   };
 </script>
 
