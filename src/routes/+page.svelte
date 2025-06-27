@@ -8,6 +8,7 @@
   import NewsletterSignup from '$lib/components/NewsletterSignup.svelte';
   import { auditStore } from '$lib/stores/audit.js';
   import { onMount } from 'svelte';
+  import AuditForm from '$lib/components/AuditForm.svelte';
   
   // Store subscription
   let isLoading = false;
@@ -100,7 +101,8 @@
         <p class="text-sm text-gray-600 text-center leading-relaxed mb-24">
           ReachScore analyzes and optimizes every line — so you attract the right talent, faster.
         </p>
-        <ChatAuditForm on:audit={handleAudit} />
+        <!-- <ChatAuditForm on:audit={handleAudit} /> -->
+         <AuditForm on:audit={handleAudit} />
       </div>
       
      

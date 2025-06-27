@@ -38,7 +38,7 @@
         
         
         <a href="/" class="flex-shrink-0 flex items-center">
-          <span class="text-2xl text-black">Reach<b class="text-black">Score</b> <sup class="text-xs align-super">™</sup></span>
+          <span class="text-2xl text-black">Job Visibility <b class="text-black">Audit</b> <sup class="text-xs align-super">™</sup></span>
         </a>
 
         {#if !justLogo}
