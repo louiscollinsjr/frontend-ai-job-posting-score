@@ -31,6 +31,7 @@ module.exports = {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         display: ['Poppins', 'system-ui', 'sans-serif'],
         playfair: ['Playfair Display Variable', 'Playfair Display', 'system-ui', 'serif'],
+        roboto: ['Roboto Variable', 'Roboto', 'system-ui', 'sans-serif'],
       },
       spacing: {
         '128': '32rem',

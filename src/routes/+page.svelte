@@ -94,15 +94,21 @@
 </svelte:head>
 
 <!-- Hero Section with Audit Form -->
-<section class="mb-8 bg-gray-100 p-16 rounded-3xl">
+<section class="mb-8 bg-gray p-6 rounded-3xl">
   <div class="container">
     <div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-center mx-auto">
-      <div class="bg-gray-1000 px-16 lg:px-16 py-6 rounded-3xl min-h-[580px] mx-auto">
+      <div class=" px-16 lg:px-16 pb-20 rounded-3xl min-h-[580px] mx-auto">
         <!-- Try multiple approaches to get Playfair font working -->
-        <h1 class="text-6xl font-normal w-[65%] pb-12 leading-tight tracking-tight text-gray-900 mx-auto text-center">
-          Stop Guessing. Increase Job Visibility by 70%
-        </h1>
-        <p class="text-xl text-gray-500 text-center mb-24 max-w-2xl mx-auto">
+
+<h1 class="text-7xl font-normal w-[100%] pb-12 leading-tight tracking-tight mx-auto text-center">
+  Improve <span class="word-cycle" style="min-width: 240px;">
+    <span class="chroma-text text-left" data-text="Clarity.">Clarity.</span>
+    <span class="chroma-text text-left" data-text="Reach.">Reach.</span>
+    <span class="chroma-text text-left" data-text="Results.">Results.</span>
+  </span><br>
+  Increase job visibility by 70%
+</h1>
+        <p class="text-xl text-gray-400 text-center mb-24 max-w-3xl mx-auto font-normal font-roboto">
           Industry data shows proper optimization can increase job posting visibility by up to 70%. We score your post and show you exactly what to improve to get there.
         </p>
         <!-- <ChatAuditForm on:audit={handleAudit} /> -->
@@ -138,3 +144,156 @@
   on:close={handleCloseResults} 
   on:export={handleExport} 
 /> -->
+
+<style>
+  .chroma-mask {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    &:after {
+        content: "";
+        pointer-events: none;
+        position: absolute;
+        z-index: 10;
+        height: 150vh;
+        width: 150vw;
+        --tw-bg-opacity: 1;
+        background-color: rgb(248 248 248/var(--tw-bg-opacity,1));
+        object-fit: cover
+    }
+
+    @media (min-width: 800px) {
+        &:after {
+            width:112.5vw
+        }
+    }
+
+    &:after {
+        top: calc(-25vh);
+        left: calc(-25vw);
+        mask-image: radial-gradient(circle at center,#f8f8f8 20%,transparent 100%);
+        filter: blur(100px)
+    }
+
+    @media (min-width: 800px) {
+        &:after {
+            left:calc(-6.25vw)
+        }
+    }
+}
+
+.chroma-hero {
+    display: flex;
+    overflow: clip;
+    position: relative;
+    &:after {
+        position: absolute;
+        content: "";
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 75px;
+        background-color: #f8f8f8;
+        z-index: 2;
+        pointer-events: none;
+        mask-image: linear-gradient(180deg,transparent 0,#f8f8f8 90%)
+    }
+}
+
+.chroma-column {
+    flex: 1 0 0%;
+    min-width: 0
+}
+
+.chroma-background {
+    background: linear-gradient(0deg,#340b05,#0358f7 18.27%,#5092c7 28.37%,#e1e1fe 41.35%,#ffd400 58.66%,#fa3d1d 68.27%,#fd02f5 73.08%,transparent);
+    filter: blur(5px);
+    @media (min-width: 800px) {
+        filter:blur(9px)
+    }
+}
+
+.chroma-text {
+    background-image:linear-gradient(90deg,#000000 0,#000000 33.33%,#c679c4 40%,#fa3d1d 45%,#ffb005 50%,#e1e1fe 55%,#0358f7 60%,transparent 66.67%,transparent); 
+    background-size: 300% 100%;
+    background-position: 100% 0;
+    will-change: background-position;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    /* Deep fallback if gradient text isn't supported */
+    @supports not (background-clip: text) {
+      color: #000;
+    }
+}
+
+  .word-cycle {
+    display: inline-grid;
+    vertical-align: top;
+    text-align: center;
+  }
+
+  .word-cycle > span {
+    grid-area: 1 / 1;
+    opacity: 0;
+    /* Apply cycling animation */
+    animation: word-cycling 9s infinite;
+  }
+  
+  /* Apply the sweep animation when the word is visible */
+  .word-cycle > span.chroma-text {
+    animation: 
+      word-cycling 9s infinite,
+      chroma-sweep 1s ease-in-out forwards; /* Run once when word appears */
+  }
+
+  .word-cycle > span:nth-child(1) {
+    animation-delay: 0s;
+  }
+  
+  .word-cycle > span:nth-child(2) {
+    animation-delay: 3s;
+  }
+  
+  .word-cycle > span:nth-child(3) {
+    animation-delay: 6s;
+  }
+
+  @keyframes word-cycling {
+    /* Word invisible */
+    0%, 100% {
+      opacity: 0;
+    }
+    
+    /* Word appears */
+    3% {
+      opacity: 1;
+    }
+    
+    /* Word visible */
+    30% {
+      opacity: 1;
+    }
+    
+    /* Word fades out */
+    33% {
+      opacity: 0;
+    }
+  }
+
+  
+  
+  /* Separate animation just for the color sweep effect */
+  @keyframes chroma-sweep {
+    0% {
+        background-position: 100% 0;
+        filter: blur(1px)
+    }
+
+    to {
+        background-position: 0 0;
+        filter: blur(0)
+    }
+  }
+</style>

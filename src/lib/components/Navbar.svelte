@@ -80,7 +80,7 @@
               </div> -->
             </div>
           {:else}
-            <a href="/login" class="inline-flex items-center justify-center px-4 py-1.5 text-sm font-medium text-black bg-gray-200 rounded-full hover:bg-gray-800 hover:text-white transition-colors">
+            <a href="/login" class="inline-flex items-center justify-center px-5 py-2 text-sm font-medium text-black bg-gray-100 rounded-full hover:bg-gray-800 hover:text-white transition-colors tracking-wide">
               Log in
             </a>
           {/if}

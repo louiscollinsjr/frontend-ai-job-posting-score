@@ -48,6 +48,7 @@
 	},
 	"dependencies": {
 		"@fontsource-variable/playfair-display": "^5.2.6",
+		"@fontsource-variable/roboto": "^5.2.6",
 		"@supabase/supabase-js": "^2.50.0",
 		"phosphor-icons-svelte": "1.1.2"
 	}

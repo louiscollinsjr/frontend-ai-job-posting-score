@@ -45,7 +45,7 @@
         <!-- Sidebar navigation -->
         <AppSidebar />
         
-        <main class="bg-white max-w-9xl mx-auto mt-16 px-2">
+        <main class="bg-white max-w-9xl mx-auto mt-8 px-2">
           <!-- Main content -->
           {@render children?.()}
         </main>
