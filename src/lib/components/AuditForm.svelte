@@ -96,7 +96,7 @@
   }
 </script>
 
-<section class="audit-form-container rounded-lg p-6 md:p-8 max-w-3xl mx-auto">
+<section class="audit-form-container rounded-lg p-6 md:p-8 max-w-3xl mx-auto ">
   <div class="mb-8">
     <div class="flex justify-center mb-4">
       <div class="inline-flex rounded-md shadow-sm" role="group" aria-label="Input type selection">
@@ -170,7 +170,7 @@
             </svg>
             Analyzing...
           {:else}
-            Analyze Posting
+          See your score in less than 30 seconds
           {/if}
         </button>
       </div>

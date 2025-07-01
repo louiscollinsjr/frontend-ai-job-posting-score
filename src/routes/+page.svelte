@@ -9,6 +9,9 @@
   import { auditStore } from '$lib/stores/audit.js';
   import { onMount } from 'svelte';
   import AuditForm from '$lib/components/AuditForm.svelte';
+ // Supports weights 400-900
+
+
   
   // Store subscription
   let isLoading = false;
@@ -91,15 +94,16 @@
 </svelte:head>
 
 <!-- Hero Section with Audit Form -->
-<section class="mb-8">
+<section class="mb-8 bg-gray-100 p-16 rounded-3xl">
   <div class="container">
-    <div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-center">
-      <div class="bg-gray-1000 px-16 lg:px-16 py-6 rounded-3xl min-h-[580px]">
-        <h1 class="text-4xl md:text-6xl font-black text-gray-900 mb-6 text-center leading-[1.1] font-normal">
-          Your job post deserves to be seen
+    <div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-center mx-auto">
+      <div class="bg-gray-1000 px-16 lg:px-16 py-6 rounded-3xl min-h-[580px] mx-auto">
+        <!-- Try multiple approaches to get Playfair font working -->
+        <h1 class="text-6xl font-normal w-[65%] pb-12 leading-tight tracking-tight text-gray-900 mx-auto text-center">
+          Stop Guessing. Increase Job Visibility by 70%
         </h1>
-        <p class="text-sm text-gray-600 text-center leading-relaxed mb-24">
-          ReachScore analyzes and optimizes every line — so you attract the right talent, faster.
+        <p class="text-xl text-gray-500 text-center mb-24 max-w-2xl mx-auto">
+          Industry data shows proper optimization can increase job posting visibility by up to 70%. We score your post and show you exactly what to improve to get there.
         </p>
         <!-- <ChatAuditForm on:audit={handleAudit} /> -->
          <AuditForm on:audit={handleAudit} />

@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+
+
 module.exports = {
   content: ['./src/**/*.{html,js,svelte,ts}'],
   theme: {
@@ -28,6 +30,7 @@ module.exports = {
         inter: ['Inter', 'sans-serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
         display: ['Poppins', 'system-ui', 'sans-serif'],
+        playfair: ['Playfair Display Variable', 'Playfair Display', 'system-ui', 'serif'],
       },
       spacing: {
         '128': '32rem',

@@ -4,10 +4,12 @@
     "": {
       "name": "frontend-ai-job-posting-score",
       "dependencies": {
+        "@fontsource-variable/playfair-display": "^5.2.6",
         "@supabase/supabase-js": "^2.50.0",
         "phosphor-icons-svelte": "1.1.2",
       },
       "devDependencies": {
+        "@fontsource-variable/playfair-display": "^5.2.6",
         "@fontsource/inter": "^5.1.1",
         "@fontsource/open-sans": "^5.1.1",
         "@internationalized/date": "^3.8.1",
@@ -96,6 +98,8 @@
     "@floating-ui/dom": ["@floating-ui/dom@1.7.1", "", { "dependencies": { "@floating-ui/core": "^1.7.1", "@floating-ui/utils": "^0.2.9" } }, "sha512-cwsmW/zyw5ltYTUeeYJ60CnQuPqmGwuGVhG9w0PRaRKkAyi38BT5CKrpIbb+jtahSwUl04cWzSx9ZOIxeS6RsQ=="],
 
     "@floating-ui/utils": ["@floating-ui/utils@0.2.9", "", {}, "sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg=="],
+
+    "@fontsource-variable/playfair-display": ["@fontsource-variable/playfair-display@5.2.6", "", {}, "sha512-Uedpo4WwsWtobi1KMYGm9tlKcZJcD18EiBtPWhbbccT2u58qM7vwkOZGdrmdWVDhcEhjwNrqRUyZijwIFtsCcQ=="],
 
     "@fontsource/inter": ["@fontsource/inter@5.2.6", "", {}, "sha512-CZs9S1CrjD0jPwsNy9W6j0BhsmRSQrgwlTNkgQXTsAeDRM42LBRLo3eo9gCzfH4GvV7zpyf78Ozfl773826csw=="],
 

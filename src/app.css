@@ -2,6 +2,11 @@
 
 @import "tw-animate-css";
 
+/* Custom font classes */
+.font-playfair {
+  font-family: 'Playfair Display Variable', 'Playfair Display', serif !important;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {

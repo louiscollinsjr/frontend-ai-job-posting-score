@@ -1,5 +1,9 @@
 <script lang="ts">
   import '../app.css';
+  // Import Playfair Display Variable font with all options
+  import '@fontsource-variable/playfair-display/wght.css';
+  import '@fontsource-variable/playfair-display/wght-italic.css';
+  import '../lib/font-test.css';
   import * as Sidebar from "$lib/components/ui/sidebar/index.js";
   import AppSidebar from '$lib/components/app-sidebar.svelte';
   import Navbar from '$lib/components/Navbar.svelte';
@@ -41,7 +45,7 @@
         <!-- Sidebar navigation -->
         <AppSidebar />
         
-        <main class="bg-white max-w-9xl mx-auto mt-16">
+        <main class="bg-white max-w-9xl mx-auto mt-16 px-2">
           <!-- Main content -->
           {@render children?.()}
         </main>
