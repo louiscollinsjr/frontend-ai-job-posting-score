@@ -6,11 +6,3 @@
   font-family: 'Playfair Display Variable', serif !important;
 }
 
-/* Alternative - try each of these if the above doesn't work */
-.font-playfair-alt1 {
-  font-family: 'Playfair Display', serif !important;
-}
-
-.font-playfair-alt2 {
-  font-family: '"Playfair Display Variable"', serif !important;
-}

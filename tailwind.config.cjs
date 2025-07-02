@@ -1,5 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 
+import { fontFamily } from "tailwindcss/defaultTheme";
+import containerQueries from '@tailwindcss/container-queries';
+import forms from '@tailwindcss/forms';
+import typography from '@tailwindcss/typography';
+import type { Config } from 'tailwindcss';
 
 module.exports = {
   content: ['./src/**/*.{html,js,svelte,ts}'],
@@ -27,11 +32,11 @@ module.exports = {
       colors: {       
       },
       fontFamily: {
-        inter: ['Inter', 'sans-serif'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Poppins', 'system-ui', 'sans-serif'],
-        playfair: ['Playfair Display Variable', 'Playfair Display', 'system-ui', 'serif'],
-        roboto: ['Roboto Variable', 'Roboto', 'system-ui', 'sans-serif'],
+        sans: ['Roboto Variable', 'system-ui', 'sans-serif'],
+        playfair: ['"Playfair Display Variable"', 'serif'],
+        roboto: ['"Roboto Variable"', 'sans-serif'],
+        quicksand: ['"Quicksand Variable"', 'sans-serif'],
+        geist: ['"Geist Variable"', 'sans-serif'],
       },
       spacing: {
         '128': '32rem',
@@ -45,7 +50,7 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [typography, forms, containerQueries],
 }
 
 // // tailwind.config.ts

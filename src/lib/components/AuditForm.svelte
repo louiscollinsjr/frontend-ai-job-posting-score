@@ -1,8 +1,20 @@
-<script>
-  import { createEventDispatcher } from 'svelte';
-  import { auditJobUrl, auditJobText } from '$lib/api/audit.js';
-  import { goto } from '$app/navigation';
-  import { auditStore } from '$lib/stores/audit.js';
+<script
+  lang="ts">
+import { z } from 'zod';
+
+// Zod schema for URLs starting with https:// or http://
+const urlSchema = z.string()
+  .url({ message: 'Please enter a valid URL (must include http:// or https://)' })
+  .refine(
+    (val) => val.startsWith('https://') || val.startsWith('http://'),
+    { message: 'URL must start with https:// or http://' }
+  );
+
+import { createEventDispatcher } from 'svelte';
+import { auditJobUrl, auditJobText } from '$lib/api/audit.js';
+import { goto } from '$app/navigation';
+import CircleAlertIcon from "@lucide/svelte/icons/circle-alert";
+import * as Alert from "$lib/components/ui/alert/index.js";
   
   // Create a dispatcher to send events to parent components
   const dispatch = createEventDispatcher();
@@ -13,10 +25,10 @@
   let jobDescription = '';
   let selectedFile = null;
   let isLoading = false;
+  let isUrlValid = true;
   let error = '';
   
   // Form validation state
-  let isUrlValid = true;
   let isDescriptionValid = true;
   
   // Toggle between URL and text/file input
@@ -153,7 +165,7 @@
       </div>
     </div>
 
-    <form on:submit|preventDefault={handleSubmit} class="space-y-12">
+    <form on:submit|preventDefault={() => { validateUrl(); if (isUrlValid) handleSubmit(); }} class="space-y-12">
       {#if inputType === 'url'}
         <div class="form-control">
           <label for="job-url" class="block text-sm font-medium text-gray-700 mb-1">Job Posting URL</label>
@@ -164,10 +176,15 @@
             class="w-full px-4 py-3 border bg-white border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all {!isUrlValid ? 'border-red-500' : ''}"
             bind:value={jobUrl}
             disabled={isLoading}
+            on:input={validateUrl}
           />
           {#if !isUrlValid && error}
-            <p class="mt-1 text-sm text-red-600">{error}</p>
-          {/if}
+  <Alert.Root variant="destructive" class="mt-6 text-xs bg-transparent border-none">
+    <CircleAlertIcon class="size-4" />
+    <Alert.Title>Error</Alert.Title>
+    <Alert.Description>{error}</Alert.Description>
+  </Alert.Root>
+{/if}
         </div>
       {:else}
         <div class="form-control">

@@ -1,12 +1,16 @@
 <script lang="ts">
   import '../app.css';
-  // Import Playfair Display Variable font with all options
-  import '@fontsource-variable/playfair-display/wght.css';
-  import '@fontsource-variable/playfair-display/wght-italic.css';
+  // Import variable fonts with all weights and styles
+  import '@fontsource-variable/playfair-display';
+  import '@fontsource-variable/roboto';
+  import '@fontsource-variable/quicksand';
+  import '@fontsource-variable/geist';
+  import '@fontsource-variable/inter';
   import '../lib/font-test.css';
   import * as Sidebar from "$lib/components/ui/sidebar/index.js";
   import AppSidebar from '$lib/components/app-sidebar.svelte';
   import Navbar from '$lib/components/Navbar.svelte';
+
   import { onMount } from 'svelte';
   import { user } from '$lib/stores/auth.js';
   import { page } from '$app/stores';
