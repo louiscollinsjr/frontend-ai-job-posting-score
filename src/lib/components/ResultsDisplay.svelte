@@ -7,6 +7,7 @@
   // Props for the results display
   export let results = null; // Results data from the audit
   export let loading = false; // Loading state
+  export let isLoggedIn = false; // Authentication state
   
   // Format the API response for new 7-category, 100-point rubric
   $: processedResults = results && {
@@ -103,80 +104,90 @@
         <p class="text-lg text-gray-600">Analyzing your job posting...</p>
       </div>
     {:else if processedResults}
-      <!-- Category Breakdown Table -->
-      <div class="space-y-4 mb-8">
-        <table class="w-full text-left border rounded-lg overflow-hidden">
-          <thead>
-            <tr class="bg-gray-50">
-              <th class="py-2 px-4">Category</th>
-              <th class="py-2 px-4">Score</th>
-              <th class="py-2 px-4">Max</th>
-              <th class="py-2 px-4">Suggestions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#each categoryLabels as cat}
-              <tr class="border-b">
-                <td class="py-2 px-4 font-medium">{cat.label}</td>
-                <td class="py-2 px-4 {getScoreColor100(processedResults.categories?.[cat.key]?.score || 0, cat.max)}">
-                  {processedResults.categories?.[cat.key]?.score ?? '-'}
-                </td>
-                <td class="py-2 px-4 text-gray-500">{cat.max}</td>
-                <td class="py-2 px-4 text-xs text-gray-600">
-                  {#if processedResults.categories?.[cat.key]?.suggestions?.length}
-                    <ul class="list-disc pl-4">
-                      {#each processedResults.categories[cat.key].suggestions as sugg}
-                        <li>{sugg}</li>
-                      {/each}
-                    </ul>
-                  {:else}-{/if}
-                </td>
-              </tr>
-            {/each}
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Red Flags -->
-      {#if processedResults.redFlags?.length}
-        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-          <div class="font-semibold text-red-700 mb-1">Red Flags</div>
-          <ul class="list-disc pl-5 text-sm text-red-700">
-            {#each processedResults.redFlags as flag}
-              <li>{categoryLabels.find(c => c.key === flag)?.label || flag}</li>
-            {/each}
-          </ul>
-        </div>
-      {/if}
-
-      <!-- Recommendations -->
-      {#if processedResults.recommendations?.length}
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-          <div class="font-semibold text-blue-700 mb-1">Optimization Suggestions</div>
-          <ul class="list-disc pl-5 text-sm text-blue-700">
-            {#each processedResults.recommendations as rec}
-              <li>{rec}</li>
-            {/each}
-          </ul>
-        </div>
-      {/if}
       
-      <!-- Detailed Analysis -->
-      <div class="border rounded-lg p-6 mb-8">
-        <h2 class="flex items-center gap-2 text-xl mb-6">
-          
-          Detailed Analysis & Recommendations
-        </h2>
-        
-        <!-- Render the feedback directly from the API response -->
-        <div class="space-y-4 text-gray-700 leading-relaxed text-sm">
-          <p>{processedResults.feedback || ''}</p>
-          
-          {#if processedResults.jobTitle}
-          <p class="font-medium">Job Title: {processedResults.jobTitle}</p>
-          {/if}
+      {#if isLoggedIn}
+        <!-- Category Breakdown Table (Only for authenticated users) -->
+        <div class="space-y-4 mb-8">
+          <table class="w-full text-left border rounded-lg overflow-hidden">
+            <thead>
+              <tr class="bg-gray-50">
+                <th class="py-2 px-4">Category</th>
+                <th class="py-2 px-4">Score</th>
+                <th class="py-2 px-4">Max</th>
+                <th class="py-2 px-4">Suggestions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {#each categoryLabels as cat}
+                <tr class="border-b">
+                  <td class="py-2 px-4 font-medium">{cat.label}</td>
+                  <td class="py-2 px-4 {getScoreColor100(processedResults.categories?.[cat.key]?.score || 0, cat.max)}">
+                    {processedResults.categories?.[cat.key]?.score ?? '-'}
+                  </td>
+                  <td class="py-2 px-4 text-gray-500">{cat.max}</td>
+                  <td class="py-2 px-4 text-xs text-gray-600">
+                    {#if processedResults.categories?.[cat.key]?.suggestions?.length}
+                      <ul class="list-disc pl-4">
+                        {#each processedResults.categories[cat.key].suggestions as sugg}
+                          <li>{sugg}</li>
+                        {/each}
+                      </ul>
+                    {:else}-{/if}
+                  </td>
+                </tr>
+              {/each}
+            </tbody>
+          </table>
         </div>
-      </div>
+      {:else}
+        <!-- Message for unauthenticated users -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8 text-center">
+          <h3 class="font-semibold text-blue-800 mb-2">Sign in to view detailed results</h3>
+          <p class="text-sm text-blue-700">Provide your email to unlock the complete audit report with category breakdowns, suggestions, and detailed analysis.</p>
+        </div>
+      {/if}
+
+      {#if isLoggedIn}
+        <!-- Red Flags (Only for authenticated users) -->
+        {#if processedResults.redFlags?.length}
+          <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <div class="font-semibold text-red-700 mb-1">Red Flags</div>
+            <ul class="list-disc pl-5 text-sm text-red-700">
+              {#each processedResults.redFlags as flag}
+                <li>{categoryLabels.find(c => c.key === flag)?.label || flag}</li>
+              {/each}
+            </ul>
+          </div>
+        {/if}
+
+        <!-- Recommendations (Only for authenticated users) -->
+        {#if processedResults.recommendations?.length}
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div class="font-semibold text-blue-700 mb-1">Optimization Suggestions</div>
+            <ul class="list-disc pl-5 text-sm text-blue-700">
+              {#each processedResults.recommendations as rec}
+                <li>{rec}</li>
+              {/each}
+            </ul>
+          </div>
+        {/if}
+        
+        <!-- Detailed Analysis (Only for authenticated users) -->
+        <div class="border rounded-lg p-6 mb-8">
+          <h2 class="flex items-center gap-2 text-xl mb-6">
+            Detailed Analysis & Recommendations
+          </h2>
+          
+          <!-- Render the feedback directly from the API response -->
+          <div class="space-y-4 text-gray-700 leading-relaxed text-sm">
+            <p>{processedResults.feedback || ''}</p>
+            
+            {#if processedResults.jobTitle}
+            <p class="font-medium">Job Title: {processedResults.jobTitle}</p>
+            {/if}
+          </div>
+        </div>
+      {/if}
       
       <!-- Action buttons -->
       <div class="flex flex-wrap justify-center gap-4 mt-8">

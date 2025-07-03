@@ -53,6 +53,7 @@
 		"@fontsource-variable/roboto": "^5.2.6",
 		"@supabase/supabase-js": "^2.50.0",
 		"phosphor-icons-svelte": "1.1.2",
+		"phosphor-svelte": "^3.0.1",
 		"zod": "^3.25.67"
 	}
 }

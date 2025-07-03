@@ -268,6 +268,7 @@
       <ResultsDisplay 
         results={auditResults} 
         visible={true} 
+        isLoggedIn={isLoggedIn}
         on:save={() => triggerSaveDialog({type: 'save'})} 
         on:export={() => triggerSaveDialog({type: 'export'})} 
         on:accesslater={() => triggerSaveDialog({type: 'accesslater'})} 

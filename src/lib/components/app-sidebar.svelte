@@ -18,7 +18,7 @@
     },
     {
       title: "Pricing",
-      url: "#",
+      url: "/pricing",
     },
     {
       title: "My Dashboard",
