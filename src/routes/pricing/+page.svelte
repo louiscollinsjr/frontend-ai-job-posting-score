@@ -134,8 +134,8 @@
 <div class="container mx-auto px-4 py-20 pt-8 max-w-7xl">
   <!-- Page Header -->
   <div class="text-center mb-40">
-    <h1 class="text-4xl md:text-5xl font-bold mb-4">Simple, Transparent Pricing</h1>
-    <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
+    <h1 class="text-4xl md:text-5xl font-bold mb-4">Build Your Perfect Plan</h1>
+    <p class="text-lg text-muted-foreground max-w-2xl mx-auto mb-12">
       Get actionable insights to improve your job post visibility. Start with our free plan,
       or choose a plan that fits your needs.
     </p>
@@ -166,7 +166,7 @@
               <div class="flex flex-col gap-2">
                 <h3 class="text-lg font-bold pb-8">{plan.name}</h3>
                 <div class="flex items-baseline gap-2">
-                  <span class="text-4xl font-bold">${plan.price[billingCycle]}</span>
+                  <span class="text-2xl font-bold">${plan.price[billingCycle]}</span>
                   <span class="text-muted-foreground">/{billingCycle === 'monthly' ? 'month' : 'year'}</span>
                 </div>
                 <div class="text-xs text-muted-foreground mb-1">{plan.tagline}</div>
