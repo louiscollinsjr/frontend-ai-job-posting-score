@@ -100,16 +100,17 @@
       <div class=" px-16 lg:px-16 pb-20 rounded-3xl min-h-[580px] mx-auto">
        
 
-<h1 class="text-7xl font-normal w-[100%] pb-12 leading-tight tracking-tight mx-auto text-center font-inter">
- <span class="word-cycle" style="min-width: 140px;">
+<h1 class="text-6xl font-normal w-[100%] pb-12 leading-tight tracking-tight mx-auto text-center font-inter">
+ <!-- <span class="word-cycle" style="min-width: 140px;">
     <span class="chroma-text text-right" data-text="Audit">Audit</span>
     <span class="chroma-text text-right" data-text="Score">Score</span>
     <span class="chroma-text text-right" data-text="Boost">Boost</span>
-  </span> your job postings<!-- 70% more visibility. -->
+  </span> your job postings70% more visibility. -->
+  What's your job post's ReachScore?
 </h1>
-        <!-- <p class="text-xl text-gray-400 text-center mb-24 max-w-3xl mx-auto font-normal font-roboto">
-          Industry data shows proper optimization can increase job posting visibility by up to 70%. We score your post and show you exactly what to improve to get there.
-        </p> -->
+        <p class="text-xl text-gray-500 text-center mb-24 max-w-2xl mx-auto font-normal">
+          Your <b class="text-black">ReachScore <sup class="text-xs">™</sup></b> is the key to connecting with the 70% of qualified candidates you're currently missing.
+        </p>
         <!-- <ChatAuditForm on:audit={handleAudit} /> -->
          <AuditForm on:audit={handleAudit} />
       </div>
