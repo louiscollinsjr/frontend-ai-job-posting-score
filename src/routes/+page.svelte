@@ -94,7 +94,7 @@
 </svelte:head>
 
 <!-- Hero Section with Audit Form -->
-<section class="mb-8 bg-gray p-6 rounded-3xl  pt-32">
+<section class="mb-8 bg-gray p-6 rounded-3xl  pt-32 border-gray-200 border h-[85vh]">
   <div class="container">
     <div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-center mx-auto">
       <div class=" px-16 lg:px-16 pb-20 rounded-3xl min-h-[580px] mx-auto">
