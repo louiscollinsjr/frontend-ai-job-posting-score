@@ -1,9 +1,108 @@
-<script>
-  import { onMount } from 'svelte';
+<script lang="ts">
+  import { supabase } from '$lib/supabaseClient';
   import { goto } from '$app/navigation';
-  import { supabase } from '$lib/stores/auth.js';
+  import { onMount } from 'svelte';
+  import { user } from '$lib/stores/auth.js';
+  import type { Report, SupabaseReport } from '$lib/types/report';
   
   let error = null;
+  let processingReport = false;
+  let currentUser = null;
+  
+  // Subscribe to user store to get current user
+  const unsubUser = user.subscribe(val => {
+    currentUser = val;
+  });
+  
+  // Format report data to match the database schema
+  function formatReportForDB(report: any, userId: string): any {
+    // Ensure all required fields are present
+    return {
+      userId: userId,
+      jobTitle: report.jobTitle || 'Untitled Job',
+      jobBody: report.jobBody || report.content || '',
+      feedback: report.feedback || '',
+      totalScore: report.totalScore || 0,
+      categories: report.categories || {},
+      recommendations: report.recommendations || [],
+      redFlags: report.redFlags || [],
+      savedAt: new Date().toISOString(),
+      source: report.source || 'guest_conversion',
+      // Store the original report JSON for future use
+      originalReport: JSON.stringify(report)
+    };
+  }
+
+  // Function to associate guest report with user account
+  async function associateGuestReport(userId) {
+    try {
+      // Check if there's a guest report in localStorage
+      console.log('[localStorage-auth] Checking for guest_audit_report in associateGuestReport');
+      const guestReport = localStorage.getItem('guest_audit_report');
+      console.log('[localStorage-auth] Guest report found?', !!guestReport, guestReport ? `Size: ${guestReport.length} bytes` : '');
+      
+      if (guestReport) {
+        processingReport = true;
+        const reportData = JSON.parse(guestReport);
+        
+        // Format the report to match the database schema
+        const formattedReport = formatReportForDB(reportData, userId);
+        console.log('Saving formatted guest report to Supabase:', formattedReport);
+        
+        // Save report to Supabase 'reports' table
+        if (typeof window !== 'undefined') {
+          // Transform to match Supabase's lowercase column names (SupabaseReport interface)
+          const dbReport = {
+            // Map camelCase fields to lowercase for Supabase
+            userid: formattedReport.userId,
+            jobtitle: formattedReport.jobTitle,
+            jobbody: formattedReport.jobBody,
+            feedback: formattedReport.feedback,
+            totalscore: formattedReport.totalScore,
+            // Ensure JSON fields are properly formatted
+            categories: typeof formattedReport.categories === 'string' 
+              ? JSON.parse(formattedReport.categories) 
+              : formattedReport.categories,
+            recommendations: Array.isArray(formattedReport.recommendations) 
+              ? formattedReport.recommendations 
+              : [],
+            redflags: Array.isArray(formattedReport.redFlags) 
+              ? formattedReport.redFlags 
+              : [],
+            savedat: formattedReport.savedAt,
+            source: formattedReport.source,
+            // Store original as JSON object for the jsonb column
+            originalreport: typeof formattedReport.originalReport === 'string' 
+              ? JSON.parse(formattedReport.originalReport) 
+              : formattedReport
+          };
+          
+          console.log('Final report object being sent to Supabase:', dbReport);
+          
+          const { data, error: dbError } = await supabase.from('reports').insert([dbReport]).select();
+          if (dbError) {
+            console.error('Error saving report to database:', dbError);
+            console.error('Supabase error code:', dbError.code);
+            console.error('Supabase error message:', dbError.message);
+            console.error('Supabase error details:', dbError.details);
+          } else {
+            console.log('Guest report saved to database for user:', userId, data);
+          }
+        } else {
+          console.log('Not running in browser, skipping DB save.');
+        }
+        
+        // Do NOT clear the guest report here; let the results page remove it after display
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error('Error associating guest report:', err);
+      return false;
+    } finally {
+      processingReport = false;
+    }
+  }
   
   onMount(async () => {
     // Get the URL hash
@@ -20,8 +119,20 @@
         if (authError) {
           error = authError.message;
         } else {
-          // Redirect to dashboard on successful authentication
-          goto('/dashboard');
+          // If login successful, associate any guest report with the user
+          let redirected = false;
+          if (data?.user?.id) {
+            const guestReportExisted = await associateGuestReport(data.user.id);
+            // If a guest report was present, redirect to results page
+            if (guestReportExisted) {
+              redirected = true;
+              goto('/results?from=guest-login');
+            }
+          }
+          // If no guest report, redirect to dashboard
+          if (!redirected) {
+            goto('/dashboard');
+          }
         }
       } catch (err) {
         error = 'Failed to process authentication. Please try again.';
@@ -31,6 +142,10 @@
       // If no hash with tokens, redirect to login
       goto('/login');
     }
+    
+    return () => {
+      unsubUser(); // Clean up subscription
+    };
   });
 </script>
 

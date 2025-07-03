@@ -21,8 +21,8 @@
       url: "#",
     },
     {
-      title: "My Reports",
-      url: "#",
+      title: "My Dashboard",
+      url: "/dashboard",
     },
     {
       title: "Contact us",

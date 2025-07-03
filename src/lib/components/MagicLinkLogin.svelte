@@ -2,6 +2,13 @@
   import { onMount } from 'svelte';
   import { supabase } from '$lib/stores/auth.js';
   import { browser } from '$app/environment';
+  import { createEventDispatcher } from 'svelte';
+
+  // Dispatch events for parent components
+  const dispatch = createEventDispatcher();
+  
+  // Props
+  export let compact = false; // Whether to use compact mode for dialogs
 
   let email = '';
   let loading = false;
@@ -63,6 +70,11 @@
         error = supabaseError.message;
       } else {
         success = 'Magic link sent! Check your email.';
+        console.log('Mock magic link sent to:', email);
+        
+        // Dispatch success event with email for parent components
+        dispatch('success', { email });
+        
         email = '';
       }
     } catch (err: any) {
@@ -74,8 +86,10 @@
   }
 </script>
 
-<div class="w-full max-w-sm mx-auto p-6 bg-white rounded-2xl shadow-none flex flex-col gap-8">
-  <h2 class="text-3xl font-normal text-gray-900 mb-4">Create an account</h2>
+<div class="w-full {compact ? '' : 'max-w-sm mx-auto p-6 bg-white rounded-2xl shadow-none'} flex flex-col gap-4">
+  {#if !compact}
+    <h2 class="text-3xl font-normal text-gray-900 mb-4">Create an account</h2>
+  {/if}
   <form on:submit|preventDefault={handleLogin} class="flex flex-col gap-3">
 
     <label for="email" class="text-sm font-normal text-gray-700">Email address</label>
@@ -88,7 +102,7 @@
       required
       disabled={loading}
     />
-    <div class="flex items-center mb-4 my-6">
+    <div class="flex items-center mb-2 {compact ? 'my-2' : 'my-6'}">
       <input 
         type="checkbox" 
         id="terms" 

@@ -13,6 +13,7 @@ const urlSchema = z.string()
 import { createEventDispatcher } from 'svelte';
 import { auditJobUrl, auditJobText } from '$lib/api/audit.js';
 import { goto } from '$app/navigation';
+import { auditStore } from '$lib/stores/audit.js';
 import CircleAlertIcon from "@lucide/svelte/icons/circle-alert";
 import * as Alert from "$lib/components/ui/alert/index.js";
   
