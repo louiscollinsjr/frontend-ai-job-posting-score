@@ -18,6 +18,7 @@
 		className
 	)}
 	{...restProps}
+	on:click
 >
 	{@render children?.()}
 </div>

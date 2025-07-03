@@ -3,60 +3,83 @@
   import { Button } from '$lib/components/ui/button/index.js';
   import { Checkbox } from '$lib/components/ui/checkbox/index.js';
   import { onMount } from 'svelte';
+  import * as Accordion from '$lib/components/ui/accordion/index.js';
   // Simple icon for checkmark
   const Check = () => '<svg class="inline-block mr-2 h-4 w-4 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>';
 
   // Plan data
-  const plans = [
+  let plans = [
     {
       id: 'starter',
       name: 'Starter',
-      price: 29,
+      price: { monthly: 0, annual: 279 },
       users: 1,
-      storage: 10,
-      projects: 5,
+      storage: 1,
+      projects: "7-days",
       tagline: 'Essential features for individuals',
       features: ['Users', 'Storage', 'Projects'],
-      selected: false
+      includedFeatures: [
+    '5 Audit Scores per month',
+    'Overall Visibility Score™',
+    'No credit card required'
+  ]
     },
     {
       id: 'business',
       name: 'Business',
-      price: 79,
-      users: 5,
-      storage: 500,
-      projects: 20,
+      price: { monthly: 79, annual: 759 },
+      users: 1,
+      storage: 10,
+      projects: "6 months",
       tagline: 'Advanced features for teams',
       features: ['Users', 'Storage', 'Projects'],
-      selected: true
+      includedFeatures: [
+    '50 Audits per month',
+    'Overall Visibility Score™',
+    'Detailed Category Score Breakdown',
+    'Actionable AI-Powered Suggestions',
+    'Save & Track Report History',
+    'Export Reports (PDF & CSV)'
+  ]
     },
     {
       id: 'enterprise',
       name: 'Enterprise',
-      price: 199,
+      price: { monthly: 199, annual: 1911 },
       users: 20,
       storage: 2000,
-      projects: 100,
+      projects: "Full",
       tagline: 'Complete solution for organizations',
       features: ['Users', 'Storage', 'Projects'],
-      selected: false
+      includedFeatures: [
+    'Unlimited Audit Scores per month',
+    'Multi-User & Team Collaboration',
+    'Priority Onboarding & Support',
+    'Shared Report Workspace (coming soon)',
+    'Grade your ATS Feed (coming soon)', 
+    'Custom Integrations (coming soon)'
+  ]
     }
   ];
 
-  let selectedPlan = plans[1];
+  let selectedPlanId = 'business';
   let additionalUsers = 0;
   let additionalStorage = 0;
   let premiumSupport = false;
   let customTraining = false;
 
-  $: basePrice = selectedPlan.price;
+  let billingCycle = 'monthly';
+
+  $: selectedPlan = plans.find(p => p.id === selectedPlanId);
+  $: basePrice = selectedPlan?.price[billingCycle] ?? 0;
   $: usersPrice = additionalUsers * 10;
   $: storagePrice = additionalStorage * 5;
-  $: addonsPrice = (premiumSupport ? 49 : 0) + (customTraining ? 199 : 0);
-  $: total = basePrice + usersPrice + storagePrice + addonsPrice;
+  $: premiumSupportPrice = premiumSupport ? 49 : 0;
+  $: customTrainingPrice = customTraining ? 199 : 0;
+  $: total = basePrice + (usersPrice + storagePrice + premiumSupportPrice + customTrainingPrice) * (billingCycle === 'monthly' ? 1 : 12);
 
   function selectPlan(plan) {
-    selectedPlan = plan;
+    selectedPlanId = plan.id;
   }
 </script>
 
@@ -108,35 +131,43 @@
   }
 </style>
 
-<div class="container mx-auto px-4 py-20 max-w-7xl">
+<div class="container mx-auto px-4 py-20 pt-8 max-w-7xl">
   <!-- Page Header -->
-  <div class="text-center mb-12">
+  <div class="text-center mb-40">
     <h1 class="text-4xl md:text-5xl font-bold mb-4">Simple, Transparent Pricing</h1>
     <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
       Get actionable insights to improve your job post visibility. Start with our free plan,
-      then upgrade anytime for detailed reports.
+      or choose a plan that fits your needs.
     </p>
+    <div class="mt-8 flex justify-center">
+      <div class="bg-muted p-1 rounded-lg flex items-center gap-1">
+        <Button variant={billingCycle === 'monthly' ? 'white' : 'ghost'} on:click={() => billingCycle = 'monthly'}>Monthly</Button>
+        <Button variant={billingCycle === 'annual' ? 'white' : 'ghost'} on:click={() => billingCycle = 'annual'}>Annually (Save 20%)</Button>
+      </div>
+    </div>
   </div>
 
   <!-- Two-column layout -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-32">
     <!-- Left Column: Steps -->
     <div class="space-y-8">
+
+
       <!-- Step 1: Choose Base Plan -->
       <div>
         <h2 class="text-lg font-semibold mb-4">1. Choose your base plan</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 ">
-          {#each plans as plan}
+          {#each plans as plan (plan.id)}
             <Card
-              class={`p-6 cursor-pointer transition-all ${selectedPlan.id === plan.id ? ' border-primary ring-2 ring-primary' : 'hover:shadow-md'}`}
-              selected={selectedPlan.id === plan.id}
+              id={`plan-${plan.id}`}
+              class={`p-6 px-4 cursor-pointer transition-all ${selectedPlanId === plan.id ? ' border-primary ring-2 ring-primary bg-primary/5 shadow-lg' : ' hover:shadow-md'}`}
               on:click={() => selectPlan(plan)}
             >
               <div class="flex flex-col gap-2">
                 <h3 class="text-lg font-bold pb-8">{plan.name}</h3>
-                <div class="flex items-end gap-1">
-                  <span class="text-2xl font-bold">${plan.price}</span>
-                  <span class="text-muted-foreground text-xs">/mo</span>
+                <div class="flex items-baseline gap-2">
+                  <span class="text-4xl font-bold">${plan.price[billingCycle]}</span>
+                  <span class="text-muted-foreground">/{billingCycle === 'monthly' ? 'month' : 'year'}</span>
                 </div>
                 <div class="text-xs text-muted-foreground mb-1">{plan.tagline}</div>
                 <div class="flex flex-col gap-1 text-xs text-muted-foreground pt-2">
@@ -149,7 +180,7 @@
                     <span>{plan.storage}GB</span>
                   </div>
                   <div class="flex justify-between">
-                    <span class="text-black">Projects</span>
+                    <span class="text-black">History</span>
                     <span>{plan.projects}</span>
                   </div>
                 </div>
@@ -170,7 +201,7 @@
                 <div class="text-xs text-muted-foreground">$10 per additional user per month</div>
               </div>
               <div class="flex items-center gap-2">
-                <Button variant="ghost" on:click={() => additionalUsers = Math.max(0, additionalUsers-1)}>-</Button>
+                <Button variant="ghost" on:click={() => additionalUsers = Math.max(0, additionalUsers-1)} disabled={additionalUsers === 0}>-</Button>
                 <span class="w-6 text-center">{additionalUsers}</span>
                 <Button variant="ghost" on:click={() => additionalUsers++}>+</Button>
               </div>
@@ -181,7 +212,7 @@
                 <div class="text-xs text-muted-foreground">$5 per additional 10GB per month</div>
               </div>
               <div class="flex items-center gap-2">
-                <Button variant="ghost" on:click={() => additionalStorage = Math.max(0, additionalStorage-1)}>-</Button>
+                <Button variant="ghost" on:click={() => additionalStorage = Math.max(0, additionalStorage-1)} disabled={additionalStorage === 0}>-</Button>
                 <span class="w-6 text-center">{additionalStorage}</span>
                 <Button variant="ghost" on:click={() => additionalStorage++}>+</Button>
               </div>
@@ -195,15 +226,15 @@
         <h2 class="text-lg font-semibold mb-4">3. Select add-ons</h2>
         <Card class="p-6 text-sm">
           <div class="flex flex-col gap-3">
-            <label class="flex items-start gap-2 cursor-pointer">
-              <Checkbox class="mt-1" bind:checked={premiumSupport} />
+            <label for="premium-support" class="flex items-start gap-2 cursor-pointer">
+              <Checkbox id="premium-support" class="mt-1" bind:checked={premiumSupport} />
               <div class="flex flex-col gap-1">
                 <span class="font-medium">Premium Support - $49/month</span>
                 <span class="text-xs text-muted-foreground">Get faster response times and dedicated support</span>
               </div>
             </label>
-            <label class="flex items-start gap-2 cursor-pointer">
-              <Checkbox class="mt-1" bind:checked={customTraining} />
+            <label for="custom-training" class="flex items-start gap-2 cursor-pointer">
+              <Checkbox id="custom-training" class="mt-1" bind:checked={customTraining} />
               <div class="flex flex-col gap-1">
                 <span class="font-medium">Custom Training - $199/month</span>
                 <span class="text-xs text-muted-foreground">Personalized training sessions for your team</span>
@@ -220,27 +251,31 @@
         <h2 class="text-lg font-semibold mb-4">Your Custom Plan</h2>
         <Card class="p-6 flex flex-col gap-2">
           <div class="flex justify-between items-center mb-2">
-            <div class="font-semibold">{selectedPlan.name} Plan</div>
+            <div class="font-semibold">{selectedPlan.name} Plan ({billingCycle === 'monthly' ? 'Monthly' : 'Annual'})</div>
             <div class="font-bold text-lg">${basePrice}</div>
           </div>
+          {#if additionalUsers > 0}
           <div class="flex justify-between text-sm text-muted-foreground">
-            <span>Additional Users</span>
-            <span>${usersPrice}</span>
+            <span>Additional Users ({additionalUsers})</span>
+            <span>${usersPrice * (billingCycle === 'monthly' ? 1 : 12)}</span>
           </div>
+          {/if}
+          {#if additionalStorage > 0}
           <div class="flex justify-between text-sm text-muted-foreground">
-            <span>Additional Storage</span>
-            <span>${storagePrice}</span>
+            <span>Additional Storage ({additionalStorage} GB)</span>
+            <span>${storagePrice * (billingCycle === 'monthly' ? 1 : 12)}</span>
           </div>
+          {/if}
           {#if premiumSupport}
           <div class="flex justify-between text-sm text-muted-foreground">
             <span>Premium Support</span>
-            <span>$49</span>
+            <span>${premiumSupportPrice * (billingCycle === 'monthly' ? 1 : 12)}</span>
           </div>
           {/if}
           {#if customTraining}
           <div class="flex justify-between text-sm text-muted-foreground">
             <span>Custom Training</span>
-            <span>$199</span>
+            <span>${customTrainingPrice * (billingCycle === 'monthly' ? 1 : 12)}</span>
           </div>
           {/if}
           <div class="border-t my-4"></div>
@@ -254,11 +289,9 @@
           <div class="mt-2 text-xs text-muted-foreground">
             Included Features:
             <ul class="list-disc pl-5">
-              <li>Advanced analytics</li>
-              <li>Priority support</li>
-              <li>API access (1,000 req/day)</li>
-              <li>Team collaboration</li>
-              <li>Custom domains</li>
+              {#each selectedPlan?.includedFeatures || [] as feature}
+                <li>{feature}</li>
+              {/each}
             </ul>
           </div>
         </Card>
@@ -267,7 +300,7 @@
   </div>
 
   <!-- Concierge Process Section -->
-  <div class="bg-muted rounded-lg p-8 mb-16 max-w-3xl mx-auto">
+  <div class="bg-muted rounded-lg p-8 mb-32 max-w-3xl mx-auto">
     <h2 class="text-2xl font-bold mb-4 text-center">Your Personal Path to Pro</h2>
     <p class="text-center mb-6">
       When you request Pro access, our team will personally reach out within 24 hours with a secure payment link. 
@@ -301,43 +334,43 @@
   <!-- FAQ Section -->
   <div class="max-w-3xl mx-auto mb-16">
     <h2 class="text-2xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
-    <div class="space-y-6">
-      <div class="border-b pb-4">
-        <h3 class="text-lg font-medium mb-2">Why can't I see my full report on the Free plan?</h3>
-        <p class="text-muted-foreground">
+    <Accordion.Root class="w-full" type="single" collapsible>
+      <Accordion.Item value="item-1">
+        <Accordion.Trigger>Why can't I see my full report on the Free plan?</Accordion.Trigger>
+        <Accordion.Content>
           The Free plan is designed to give you a taste of what our tool can do. You'll see your overall 
           Visibility Score™ so you know where your job post stands, but the detailed breakdown and actionable 
           suggestions are exclusive to our Pro plan. This helps you understand if there's room for improvement, 
           while the Pro plan shows you exactly how to make those improvements.
-        </p>
-      </div>
-      <div class="border-b pb-4">
-        <h3 class="text-lg font-medium mb-2">What happens after I request Pro access?</h3>
-        <p class="text-muted-foreground">
+        </Accordion.Content>
+      </Accordion.Item>
+      <Accordion.Item value="item-2">
+        <Accordion.Trigger>What happens after I request Pro access?</Accordion.Trigger>
+        <Accordion.Content>
           Within 24 hours, you'll receive an email from our team with a secure Stripe payment link. Once payment 
           is complete, we'll upgrade your account immediately and notify you when all Pro features are active. 
           This personal approach ensures you have direct access to our team from the start and allows us to 
           provide a more tailored experience.
-        </p>
-      </div>
-      <div class="border-b pb-4">
-        <h3 class="text-lg font-medium mb-2">Can I cancel my Pro plan at any time?</h3>
-        <p class="text-muted-foreground">
+        </Accordion.Content>
+      </Accordion.Item>
+      <Accordion.Item value="item-3">
+        <Accordion.Trigger>Can I cancel my Pro plan at any time?</Accordion.Trigger>
+        <Accordion.Content>
           Yes, you can cancel your Pro subscription at any time with no hidden fees or long-term commitments. 
           Simply email our support team, and we'll process your cancellation. Your Pro access will continue 
           until the end of your current billing period.
-        </p>
-      </div>
-      <div class="border-b pb-4">
-        <h3 class="text-lg font-medium mb-2">What kind of suggestions will I get on the Pro plan?</h3>
-        <p class="text-muted-foreground">
+        </Accordion.Content>
+      </Accordion.Item>
+      <Accordion.Item value="item-4">
+        <Accordion.Trigger>What kind of suggestions will I get on the Pro plan?</Accordion.Trigger>
+        <Accordion.Content>
           The Pro plan provides specific, actionable suggestions tailored to your job posting. For example, our AI might suggest 
           rephrasing a vague job title like "Team Member" to "Senior Software Engineer - Python", adding specific skills that are 
           missing from your description, or restructuring your benefits section for greater clarity and appeal. These targeted 
           recommendations directly improve your Visibility Score™ and help your job posting reach more qualified candidates.
-        </p>
-      </div>
-    </div>
+        </Accordion.Content>
+      </Accordion.Item>
+    </Accordion.Root>
   </div>
 
 </div>

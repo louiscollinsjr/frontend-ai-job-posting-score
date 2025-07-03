@@ -14,6 +14,7 @@
 					"bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 border",
 				secondary: "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
 				ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+				white: "bg-background text-foreground shadow-sm hover:bg-background/90",
 				link: "text-primary underline-offset-4 hover:underline",
 			},
 			size: {
@@ -63,6 +64,7 @@
 		role={disabled ? "link" : undefined}
 		tabindex={disabled ? -1 : undefined}
 		{...restProps}
+		on:click
 	>
 		{@render children?.()}
 	</a>
@@ -74,6 +76,7 @@
 		{type}
 		{disabled}
 		{...restProps}
+		on:click
 	>
 		{@render children?.()}
 	</button>
