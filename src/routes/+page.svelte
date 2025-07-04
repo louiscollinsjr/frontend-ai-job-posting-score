@@ -6,6 +6,7 @@
   import HowWeDo from '$lib/components/HowWeDo.svelte';
   import LearnMoreAboutUs from '$lib/components/LearnMoreAboutUs.svelte';
   import NewsletterSignup from '$lib/components/NewsletterSignup.svelte';
+  import JobPostOptimization from '$lib/components/JobPostOptimization.svelte';
   import { auditStore } from '$lib/stores/audit.js';
   import { onMount } from 'svelte';
   import AuditForm from '$lib/components/AuditForm.svelte';
@@ -94,13 +95,13 @@
 </svelte:head>
 
 <!-- Hero Section with Audit Form -->
-<section class="mb-8 bg-gray p-6 rounded-3xl  pt-32 border-gray-200 border h-[85vh]">
+<section class="mb-8 bg-gray p-2 rounded-3xl  pt-24 border-gray-200 border-none h-[75vh]">
   <div class="container">
     <div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-center mx-auto">
-      <div class=" px-16 lg:px-16 pb-20 rounded-3xl min-h-[580px] mx-auto">
+      <div class=" px-4 lg:px-16 pb-20 rounded-3xl min-h-[580px] mx-auto">
        
 
-<h1 class="text-6xl font-normal w-[100%] pb-12 leading-tight tracking-tight mx-auto text-center font-inter">
+<h1 class="text-4xl sm:text-6xl font-normal w-[100%] pb-12 leading-tight tracking-tight mx-auto text-center font-inter">
  <!-- <span class="word-cycle" style="min-width: 140px;">
     <span class="chroma-text text-right" data-text="Audit">Audit</span>
     <span class="chroma-text text-right" data-text="Score">Score</span>
@@ -108,7 +109,7 @@
   </span> your job postings70% more visibility. -->
   What's your job post's ReachScore?
 </h1>
-        <p class="text-xl text-gray-500 text-center mb-24 max-w-2xl mx-auto font-normal">
+        <p class="text-base sm:text-lg text-gray-500 text-center mb-12 max-w-2xl mx-auto font-normal">
           Your <b class="text-black">ReachScore <sup class="text-xs">™</sup></b> is the key to connecting with the 70% of qualified candidates you're currently missing.
         </p>
         <!-- <ChatAuditForm on:audit={handleAudit} /> -->
@@ -120,8 +121,23 @@
   </div>
 </section>
 
+<!-- Job Post Optimization Section -->
+<JobPostOptimization />
+
 <!-- What We Do Section -->
 <WhatWeDo />
+
+<!-- 
+
+Three ways ReachScore improves enterprise hiring
+Executive search
+ReachScore analyzes your leadership role posts and shows you specific improvements that help these critical positions get discovered by qualified candidates.
+Volume hiring
+ReachScore ensures consistent quality across hundreds of posts, helping regional recruiters maintain optimization standards without manual oversight.
+Competitive positioning
+ReachScore shows you exactly how your job posts compare to market standards, revealing opportunities to stand out in competitive talent markets.
+
+-->
 
 
 <HowWeDo />

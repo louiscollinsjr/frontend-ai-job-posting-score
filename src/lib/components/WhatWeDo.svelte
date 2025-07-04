@@ -1,4 +1,7 @@
 <script>
+  import { StackedCards } from '$lib/components/ui/stacked-cards';
+  import FadeImage from '$lib/components/ui/fade-image/fade-image.svelte';
+
   // Feature items with icons and descriptions
   const features = [
     {
@@ -28,14 +31,35 @@
   ];
 </script>
 
-<section class="py-16 bg-white border-2 border-gray-100 rounded-2xl mb-8">
-  <div class="container">
-    <div class="text-left mb-12 px-16">
-      <h2 class="text-5xl font-normal w-1/2 pb-24 leading-tight tracking-tight text-gray-900">We help teams craft job posts
-        that introduce new levels of readability, relevance, and reach</h2>
+<section class="relative py-16 bg-white border-2 border-gray-100 rounded-2xl mb-8 overflow-hidden ">
+  <div class="w-full relative">
+    <!-- Two-column layout with full bleed image -->  
+    <div class="flex flex-col lg:flex-row">
+      <!-- Left content column with padding -->  
+      <div class="w-[90%] sm:w-[80%] lg:w-[80%] xl:w-[55%] px-8 md:px-8 pb-12">
+        <div class="text-left mb-12">
+          <h2 class="text-3xl md:text-4xl lg:text-5xl font-normal pb-8 leading-tight tracking-tight text-gray-900">We help teams craft job posts
+            that introduce new levels of readability, relevance, and reach</h2>
+          <p class="text-gray-500 text-left text-base w-[80%] font-normal leading-relaxed tracking-normal">Your <b>ReachScore</b> is an intelligent job post analyzer that reads your content, scores your optimization, and shows you exactly what to fix — instantly.
+          </p>
+        </div>
+      </div>
+      
+      <!-- Right column with image flush to edge -->
+      <div class="w-full hidden xl:block  xl:w-[55%] relative h-[350px] lg:h-[500px] xl:h-[600px] overflow-hidden mt-8 lg:mt-0">
+        <FadeImage 
+          src="/ReachScoreGroup01.png" 
+          alt="Reach Score Group" 
+          fadeDirection="bottom"
+          fadeIntensity="strong"
+          className="absolute top-0 right-0 h-full w-auto min-w-full max-w-none object-cover lg:object-right rounded-lg lg:rounded-l-lg lg:rounded-r-none"
+        />
+      </div>
     </div>
     
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-16">
+    <!-- Features section with stacked cards -->
+    <!-- <StackedCards>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-8">
       {#each features as feature}
         <div class="flex flex-col text-left">
           <div class="bg-gray-100 rounded-full p-4 mb-5 w-16 h-16 flex items-center justify-center shadow-sm">
@@ -46,6 +70,7 @@
           <p class="text-gray-600 text-left text-sm leading-relaxed tracking-normal">{feature.description}</p>
         </div>
       {/each}
-    </div>
+      </div>
+    </StackedCards> -->
   </div>
 </section>

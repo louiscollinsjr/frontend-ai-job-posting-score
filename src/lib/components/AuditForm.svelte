@@ -127,11 +127,11 @@ import * as Alert from "$lib/components/ui/alert/index.js";
   }
 </script>
 
-<section class="audit-form-container rounded-full p-6 md:p-8 max-w-3xl mx-auto ">
+<section class="audit-form-container rounded-full p-2 mb-32 md:p-8 mx-auto ">
   <div class="mb-8">
     <!-- Modern Switch-Style Toggle -->
     <div class="mb-6">
-      <div class="w-full max-w-sm mx-auto relative mb-16">
+      <div class="w-full mx-auto relative mb-12">
         <!-- Custom Switch Toggle -->
         <div class="flex items-center justify-center p-2 bg-gray-100 rounded-full shadow-inner h-16">
           <div class="relative w-full flex justify-between items-center">

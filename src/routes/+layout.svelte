@@ -38,7 +38,7 @@
   </div>
 {:else}
   <Sidebar.Provider>
-    <div class="flex flex-col min-h-screen w-full">
+    <div class="flex flex-col min-h-screen w-full max-w-[1600px] mx-auto">
       <Navbar hideLoginButton={isLoginRoute || isResultsRoute} justLogo={false} />
       
       <!-- Empty space to offset the fixed navbar -->
@@ -49,7 +49,7 @@
         <!-- Sidebar navigation -->
         <AppSidebar />
         
-        <main class="bg-white max-w-9xl mx-auto mt-8 px-2">
+        <main class="max-w-[1600px] mt-8 px-4">
           <!-- Main content -->
           {@render children?.()}
         </main>
@@ -57,3 +57,4 @@
     </div>
   </Sidebar.Provider>
 {/if}
+

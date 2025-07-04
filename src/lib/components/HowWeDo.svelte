@@ -1,4 +1,5 @@
 <script>
+
   // Feature items with icons and descriptions
   const features = [
     {
@@ -23,9 +24,9 @@
 <section class="py-16 bg-white border-2 border-gray-100 rounded-2xl mb-8">
   <div class="container">
     <div class="text-left mb-12 px-16">
-      <h2 class="text-5xl font-normal w-1/2 pb-24 leading-tight tracking-tight text-gray-900">How do we do it?</h2>
+      <h2 class="text-2xl md:text-5xl font-normal w-1/2 pb-24 leading-tight tracking-tight text-gray-900">How do we do it?</h2>
     </div>
-    
+   
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-16">
       {#each features as feature}
         <div class="flex flex-col text-left">
@@ -39,4 +40,5 @@
       {/each}
     </div>
   </div>
+  
 </section>
