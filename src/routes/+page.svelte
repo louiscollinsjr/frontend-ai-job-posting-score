@@ -12,6 +12,10 @@
   import { auditStore } from '$lib/stores/audit.js';
   import { onMount } from 'svelte';
   import AuditForm from '$lib/components/AuditForm.svelte';
+  import EnterpriseTalentTeams from '$lib/components/EnterpriseTalentTeams.svelte';
+	import TrustQuoteCombo from '$lib/components/TrustQuoteCombo.svelte';
+
+
  // Supports weights 400-900
 
 
@@ -133,7 +137,7 @@
   ctaButtonText="It is."
 />
 
-
+<EnterpriseTalentTeams />
 <ScrollTellingHowItWorks />
 
 
@@ -154,6 +158,12 @@ ReachScore shows you exactly how your job posts compare to market standards, rev
 
 
 <HowWeDo />
+<TrustQuoteCombo />
+<CallToAction 
+  header='“Stop guessing, start scoring.”' 
+  ctaText="Discover how your job posts are really performing — and what to do to boost visibility and results."
+  ctaButtonText="Get Your ReachScore"
+/>
 
 <!-- Newsletter Signup Section -->
 <div class="container my-16">
@@ -163,7 +173,7 @@ ReachScore shows you exactly how your job posts compare to market standards, rev
   />
 </div>
 
-<LearnMoreAboutUs subtitle="WANT TO SEE MORE ABOUT US?" />
+<!-- <LearnMoreAboutUs subtitle="WANT TO SEE MORE ABOUT US?" /> -->
 
 <!-- Results Modal -->
 <!-- <ResultsDisplay 

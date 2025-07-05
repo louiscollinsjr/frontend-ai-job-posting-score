@@ -8,7 +8,7 @@
 <div class="cta-container py-16 px-6 sm:px-8 md:px-12 lg:px-16 bg-white rounded-sm my-16">
   <div class="max-w-4xl mx-auto text-center">
     <h2 class="text-2xl md:text-5xl mb-4 text-black">{header}</h2>
-    <p class="text-2xl md:text-5xl  font-normal text-black mb-8">{ctaText}</p>
+    <p class="text-2xl md:text-3xl  font-normal text-gray-500 my-10">{ctaText}</p>
     <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
       
       <a href="/start" class="cta-button text-2xl font-bold flex items-center gap-2 bg-black hover:bg-gray-700 transition-colors duration-300 text-white font-medium py-2 px-8 rounded-full">
