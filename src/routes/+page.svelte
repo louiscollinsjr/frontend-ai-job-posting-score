@@ -7,6 +7,8 @@
   import LearnMoreAboutUs from '$lib/components/LearnMoreAboutUs.svelte';
   import NewsletterSignup from '$lib/components/NewsletterSignup.svelte';
   import JobPostOptimization from '$lib/components/JobPostOptimization.svelte';
+  import CallToAction from '$lib/components/CallToAction.svelte';
+  import ScrollTellingHowItWorks from '$lib/components/ScrollTellingHowItWorks.svelte';
   import { auditStore } from '$lib/stores/audit.js';
   import { onMount } from 'svelte';
   import AuditForm from '$lib/components/AuditForm.svelte';
@@ -123,6 +125,17 @@
 
 <!-- Job Post Optimization Section -->
 <JobPostOptimization />
+
+<!-- Call to Action Section -->
+<CallToAction 
+  header='“This feels like the future of talent acquisition.”' 
+  ctaText=""
+  ctaButtonText="It is."
+/>
+
+
+<ScrollTellingHowItWorks />
+
 
 <!-- What We Do Section -->
 <WhatWeDo />

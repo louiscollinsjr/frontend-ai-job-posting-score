@@ -142,7 +142,7 @@ import * as Alert from "$lib/components/ui/alert/index.js";
             <!-- Buttons -->
             <button 
               type="button"
-              class="flex-1 relative z-10 flex items-center justify-center h-12 text-xs font-normal transition-colors duration-300 {inputType === 'url' ? 'text-white' : 'text-gray-800'}"
+              class="flex-1 relative z-10 flex items-center justify-center h-12 text-sm font-normal transition-colors duration-300 {inputType === 'url' ? 'text-white' : 'text-gray-800'}"
               on:click={() => setInputType('url')}
               aria-pressed={inputType === 'url'}
             >
@@ -154,7 +154,7 @@ import * as Alert from "$lib/components/ui/alert/index.js";
             
             <button 
               type="button"
-              class="flex-1 relative z-10 flex items-center justify-center h-12 text-xs font-normal transition-colors duration-300 {inputType === 'text' ? 'text-white' : 'text-gray-800'}"
+              class="flex-1 relative z-10 flex items-center justify-center h-12 text-sm font-normal transition-colors duration-300 {inputType === 'text' ? 'text-white' : 'text-gray-800'}"
               on:click={() => setInputType('text')}
               aria-pressed={inputType === 'text'}
             >
@@ -173,7 +173,7 @@ import * as Alert from "$lib/components/ui/alert/index.js";
       <div in:fade="{{ duration: 300, delay: 200 }}" out:fade="{{ duration: 200 }}">
         {#if inputType === 'url'}
         <div class="form-control">
-          <label for="job-url" class="block text-sm font-medium text-gray-700 mb-1">Job Posting URL</label>
+          <label for="job-url" class="block text-xl font-medium text-gray-700 mb-1">Job Posting URL</label>
           <input
             type="text"
             id="job-url"
@@ -231,7 +231,7 @@ import * as Alert from "$lib/components/ui/alert/index.js";
         <div class="form-submit mt-12">
           <button
             type="submit"
-            class="w-full max-w-xs mx-auto py-3 px-6 text-white bg-black hover:bg-black rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black flex justify-center items-center text-sm"
+            class="w-full max-w-sm mx-auto py-3 px-6 text-white bg-black hover:bg-black rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black flex justify-center items-center text-sm"
             disabled={isLoading}
           >
             {#if isLoading}
