@@ -157,7 +157,7 @@ ReachScore shows you exactly how your job posts compare to market standards, rev
 -->
 
 
-<HowWeDo />
+<!-- <HowWeDo /> -->
 <TrustQuoteCombo />
 <CallToAction 
   header='“Stop guessing, start scoring.”' 
@@ -166,12 +166,12 @@ ReachScore shows you exactly how your job posts compare to market standards, rev
 />
 
 <!-- Newsletter Signup Section -->
-<div class="container my-16">
+<!-- <div class="container my-16">
   <NewsletterSignup 
     heading="Stay Updated on ReachScore" 
     subheading="Get the latest news and updates about our inclusive job posting tools and features."
   />
-</div>
+</div> -->
 
 <!-- <LearnMoreAboutUs subtitle="WANT TO SEE MORE ABOUT US?" /> -->
 

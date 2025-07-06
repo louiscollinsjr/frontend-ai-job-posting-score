@@ -5,11 +5,11 @@
   const items = [
     {
       title: "Home",
-      url: "#",     
+      url: "/",     
     },
     {
       title: "How it works",
-      url: "#",
+      url: "/how-it-works",
     },
     {
       title: "Features",
@@ -21,14 +21,18 @@
       url: "/pricing",
     },
     {
+      title: "Enterprise",
+      url: "/enterprise",
+    },
+    {
       title: "My Dashboard",
       url: "/dashboard",
     },
     {
       title: "Contact us",
-      url: "#",
+      url: "/contact",
      
-    },
+    }
   ];
   
   // Social media links

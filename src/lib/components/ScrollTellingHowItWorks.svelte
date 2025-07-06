@@ -138,7 +138,7 @@
   });
 </script>
 
-<section class="scroll-telling-howitworks w-full py-24">
+<section class="scroll-telling-howitworks w-full py-24 border-2 border-gray-100 rounded-2xl p-8 mb-20">
   <div class="container mx-auto px-4">
     <!-- Title section - full width in its own row -->
     <div class="mb-40 h-[150px]" bind:this={headerElement}>
