@@ -17,15 +17,15 @@
            <span class="chroma-text text-right" data-text="Score">Score</span>
            <span class="chroma-text text-right" data-text="Boost">Boost</span>
          </span> your job postings 
-         <!-- What's your job post's ReachScore? -->
+         <!-- What's your job post's IntelliScore? -->
        </h1>
        <p class="text-base sm:text-lg text-gray-500 text-center mb-12 max-w-2xl mx-auto font-normal">
-        Your <b class="text-black">ReachScore <sup class="text-xs">™</sup></b> is the key to connecting with the 70% of qualified candidates you're currently missing.
+        Your <b class="text-black">IntelliScore <sup class="text-xs">™</sup></b> is the key to connecting with the 70% of qualified candidates you're currently missing.
       </p>
   </section>
 
   <section class="text-left mb-14"> <h1 class="text-5xl  mb-4 bg-gradient-to-r from-blue-600 via-fuchsia-500 to-orange-400 bg-clip-text text-transparent" style="-webkit-background-clip: text; -webkit-text-fill-color: transparent; color: transparent;">Enterprise optimization at scale</h1>
-    <p class="text-lg text-gray-700 max-w-2xl">Where ReachScore makes the biggest impact for high-performing organizations.</p>
+    <p class="text-lg text-gray-700 max-w-2xl">Where IntelliScore makes the biggest impact for high-performing organizations.</p>
   </section>
 
 <!-- What We Do Section -->
@@ -35,24 +35,24 @@
     <!-- Executive Search -->
     <Card class="flex flex-col items-start p-6 h-full">
       <h2 class="font-bold text-lg mb-2">Executive search</h2>
-      <p class="text-gray-600 text-sm mb-3">ReachScore analyzes your leadership role posts and shows you specific improvements that help these critical positions get discovered by qualified candidates.</p>
+      <p class="text-gray-600 text-sm mb-3">IntelliScore analyzes your leadership role posts and shows you specific improvements that help these critical positions get discovered by qualified candidates.</p>
     </Card>
     <!-- Volume Hiring -->
     <Card class="flex flex-col items-start p-6 h-full">
       <h2 class="font-bold text-lg mb-2">Volume hiring</h2>
-      <p class="text-gray-600 text-sm mb-3">ReachScore ensures consistent quality across hundreds of posts, helping regional recruiters maintain optimization standards without manual oversight.</p>
+      <p class="text-gray-600 text-sm mb-3">IntelliScore ensures consistent quality across hundreds of posts, helping regional recruiters maintain optimization standards without manual oversight.</p>
     </Card>
     <!-- Competitive Positioning -->
     <Card class="flex flex-col items-start p-6 h-full">
       <h2 class="font-bold text-lg mb-2">Competitive positioning</h2>
-      <p class="text-gray-600 text-sm mb-3">ReachScore shows you exactly how your job posts compare to market standards, revealing opportunities to stand out in competitive talent markets.</p>
+      <p class="text-gray-600 text-sm mb-3">IntelliScore shows you exactly how your job posts compare to market standards, revealing opportunities to stand out in competitive talent markets.</p>
     </Card>
   </div>
   <div class="mt-16 grid gap-8 md:grid-cols-2">
     <Card class="p-6 flex flex-col gap-4">
       <h3 class="font-semibold text-xl mb-2">Enterprise optimization at scale</h3>
       <ul class="space-y-2 text-gray-700 text-sm">
-        <li><b>Team dashboards</b> — Track ReachScore performance across all departments</li>
+        <li><b>Team dashboards</b> — Track IntelliScore performance across all departments</li>
         <li><b>ATS integration</b> — Analyze posts directly from Workday, SuccessFactors, and major platforms</li>
         <li><b>Consistency reporting</b> — Ensure optimization standards across global operations</li>
         <li><b>Benchmark insights</b> — See how your posts score against industry best practices</li>
@@ -62,8 +62,8 @@
     <Card class="p-6 flex flex-col gap-4 justify-between">
       <h3 class="font-semibold text-xl mb-2">Your competitive edge in talent acquisition</h3>
       <p class="text-gray-700 text-sm">While other companies guess at job post quality, you'll know exactly what works.</p>
-      <p class="text-gray-700 text-sm">Industry data shows optimized job posts increase visibility by up to 70%. ReachScore shows you exactly how to achieve that optimization.</p>
-      <button class="mt-4 px-6 py-2 bg-gradient-to-r from-fuchsia-500 to-orange-400 text-white rounded font-semibold hover:opacity-90 transition">Get Your Organization's ReachScore</button>
+      <p class="text-gray-700 text-sm">Industry data shows optimized job posts increase visibility by up to 70%. IntelliScore shows you exactly how to achieve that optimization.</p>
+      <button class="mt-4 px-6 py-2 bg-gradient-to-r from-fuchsia-500 to-orange-400 text-white rounded font-semibold hover:opacity-90 transition">Get Your Organization's IntelliScore</button>
     </Card>
   </div>
 </section>

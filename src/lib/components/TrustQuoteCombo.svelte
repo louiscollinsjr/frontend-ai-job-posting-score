@@ -1,8 +1,8 @@
 <script>
   // Props for customization
-  export let quote = "I ran three job posts through ReachScore and finally saw why our reach was flat.";
+  export let quote = "I ran three job posts through IntelliScore and finally saw why our reach was flat.";
   export let author = "— Talent Lead, Beta User";
-  export let trustMessage = "Now in private beta with global TA teams. ReachScore is helping recruiters surface listings before they get lost.";
+  export let trustMessage = "Now in private beta with global TA teams. IntelliScore is helping recruiters surface listings before they get lost.";
 </script>
 
 <div class="trust-quote-container py-16 px-6 sm:px-8 md:px-12 lg:px-16 bg-white border-2 border-gray-100 rounded-2xl my-16">

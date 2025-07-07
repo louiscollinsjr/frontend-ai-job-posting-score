@@ -7,19 +7,19 @@
   const features = [
     {
       title: "Reads your job posts completely",
-      description: "ReachScore analyzes your job content end to end — scoring clarity, structure, and how easily it’s found by the right candidates.",
+      description: "IntelliScore analyzes your job content end to end — scoring clarity, structure, and how easily it’s found by the right candidates.",
       imagePlaceholder: "Browser03.png",
       imagePosition: "top"
     },
     {
       title: "Scores your optimization level",
-      description: "ReachScore evaluates your posts against proven best practices, showing you exactly where you rank on the factors that drive visibility and applications.",
+      description: "IntelliScore evaluates your posts against proven best practices, showing you exactly where you rank on the factors that drive visibility and applications.",
       imagePlaceholder: "Browser03.png",
       imagePosition: "top"
     },
     {
       title: "Shows you what to fix",
-      description: "Just paste your job post. ReachScore identifies what's limiting your reach and gives you the specific changes that improve your score — no guesswork.",
+      description: "Just paste your job post. IntelliScore identifies what's limiting your reach and gives you the specific changes that improve your score — no guesswork.",
       imagePlaceholder: "Browser03.png",
       imagePosition: "left",
       colSpan: true
@@ -31,7 +31,7 @@
   <div class="container  px-4 sm:px-6 lg:px-8">
     <div class="text-left mb-12">
       <h2 class="text-3xl md:text-5xl mb-4 tracking-tight text-gray-900 md:w-[60%] w-full">Finally, job post optimization that actually works</h2>
-      <p class="text-base text-gray-500 max-w-3xl">Your <b class="text-gray-900">ReachScore</b> shows you what's limiting your reach and how to fix it.</p>
+      <p class="text-base text-gray-500 max-w-3xl">Your <b class="text-gray-900">IntelliScore</b> shows you what's limiting your reach and how to fix it.</p>
     </div>
     
     <!-- 2x2 grid with second row colspan-2 -->

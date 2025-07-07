@@ -71,7 +71,7 @@
     <div class="mt-20 px-6 pb-20">
       <!-- Site purpose description -->
       <p class="text-[11px] font-light text-gray-400 mb-6">
-        We're here to help you create inclusive job postings that reach the widest possible talent pool. ReachScore helps you audit your job descriptions for bias and improve your hiring outcomes.
+        We're here to help you create inclusive job postings that reach the widest possible talent pool. IntelliScore helps you audit your job descriptions for bias and improve your hiring outcomes.
       </p>
       
       <!-- Social links -->

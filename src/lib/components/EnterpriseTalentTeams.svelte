@@ -10,17 +10,17 @@
     },
     {
       title: "Doesn't require training",
-      description: "ReachScore analyzes posts automatically — your team gets actionable insights without learning complex SEO or optimization rules.",
+      description: "IntelliScore analyzes posts automatically — your team gets actionable insights without learning complex SEO or optimization rules.",
 
     },
     {
       title: "Invisible complexity",
-      description: "ReachScore handles technical analysis behind the scenes. You see clear scores and simple fixes, not complicated recommendations.",
+      description: "IntelliScore handles technical analysis behind the scenes. You see clear scores and simple fixes, not complicated recommendations.",
 
     },
     {
       title: "Follows your brand voice",
-      description: "ReachScore optimizes for performance while maintaining your company's authentic tone and employer brand.",
+      description: "IntelliScore optimizes for performance while maintaining your company's authentic tone and employer brand.",
     }
   ];
 
@@ -43,7 +43,7 @@
             Built for enterprise talent teams
           </h2>
           <p class="text-gray-500 text-left text-base w-[80%] font-normal leading-relaxed tracking-normal">
-            <b>ReachScore</b> is designed specifically for enterprise talent acquisition teams that need powerful optimization without the complexity.
+            <b>IntelliScore</b> is designed specifically for enterprise talent acquisition teams that need powerful optimization without the complexity.
           </p>
         </div>
       </div>

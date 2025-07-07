@@ -136,7 +136,7 @@ function generateMockResults(type, data) {
 export async function exportResults(results, format) {
   if (format === 'text') {
     // Generate text version
-    let exportText = `# ReachScore Job Posting Audit\n`;
+    let exportText = `# IntelliScore Job Posting Audit\n`;
     exportText += `Date: ${new Date(results.timestamp).toLocaleString()}\n\n`;
     exportText += `## Overall Score: ${results.overallScore}%\n\n`;
     exportText += `### Category Scores\n`;
@@ -163,7 +163,7 @@ export async function exportResults(results, format) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'reachscore-audit.txt';
+    a.download = 'IntelliScore-audit.txt';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

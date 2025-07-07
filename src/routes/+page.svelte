@@ -95,8 +95,8 @@
 </script>
 
 <svelte:head>
-  <title>ReachScore | Job Posting Audit Platform</title>
-  <meta name="description" content="Transform your job postings into talent magnets with ReachScore's job posting audit platform" />
+  <title>IntelliScore | Job Posting Audit Platform</title>
+  <meta name="description" content="Transform your job postings into talent magnets with IntelliScore's job posting audit platform" />
   <meta name="keywords" content="job posting, job description, HR tools, recruitment, diversity, inclusion, hiring" />
 </svelte:head>
 
@@ -113,10 +113,10 @@
     <span class="chroma-text text-right" data-text="Score">Score</span>
     <span class="chroma-text text-right" data-text="Boost">Boost</span>
   </span> your job postings70% more visibility. -->
-  What's your job post's ReachScore?
+  What's your job post's IntelliScore?
 </h1>
         <p class="text-base sm:text-lg text-gray-500 text-center mb-12 max-w-2xl mx-auto font-normal">
-          Your <b class="text-black">ReachScore <sup class="text-xs">™</sup></b> is the key to connecting with the 70% of qualified candidates you're currently missing.
+          Your <b class="text-black">IntelliScore <sup class="text-xs">™</sup></b> is the key to connecting with the 70% of qualified candidates you're currently missing.
         </p>
         <!-- <ChatAuditForm on:audit={handleAudit} /> -->
          <AuditForm on:audit={handleAudit} />
@@ -146,13 +146,13 @@
 
 <!-- 
 
-Three ways ReachScore improves enterprise hiring
+Three ways IntelliScore improves enterprise hiring
 Executive search
-ReachScore analyzes your leadership role posts and shows you specific improvements that help these critical positions get discovered by qualified candidates.
+IntelliScore analyzes your leadership role posts and shows you specific improvements that help these critical positions get discovered by qualified candidates.
 Volume hiring
-ReachScore ensures consistent quality across hundreds of posts, helping regional recruiters maintain optimization standards without manual oversight.
+IntelliScore ensures consistent quality across hundreds of posts, helping regional recruiters maintain optimization standards without manual oversight.
 Competitive positioning
-ReachScore shows you exactly how your job posts compare to market standards, revealing opportunities to stand out in competitive talent markets.
+IntelliScore shows you exactly how your job posts compare to market standards, revealing opportunities to stand out in competitive talent markets.
 
 -->
 
@@ -162,13 +162,13 @@ ReachScore shows you exactly how your job posts compare to market standards, rev
 <CallToAction 
   header='“Stop guessing, start scoring.”' 
   ctaText="Discover how your job posts are really performing — and what to do to boost visibility and results."
-  ctaButtonText="Get Your ReachScore"
+  ctaButtonText="Get Your IntelliScore"
 />
 
 <!-- Newsletter Signup Section -->
 <!-- <div class="container my-16">
   <NewsletterSignup 
-    heading="Stay Updated on ReachScore" 
+    heading="Stay Updated on IntelliScore" 
     subheading="Get the latest news and updates about our inclusive job posting tools and features."
   />
 </div> -->

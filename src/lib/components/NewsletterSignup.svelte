@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   
   export let heading = "Stay Updated";
-  export let subheading = "Get the latest news and updates about ReachScore's inclusive job posting tools and features.";
+  export let subheading = "Get the latest news and updates about IntelliScore's inclusive job posting tools and features.";
   export let buttonText = "Subscribe";
   export let placeholder = "Enter your email";
   

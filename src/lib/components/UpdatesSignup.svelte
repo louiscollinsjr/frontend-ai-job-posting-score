@@ -6,7 +6,7 @@
   <div class="content-container">
     <div class="text-content">
       <h2>Stay Updated</h2>
-      <p>Get the latest news and updates about ReachScore's inclusive job posting tools and features.</p>
+      <p>Get the latest news and updates about IntelliScore's inclusive job posting tools and features.</p>
       
       <div class="subscribe-form">
         <EmailSubscribe 
