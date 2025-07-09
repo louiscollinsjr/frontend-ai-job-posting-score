@@ -38,7 +38,7 @@
         
         
         <a href="/" class="flex-shrink-0 flex items-center">
-          <span class="text-2xl text-black">Intellignce<b class="">Score</b> <sup class="text-xs align-super">™</sup></span>
+          <span class="text-2xl text-black">Intelli<b class="">Score</b> <sup class="text-xs align-super">™</sup></span>
         </a>
 
         {#if !justLogo}
