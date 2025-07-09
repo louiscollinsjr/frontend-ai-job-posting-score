@@ -40,7 +40,7 @@
         <div class="text-left mb-12">
           <h2 class="text-3xl md:text-4xl lg:text-5xl font-normal pb-8 leading-tight tracking-tight text-gray-900">We help teams craft job posts
             that introduce new levels of readability, relevance, and reach</h2>
-          <p class="text-gray-500 text-left text-base w-[80%] font-normal leading-relaxed tracking-normal">Your <b>IntelliScore</b> is an intelligent job post analyzer that reads your content, scores your optimization, and shows you exactly what to fix — instantly.
+          <p class="text-gray-500 text-left text-base w-[80%] font-normal leading-relaxed tracking-normal">Your <b>JobPostScore</b> is an intelligent job post analyzer that reads your content, scores your optimization, and shows you exactly what to fix — instantly.
           </p>
         </div>
       </div>
@@ -48,7 +48,7 @@
       <!-- Right column with image flush to edge -->
       <div class="w-full hidden xl:block  xl:w-[55%] relative h-[350px] lg:h-[500px] xl:h-[600px] overflow-hidden mt-8 lg:mt-0">
         <FadeImage 
-          src="/IntelliScoreGroup01.png" 
+          src="/JobPostScoreGroup01.png" 
           alt="Reach Score Group" 
           fadeDirection="bottom"
           fadeIntensity="strong"

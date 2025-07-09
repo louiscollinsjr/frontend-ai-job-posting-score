@@ -241,7 +241,7 @@ import * as Alert from "$lib/components/ui/alert/index.js";
               </svg>
               Analyzing...
             {:else}
-           Get Your Free IntelliScore
+           Get Your Free JobPostScore
             {/if}
           </button>
         </div>

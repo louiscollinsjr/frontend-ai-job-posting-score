@@ -11,7 +11,7 @@
       <h3 class="font-medium">Top to Bottom Fade (Default)</h3>
       <div class="h-80 w-full bg-gray-100 rounded-lg overflow-hidden">
         <FadeImage 
-          src="/IntelliScoreGroup01.png" 
+          src="/JobPostScoreGroup01.png" 
           alt="Fade Top to Bottom" 
           fadeDirection="bottom"
           fadeIntensity="medium"
@@ -24,7 +24,7 @@
       <h3 class="font-medium">Bottom to Top Fade</h3>
       <div class="h-80 w-full bg-gray-100 rounded-lg overflow-hidden">
         <FadeImage 
-          src="/IntelliScoreGroup01.png" 
+          src="/JobPostScoreGroup01.png" 
           alt="Fade Bottom to Top" 
           fadeDirection="top"
           fadeIntensity="medium"
@@ -37,7 +37,7 @@
       <h3 class="font-medium">Left to Right Fade</h3>
       <div class="h-80 w-full bg-gray-100 rounded-lg overflow-hidden">
         <FadeImage 
-          src="/IntelliScoreGroup01.png" 
+          src="/JobPostScoreGroup01.png" 
           alt="Fade Left to Right" 
           fadeDirection="right"
           fadeIntensity="medium"
@@ -50,7 +50,7 @@
       <h3 class="font-medium">Strong Fade Intensity</h3>
       <div class="h-80 w-full bg-gray-100 rounded-lg overflow-hidden">
         <FadeImage 
-          src="/IntelliScoreGroup01.png" 
+          src="/JobPostScoreGroup01.png" 
           alt="Strong Fade Intensity" 
           fadeDirection="bottom"
           fadeIntensity="strong"

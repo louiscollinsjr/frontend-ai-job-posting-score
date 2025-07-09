@@ -72,7 +72,7 @@
 
 <div class="results-page pb-32">
   <!-- Main content area -->
-  <div class="max-w-2xl mx-auto py-8 px-4">  
+  <div class="max-w-2xl mx-auto pb-8 px-4">  
     <h1 class="text-3xl text-center mb-2">Your Intelli<b class="text-black">Score</b> Analysis</h1>
     <p class="text-center text-gray-600 mb-8 text-sm">Here's how your job posting performed across key metrics</p>
     
@@ -106,7 +106,7 @@
           </div>
         </div>
       </div>
-      <h3 class="text-lg font-bold mt-8 mb-2">IntelliScore</h3>
+      <h3 class="text-lg font-bold mt-8 mb-2">JobPostScore</h3>
       <p class="text-sm text-gray-600">Job Post Visibility & Quality Index</p>
     </div>
     

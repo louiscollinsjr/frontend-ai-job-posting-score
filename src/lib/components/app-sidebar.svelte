@@ -46,7 +46,7 @@
   <Sidebar.Content class="bg-white border-none flex flex-col h-full overflow-y-auto">
     <!-- Navigation Menu -->
     <Sidebar.Group>
-      <!-- <Sidebar.GroupLabel class="text-2xl text-black pt-10">Reach<b class="text-black">Score</b> <sup class="text-xs align-super">™</sup></Sidebar.GroupLabel>
+      <!-- <Sidebar.GroupLabel class="text-2xl text-black pt-10">Reach<b class="text-black">Score</b> <sup class=" hidden text-xs align-super">™</sup></Sidebar.GroupLabel>
        -->
       <Sidebar.GroupContent class="pt-12 pl-6">
         <Sidebar.Menu>
@@ -71,7 +71,7 @@
     <div class="mt-20 px-6 pb-20">
       <!-- Site purpose description -->
       <p class="text-[11px] font-light text-gray-400 mb-6">
-        We're here to help you create inclusive job postings that reach the widest possible talent pool. IntelliScore helps you audit your job descriptions for bias and improve your hiring outcomes.
+        We're here to help you create inclusive job postings that reach the widest possible talent pool. JobPostScore helps you audit your job descriptions for bias and improve your hiring outcomes.
       </p>
       
       <!-- Social links -->

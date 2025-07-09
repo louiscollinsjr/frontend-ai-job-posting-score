@@ -41,15 +41,15 @@
   const sections = [
     {
       header: 'Reads your job posts completely',
-      text: `IntelliScore analyzes every element of your job content — titles, descriptions, requirements, benefits — understanding clarity, structure, and searchability.`
+      text: `JobPostScore analyzes every element of your job content — titles, descriptions, requirements, benefits — understanding clarity, structure, and searchability.`
     },
     {
       header: 'Scores your optimization level',
-      text: `IntelliScore evaluates your posts against proven best practices, showing you exactly where you rank on the factors that drive visibility and applications.`
+      text: `JobPostScore evaluates your posts against proven best practices, showing you exactly where you rank on the factors that drive visibility and applications.`
     },
     {
       header: 'Shows you what to fix',
-      text: `Just paste your job post. IntelliScore identifies what's limiting your reach and gives you the specific changes that improve your score — no guesswork.`
+      text: `Just paste your job post. JobPostScore identifies what's limiting your reach and gives you the specific changes that improve your score — no guesswork.`
     }
   ];
 
@@ -142,7 +142,7 @@
   <div class="container mx-auto px-4">
     <!-- Title section - full width in its own row -->
     <div class="mb-40 h-[150px]" bind:this={headerElement}>
-      <h2 class="text-3xl md:text-4xl font-normal text-black max-w-lg">IntelliScore transforms your hiring content</h2>
+      <h2 class="text-3xl md:text-4xl font-normal text-black max-w-lg">JobPostScore transforms your hiring content</h2>
     </div>
     
     <!-- Content section -->
@@ -154,7 +154,7 @@
             {#each images as img, i}
               <img
                 src={img}
-                alt="How IntelliScore works step {i+1}"
+                alt="How JobPostScore works step {i+1}"
                 class="image transition-opacity duration-300"
                 style="opacity: {activeIndex === i ? 1 : 0}; z-index: {activeIndex === i ? 2 : 1}; pointer-events: none;"
                 draggable="false"
