@@ -17,6 +17,13 @@
     redFlags: results.redFlags || [],
     recommendations: results.recommendations || []
   };
+  
+  // Function to determine which score background to use based on score value
+  function getScoreBackground(score) {
+    if (score >= 96.0) return '/green-score.svg';
+    if (score >= 75.0) return '/yellow-score.svg';
+    return '/red-score.svg';
+  }
 
   // Category display order and labels
   const categoryLabels = [
@@ -66,33 +73,41 @@
 <div class="results-page pb-32">
   <!-- Main content area -->
   <div class="max-w-2xl mx-auto py-8 px-4">  
-    <h1 class="text-3xl text-center mb-2">Your Reach<b class="text-black">Score</b> Analysis</h1>
+    <h1 class="text-3xl text-center mb-2">Your Intelli<b class="text-black">Score</b> Analysis</h1>
     <p class="text-center text-gray-600 mb-8 text-sm">Here's how your job posting performed across key metrics</p>
     
     <!-- Overall Score Circle (100-point scale) -->
-    <div class="bg-white rounded-lg p-6 mb-8 text-center max-w-md mx-auto">
-      <div class="relative h-36 w-36 mx-auto">
-        <svg class="w-full h-full" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
-          <!-- Background circle -->
-          <circle cx="18" cy="18" r="16" fill="none" stroke="#e0e0e0" stroke-width="2"></circle>
-          <!-- Progress circle -->
-          <circle 
-            cx="18" cy="18" r="16" 
-            fill="none" 
-            stroke="#F97316" 
-            stroke-width="2"
-            stroke-dasharray="100.53 100.53"
-            stroke-dashoffset="{100.53 - (processedResults?.overallScore / 100 * 100.53) || 0}"
-            transform="rotate(-90 18 18)"
-          ></circle>
-        </svg>
-        <div class="absolute inset-0 flex flex-col items-center justify-center">
-          <span class="text-3xl font-bold text-orange-500">{processedResults?.overallScore?.toFixed(1) || '0'}</span>
-          <span class="text-sm text-gray-600">out of 100</span>
+    <div class="bg-white p-6 mb-24 text-center max-w-md mx-auto">
+      <!-- Larger container for score display with proper spacing -->
+      <div class="relative h-64 w-64 mx-auto sm:h-72 sm:w-80 md:h-80 md:w-80">
+        <!-- SVG Score Background -->
+        <div class="absolute inset-0 flex items-center justify-center">
+          {#if processedResults?.overallScore}
+            <img 
+              src={getScoreBackground(processedResults.overallScore)} 
+              alt="Score background" 
+              class="w-full h-full object-contain" 
+              style="transform: scale(1.5);"
+            />
+          {:else}
+            <img 
+              src="/yellow-score.svg" 
+              alt="Default score background" 
+              class="w-full h-full object-contain"
+              style="transform: scale(1.5);"
+            />
+          {/if}
+        </div>
+        <!-- Score text positioned in center with z-index to appear above background -->
+        <div class="absolute inset-0 flex flex-col items-center justify-center z-10">
+          <div class="bg-transparent p-4 pl-1">
+            <span class="text-5xl font-bold {processedResults?.overallScore >= 96.0 ? 'text-green-600' : processedResults?.overallScore >= 75.0 ? 'text-yellow-600' : 'text-red-500'}">{processedResults?.overallScore?.toFixed(1) || '0'}</span>
+            <span class="text-sm text-gray-600 block">out of 100</span>
+          </div>
         </div>
       </div>
-      <h3 class="text-lg font-bold mt-4 mb-1">GPT Visibility Score™</h3>
-      <p class="text-sm text-gray-600">Comprehensive posting quality</p>
+      <h3 class="text-lg font-bold mt-8 mb-2">IntelliScore</h3>
+      <p class="text-sm text-gray-600">Job Post Visibility & Quality Index</p>
     </div>
     
     {#if loading}
@@ -141,9 +156,9 @@
         </div>
       {:else}
         <!-- Message for unauthenticated users -->
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8 text-center">
-          <h3 class="font-semibold text-blue-800 mb-2">Sign in to view detailed results</h3>
-          <p class="text-sm text-blue-700">Provide your email to unlock the complete audit report with category breakdowns, suggestions, and detailed analysis.</p>
+        <div class="bg-gray-100 border border-gray-200 rounded-lg p-6 mb-8 text-center py-12">
+          <h3 class="font-semibold text-gray-800 mb-6">Sign in to view detailed results</h3>
+          <p class="text-sm text-gray-700">Provide your email to unlock the complete audit report with category breakdowns, suggestions, and detailed analysis.</p>
         </div>
       {/if}
 
