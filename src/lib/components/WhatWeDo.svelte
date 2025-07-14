@@ -48,8 +48,8 @@
       <!-- Right column with image flush to edge -->
       <div class="w-full hidden xl:block  xl:w-[55%] relative h-[350px] lg:h-[500px] xl:h-[600px] overflow-hidden mt-8 lg:mt-0">
         <FadeImage 
-          src="/JobPostScoreGroup01.png" 
-          alt="Reach Score Group" 
+          src="/job-post-score-01.png"
+          alt="JobPostScore Group" 
           fadeDirection="bottom"
           fadeIntensity="strong"
           className="absolute top-0 right-0 h-full w-auto min-w-full max-w-none object-cover lg:object-right rounded-lg lg:rounded-l-lg lg:rounded-r-none"
