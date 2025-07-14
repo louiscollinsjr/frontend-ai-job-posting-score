@@ -1,0 +1,8 @@
+/* Import the Playfair Display Variable font */
+@import '@fontsource-variable/playfair-display';
+
+/* Define explicit font classes */
+.font-playfair {
+  font-family: 'Playfair Display Variable', serif !important;
+}
+
