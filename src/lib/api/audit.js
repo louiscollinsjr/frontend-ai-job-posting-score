@@ -1,7 +1,10 @@
 /**
  * API utilities for the job posting audit functionality
- * In a real implementation, this would connect to backend services
+ * Connects to backend services deployed on Fly.io
  */
+
+// API base URL
+const API_BASE_URL = 'https://ai-audit-api.fly.dev';
 
 /**
  * Submit a job posting for audit via URL
@@ -10,7 +13,7 @@
  */
 export async function auditJobUrl(url) {
   try {
-    const response = await fetch('https://ai-audit-api.fly.dev/api/audit-job-post', {
+    const response = await fetch(`${API_BASE_URL}/api/audit-job-post`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url })
@@ -32,7 +35,7 @@ export async function auditJobUrl(url) {
  */
 export async function auditJobText(text) {
   try {
-    const response = await fetch('https://ai-audit-api.fly.dev/api/audit-job-post', {
+    const response = await fetch(`${API_BASE_URL}/api/audit-job-post`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text })
@@ -58,21 +61,16 @@ export async function auditJobFile(file) {
     const formData = new FormData();
     formData.append('file', file);
     
-    // In a production environment, this would send the file to the backend
-    // For now, we'll use the mock data for demonstration purposes
+    const response = await fetch(`${API_BASE_URL}/api/audit-job-file`, {
+      method: 'POST',
+      body: formData
+    });
     
-    // Simulate API call with delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
     
-    // Use the generateMockResults function to create demo data
-    // In production, we'd make an actual API call like this:
-    // const response = await fetch('https://ai-audit-api.fly.dev/api/audit-job-file', {
-    //   method: 'POST',
-    //   body: formData
-    // });
-    // return await response.json();
-    
-    return generateMockResults('file', file.name);
+    return await response.json();
   } catch (error) {
     console.error('Error auditing job file:', error);
     throw new Error('Failed to analyze job posting file. Please try again.');
@@ -179,5 +177,118 @@ export async function exportResults(results, format) {
     alert('PDF export will be available in a future update!');
     
     return false;
+  }
+}
+
+/**
+ * Submit a job posting for analysis through the unified endpoint
+ * @param {string} inputType - Type of input ('text', 'url', or 'file') 
+ * @param {string|File} inputData - The actual input data
+ * @returns {Promise<object>} - Complete analysis results including score, JSON-LD, etc.
+ */
+export async function analyzeJob(inputType, inputData) {
+  try {
+    // If input is a file, handle it differently
+    if (inputType === 'file' && inputData instanceof File) {
+      const formData = new FormData();
+      formData.append('file', inputData);
+      formData.append('inputType', 'file');
+      
+      const response = await fetch(`${API_BASE_URL}/api/analyze-job/file`, {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      
+      return await response.json();
+    }
+    
+    // Handle text or URL inputs
+    const response = await fetch(`${API_BASE_URL}/api/analyze-job`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ inputType, inputData })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error analyzing job:', error);
+    throw new Error(`Failed to analyze job posting. ${error.message}`);
+  }
+}
+
+/**
+ * Rewrite a job posting to improve its visibility
+ * @param {string} jobId - The ID of the job to rewrite
+ * @param {boolean} saveToDatabase - Whether to save the rewritten text to the database
+ * @returns {Promise<object>} - The rewritten job posting
+ */
+export async function rewriteJob(jobId, saveToDatabase = true) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/rewrite-job/${jobId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ saveToDatabase })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error rewriting job:', error);
+    throw new Error(`Failed to rewrite job posting. ${error.message}`);
+  }
+}
+
+/**
+ * Download job posting as a text file
+ * @param {object} job - Job object containing text and metadata
+ * @param {string} fileType - Type of file to download (txt, json, jsonld)
+ */
+export function downloadJobPosting(job, fileType = 'txt') {
+  try {
+    let content, filename, mimeType;
+    
+    switch (fileType) {
+      case 'jsonld':
+        content = JSON.stringify(job.jsonLd, null, 2);
+        filename = `job-posting-jsonld-${job.id}.json`;
+        mimeType = 'application/ld+json';
+        break;
+      case 'json':
+        content = JSON.stringify(job, null, 2);
+        filename = `job-posting-data-${job.id}.json`;
+        mimeType = 'application/json';
+        break;
+      case 'txt':
+      default:
+        content = job.improvedText || job.originalText;
+        filename = `job-posting-${job.id}.txt`;
+        mimeType = 'text/plain';
+        break;
+    }
+    
+    // Create blob and download
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Error downloading job posting:', error);
+    throw new Error(`Failed to download job posting. ${error.message}`);
   }
 }
