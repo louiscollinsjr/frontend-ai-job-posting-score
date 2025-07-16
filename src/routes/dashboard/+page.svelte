@@ -23,62 +23,23 @@
     reportError = null;
     
     try {
-      // First, check localStorage for any guest reports
-      console.log('[dashboard] Checking localStorage for guest_audit_report');
-      const guestReport = localStorage.getItem('guest_audit_report');
-      console.log('[dashboard] Guest report found?', !!guestReport, guestReport ? `Size: ${guestReport.length} bytes` : '');
-      
-      if (guestReport) {
-        try {
-          console.log('[dashboard] Attempting to parse guest report');
-          const parsedReport = JSON.parse(guestReport);
-          console.log('[dashboard] Successfully parsed guest report:', parsedReport ? 'valid data' : 'null data');
-          
-          // Format the guest report to match our expected structure
-          const formattedReport = {
-            id: 'local_' + Date.now(),
-            title: parsedReport.job_title || 'Job Posting',
-            company: parsedReport.company || 'Unknown Company',
-            date: new Date().toISOString().split('T')[0],
-            score: parsedReport.overallScore || calculateOverallScore(parsedReport),
-            status: 'Local',
-            data: parsedReport
-          };
-          
-          console.log('[dashboard] Formatted guest report for display:', formattedReport);
-          
-          // Add to reports array
-          reports = [formattedReport, ...reports];
-        } catch (err) {
-          console.error('[dashboard] Error parsing guest report:', err);
-        }
+      // Only fetch reports from backend API for authenticated user
+      const token = localStorage.getItem('sb-zincimrcpvxtugvhimny-auth-token');
+      if (!token) {
+        throw new Error('No auth token found');
       }
-      
-      // TODO: Fetch reports from database
-      // This would be an API call to get the user's saved reports
-      // For now, we'll add some mock data to simulate database reports
-      const mockDbReports = [
-        {
-          id: 'db_1',
-          title: 'Senior Software Engineer',
-          company: 'TechCorp',
-          date: '2025-06-28',
-          score: 87,
-          status: 'Saved'
-        },
-        {
-          id: 'db_2',
-          title: 'Product Manager',
-          company: 'InnovateCo',
-          date: '2025-06-25',
-          score: 72,
-          status: 'Saved'
+      const res = await fetch('https://ai-audit-api.fly.dev/api/v1/reports', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-      ];
-      
-      // Add database reports to our reports array
-      reports = [...reports, ...mockDbReports];
-      
+      });
+      if (!res.ok) {
+        throw new Error('Failed to fetch reports from server');
+      }
+      const data = await res.json();
+      // Expecting data to be an array of report objects
+      reports = data;
     } catch (err) {
       console.error('Error fetching reports:', err);
       reportError = 'Failed to load reports. Please try again.';

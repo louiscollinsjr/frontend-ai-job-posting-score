@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import { marked } from 'marked';
   import './JobRewrite.css';
   
   export let original_text = '';
@@ -11,6 +12,7 @@
   let versions = [];
   let loadingVersions = false;
   let selectedVersion = null;
+  let isMarkdownEnabled = true; // Add a variable to control markdown rendering
 
   async function fetchVersions() {
     loadingVersions = true;
@@ -30,6 +32,9 @@
   }
 
   onMount(fetchVersions);
+  
+  // Compute the markdown HTML for improved text
+  $: improvedMarkdown = marked.parse(selectedVersion ? selectedVersion.improved_text || '' : improvedText || '');
 </script>
 
 <div class="version-selector">
@@ -51,18 +56,18 @@
     <h3>Original Posting (Score: {score})</h3>
     <div class="posting-content">{original_text}</div>
   </div>
-  
-  <div class="improved-posting">
-    <h3>Improved Version {selectedVersion ? `#${selectedVersion.version_number}` : ''}</h3>
-    <div class="posting-content">
-      {selectedVersion ? selectedVersion.improved_text : improvedText}
-    </div>
-    <div class="actions">
-      <button on:click={() => copyToClipboard(selectedVersion?.improved_text || improvedText)}>
-        Copy Improved Text
-      </button>
-    </div>
+
+<div class="improved-posting">
+  <h3>Improved Version {selectedVersion ? `#${selectedVersion.version_number}` : ''}</h3>
+  <div class="posting-content" class:markdown={isMarkdownEnabled}>
+    {@html improvedMarkdown}
   </div>
+  <div class="actions">
+    <button on:click={() => copyToClipboard(selectedVersion?.improved_text || improvedText)}>
+      Copy Improved Text
+    </button>
+  </div>
+</div>
   
   {#if recommendations.length > 0}
     <div class="recommendations">
