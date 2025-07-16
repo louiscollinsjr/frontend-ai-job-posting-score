@@ -80,6 +80,34 @@
         
         // Update the audit store safely
         try {
+          console.log('Updating store with saved data:', { 
+            id: data.id, 
+            hasJsonLd: !!data.json_ld 
+          });
+          
+          // Verify we have JSON-LD data before updating store
+          if (!data.json_ld) {
+            console.warn('No JSON-LD in saved report, attempting to retrieve it specifically');
+            try {
+              // Try to retrieve JSON-LD specifically
+              const { data: jsonLdData, error: jsonLdError } = await supabase
+                .from('reports')
+                .select('json_ld')
+                .eq('id', data.id)
+                .single();
+                
+              if (jsonLdData?.json_ld) {
+                console.log('Retrieved JSON-LD separately:', !!jsonLdData.json_ld);
+                data.json_ld = jsonLdData.json_ld;
+              } else if (jsonLdError) {
+                console.warn('Error retrieving JSON-LD:', jsonLdError);
+              }
+            } catch (jsonLdErr) {
+              console.error('Error in JSON-LD retrieval:', jsonLdErr);
+            }
+          }
+          
+          // Update the store with all available data
           auditStore.update(state => {
             if (!state || !state.results) {
               return { 
@@ -108,12 +136,25 @@
             };
           });
           
-          // Also update the local results variable
-          auditResults = {
-            ...auditResults,
-            id: data.id,
-            json_ld: data.json_ld
-          };
+          // Also update any local variables used by components
+          if (typeof results !== 'undefined') {
+            results = {
+              ...results,
+              id: data.id,
+              json_ld: data.json_ld
+            };
+          }
+          
+          // Update the auditResults variable if it exists
+          if (typeof auditResults !== 'undefined') {
+            auditResults = {
+              ...auditResults,
+              id: data.id,
+              json_ld: data.json_ld
+            };
+          }
+          
+          console.log('Store updated successfully with data including JSON-LD:', !!data.json_ld);
         } catch (storeErr) {
           console.error('Error updating store:', storeErr);
         }
@@ -163,21 +204,19 @@
     }, 3000);
   }
   
-  // Show dialog after delay for guests or auto-save for logged-in users
-  async function gentlyPromptSave() {
+  // Show dialog after delay for guests only - no auto-save for logged-in users
+  function gentlyPromptSave() {
     if (!auditResults) return;
     
-    if (isLoggedIn) {
-      // Auto-save for logged-in users
-      const saved = await saveReport(auditResults);
-      if (saved) showSavedMessage();
-    } else {
+    // Only show dialog for guests, no auto-save
+    if (!isLoggedIn) {
       // Show dialog after delay for guests
       dialogTimeout = setTimeout(() => {
         console.log('Timed prompt: Setting showDialog to true');
         showDialog = true;
       }, 6000); // 6 seconds
     }
+    // No auto-save for logged-in users to prevent duplicative database entries
   }
 
   // Manual trigger for Save/Export/Access Later
@@ -225,20 +264,67 @@
 
   import { page } from '$app/stores';
 
+  // Function to load a specific report by ID from the database
+  async function loadReportById(reportId) {
+    try {
+      console.log('Loading report by ID:', reportId);
+      const { data, error } = await supabase
+        .from('reports')
+        .select('*')
+        .eq('id', reportId)
+        .single();
+        
+      if (error) {
+        console.error('Error loading report:', error);
+        toast.error('Could not load the requested report');
+        return false;
+      }
+      
+      if (data) {
+        console.log('Successfully loaded report:', data.id);
+        
+        // Update the audit store with the loaded report
+        auditStore.update(state => ({
+          ...state,
+          results: data
+        }));
+        
+        // Update local variable
+        auditResults = data;
+        
+        return true;
+      } else {
+        console.warn('No report found with ID:', reportId);
+        toast.error('Report not found');
+        return false;
+      }
+    } catch (err) {
+      console.error('Exception loading report:', err);
+      toast.error('Error loading report');
+      return false;
+    }
+  }
+
   onMount(() => {
-    // If redirected from guest login, load guest report from localStorage
+    // Check URL parameters
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('from') === 'guest-login') {
+    const fromParam = urlParams.get('from');
+    const reportId = urlParams.get('report');
+    
+    // Priority 1: Load specific report if report ID is provided
+    if (reportId && isLoggedIn) {
+      loadReportById(reportId);
+    }
+    // Priority 2: Handle guest login redirect
+    else if (fromParam === 'guest-login') {
       console.log('[localStorage] Checking for guest_audit_report after login');
       const guestReport = localStorage.getItem('guest_audit_report');
       if (guestReport) {
         console.log('[localStorage] Found guest report, size:', guestReport.length, 'bytes');
         try {
           auditResults = JSON.parse(guestReport);
-          console.log('[localStorage] Successfully parsed guest report:', auditResults ? 'valid data' : 'null data');
-          console.log('[localStorage] Keeping guest_audit_report in localStorage for persistence');
-          // No longer removing the report from localStorage
-          // localStorage.removeItem('guest_audit_report');
+          // Save report to database now that user is logged in
+          saveReport(auditResults);
           // Optionally, show a toast or success message
           showSavedMessage();
         } catch (e) {
@@ -247,9 +333,12 @@
       } else {
         console.warn('[localStorage] No guest report found after login redirect');
       }
-    } else {
+    }
+    // Priority 3: For normal visits, just prompt guests to save (no auto-save)
+    else {
       gentlyPromptSave();
     }
+    
     return () => {
       clearTimeout(dialogTimeout);
       unsubscribe();

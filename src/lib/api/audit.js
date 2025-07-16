@@ -1,3 +1,5 @@
+import { supabase } from '../supabaseClient';
+
 /**
  * API utilities for the job posting audit functionality
  * Connects to backend services deployed on Fly.io
@@ -13,9 +15,16 @@ const API_BASE_URL = 'https://ai-audit-api.fly.dev';
  */
 export async function auditJobUrl(url) {
   try {
+    const headers = { 'Content-Type': 'application/json' };
+    // Add auth token if available
+    const session = await supabase.auth.getSession();
+    if (session?.data?.session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.data.session.access_token}`;
+    }
+    
     const response = await fetch(`${API_BASE_URL}/api/audit-job-post`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ url })
     });
     if (!response.ok) {
@@ -35,9 +44,16 @@ export async function auditJobUrl(url) {
  */
 export async function auditJobText(text) {
   try {
+    const headers = { 'Content-Type': 'application/json' };
+    // Add auth token if available
+    const session = await supabase.auth.getSession();
+    if (session?.data?.session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.data.session.access_token}`;
+    }
+    
     const response = await fetch(`${API_BASE_URL}/api/audit-job-post`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ text })
     });
     if (!response.ok) {
@@ -207,9 +223,16 @@ export async function analyzeJob(inputType, inputData) {
     }
     
     // Handle text or URL inputs
+    const headers = { 'Content-Type': 'application/json' };
+    // Add auth token if available
+    const session = await supabase.auth.getSession();
+    if (session?.data?.session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.data.session.access_token}`;
+    }
+    
     const response = await fetch(`${API_BASE_URL}/api/analyze-job`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ inputType, inputData })
     });
     
@@ -232,9 +255,16 @@ export async function analyzeJob(inputType, inputData) {
  */
 export async function rewriteJob(jobId, saveToDatabase = true) {
   try {
+    const headers = { 'Content-Type': 'application/json' };
+    // Add auth token if available
+    const session = await supabase.auth.getSession();
+    if (session?.data?.session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.data.session.access_token}`;
+    }
+    
     const response = await fetch(`${API_BASE_URL}/api/rewrite-job/${jobId}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ saveToDatabase })
     });
     

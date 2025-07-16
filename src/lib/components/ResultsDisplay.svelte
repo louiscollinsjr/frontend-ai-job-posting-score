@@ -2,6 +2,8 @@
   import { onMount } from 'svelte';
   import { createEventDispatcher } from 'svelte';
   import { supabase } from '$lib/supabaseClient';
+  import ScoreVisualizer from '$lib/components/ScoreVisualizer.svelte';
+  import Button from '$lib/components/ui/button/button.svelte';
   
   // Create a dispatcher for events
   const dispatch = createEventDispatcher();
@@ -135,7 +137,11 @@
       console.log('Falling back to API endpoint for JSON-LD generation');
       
       // Try to get JSON-LD from backend
-      const response = await fetch(`https://ai-audit-api.fly.dev/api/generate-jsonld/${jobId}`);
+      const response = await fetch(`https://ai-audit-api.fly.dev/api/v1/rewrite-job/${jobId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ saveToDatabase: true })
+      });
       
       if (!response.ok) {
         throw new Error(`Failed to fetch JSON-LD: ${response.statusText}`);
@@ -160,15 +166,71 @@
   async function handleRewrite() {
     rewriteLoading = true;
     try {
-      const response = await fetch(`/api/rewrite-job/${results.id}`, {
+      // Check for a valid job ID
+      let jobId = results?.id || localStorage.getItem('last_job_id');
+      
+      // If no job ID, try to save the job first
+      if (!jobId && isLoggedIn) {
+        console.log('No job ID found, saving job first...');
+        try {
+          // Save the job directly to Supabase
+          const { data, error } = await supabase
+            .from('reports')
+            .insert([{
+              userid: (await supabase.auth.getUser()).data.user?.id,
+              job_title: results.job_title || 'Untitled Job',
+              job_body: results.job_body || results.original_text || '',
+              feedback: results.feedback || '',
+              total_score: results.total_score || 0,
+              categories: results.categories || {},
+              recommendations: results.recommendations || [],
+              red_flags: results.red_flags || [],
+              savedat: new Date().toISOString(),
+              source: results.source || 'web_app',
+              original_text: results.job_body || results.original_text || '',
+              original_report: JSON.stringify(results)
+            }])
+            .select('id')
+            .single();
+
+          if (error) throw error;
+          
+          jobId = data.id;
+          console.log('Job successfully saved with ID:', jobId);
+          localStorage.setItem('last_job_id', jobId);
+          
+          // Update the results object with the new ID
+          results.id = jobId;
+          
+        } catch (saveError) {
+          console.error('Failed to save job before rewrite:', saveError);
+          throw new Error('Unable to save job before improving. Please try again.');
+        }
+      }
+      
+      if (!jobId) {
+        throw new Error('No job ID available. Please save the job first or log in to use this feature.');
+      }
+      
+      console.log('Improving job posting with ID:', jobId);
+      
+      // Use the full fly.io URL instead of relative path
+      const response = await fetch(`https://ai-audit-api.fly.dev/api/v1/rewrite-job/${jobId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ saveToDatabase: true })
       });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`API returned ${response.status}: ${errorText}`);
+      }
+      
       const data = await response.json();
       dispatch('rewrite', data);
     } catch (error) {
       console.error('Rewrite failed:', error);
+      alert(`Failed to improve job posting: ${error.message}`);
     } finally {
       rewriteLoading = false;
     }
@@ -178,14 +240,14 @@
 <div class="results-page pb-32">
   <!-- Main content area -->
   <div class="max-w-2xl mx-auto pb-8 px-4">  
-    <h1 class="text-3xl text-center mb-2">Your Intelli<b class="text-black">Score</b> Analysis</h1>
+    <!-- <h1 class="text-3xl text-center mb-2">Your Intelli<b class="text-black">Score</b> Analysis</h1>
     <p class="text-center text-gray-600 mb-8 text-sm">Here's how your job posting performed across key metrics</p>
     
-    <!-- Overall Score Circle (100-point scale) -->
+    
     <div class="bg-white p-6 mb-24 text-center max-w-md mx-auto">
-      <!-- Larger container for score display with proper spacing -->
+      
       <div class="relative h-64 w-64 mx-auto sm:h-72 sm:w-80 md:h-80 md:w-80">
-        <!-- SVG Score Background -->
+       
         <div class="absolute inset-0 flex items-center justify-center">
           {#if processedResults?.overallScore}
             <img 
@@ -203,7 +265,7 @@
             />
           {/if}
         </div>
-        <!-- Score text positioned in center with z-index to appear above background -->
+        
         <div class="absolute inset-0 flex flex-col items-center justify-center z-10">
           <div class="bg-transparent p-4 pl-1">
             <span class="text-5xl font-bold {processedResults?.overallScore >= 96.0 ? 'text-green-600' : processedResults?.overallScore >= 75.0 ? 'text-yellow-600' : 'text-red-500'}">{processedResults?.overallScore?.toFixed(1) || '0'}</span>
@@ -213,7 +275,7 @@
       </div>
       <h3 class="text-lg font-bold mt-8 mb-2">JobPostScore</h3>
       <p class="text-sm text-gray-600">Job Post Visibility & Quality Index</p>
-    </div>
+    </div> -->
     
     {#if loading}
       <div class="flex flex-col items-center justify-center py-12">
@@ -226,38 +288,40 @@
     {:else if processedResults}
       
       {#if isLoggedIn}
-        <!-- Category Breakdown Table (Only for authenticated users) -->
-        <div class="space-y-4 mb-8">
-          <table class="w-full text-left border rounded-lg overflow-hidden">
-            <thead>
-              <tr class="bg-gray-50">
-                <th class="py-2 px-4">Category</th>
-                <th class="py-2 px-4">Score</th>
-                <th class="py-2 px-4">Max</th>
-                <th class="py-2 px-4">Suggestions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {#each categoryLabels as cat}
-                <tr class="border-b">
-                  <td class="py-2 px-4 font-medium">{cat.label}</td>
-                  <td class="py-2 px-4 {getScoreColor100(processedResults.categories?.[cat.key]?.score || 0, cat.max)}">
-                    {processedResults.categories?.[cat.key]?.score ?? '-'}
-                  </td>
-                  <td class="py-2 px-4 text-gray-500">{cat.max}</td>
-                  <td class="py-2 px-4 text-xs text-gray-600">
-                    {#if processedResults.categories?.[cat.key]?.suggestions?.length}
-                      <ul class="list-disc pl-4">
-                        {#each processedResults.categories[cat.key].suggestions as sugg}
-                          <li>{sugg}</li>
-                        {/each}
-                      </ul>
-                    {:else}-{/if}
-                  </td>
-                </tr>
-              {/each}
-            </tbody>
-          </table>
+        <!-- Score Visualizer (Modern chart display for authenticated users) -->
+        <div class="space-y-4 mb-2">
+          <ScoreVisualizer 
+            score={processedResults?.overallScore || 0} 
+            categories={processedResults?.categories || {}} 
+            {categoryLabels} 
+          />
+          
+          <!-- Suggestions Panel -->
+          <div class="mt-2 p-6 bg-white rounded-lg shadow-sm border border-gray-100">
+            <h3 class="text-xl font-bold uppercase mb-3">Improvement Suggestions</h3>
+            {#if processedResults.job_title}
+            <div class="mb-4 text-gray-400">
+              <p class="font-normal text-xs">Job Title: {processedResults.job_title}</p>
+              <!--job uuid -->
+              <p class="font-normal text-xs">JobPostScore ID: {processedResults.id}</p>
+            </div>
+            {/if}
+            {#each categoryLabels as cat}
+              {#if processedResults.categories?.[cat.key]?.suggestions?.length}
+                <div class="mb-4">
+                  <h4 class="font-medium text-sm mb-1">{cat.label}</h4>
+                  <ul class="list-disc pl-4 text-sm text-gray-700">
+                    {#each processedResults.categories[cat.key].suggestions as sugg}
+                      <li class="mb-1">{sugg}</li>
+                    {/each}
+                  </ul>
+                </div>
+              {/if}
+            {/each}
+
+            
+
+          </div>
         </div>
       {:else}
         <!-- Message for unauthenticated users -->
@@ -269,7 +333,7 @@
 
       {#if isLoggedIn}
         <!-- Red Flags (Only for authenticated users) -->
-        {#if processedResults.red_flags?.length}
+        <!-- {#if processedResults.red_flags?.length}
           <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
             <div class="font-semibold text-red-700 mb-1">Red Flags</div>
             <ul class="list-disc pl-5 text-sm text-red-700">
@@ -278,10 +342,10 @@
               {/each}
             </ul>
           </div>
-        {/if}
+        {/if} -->
 
         <!-- Recommendations (Only for authenticated users) -->
-        {#if processedResults.recommendations?.length}
+        <!-- {#if processedResults.recommendations?.length}
           <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
             <div class="font-semibold text-blue-700 mb-1">Optimization Suggestions</div>
             <ul class="list-disc pl-5 text-sm text-blue-700">
@@ -290,15 +354,15 @@
               {/each}
             </ul>
           </div>
-        {/if}
+        {/if} -->
         
         <!-- Detailed Analysis (Only for authenticated users) -->
-        <div class="border rounded-lg p-6 mb-8">
+        <!-- <div class="border rounded-lg p-6 mb-8">
           <h2 class="flex items-center gap-2 text-xl mb-6">
             Detailed Analysis & Recommendations
           </h2>
           
-          <!-- Render the feedback directly from the API response -->
+         
           <div class="space-y-4 text-gray-700 leading-relaxed text-sm">
             <p>{processedResults.feedback || ''}</p>
             
@@ -306,48 +370,41 @@
             <p class="font-medium">Job Title: {processedResults.job_title}</p>
             {/if}
           </div>
-        </div>
+        </div> -->
       {/if}
       
       <!-- Action buttons -->
-      <div class="flex flex-wrap justify-center gap-4 mt-8">
-        <button 
+      <div class="flex flex-wrap justify-center gap-4 mt-8 bg-gray-100 p-6 rounded-lg py-12">
+        <Button
+          variant="default"
+          size="sm"
           on:click={downloadReport}
-          class="px-6 py-3 bg-black text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
         >
           Download Report
-        </button>
+        </Button>
         
-        <button 
-          on:click={analyzeAnother}
-          class="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition-colors"
-        >
-          Analyze Another Posting
-        </button>
         
-        <button 
-          on:click={getImprovementTips}
-          class="px-6 py-3 bg-white font-medium rounded-lg hover:bg-gray-100 transition-colors premium-btn"
-        >
-          <span class="text-sm text-gray-500">Upgrade for improvement tips</span>
-        </button>
         
-        <button 
+       
+        
+        <Button
+          variant="default"
+          size="sm"
           id="downloadButton"
           on:click={downloadJobData}
-          class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
         >
-          Download Schema.org Data
-        </button>
+          Download JSON-LD Data
+        </Button>
         
         {#if isLoggedIn}
-          <button 
+          <Button 
+            variant="default"
+            size="sm"
             on:click={handleRewrite}
             disabled={rewriteLoading || loading}
-            class="px-6 py-3 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 transition-colors"
           >
             {rewriteLoading ? 'Improving...' : 'Improve This Posting'}
-          </button>
+          </Button>
         {/if}
       </div>
     {/if}
