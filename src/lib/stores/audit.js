@@ -93,11 +93,11 @@ const createAuditStore = () => {
       const compensationScore = getRandomScore(10);
       const pageContextScore = getRandomScore(10);
       
-      const totalScore = clarityScore + promptAlignmentScore + structuredDataScore +
+      const total_score = clarityScore + promptAlignmentScore + structuredDataScore +
         recencyScore + keywordTargetingScore + compensationScore + pageContextScore;
       
       return {
-        totalScore,
+        total_score,
         categories: {
           clarity: {
             score: clarityScore,
@@ -135,15 +135,15 @@ const createAuditStore = () => {
             suggestions: ['Improve page layout to highlight key information']
           }
         },
-        redFlags: ['compensation'],
+        red_flags: ['compensation'],
         recommendations: [
           'Include specific salary range information',
           'Add more industry-specific keywords',
           'Remove unnecessary corporate jargon'
         ],
-        jobTitle: type === 'url' ? 'Marketing Director at ACME Corp' : 'Job Posting Analysis',
-        jobBody: data.substring(0, 100) + (data.length > 100 ? '...' : ''),
-        feedback: `This job posting scored ${totalScore}/100. Several improvements can be made for better visibility.`
+        job_title: type === 'url' ? 'Marketing Director at ACME Corp' : 'Job Posting Analysis',
+        job_body: data.substring(0, 100) + (data.length > 100 ? '...' : ''),
+        feedback: `This job posting scored ${total_score}/100. Several improvements can be made for better visibility.`
       };
     },
     

@@ -1,5 +1,7 @@
 <script>
+  import { onMount } from 'svelte';
   import { createEventDispatcher } from 'svelte';
+  import { supabase } from '$lib/supabaseClient';
   
   // Create a dispatcher for events
   const dispatch = createEventDispatcher();
@@ -9,12 +11,14 @@
   export let loading = false; // Loading state
   export let isLoggedIn = false; // Authentication state
   
+  let rewriteLoading = false;
+
   // Format the API response for new 7-category, 100-point rubric
   $: processedResults = results && {
     ...results,
-    overallScore: results.totalScore || results.overallScore || 0,
+    overallScore: results.total_score || results.overallScore || 0,
     categories: results.categories || {},
-    redFlags: results.redFlags || [],
+    red_flags: results.red_flags || [],
     recommendations: results.recommendations || []
   };
   
@@ -69,27 +73,104 @@
     dispatch('tips');
   }
   
-  // Function to download job data as a text file
+  // Helper function to download JSON data as a file
+  function downloadJsonFile(jsonData, filename) {
+    const blob = new Blob([jsonData], { type: 'application/ld+json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+  
+  // Function to download job data as JSON-LD schema.org/JobPosting
   async function downloadJobData() {
+    const originalButtonText = document.getElementById('downloadButton').innerText;
+    document.getElementById('downloadButton').innerText = 'Generating...';
+    
     try {
-      const response = await fetch(`/api/analyze-job/${results.id}`);
-      const data = await response.json();
+      // First check if we have JSON-LD in the passed results
+      if (results?.json_ld) {
+        console.log('Found JSON-LD in results:', results.json_ld);
+        downloadJsonFile(JSON.stringify(results.json_ld, null, 2), `job_${results.id}_schema.jsonld`);
+        return;
+      }
       
-      // Convert data to text format
-      const textData = JSON.stringify(data, null, 2);
+      // Get job ID from results, or check store, or fallback to localStorage
+      let jobId = results?.id;
       
-      // Create a blob and trigger download
-      const blob = new Blob([textData], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `job_${results.id}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      if (!jobId) {
+        // Try to get from local storage
+        jobId = localStorage.getItem('last_job_id');
+        console.log('Using job ID from localStorage:', jobId);
+      }
+      
+      if (!jobId) {
+        throw new Error('No job ID available');
+      }
+      
+      console.log('Fetching JSON-LD for job ID:', jobId);
+      
+      // Try to get directly from Supabase first
+      try {
+        const { data, error } = await supabase
+          .from('reports')
+          .select('json_ld')
+          .eq('id', jobId)
+          .single();
+          
+        if (data?.json_ld) {
+          console.log('Retrieved JSON-LD from Supabase');
+          downloadJsonFile(JSON.stringify(data.json_ld, null, 2), `job_${jobId}_schema.jsonld`);
+          return;
+        }
+      } catch (err) {
+        console.warn('Error fetching from Supabase:', err);
+      }
+      
+      // If Supabase failed, try the API
+      console.log('Falling back to API endpoint for JSON-LD generation');
+      
+      // Try to get JSON-LD from backend
+      const response = await fetch(`https://ai-audit-api.fly.dev/api/generate-jsonld/${jobId}`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch JSON-LD: ${response.statusText}`);
+      }
+      
+      const json_ldData = await response.json();
+      
+      if (!json_ldData) {
+        throw new Error('No JSON-LD data received');
+      }
+      
+      // Trigger download
+      downloadJsonFile(JSON.stringify(json_ldData, null, 2), `job_${jobId}_schema.jsonld`);
     } catch (error) {
-      console.error('Error downloading job data:', error);
+      console.error('Error downloading JSON-LD data:', error);
+      alert(`Failed to download JSON-LD: ${error.message}`);
+    } finally {
+      document.getElementById('downloadButton').innerText = originalButtonText;
+    }
+  }
+  
+  async function handleRewrite() {
+    rewriteLoading = true;
+    try {
+      const response = await fetch(`/api/rewrite-job/${results.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ saveToDatabase: true })
+      });
+      const data = await response.json();
+      dispatch('rewrite', data);
+    } catch (error) {
+      console.error('Rewrite failed:', error);
+    } finally {
+      rewriteLoading = false;
     }
   }
 </script>
@@ -188,11 +269,11 @@
 
       {#if isLoggedIn}
         <!-- Red Flags (Only for authenticated users) -->
-        {#if processedResults.redFlags?.length}
+        {#if processedResults.red_flags?.length}
           <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
             <div class="font-semibold text-red-700 mb-1">Red Flags</div>
             <ul class="list-disc pl-5 text-sm text-red-700">
-              {#each processedResults.redFlags as flag}
+              {#each processedResults.red_flags as flag}
                 <li>{categoryLabels.find(c => c.key === flag)?.label || flag}</li>
               {/each}
             </ul>
@@ -221,8 +302,8 @@
           <div class="space-y-4 text-gray-700 leading-relaxed text-sm">
             <p>{processedResults.feedback || ''}</p>
             
-            {#if processedResults.jobTitle}
-            <p class="font-medium">Job Title: {processedResults.jobTitle}</p>
+            {#if processedResults.job_title}
+            <p class="font-medium">Job Title: {processedResults.job_title}</p>
             {/if}
           </div>
         </div>
@@ -252,11 +333,22 @@
         </button>
         
         <button 
+          id="downloadButton"
           on:click={downloadJobData}
           class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
         >
-          Download Job Data
+          Download Schema.org Data
         </button>
+        
+        {#if isLoggedIn}
+          <button 
+            on:click={handleRewrite}
+            disabled={rewriteLoading || loading}
+            class="px-6 py-3 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 transition-colors"
+          >
+            {rewriteLoading ? 'Improving...' : 'Improve This Posting'}
+          </button>
+        {/if}
       </div>
     {/if}
   </div>

@@ -19,17 +19,17 @@
     // Ensure all required fields are present
     return {
       userId: userId,
-      jobTitle: report.jobTitle || 'Untitled Job',
-      jobBody: report.jobBody || report.content || '',
+      job_title: report.job_title || 'Untitled Job',
+      job_body: report.job_body || report.content || '',
       feedback: report.feedback || '',
-      totalScore: report.totalScore || 0,
+      total_score: report.total_score || 0,
       categories: report.categories || {},
       recommendations: report.recommendations || [],
-      redFlags: report.redFlags || [],
+      red_flags: report.red_flags || [],
       savedAt: new Date().toISOString(),
       source: report.source || 'guest_conversion',
       // Store the original report JSON for future use
-      originalReport: JSON.stringify(report)
+      original_report: JSON.stringify(report)
     };
   }
 
@@ -55,10 +55,10 @@
           const dbReport = {
             // Map camelCase fields to lowercase for Supabase
             userid: formattedReport.userId,
-            jobtitle: formattedReport.jobTitle,
-            jobbody: formattedReport.jobBody,
+            jobtitle: formattedReport.job_title,
+            jobbody: formattedReport.job_body,
             feedback: formattedReport.feedback,
-            totalscore: formattedReport.totalScore,
+            totalscore: formattedReport.total_score,
             // Ensure JSON fields are properly formatted
             categories: typeof formattedReport.categories === 'string' 
               ? JSON.parse(formattedReport.categories) 
@@ -66,14 +66,14 @@
             recommendations: Array.isArray(formattedReport.recommendations) 
               ? formattedReport.recommendations 
               : [],
-            redflags: Array.isArray(formattedReport.redFlags) 
-              ? formattedReport.redFlags 
+            redflags: Array.isArray(formattedReport.red_flags) 
+              ? formattedReport.red_flags 
               : [],
             savedat: formattedReport.savedAt,
             source: formattedReport.source,
             // Store original as JSON object for the jsonb column
-            originalreport: typeof formattedReport.originalReport === 'string' 
-              ? JSON.parse(formattedReport.originalReport) 
+            originalreport: typeof formattedReport.original_report === 'string' 
+              ? JSON.parse(formattedReport.original_report) 
               : formattedReport
           };
           

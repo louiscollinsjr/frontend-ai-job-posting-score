@@ -2,7 +2,8 @@
   import ResultsDisplay from '$lib/components/ResultsDisplay.svelte';
   import Navbar from '$lib/components/Navbar.svelte';
   import SaveReportDialog from '$lib/components/SaveReportDialog.svelte';
-    import { browser } from '$app/environment';
+  import JobRewrite from '$lib/components/JobRewrite.svelte';
+  import { browser } from '$app/environment';
   import { onMount } from 'svelte';
   import { supabase } from '$lib/supabaseClient';
   import { toast } from 'svelte-sonner';
@@ -17,6 +18,8 @@
   let isLoggedIn = false;
   let showSuccessMessage = false;
   let successMessageTimeout;
+  let rewriteData = null;
+  let results = null;
 
   // Check if we just logged in from a guest session
   let fromGuestLogin = false;
@@ -39,20 +42,20 @@
 
   // Format report data to match the database schema
   function formatReportForDB(report: any, userId: string): any {
-    // Ensure all required fields are present
+    // Ensure all required fields are present and match DB schema
     return {
-      userId: userId,
-      jobTitle: report.jobTitle || 'Untitled Job',
-      jobBody: report.jobBody || report.content || '',
+      userid: userId,
+      job_title: report.job_title || 'Untitled Job',
+      job_body: report.job_body || report.content || '',
       feedback: report.feedback || '',
-      totalScore: report.totalScore || 0,
+      total_score: report.total_score || 0,
       categories: report.categories || {},
       recommendations: report.recommendations || [],
-      redFlags: report.redFlags || [],
-      savedAt: new Date().toISOString(),
+      red_flags: report.red_flags || [],
+      savedat: new Date().toISOString(),
       source: report.source || 'web_app',
-      // Store the original report JSON for future use
-      originalReport: JSON.stringify(report)
+      original_text: report.job_body || report.content || '',
+      original_report: report.job_body || report.content || ''
     };
   }
 
@@ -62,42 +65,68 @@
     
     if (isLoggedIn && userVal?.id) {
       try {
-        // Format the report to match the database schema
         const formattedReport = formatReportForDB(report, userVal.id);
-        console.log('Saving formatted report to Supabase:', formattedReport);
         
-        // Ensure JSON fields are properly formatted
-        const dbReport = {
-          ...formattedReport,
-          // Convert to proper JSON format for Supabase
-          categories: typeof formattedReport.categories === 'string' 
-            ? JSON.parse(formattedReport.categories) 
-            : formattedReport.categories,
-          recommendations: Array.isArray(formattedReport.recommendations) 
-            ? formattedReport.recommendations 
-            : [],
-          redFlags: Array.isArray(formattedReport.redFlags) 
-            ? formattedReport.redFlags 
-            : [],
-          // Store original as string in case it's already stringified
-          originalReport: typeof formattedReport.originalReport === 'string' 
-            ? formattedReport.originalReport 
-            : JSON.stringify(formattedReport)
-        };
+        // Save to database
+        const { data, error } = await supabase
+          .from('reports')
+          .insert([formattedReport])
+          .select('id, json_ld, job_title, job_body, feedback, total_score')
+          .single();
+          
+        if (error) throw error;
         
-        console.log('Final report object being sent to Supabase:', dbReport);
+        console.log('Report saved successfully with ID:', data.id);
         
-        const { data, error } = await supabase.from('reports').insert([dbReport]).select();
-        if (error) {
-          console.error('Supabase error code:', error.code);
-          console.error('Supabase error message:', error.message);
-          console.error('Supabase error details:', error.details);
-          throw error;
+        // Update the audit store safely
+        try {
+          auditStore.update(state => {
+            if (!state || !state.results) {
+              return { 
+                results: {
+                  id: data.id,
+                  json_ld: data.json_ld,
+                  job_title: data.job_title,
+                  job_body: data.job_body,
+                  feedback: data.feedback,
+                  total_score: data.total_score
+                }
+              };
+            }
+            
+            return {
+              ...state,
+              results: {
+                ...state.results,
+                id: data.id,
+                json_ld: data.json_ld,
+                job_title: data.job_title,
+                job_body: data.job_body,
+                feedback: data.feedback,
+                total_score: data.total_score
+              }
+            };
+          });
+          
+          // Also update the local results variable
+          auditResults = {
+            ...auditResults,
+            id: data.id,
+            json_ld: data.json_ld
+          };
+        } catch (storeErr) {
+          console.error('Error updating store:', storeErr);
         }
-        console.log('Report saved successfully:', data);
+        
+        // Store the ID in localStorage as fallback
+        if (data.id) {
+          localStorage.setItem('last_job_id', data.id);
+          console.log('Saved job ID to localStorage:', data.id);
+        }
+        
         return true;
       } catch (err) {
-        console.error('Error saving report for logged-in user:', err);
+        console.error('Error saving report:', err);
         return false;
       }
     } else {
@@ -186,6 +215,14 @@
     }
   }
 
+  function handleRewrite(event) {
+    rewriteData = event.detail;
+  }
+  
+  function handleBackToResults() {
+    rewriteData = null;
+  }
+
   import { page } from '$app/stores';
 
   onMount(() => {
@@ -222,10 +259,10 @@
 
   // Dummy data following new API response format
   const defaultResults = {
-    jobTitle: "Senior Frontend Developer",
-    jobBody: "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
+    job_title: "Senior Frontend Developer",
+    job_body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
     timestamp: "2025-06-24T12:00:00Z",
-    totalScore: 82,
+    total_score: 82,
     categories: {
       clarity: { score: 16, maxScore: 20, suggestions: ["Shorten sentences"] },
       promptAlignment: { score: 18, maxScore: 20, suggestions: ["Group skills more logically"] },
@@ -235,7 +272,7 @@
       compensation: { score: 8, maxScore: 10, suggestions: ["Include salary range"] },
       pageContext: { score: 8, maxScore: 10, suggestions: [] }
     },
-    redFlags: ["structuredData"],
+    red_flags: ["structuredData"],
     recommendations: [
       "Add schema.org/JobPosting JSON-LD for better visibility",
       "Include a salary range for transparency",
@@ -263,7 +300,18 @@
   {/if}
   
   <div class="pt-16"> <!-- Add padding to account for the fixed navbar -->
-    {#if auditResults}
+    {#if rewriteData}
+      <div class="back-button" on:click={handleBackToResults}>
+        ← Back to Results
+      </div>
+      <JobRewrite 
+        original_text={rewriteData.original_text} 
+        improvedText={rewriteData.improvedText}
+        recommendations={rewriteData.recommendations}
+        score={rewriteData.score}
+        jobId={rewriteData.id}
+      />
+    {:else if auditResults}
       <!-- Use actual results from audit store if available -->
       <ResultsDisplay 
         results={auditResults} 
@@ -273,6 +321,7 @@
         on:export={() => triggerSaveDialog({type: 'export'})} 
         on:accesslater={() => triggerSaveDialog({type: 'accesslater'})} 
         on:tips={() => triggerSaveDialog({type: 'tips'})} 
+        on:rewrite={handleRewrite}
       />
       <SaveReportDialog
         bind:open={showDialog}

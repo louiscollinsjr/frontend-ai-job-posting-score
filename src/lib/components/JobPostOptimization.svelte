@@ -114,7 +114,7 @@
 
 <!-- Job Input Form -->
 <form on:submit|preventDefault={() => submitJob('text', jobData)}>
-  <textarea bind:value={$jobData.jobBody} placeholder="Enter job description..."></textarea>
+  <textarea bind:value={$jobData.job_body} placeholder="Enter job description..."></textarea>
   <button type="submit">Analyze Job</button>
 </form>
 

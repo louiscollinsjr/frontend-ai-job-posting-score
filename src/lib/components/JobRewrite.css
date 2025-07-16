@@ -1,0 +1,61 @@
+.rewrite-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.version-selector {
+  grid-column: span 2;
+  margin-bottom: 1rem;
+}
+
+.version-selector select {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.original-posting, .improved-posting {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.improved-posting {
+  background-color: #f8fafc;
+}
+
+.posting-content {
+  white-space: pre-wrap;
+  margin-top: 1rem;
+  line-height: 1.6;
+}
+
+.actions {
+  margin-top: 1.5rem;
+}
+
+.actions button {
+  padding: 0.5rem 1rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.actions button:hover {
+  background: #2563eb;
+}
+
+.back-button {
+  color: #3b82f6;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.back-button:hover {
+  text-decoration: underline;
+}

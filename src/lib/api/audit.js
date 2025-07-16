@@ -260,7 +260,7 @@ export function downloadJobPosting(job, fileType = 'txt') {
     
     switch (fileType) {
       case 'jsonld':
-        content = JSON.stringify(job.jsonLd, null, 2);
+        content = JSON.stringify(job.json_ld, null, 2);
         filename = `job-posting-jsonld-${job.id}.json`;
         mimeType = 'application/ld+json';
         break;
@@ -271,7 +271,7 @@ export function downloadJobPosting(job, fileType = 'txt') {
         break;
       case 'txt':
       default:
-        content = job.improvedText || job.originalText;
+        content = job.improvedText || job.original_text;
         filename = `job-posting-${job.id}.txt`;
         mimeType = 'text/plain';
         break;

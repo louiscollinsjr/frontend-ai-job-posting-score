@@ -37,7 +37,7 @@
           // Format the guest report to match our expected structure
           const formattedReport = {
             id: 'local_' + Date.now(),
-            title: parsedReport.jobTitle || 'Job Posting',
+            title: parsedReport.job_title || 'Job Posting',
             company: parsedReport.company || 'Unknown Company',
             date: new Date().toISOString().split('T')[0],
             score: parsedReport.overallScore || calculateOverallScore(parsedReport),
