@@ -17,13 +17,10 @@
 }
 
 .original-posting, .improved-posting {
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 1.5rem;
+  padding: 0
 }
 
 .improved-posting {
-  background-color: #f8fafc;
 }
 
 .posting-content {
