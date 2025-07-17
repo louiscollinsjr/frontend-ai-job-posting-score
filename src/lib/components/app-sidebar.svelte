@@ -1,37 +1,45 @@
 <script>
   import * as Sidebar from "$lib/components/ui/sidebar/index.js";
+  import { user } from '$lib/stores/auth.js';
+  import { page } from '$app/stores';
 
   // Menu items.
   const items = [
     {
       title: "Home",
-      url: "/",     
+      url: "/",
+      disabled: false,
+      hideOnCurrentPage: true
     },
-    {
-      title: "How it works",
-      url: "/how-it-works",
-    },
-    {
-      title: "Features",
-      url: "#",
-     
-    },
+    // {
+    //   title: "How it works",
+    //   url: "/how-it-works",
+    //   disabled: false
+    // },
+    // {
+    //   title: "Features",
+    //   url: "#",
+    //   disabled: false
+    // },
     {
       title: "Pricing",
       url: "/pricing",
+      disabled: false
     },
     {
-      title: "Enterprise",
+      title: "For Enterprise",
       url: "/enterprise",
+      disabled: false
     },
     {
-      title: "My Dashboard",
+      title: "Dashboard",
       url: "/dashboard",
+      disabled: !$user
     },
     {
-      title: "Contact us",
-      url: "/contact",
-     
+      title: "News",
+      url: "/news",
+      disabled: false
     }
   ];
   
@@ -50,16 +58,24 @@
        -->
       <Sidebar.GroupContent class="pt-12 pl-6">
         <Sidebar.Menu>
-          {#each items as item (item.title)}
-            <Sidebar.MenuItem class="mb-2">
-              <Sidebar.MenuButton class="border-none">
-                {#snippet child({ props })}
-                  <a href={item.url} {...props} class="text-xs font-medium">
-                    <span>{item.title}</span>
-                  </a>
-                {/snippet}
-              </Sidebar.MenuButton>
-            </Sidebar.MenuItem>
+          {#each items as item}
+            {#if !item.hideOnCurrentPage || $page.url.pathname !== item.url}
+              <Sidebar.MenuItem class="mb-2">
+                <Sidebar.MenuButton class="border-none">
+                  {#snippet child({ props })}
+                    {#if item.disabled}
+                      <span class="text-xs font-medium cursor-not-allowed opacity-50">
+                        {item.title}
+                      </span>
+                    {:else}
+                      <a href={item.url} {...props} class="text-xs font-medium">
+                        <span>{item.title}</span>
+                      </a>
+                    {/if}
+                  {/snippet}
+                </Sidebar.MenuButton>
+              </Sidebar.MenuItem>
+            {/if}
           {/each}
         </Sidebar.Menu>
       </Sidebar.GroupContent>
@@ -92,4 +108,3 @@
     </Sidebar.Footer>
  
 </Sidebar.Root>
-

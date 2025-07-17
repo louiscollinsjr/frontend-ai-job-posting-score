@@ -56,3 +56,13 @@
 .back-button:hover {
   text-decoration: underline;
 }
+
+.dropdown-container {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  z-index: 1000;
+  overflow: visible;
+}

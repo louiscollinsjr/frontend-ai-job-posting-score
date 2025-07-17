@@ -15,7 +15,16 @@
   let selectedReports = [];
   let activeDropdown = null;
   let userEmail = '';
-  let loading = false; // Initialize the loading variable
+  let loading = false;
+  let dropdownPosition = { top: 0, left: 0 };
+  
+  onMount(() => {
+    document.addEventListener('click', handleClickOutside);
+    
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  });
   
   // Subscribe to the reports store
   const unsubscribe = reportsStore.subscribe(state => {
@@ -196,39 +205,58 @@
     }
   }
   
-  function toggleDropdown(reportId) {
+  // Define a function to toggle dropdown visibility
+  const toggleDropdown = (reportId, event) => {
+    event?.preventDefault();
+    event?.stopPropagation();
+    
+    // No need to calculate position anymore as we'll use absolute positioning
+    // relative to the button's container
+    
     if (activeDropdown === reportId) {
       activeDropdown = null;
     } else {
       activeDropdown = reportId;
     }
-  }
+  };
+  
+  // Close dropdown when clicking outside
+  const handleClickOutside = (event) => {
+    // Skip if we're clicking on a button that toggles the dropdown
+    if (event.target.closest('button') && event.target.closest('.relative')) {
+      return;
+    }
+    
+    if (activeDropdown !== null) {
+      activeDropdown = null;
+    }
+  };
   
   function newAudit() {
     goto('/');
   }
 </script>
 
-<div class="flex h-screen bg-white">
+<div class="flex min-h-screen max-w-[1400px] mx-auto ">
   <!-- Sidebar -->
   <!-- <div class="hidden md:block w-64 border-r border-gray-100">
     <AppSidebar />
   </div> -->
   
   <!-- Main Content -->
-  <div class="flex-1 flex flex-col overflow-hidden">
+  <div class="flex-1 flex flex-col">
     <!-- Top Navigation -->
    
     
     <!-- Main Dashboard Content -->
-    <main class="flex-1 overflow-y-auto p-6">
+    <main class="flex-1 p-2">
       {#if loading}
         <div class="flex justify-center items-center h-64">
           <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
         </div>
       {:else}
         <!-- Dashboard Header -->
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex justify-between items-center mb-10 ">
           <div>
             <h1 class="text-2xl font-bold text-gray-900">JobPostScore Dashboard</h1>
             <p class="text-sm text-gray-500">Welcome back 👋, {userEmail}</p>
@@ -239,11 +267,11 @@
           </Button.Root>
         </div>
         
-        <Separator.Root class="my-6" />
+        <Separator.Root class="my-12" />
         
         <!-- Reports Table -->
-        <div class="bg-white rounded-lg shadow-md border border-gray-100 w-full">
-          <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between gap-4 w-full">
+        <div class="bg-white rounded-lg shadow-none w-full pb-32">
+          <div class="p-6 pl-2 border-0 border-gray-100 flex flex-col sm:flex-row justify-between gap-4 w-full">
             <div class="">
               <h2 class="text-lg font-bold">JobPostScore Reports</h2>
               {#if reports.length > 0 && !loadingReports}
@@ -261,11 +289,11 @@
             {/if}
           </div>
           
-          <!-- Table Container with fixed dimensions to prevent layout shifts -->
-          <div class="w-full overflow-hidden"> <!-- This wrapper maintains consistent width -->
+          <!-- Table Container that displays all content without scrolling -->
+          <div class="w-full max-w-[1400px] mx-auto">
             {#if loadingReports}
               <div class="p-12 flex justify-center items-center min-h-[300px]">
-                <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
+                <div class="animate-spin rounded-full h-8 w-8"></div>
               </div>
             {:else if reportError}
               <Alert.Root class="m-6">
@@ -283,26 +311,26 @@
                 </Button.Root>
               </div>
             {:else}
-              <div>
-                <Table.Root>
-                  <Table.Header>
-                    <Table.Row>
-                      <Table.Head class="w-[40px]">
-                        <Checkbox.Root
+              <div class="border-2 border-black rounded-lg w-full">
+                <Table.Root class="w-full">
+                  <Table.Header class="text-xs">
+                    <Table.Row class="">
+                      <Table.Head class="w-[5%]">
+                        <Checkbox.Root class="ml-2"
                           checked={selectedReports.length === reports.length && reports.length > 0}
                           on:click={toggleSelectAll}
                         />
                       </Table.Head>
-                      <Table.Head class="w-[80px]">ID</Table.Head>
-                      <Table.Head>Job Title</Table.Head>
-                      <Table.Head>Company</Table.Head>
-                      <Table.Head>Date</Table.Head>
-                      <Table.Head>Score</Table.Head>
-                      <Table.Head>Status</Table.Head>
-                      <Table.Head class="text-right">Actions</Table.Head>
+                      <Table.Head class="w-[30%]">Job Title</Table.Head>
+                      <Table.Head class="w-[20%]">Company</Table.Head>
+                      <Table.Head class="w-[15%]">Date</Table.Head>
+                      <Table.Head class="w-[10%] text-center">Score</Table.Head>
+                      <Table.Head class="w-[10%]">Status</Table.Head>
+                      <Table.Head class="w-[10%] text-right">Actions</Table.Head>
                     </Table.Row>
                   </Table.Header>
-                  <Table.Body>
+
+                  <Table.Body class="text-xs">
                     {#each reports as report}
                       <Table.Row class="hover:bg-gray-50">
                         <Table.Cell class="p-4">
@@ -311,83 +339,84 @@
                             on:click={() => toggleSelectReport(report.id)}
                           />
                         </Table.Cell>
-                        <Table.Cell class="font-mono text-xs">{report.id ? report.id.substring(0, 8) : 'N/A'}</Table.Cell>
-                        <Table.Cell class="font-medium">{report.title || 'Untitled'}</Table.Cell>
-                        <Table.Cell>{report.company || 'N/A'}</Table.Cell>
-                        <Table.Cell>{report.date || 'N/A'}</Table.Cell>
-                        <Table.Cell>
-                          <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                            {report.score >= 90 ? 'bg-green-100 text-green-800' : 
-                            report.score >= 70 ? 'bg-yellow-100 text-yellow-800' : 
-                            'bg-red-100 text-red-800'}"
+                        <!-- <Table.Cell class="font-mono text-xs">{report.id ? report.id.substring(0, 8) : 'N/A'}</Table.Cell> -->
+                        <Table.Cell class="font-normal text-[10px] w-[30%]">{report.title || 'Untitled'}</Table.Cell>
+                        <Table.Cell class="text-[10px] w-[20%]">{report.company || 'N/A'}</Table.Cell>
+                        <Table.Cell class="text-[10px] w-[15%]">{report.date || 'N/A'}</Table.Cell>
+                        <Table.Cell class="text-center">
+                          <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] 
+                            {report.score >= 90 ? 'bg-black text-white' : 
+                            report.score >= 70 ? 'bg-black text-white' : 
+                            'bg-black text-white'}"
                           >
                             {report.score || 0}
                           </div>
                         </Table.Cell>
                         <Table.Cell>
-                          <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                          <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] 
                             {report.status === 'Local' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}"
                           >
                             {report.status || 'Unknown'}
                           </div>
                         </Table.Cell>
                         <Table.Cell class="text-right">
-                          <Dropdown 
-                            open={activeDropdown === report.id} 
-                            on:close={() => { activeDropdown = null; }}
-                          >
-                            <div slot="trigger">
-                              <Button.Root 
-                                variant="outline" 
-                                size="sm"
-                                class="h-8 w-8 p-0" 
-                                on:click={() => toggleDropdown(report.id)}
+                          <div class="relative">
+                            <Button.Root 
+                              variant="outline" 
+                              size="sm"
+                              class="h-8 w-8 p-0" 
+                              on:click={(e) => { e.stopPropagation(); toggleDropdown(report.id, e); }}
+                            >
+                              <span class="sr-only">Open menu</span>
+                              <svg 
+                                width="15" 
+                                height="15" 
+                                viewBox="0 0 15 15" 
+                                fill="none" 
+                                xmlns="http://www.w3.org/2000/svg" 
+                                class="h-4 w-4"
                               >
-                                <span class="sr-only">Open menu</span>
-                                <svg 
-                                  width="15" 
-                                  height="15" 
-                                  viewBox="0 0 15 15" 
-                                  fill="none" 
-                                  xmlns="http://www.w3.org/2000/svg" 
-                                  class="h-4 w-4"
+                                <path d="M3.625 7.5C3.625 8.12132 3.12132 8.625 2.5 8.625C1.87868 8.625 1.375 8.12132 1.375 7.5C1.375 6.87868 1.87868 6.375 2.5 6.375C3.12132 6.375 3.625 6.87868 3.625 7.5ZM8.625 7.5C8.625 8.12132 8.12132 8.625 7.5 8.625C6.87868 8.625 6.375 8.12132 6.375 7.5C6.375 6.87868 6.87868 6.375 7.5 6.375C8.12132 6.375 8.625 6.87868 8.625 7.5ZM13.625 7.5C13.625 8.12132 13.1213 8.625 12.5 8.625C11.8787 8.625 11.375 8.12132 11.375 7.5C11.375 6.87868 11.8787 6.375 12.5 6.375C13.1213 6.375 13.625 6.87868 13.625 7.5Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path>
+                              </svg>
+                            </Button.Root>
+                            
+                            {#if activeDropdown === report.id}
+                              <div 
+                                class="absolute bg-white rounded-md shadow-lg border border-gray-200 py-1 z-[9999]"
+                                style="min-width: 180px; top: 100%; right: 0;"
+                              >
+                                <button 
+                                  class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
+                                  on:click={() => { viewReport(report.id); activeDropdown = null; }}
                                 >
-                                  <path d="M3.625 7.5C3.625 8.12132 3.12132 8.625 2.5 8.625C1.87868 8.625 1.375 8.12132 1.375 7.5C1.375 6.87868 1.87868 6.375 2.5 6.375C3.12132 6.375 3.625 6.87868 3.625 7.5ZM8.625 7.5C8.625 8.12132 8.12132 8.625 7.5 8.625C6.87868 8.625 6.375 8.12132 6.375 7.5C6.375 6.87868 6.87868 6.375 7.5 6.375C8.12132 6.375 8.625 6.87868 8.625 7.5ZM13.625 7.5C13.625 8.12132 13.1213 8.625 12.5 8.625C11.8787 8.625 11.375 8.12132 11.375 7.5C11.375 6.87868 11.8787 6.375 12.5 6.375C13.1213 6.375 13.625 6.87868 13.625 7.5Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path>
-                                </svg>
-                              </Button.Root>
-                            </div>
-                            <div class="min-w-[160px] py-1">
-                              <button 
-                                class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
-                                on:click={() => { viewReport(report.id); activeDropdown = null; }}
-                              >
-                                <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                View
-                              </button>
-                              <button 
-                                class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
-                                on:click={() => { improveReport(report.id); activeDropdown = null; }}
-                              >
-                                <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                                Improve
-                              </button>
-                              <button 
-                                class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
-                                on:click={() => { viewJsonLd(report.id); activeDropdown = null; }}
-                              >
-                                <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                                JSON-LD
-                              </button>
-                              <div class="my-1 h-px bg-gray-100"></div>
-                              <button 
-                                class="w-full text-left px-2 py-1.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 rounded-sm flex items-center"
-                                on:click={() => { deleteReport(report.id); activeDropdown = null; }}
-                              >
-                                <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                                Delete
-                              </button>
-                            </div>
-                          </Dropdown>
+                                  <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                  View
+                                </button>
+                                <button 
+                                  class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
+                                  on:click={() => { improveReport(report.id); activeDropdown = null; }}
+                                >
+                                  <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                  Improve
+                                </button>
+                                <button 
+                                  class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
+                                  on:click={() => { viewJsonLd(report.id); activeDropdown = null; }}
+                                >
+                                  <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                  JSON-LD
+                                </button>
+                                <div class="my-1 h-px bg-gray-100"></div>
+                                <button 
+                                  class="w-full text-left px-2 py-1.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 rounded-sm flex items-center"
+                                  on:click={() => { deleteReport(report.id); activeDropdown = null; }}
+                                >
+                                  <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                  Delete
+                                </button>
+                              </div>
+                            {/if}
+                          </div>
                         </Table.Cell>
                       </Table.Row>
                     {/each}
