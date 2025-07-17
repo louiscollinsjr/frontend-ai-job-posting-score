@@ -5,10 +5,13 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 const config = {
 	// Enable vitePreprocess with explicit PostCSS configuration
 	preprocess: vitePreprocess({
-		postcss: true, // Ensure PostCSS processing is explicitly enabled
+		postcss: true // Ensure PostCSS processing is explicitly enabled
 	}),
 	kit: {
-		adapter: adapter()
+		adapter: adapter(),
+		paths: {
+			relative: false // Required for PostHog session replay to work correctly
+		}
 	}
 };
 
