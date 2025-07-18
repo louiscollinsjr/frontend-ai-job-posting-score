@@ -1,6 +1,11 @@
 <script>
   import { onMount } from 'svelte';
-  import { goto } from '$app/navigation';
+  import { goto } from '$app/navigation';  
+  import { get } from 'svelte/store';
+  import { onMount } from 'svelte';
+  import { auth, reportsStore } from '$lib/stores';
+  import { supabase } from '$lib/supabaseClient';
+  import { toast } from 'svelte-sonner';
   import * as Button from '$lib/components/ui/button';
   import * as Alert from '$lib/components/ui/alert';
   import * as Table from '$lib/components/ui/table';
@@ -164,12 +169,96 @@
     goto(`/results?report=${reportId}`);
   }
   
-  function improveReport(reportId) {
-    goto(`/rewrite?report=${reportId}`);
+  async function improveReport(reportId) {
+    try {
+      if (!reportId) {
+        throw new Error('No report ID provided');
+      }
+      
+      // Show loading indicator
+      const loadingToast = toast.loading('Improving job posting...');
+      
+      // Make API request to improve the job posting
+      const response = await fetch(`https://ai-audit-api.fly.dev/api/v1/rewrite-job/${reportId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
+        }
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`API returned ${response.status}: ${errorText}`);
+      }
+      
+      // Hide loading toast and show success toast
+      toast.dismiss(loadingToast);
+      toast.success('Job posting improved successfully!');
+      
+      // Navigate to the improved version
+      const data = await response.json();
+      goto(`/results?report=${reportId}&improved=true`);
+    } catch (error) {
+      console.error('Rewrite failed:', error);
+      toast.error(`Failed to improve job posting: ${error.message}`);
+    }
   }
   
-  function viewJsonLd(reportId) {
-    goto(`/json-ld?report=${reportId}`);
+  async function viewJsonLd(reportId) {
+    try {
+      if (!reportId) {
+        throw new Error('No report ID provided');
+      }
+      
+      // Show loading indicator
+      const loadingToast = toast.loading('Generating JSON-LD...');
+      
+      // Helper function to download JSON data as a file
+      function downloadJsonFile(jsonData, filename) {
+        const blob = new Blob([jsonData], { type: 'application/ld+json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+      
+      // Try to get JSON-LD from backend
+      const response = await fetch(`https://ai-audit-api.fly.dev/api/v1/rewrite-job/${reportId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
+        },
+        body: JSON.stringify({ generate_json_ld_only: true })
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`API returned ${response.status}: ${errorText}`);
+      }
+      
+      const data = await response.json();
+      const json_ldData = data.json_ld;
+      
+      if (!json_ldData) {
+        throw new Error('No JSON-LD data received');
+      }
+      
+      // Hide loading toast and show success toast
+      toast.dismiss(loadingToast);
+      toast.success('JSON-LD generated successfully!');
+      
+      // Trigger download
+      downloadJsonFile(JSON.stringify(json_ldData, null, 2), `job_${reportId}_schema.jsonld`);
+    } catch (error) {
+      console.error('JSON-LD generation failed:', error);
+      toast.error(`Failed to generate JSON-LD: ${error.message}`);
+    }
   }
   
   function deleteReport(reportId) {
@@ -232,48 +321,155 @@
     }
   };
   
+  // Directive to position dropdowns correctly
+  function positionDropdown(node, reportId) {
+    function position() {
+      if (activeDropdown === reportId) {
+        const buttonElement = document.querySelector(`[data-dropdown-trigger="${reportId}"]`);
+        if (buttonElement) {
+          const rect = buttonElement.getBoundingClientRect();
+          // Position to the right and slightly below the button
+          node.style.minWidth = '180px';
+          node.style.top = `${rect.bottom + window.scrollY + 5}px`;
+          node.style.right = `${window.innerWidth - rect.right - window.scrollX}px`;
+        }
+      }
+    }
+    
+    // Position immediately and whenever scroll or resize happens
+    position();
+    
+    // Add event listeners for scroll and resize
+    window.addEventListener('scroll', position, { passive: true });
+    window.addEventListener('resize', position, { passive: true });
+    
+    // Also use ResizeObserver for element size changes
+    const resizeObserver = new ResizeObserver(position);
+    resizeObserver.observe(document.body);
+    
+    return {
+      update(newReportId) {
+        // Update if the report ID changes
+        if (newReportId !== reportId) {
+          reportId = newReportId;
+          position();
+        }
+      },
+      destroy() {
+        // Clean up all event listeners and observers
+        window.removeEventListener('scroll', position);
+        window.removeEventListener('resize', position);
+        resizeObserver.disconnect();
+      }
+    };
+  }
+  
   function newAudit() {
     goto('/');
   }
 </script>
 
-<div class="flex min-h-screen max-w-[1400px] mx-auto ">
+<div class="flex min-h-screen w-full">
   <!-- Sidebar -->
   <!-- <div class="hidden md:block w-64 border-r border-gray-100">
     <AppSidebar />
   </div> -->
   
   <!-- Main Content -->
-  <div class="flex-1 flex flex-col">
-    <!-- Top Navigation -->
-   
+  <div class="flex-1 p-8 w-full">
+    <!-- Dashboard Header - Always visible with skeleton loaders when needed -->
+    <div class="flex justify-between items-center mb-10 w-full">
+      <div>
+        {#if loading}
+          <div class="h-8 w-64 bg-gray-200 animate-pulse rounded mb-2"></div>
+          <div class="h-4 w-48 bg-gray-100 animate-pulse rounded"></div>
+        {:else}
+          <h1 class="text-2xl font-bold text-gray-900">JobPostScore Dashboard</h1>
+          <p class="text-sm text-gray-500">Welcome back 👋, {userEmail}</p>
+        {/if}
+      </div>
+      <Button.Root 
+        on:click={newAudit} 
+        variant="default"
+        size="sm" 
+        class="bg-black hover:bg-gray-800 text-white"
+        disabled={loading}
+      >
+        New Audit
+      </Button.Root>
+    </div>
     
-    <!-- Main Dashboard Content -->
-    <main class="flex-1 p-2">
-      {#if loading}
-        <div class="flex justify-center items-center h-64">
-          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-        </div>
-      {:else}
-        <!-- Dashboard Header -->
-        <div class="flex justify-between items-center mb-10 ">
+    <Separator.Root class="my-12" />
+    
+    {#if loading}
+      <!-- Reports Table with Skeleton Loaders -->
+      <div class="bg-white rounded-lg shadow-none w-full pb-32">
+        <div class="p-6 pl-2 border-0 border-gray-100 flex justify-between items-center w-full">
           <div>
-            <h1 class="text-2xl font-bold text-gray-900">JobPostScore Dashboard</h1>
-            <p class="text-sm text-gray-500">Welcome back 👋, {userEmail}</p>
+            <div class="h-6 w-48 bg-gray-200 animate-pulse rounded mb-2"></div>
+            <div class="h-3 w-24 bg-gray-100 animate-pulse rounded"></div>
           </div>
-          <Button.Root on:click={newAudit} variant="default"
-          size="sm" class="bg-black hover:bg-gray-800 text-white">
-            New Audit
-          </Button.Root>
         </div>
         
-        <Separator.Root class="my-12" />
-        
+        <div class="w-full overflow-hidden">
+          <div class="relative w-full overflow-auto">
+            <table class="w-full caption-bottom text-sm">
+              <!-- Skeleton Header Row -->
+              <thead class="[&_tr]:border-b">
+                <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                  {#each Array(6) as _, i}
+                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                      {#if i === 0}
+                        <div class="h-4 w-4 bg-gray-200 animate-pulse rounded"></div>
+                      {:else if i === 1}
+                        <div class="h-4 w-32 bg-gray-200 animate-pulse rounded"></div>
+                      {:else if i === 2}
+                        <div class="h-4 w-24 bg-gray-200 animate-pulse rounded"></div>
+                      {:else if i === 3}
+                        <div class="h-4 w-16 bg-gray-200 animate-pulse rounded"></div>
+                      {:else if i === 4}
+                        <div class="h-4 w-16 bg-gray-200 animate-pulse rounded"></div>
+                      {:else}
+                        <div class="h-4 w-24 bg-gray-200 animate-pulse rounded"></div>
+                      {/if}
+                    </th>
+                  {/each}
+                </tr>
+              </thead>
+              <!-- Skeleton Body Rows -->
+              <tbody class="[&_tr:last-child]:border-0">
+                {#each Array(3) as _}
+                  <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                    {#each Array(6) as _, i}
+                      <td class="p-4 align-middle">
+                        {#if i === 0}
+                          <div class="h-4 w-4 bg-gray-100 animate-pulse rounded"></div>
+                        {:else if i === 1}
+                          <div class="h-4 w-32 bg-gray-100 animate-pulse rounded"></div>
+                        {:else if i === 2}
+                          <div class="h-4 w-24 bg-gray-100 animate-pulse rounded"></div>
+                        {:else if i === 3}
+                          <div class="h-4 w-16 bg-gray-100 animate-pulse rounded"></div>
+                        {:else if i === 4}
+                          <div class="h-4 w-16 bg-gray-100 animate-pulse rounded"></div>
+                        {:else}
+                          <div class="h-4 w-12 bg-gray-100 animate-pulse rounded"></div>
+                        {/if}
+                      </td>
+                    {/each}
+                  </tr>
+                {/each}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    {:else}  
         <!-- Reports Table -->
         <div class="bg-white rounded-lg shadow-none w-full pb-32">
           <div class="p-6 pl-2 border-0 border-gray-100 flex flex-col sm:flex-row justify-between gap-4 w-full">
             <div class="">
-              <h2 class="text-lg font-bold">JobPostScore Reports</h2>
+              <h2 class="text-base font-medium text-gray-700">Your Reports</h2>
               {#if reports.length > 0 && !loadingReports}
                 <span class="text-xs text-gray-500">{reports.length} {reports.length === 1 ? 'report' : 'reports'}</span>
               {/if}
@@ -290,7 +486,7 @@
           </div>
           
           <!-- Table Container that displays all content without scrolling -->
-          <div class="w-full max-w-[1400px] mx-auto">
+          <div class="w-full">
             {#if loadingReports}
               <div class="p-12 flex justify-center items-center min-h-[300px]">
                 <div class="animate-spin rounded-full h-8 w-8"></div>
@@ -311,7 +507,7 @@
                 </Button.Root>
               </div>
             {:else}
-              <div class="border-2 border-black rounded-lg w-full">
+              <div class="border-2 border-black rounded-lg w-full overflow-visible">
                 <Table.Root class="w-full">
                   <Table.Header class="text-xs">
                     <Table.Row class="">
@@ -365,6 +561,7 @@
                               variant="outline" 
                               size="sm"
                               class="h-8 w-8 p-0" 
+                              data-dropdown-trigger={report.id}
                               on:click={(e) => { e.stopPropagation(); toggleDropdown(report.id, e); }}
                             >
                               <span class="sr-only">Open menu</span>
@@ -382,8 +579,8 @@
                             
                             {#if activeDropdown === report.id}
                               <div 
-                                class="absolute bg-white rounded-md shadow-lg border border-gray-200 py-1 z-[9999]"
-                                style="min-width: 180px; top: 100%; right: 0;"
+                                class="fixed bg-white rounded-md shadow-lg border border-gray-200 py-1 z-[9999]"
+                                use:positionDropdown={report.id}
                               >
                                 <button 
                                   class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
@@ -427,6 +624,5 @@
           </div>  
         </div>
       {/if}  
-    </main>
   </div>
 </div>

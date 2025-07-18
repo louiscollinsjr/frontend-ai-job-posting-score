@@ -2,9 +2,28 @@
   import * as Sidebar from "$lib/components/ui/sidebar/index.js";
   import { user } from '$lib/stores/auth.js';
   import { page } from '$app/stores';
+  import { onMount } from 'svelte';
+  
+  // Track authentication state - default to false
+  let isLoggedIn = false;
+  
+  // Initialize the user store on component mount
+  onMount(() => {
+    user.init();
+    
+    // Check immediately if user is already logged in
+    isLoggedIn = !!$user;
+    console.log('Initial auth state:', isLoggedIn, $user);
+  });
+  
+  // Reactive statement to update isLoggedIn when user changes
+  $: {
+    isLoggedIn = !!$user;
+    console.log('Auth state updated:', isLoggedIn, $user);
+  }
 
-  // Menu items.
-  const items = [
+  // Make the items array reactive to authentication state
+  $: items = [
     {
       title: "Home",
       url: "/",
@@ -34,7 +53,7 @@
     {
       title: "Dashboard",
       url: "/dashboard",
-      disabled: !$user
+      disabled: !isLoggedIn  // This will now update reactively when isLoggedIn changes
     },
     {
       title: "News",

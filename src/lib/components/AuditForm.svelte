@@ -228,10 +228,10 @@ import * as Alert from "$lib/components/ui/alert/index.js";
         </div>
         {/if}
         
-        <div class="form-submit mt-12">
+        <div class="form-submit mt-24">
           <button
             type="submit"
-            class="w-full max-w-sm mx-auto py-3 px-6 text-white bg-black hover:bg-black rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black flex justify-center items-center text-sm"
+            class="mx-auto cta-button text-2xl text-center flex items-center gap-2 bg-black hover:bg-gray-700 transition-colors duration-300 text-white font-medium py-2 px-8 rounded-full"
             disabled={isLoading}
           >
             {#if isLoading}
@@ -242,6 +242,9 @@ import * as Alert from "$lib/components/ui/alert/index.js";
               Analyzing...
             {:else}
            Get Your Free JobPostScore
+           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" class="ml-1">
+            <path fill="currentColor" d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z"></path>
+          </svg>
             {/if}
           </button>
         </div>
@@ -256,3 +259,15 @@ import * as Alert from "$lib/components/ui/alert/index.js";
     </form>
   </div>
 </section>
+
+<style>
+  .cta-button {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+  }
+  
+  .cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+</style>

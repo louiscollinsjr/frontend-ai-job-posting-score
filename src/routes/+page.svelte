@@ -100,45 +100,46 @@
   <meta name="keywords" content="job posting, job description, HR tools, recruitment, diversity, inclusion, hiring" />
 </svelte:head>
 
-<!-- Hero Section with Audit Form -->
-<section class="mb-8 bg-gray p-2 rounded-3xl  pt-24 border-gray-200 border-none h-[75vh]">
-  <div class="container">
-    <div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-center mx-auto">
-      <div class=" px-4 lg:px-16 pb-20 rounded-3xl min-h-[580px] mx-auto">
-       
 
-<h1 class="text-4xl sm:text-6xl font-normal w-[100%] pb-12 leading-tight tracking-tight mx-auto text-center font-inter">
- <!-- <span class="word-cycle" style="min-width: 140px;">
-    <span class="chroma-text text-right" data-text="Audit">Audit</span>
-    <span class="chroma-text text-right" data-text="Score">Score</span>
-    <span class="chroma-text text-right" data-text="Boost">Boost</span>
-  </span> your job postings70% more visibility. -->
-  What's your <b>JobPostScore</b>?
-</h1>
-        <p class="text-base sm:text-lg text-gray-500 text-center mb-12 max-w-2xl mx-auto font-normal">
-          Your <b class="text-black">JobPostScore<sup class="hidden text-xs">™</sup></b> is the key to connecting with the 70% of qualified candidates you're currently missing.
-        </p>
-        <!-- <ChatAuditForm on:audit={handleAudit} /> -->
-         <AuditForm on:audit={handleAudit} />
+<div class="pb-64">
+    <!-- Hero Section with Audit Form -->
+    <section class="mb-8 bg-gray p-2 rounded-3xl  pt-2 border-gray-200 border-none h-[80vh]">
+      <div class="container">
+        <div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-center mx-auto">
+          <div class=" px-4 lg:px-16 pb-20 rounded-3xl min-h-[680px] mx-auto pt-24">
+        
+            <h1 class="text-4xl sm:text-6xl font-normal w-[100%] pb-12 leading-tight tracking-tight mx-auto text-center font-inter">
+            <!-- <span class="word-cycle" style="min-width: 140px;">
+                <span class="chroma-text text-right" data-text="Audit">Audit</span>
+                <span class="chroma-text text-right" data-text="Score">Score</span>
+                <span class="chroma-text text-right" data-text="Boost">Boost</span>
+              </span> your job postings70% more visibility. -->
+              What's your <b>JobPostScore</b>?
+            </h1>
+            <p class="text-base sm:text-lg text-gray-500 text-center mb-12 max-w-2xl mx-auto font-normal">
+              Your <b class="text-black">JobPostScore<sup class="hidden text-xs">™</sup></b> is the key to connecting with the 70% of qualified candidates you're currently missing.
+            </p>
+            <!-- <ChatAuditForm on:audit={handleAudit} /> -->
+            <AuditForm on:audit={handleAudit} />
+          </div>
+        </div>
       </div>
-      
-     
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- Job Post Optimization Section -->
-<JobPostOptimization />
+    <!-- Job Post Optimization Section -->
+<!-- <JobPostOptimization /> -->
 
 <!-- Call to Action Section -->
+ <div class="pb-24">
 <CallToAction 
   header='“This feels like the future of talent acquisition.”' 
   ctaText=""
   ctaButtonText="It is."
 />
+</div>
 
-<EnterpriseTalentTeams />
-<ScrollTellingHowItWorks />
+<!-- <EnterpriseTalentTeams />
+<ScrollTellingHowItWorks /> -->
 
 
 <!-- What We Do Section -->
@@ -183,6 +184,8 @@ JobPostScore shows you exactly how your job posts compare to market standards, r
   on:close={handleCloseResults} 
   on:export={handleExport} 
 /> -->
+
+</div>
 
 <style lang="scss">
   .chroma-text {

@@ -10,6 +10,7 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import AppSidebar from '$lib/components/app-sidebar.svelte';
 	import Navbar from '$lib/components/Navbar.svelte';
+	import CookieBanner from '$lib/components/CookieBanner.svelte';
 
 	import { onMount } from 'svelte';
 	import { user } from '$lib/stores/auth.js';
@@ -49,6 +50,9 @@
 		<main class="bg-white w-full mx-auto flex-grow overflow-auto">
 			{@render children?.()}
 		</main>
+		
+		<!-- Cookie consent banner -->
+		<CookieBanner />
 	</div>
 {:else}
 	<Sidebar.Provider>
@@ -63,11 +67,14 @@
 				<!-- Sidebar navigation -->
 				<AppSidebar />
 
-				<main class="max-w-[1600px] mt-8 px-4">
+				<main class="w-full mt-8 px-4">
 					<!-- Main content -->
 					{@render children?.()}
 				</main>
 			</div>
 		</div>
+		
+		<!-- Cookie consent banner -->
+		<CookieBanner />
 	</Sidebar.Provider>
 {/if}
