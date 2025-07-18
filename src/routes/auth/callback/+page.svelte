@@ -129,9 +129,24 @@
               goto('/results?from=guest-login');
             }
           }
-          // If no guest report, redirect to dashboard
+          // If no guest report, redirect to intended destination
           if (!redirected) {
-            goto('/dashboard');
+            // 1. Check for ?redirect= param in URL
+            let redirectTo = null;
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('redirect')) {
+              redirectTo = urlParams.get('redirect');
+            } else {
+              // 2. Fallback: check localStorage for intended destination
+              redirectTo = localStorage.getItem('intended_destination');
+            }
+            // 3. Fallback: dashboard
+            if (!redirectTo || redirectTo === '/auth/callback') {
+              redirectTo = '/dashboard';
+            }
+            // Clean up localStorage
+            localStorage.removeItem('intended_destination');
+            goto(redirectTo);
           }
         }
       } catch (err) {

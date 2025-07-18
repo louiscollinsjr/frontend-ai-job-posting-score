@@ -2,8 +2,7 @@
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';  
   import { get } from 'svelte/store';
-  import { onMount } from 'svelte';
-  import { auth, reportsStore } from '$lib/stores';
+  import { user } from '$lib/stores/auth';
   import { supabase } from '$lib/supabaseClient';
   import { toast } from 'svelte-sonner';
   import * as Button from '$lib/components/ui/button';
@@ -22,7 +21,8 @@
   let userEmail = '';
   let loading = false;
   let dropdownPosition = { top: 0, left: 0 };
-  
+  let reportsWithRewrites = [];
+
   onMount(() => {
     document.addEventListener('click', handleClickOutside);
     
@@ -45,6 +45,26 @@
       if (sessionStr) {
         const session = JSON.parse(sessionStr);
         userEmail = session.user?.email || 'User';
+      }
+      
+      // Fetch all report IDs with rewrites
+      try {
+        const token = JSON.parse(localStorage.getItem('sb-zincimrcpvxtugvhimny-auth-token'))?.access_token;
+        if (token) {
+          const resp = await fetch('https://ai-audit-api.fly.dev/api/v1/job/with-rewrites', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (resp.ok) {
+            reportsWithRewrites = await resp.json();
+            console.log('reportsWithRewrites:', reportsWithRewrites);
+          } else {
+            reportsWithRewrites = [];
+            console.log('Failed to fetch reportsWithRewrites, resp not ok');
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch reportsWithRewrites:', err);
+        reportsWithRewrites = [];
       }
       
       // Try to load from cache first
@@ -76,7 +96,7 @@
         throw new Error('Authentication token not found');
       }
       
-      const response = await fetch('https://ai-audit-api.fly.dev/api/v1/reports', {
+      const response = await fetch('https://ai-audit-api.fly.dev/api/v1/', {
         headers: {
           'Authorization': `Bearer ${token}`,
         }
@@ -203,6 +223,17 @@
       console.error('Rewrite failed:', error);
       toast.error(`Failed to improve job posting: ${error.message}`);
     }
+  }
+  
+  // Function to view rewrite history of a report
+  function viewRewriteHistory(reportId) {
+    if (!reportId) {
+      toast.error('No report ID provided');
+      return;
+    }
+    
+    // Navigate to a dedicated route for viewing rewrite history
+    goto(`/rewrite?report=${reportId}&view_only=true`);
   }
   
   async function viewJsonLd(reportId) {
@@ -596,6 +627,15 @@
                                   <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                   Improve
                                 </button>
+                                {#if reportsWithRewrites && reportsWithRewrites.includes(report.id)}
+  <button 
+    class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
+    on:click={() => { viewRewriteHistory(report.id); activeDropdown = null; }}
+  >
+    <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    Previous Rewrites
+  </button>
+{/if}
                                 <button 
                                   class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
                                   on:click={() => { viewJsonLd(report.id); activeDropdown = null; }}

@@ -15,6 +15,8 @@
 	import { onMount } from 'svelte';
 	import { user } from '$lib/stores/auth.js';
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
+	import { supabase } from '$lib/supabaseClient';
 
 	// PostHog client-side navigation tracking
 	import posthog from 'posthog-js';
@@ -39,8 +41,17 @@
 	);
 
 	onMount(() => {
-		// Initialize the user auth store
-		user.init();
+		return supabase.auth.onAuthStateChange((event, session) => {
+			if (event === 'SIGNED_IN') {
+				// Only redirect if we have a guest report
+				const guestReport = localStorage.getItem('guest_audit_report');
+				if (guestReport) {
+					goto('/results');
+				} else {
+					goto('/dashboard');
+				}
+			}
+		});
 	});
 </script>
 

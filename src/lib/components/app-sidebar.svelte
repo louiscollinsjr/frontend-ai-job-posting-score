@@ -45,11 +45,11 @@
       url: "/pricing",
       disabled: false
     },
-    {
-      title: "For Enterprise",
-      url: "/enterprise",
-      disabled: false
-    },
+    // {
+    //   title: "For Enterprise",
+    //   url: "/enterprise",
+    //   disabled: false
+    // },
     {
       title: "Dashboard",
       url: "/dashboard",

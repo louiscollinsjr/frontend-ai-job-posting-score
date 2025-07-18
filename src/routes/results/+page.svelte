@@ -324,9 +324,33 @@
         try {
           auditResults = JSON.parse(guestReport);
           // Save report to database now that user is logged in
-          saveReport(auditResults);
-          // Optionally, show a toast or success message
-          showSavedMessage();
+          const userId = userVal?.id;
+          async function saveGuestReport() {
+            const { data: reportData, error: reportError } = await supabase
+              .from('reports')
+              .insert([{
+                userid: userId,
+                jobtitle: guestReport.job_title,
+                job_body: guestReport.job_body,
+                feedback: guestReport.feedback,
+                totalscore: guestReport.total_score,
+                categories: guestReport.categories,
+                recommendations: guestReport.recommendations,
+                redflags: guestReport.red_flags,
+                savedat: new Date().toISOString(),
+                source: guestReport.source,
+                originalreport: guestReport.original_report
+              }])
+              .select('*');
+            if (reportError) {
+              console.error('Error saving guest report:', reportError);
+            } else {
+              console.log('Guest report saved successfully:', reportData);
+              // Optionally, show a toast or success message
+              showSavedMessage();
+            }
+          }
+          saveGuestReport();
         } catch (e) {
           console.error('[localStorage] Failed to parse guest report after login:', e);
         }

@@ -22,7 +22,30 @@
   async function fetchVersions() {
     loadingVersions = true;
     try {
-      const response = await fetch(`/api/job/${jobId}/versions`);
+      if (!jobId) {
+        console.warn('No job ID provided for version fetch');
+        loadingVersions = false;
+        return;
+      }
+
+      const sessionStr = localStorage.getItem('sb-zincimrcpvxtugvhimny-auth-token');
+      if (!sessionStr) {
+        console.error('Authentication required');
+        loadingVersions = false;
+        return;
+      }
+      const token = JSON.parse(sessionStr)?.access_token;
+
+      const response = await fetch(`https://ai-audit-api.fly.dev/api/v1/job/${jobId}/versions`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
       versions = await response.json();
       if (versions.length > 0) selectedVersion = versions[0];
     } catch (error) {
