@@ -3,7 +3,7 @@
   import { marked } from 'marked';
   import './JobRewrite.css';
   import Button from '$lib/components/ui/button/button.svelte';
-  import * as Select from '$lib/components/ui/select/index.js';
+  import * as Select from '$lib/components/ui/select';
   
   export let original_text = '';
   export let improvedText = '';
@@ -105,13 +105,13 @@
             </Select.Trigger>
             <Select.Content>
               <Select.ScrollUpButton />
-              <Select.Viewport>
+              <div class="select-viewport-container p-2">
                 {#each versions as version (version.id)}
                   <Select.Item value={version}>
                     Version #{version.version_number} - {new Date(version.created_at).toLocaleDateString()}
                   </Select.Item>
                 {/each}
-              </Select.Viewport>
+              </div>
               <Select.ScrollDownButton />
             </Select.Content>
           </Select.Root>
