@@ -142,7 +142,7 @@ import * as Alert from "$lib/components/ui/alert/index.js";
             <!-- Buttons -->
             <button 
               type="button"
-              class="flex-1 relative z-10 flex items-center justify-center h-12 text-sm font-normal transition-colors duration-300 {inputType === 'url' ? 'text-white' : 'text-gray-800'}"
+              class="flex-1 relative z-10 flex items-center justify-center h-12 text-[13px] sm:text-sm font-bold sm:font-normal transition-colors duration-300 {inputType === 'url' ? 'text-white' : 'text-gray-800'}"
               on:click={() => setInputType('url')}
               aria-pressed={inputType === 'url'}
             >
@@ -154,7 +154,7 @@ import * as Alert from "$lib/components/ui/alert/index.js";
             
             <button 
               type="button"
-              class="flex-1 relative z-10 flex items-center justify-center h-12 text-sm font-normal transition-colors duration-300 {inputType === 'text' ? 'text-white' : 'text-gray-800'}"
+              class="flex-1 relative z-10 flex items-center justify-center h-12 text-xs sm:text-sm font-normal transition-colors duration-300 {inputType === 'text' ? 'text-white' : 'text-gray-800'}"
               on:click={() => setInputType('text')}
               aria-pressed={inputType === 'text'}
             >
@@ -231,7 +231,7 @@ import * as Alert from "$lib/components/ui/alert/index.js";
         <div class="form-submit mt-24">
           <button
             type="submit"
-            class="mx-auto cta-button text-2xl text-center flex items-center gap-2 bg-black hover:bg-gray-700 transition-colors duration-300 text-white font-medium py-2 px-8 rounded-full"
+            class="mx-auto cta-button text-lg sm:text-2xl text-center flex items-center gap-2 bg-black hover:bg-gray-700 transition-colors duration-300 text-white font-medium py-2 px-8 rounded-full"
             disabled={isLoading}
           >
             {#if isLoading}

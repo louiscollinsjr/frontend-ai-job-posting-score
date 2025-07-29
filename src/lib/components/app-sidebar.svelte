@@ -120,8 +120,8 @@
       
       <!-- Legal links -->
       <div class="text-[10px] text-gray-400">
-        <a href="javascript:void(0)" class="block mb-2 hover:underline">Terms and conditions</a>
-        <a href="javascript:void(0)" class="block mb-10 hover:underline">Privacy Policy</a>
+        <a href="/legal?tab=terms" class="block mb-2 hover:underline">Terms and conditions</a>
+        <a href="/legal?tab=privacy" class="block mb-10 hover:underline">Privacy Policy</a>
       </div>
     </div>
     </Sidebar.Footer>
