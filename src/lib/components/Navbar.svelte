@@ -30,7 +30,7 @@
   }
 </script>
 
-<nav class="w-full bg-white fixed top-0 left-0 z-50">
+<nav class="w-full fixed top-0 left-0 z-50 backdrop-blur-md bg-white/50 border-none border-gray-200/50">
   <div class="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between h-16">
       <!-- Logo and sidebar trigger -->

@@ -100,24 +100,30 @@
   <meta name="keywords" content="job posting, job description, HR tools, recruitment, diversity, inclusion, hiring" />
 </svelte:head>
 
-
 <div class="pb-64">
+<div class="bg-[url('/bkg.png')] bg-no-repeat bg-cover bg-center rounded-3xl bg-opacity-100">
+  
     <!-- Hero Section with Audit Form -->
-    <section class="mb-8 bg-gray p-2 rounded-3xl  pt-2 border-gray-200 border-none h-[80vh]">
-      <div class="container">
-        <div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-center mx-auto">
-          <div class=" px-4 lg:px-16 pb-20 rounded-3xl min-h-[680px] mx-auto pt-24">
+    <section class="mb-4 sm:mb-8 bg-[radial-gradient(ellipse_at_center,white_0%,transparent_70%)] p-2 rounded-3xl border-gray-200 border-none min-h-[400px] sm:h-[85vh] relative">
+      <div class="container sm:pt-16">
         
-            <h1 class="text-4xl sm:text-6xl font-normal w-[100%] pb-12 leading-tight tracking-tight mx-auto text-center font-inter">
+        <div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-center mx-auto">
+          <div class="px-4 lg:px-16 pb-8 sm:pb-20 rounded-3xl min-h-[350px] sm:min-h-[680px] mx-auto pt-8 sm:pt-24">
+        
+            <h1 class="text-4xl sm:text-7xl font-normal w-[100%] pb-12 leading-tight tracking-tight mx-auto text-center font-aeonik ">
+            <!-- Three animated words that cycle every 3 seconds -->
             <!-- <span class="word-cycle" style="min-width: 140px;">
                 <span class="chroma-text text-right" data-text="Audit">Audit</span>
                 <span class="chroma-text text-right" data-text="Score">Score</span>
                 <span class="chroma-text text-right" data-text="Boost">Boost</span>
               </span> your job postings70% more visibility. -->
-              What's your <b>JobPostScore</b>?
+              
+              What is your <span style="min-width: 140px;">
+                <span class="single-sweep" data-text="JobPostScore">JobPostScore?</span>
+              </span>
             </h1>
-            <p class="text-base sm:text-lg text-gray-500 text-center mb-12 max-w-2xl mx-auto font-normal">
-              Your <b class="text-black">JobPostScore<sup class="hidden text-xs">™</sup></b> is the key to connecting with the 70% of qualified candidates you're currently missing.
+            <p class="text-base sm:text-xl text-gray-400 text-center mb-12 max-w-3xl mx-auto font-normal font-aeonik">
+              Your JobPostScore is the key to connecting with the 70% of qualified candidates you're currently missing. <span class="hidden sm:inline">Audit your post, improve your visibility, and start attracting the right candidates—before your competitors do.</span>
             </p>
             <!-- <ChatAuditForm on:audit={handleAudit} /> -->
             <AuditForm on:audit={handleAudit} />
@@ -125,7 +131,7 @@
         </div>
       </div>
     </section>
-
+</div>
     <!-- Job Post Optimization Section -->
 <!-- <JobPostOptimization /> -->
 
@@ -185,78 +191,107 @@ JobPostScore shows you exactly how your job posts compare to market standards, r
   on:export={handleExport} 
 /> -->
 
-</div>
 
+</div>
 <style lang="scss">
+  /* Gradient text effect with color transition */
   .chroma-text {
-    background-image:linear-gradient(90deg,#000000 0,#000000 33.33%,#c679c4 40%,#fa3d1d 45%,#ffb005 50%,#e1e1fe 55%,#0358f7 60%,transparent 66.67%,transparent); 
+    background-image: linear-gradient(90deg, #000000 0, #000000 33.33%, #c679c4 40%, #fa3d1d 45%, #ffd700 50%, #ffffff 55%, #4da6ff 65%, transparent 66.67%, transparent); 
     background-size: 300% 100%;
     background-position: 100% 0;
     will-change: background-position;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    /* Deep fallback if gradient text isn't supported */
+    /* Fallback for browsers that don't support gradient text */
     @supports not (background-clip: text) {
       color: #000;
     }
   }
 
+  /* Container for cycling words */
   .word-cycle {
-    display: inline-grid;
+    display: inline-grid; /* Stack words in same position */
     text-align: right;
-
     position: relative;
   }
 
+  /* Base styles for each word in the cycle */
   .word-cycle > span {
-    grid-area: 1 / 1;
+    grid-area: 1 / 1; /* All words occupy same grid cell */
     opacity: 0;
     animation-name: word-cycle, chroma-sweep;
-    animation-duration: 9s;
+    animation-duration: 9s; /* Full cycle duration */
     animation-iteration-count: infinite;
   }
 
-  .word-cycle > span:nth-child(1) {
-    animation-delay: 0s;
-  }
-  
-  .word-cycle > span:nth-child(2) {
-    animation-delay: 3s;
-  }
-  
-  .word-cycle > span:nth-child(3) {
-    animation-delay: 6s;
+  /* Staggered animation delays for each word */
+  .word-cycle > span:nth-child(1) { animation-delay: 0s; }
+  .word-cycle > span:nth-child(2) { animation-delay: 3s; }
+  .word-cycle > span:nth-child(3) { animation-delay: 6s; }
+
+  /* Controls word visibility during 9s cycle */
+  @keyframes word-cycle {
+    0%, 33.32%, 100% { opacity: 0; } /* Hidden most of the time */
+    3%, 30% { opacity: 1; } /* Visible for ~27% of cycle */
   }
 
-  @keyframes word-cycle {
-    /* Handles opacity for one word over a 9s cycle */
-    0%, 33.32%, 100% {
-      opacity: 0;
+  /* Controls gradient sweep effect during visibility */
+  @keyframes chroma-sweep {
+    0%, 3% {
+      background-position: 100% 0; /* Start with gradient off to right */
+      filter: blur(1px); /* Slightly blurred at start */
     }
-    3%, 30% {
-      opacity: 1;
+    /* SLOWED DOWN: Sweep now happens between 3% and 12% */
+    16% {
+      background-position: 0% 0; /* Gradient fully sweeps in */
+      filter: blur(0); /* Sharpens */
+    }
+    30% {
+      background-position: 0% 0; /* Maintains gradient position */
+      filter: blur(0);
+    }
+    30.01%, 100% {
+      background-position: 100% 0; /* Resets gradient position */
+      filter: blur(1px); /* Blurs again before disappearing */
+    }
+  }
+  
+  .single-sweep {
+    background-image: linear-gradient(90deg, 
+      #000000 0%, 
+      #000000 35%, 
+      #c679c4 40%, 
+      #fa3d1d 42%, 
+      #ffb005 44%, 
+      #e1e1fe 46%, 
+      #0358f7 48%, 
+      #000000 50%, 
+      #000000 100%);
+    background-size: 800% 100%;
+    background-position: 100% 0;
+    will-change: background-position;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: initial;
+    color: #000;
+    filter: blur(0);
+    animation: chroma-sweep 3s ease-in-out 4s 1 forwards;
+    @supports not (background-clip: text) {
+      color: #000;
     }
   }
 
   @keyframes chroma-sweep {
-    /* Handles the gradient sweep for one word over a 9s cycle */
-    0%, 3% {
+    0% {
+      -webkit-text-fill-color: initial;
       background-position: 100% 0;
-      filter: blur(1px);
-    }
-    /* SLOWED DOWN: Sweep now happens between 3% and 12% */
-    16% {
-      background-position: 0% 0;
       filter: blur(0);
     }
-    30% {
-      background-position: 0% 0;
+    100% {
+      -webkit-text-fill-color: transparent;
+      background-position: 0 0;
       filter: blur(0);
-    }
-    30.01%, 100% {
-      background-position: 100% 0;
-      filter: blur(1px);
     }
   }
 </style>

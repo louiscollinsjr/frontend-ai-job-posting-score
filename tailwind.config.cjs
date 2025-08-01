@@ -10,6 +10,33 @@ module.exports = {
   content: ['./src/**/*.{html,js,svelte,ts}'],
   theme: {
     extend: {
+      animation: {
+        blob1: 'blob1 5s ease-in-out infinite',
+        blob2: 'blob2 6s ease-in-out infinite',
+        blob3: 'blob3 7s ease-in-out infinite',
+      },
+      keyframes: {
+        blob1: {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '50%': { transform: 'translate(80px, -60px) scale(1.3)' },
+        },
+        blob2: {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '50%': { transform: 'translate(-60px, 80px) scale(1.25)' },
+        },
+        blob3: {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '50%': { transform: 'translate(60px, 40px) scale(1.28)' },
+        },
+      },
+      fontFamily: {
+        sans: ['Aeonik', ...fontFamily.sans],
+        aeonik: ['Aeonik', 'sans-serif'],
+        playfair: ['"Playfair Display Variable"', 'serif'],
+        roboto: ['"Roboto Variable"', 'sans-serif'],
+        quicksand: ['"Quicksand Variable"', 'sans-serif'],
+        geist: ['"Geist Variable"', 'sans-serif']
+      },
       maxWidth: {
         '7xl': '80rem',   // 1280px (default)
         '8xl': '90rem',   // 1440px
@@ -30,13 +57,6 @@ module.exports = {
         },
       },
       colors: {       
-      },
-      fontFamily: {
-        sans: ['Roboto Variable', 'system-ui', 'sans-serif'],
-        playfair: ['"Playfair Display Variable"', 'serif'],
-        roboto: ['"Roboto Variable"', 'sans-serif'],
-        quicksand: ['"Quicksand Variable"', 'sans-serif'],
-        geist: ['"Geist Variable"', 'sans-serif'],
       },
       spacing: {
         '128': '32rem',

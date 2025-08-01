@@ -127,13 +127,13 @@ import * as Alert from "$lib/components/ui/alert/index.js";
   }
 </script>
 
-<section class="audit-form-container rounded-full p-2 mb-32 md:p-8 mx-auto ">
+<section class="audit-form-container rounded-xl p-2 mb-0 md:p-8 mx-auto font-aeonik">
   <div class="mb-8">
     <!-- Modern Switch-Style Toggle -->
     <div class="mb-6">
       <div class="w-full mx-auto relative mb-12">
         <!-- Custom Switch Toggle -->
-        <div class="flex items-center justify-center p-2 bg-gray-100 rounded-full shadow-inner h-16">
+        <div class="flex items-center justify-center p-2 bg-gray-200 rounded-full shadow-inners h-16 max-w-md mx-auto">
           <div class="relative w-full flex justify-between items-center">
             <!-- Track and Thumb -->
             <div class="absolute h-12 w-1/2 rounded-full bg-black transition-transform duration-300 ease-in-out" 
@@ -142,26 +142,26 @@ import * as Alert from "$lib/components/ui/alert/index.js";
             <!-- Buttons -->
             <button 
               type="button"
-              class="flex-1 relative z-10 flex items-center justify-center h-12 text-[13px] sm:text-sm font-bold sm:font-normal transition-colors duration-300 {inputType === 'url' ? 'text-white' : 'text-gray-800'}"
+              class="flex-1 relative z-10 flex items-center justify-center h-12 text-base font-aeonik font-normal transition-colors duration-300 {inputType === 'url' ? 'text-white' : 'text-gray-800'}"
               on:click={() => setInputType('url')}
               aria-pressed={inputType === 'url'}
             >
-              <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <!-- <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-              </svg>
+              </svg> -->
               Paste URL
             </button>
             
             <button 
               type="button"
-              class="flex-1 relative z-10 flex items-center justify-center h-12 text-xs sm:text-sm font-normal transition-colors duration-300 {inputType === 'text' ? 'text-white' : 'text-gray-800'}"
+              class="flex-1 relative z-10 flex sm:flex-col items-center justify-center h-12 text-base sm:w-[100%] sm:text-base font-aeonik font-normal transition-colors duration-300 {inputType === 'text' ? 'text-white' : 'text-gray-800'}"
               on:click={() => setInputType('text')}
               aria-pressed={inputType === 'text'}
             >
-              <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <!-- <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              Paste or Upload File
+              </svg> -->
+            Upload File
             </button>
           </div>
         </div>
@@ -231,7 +231,7 @@ import * as Alert from "$lib/components/ui/alert/index.js";
         <div class="form-submit mt-24">
           <button
             type="submit"
-            class="mx-auto cta-button text-lg sm:text-2xl text-center flex items-center gap-2 bg-black hover:bg-gray-700 transition-colors duration-300 text-white font-medium py-2 px-8 rounded-full"
+            class="mx-auto cta-button text-lg sm:text-2xl text-center flex items-center gap-2 bg-black hover:bg-gray-700 transition-colors duration-300 text-white py-2 px-8 rounded-full font-aeonik tracking-wider font-normal"
             disabled={isLoading}
           >
             {#if isLoading}
@@ -241,10 +241,11 @@ import * as Alert from "$lib/components/ui/alert/index.js";
               </svg>
               Analyzing...
             {:else}
-           Get Your Free JobPostScore
-           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" class="ml-1">
+           <span class="block sm:hidden">Get JobPostScore</span>
+           <span class="hidden sm:block">Get Your Free JobPostScore</span>
+           <!-- <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" class=" hidden sm:block ml-1">
             <path fill="currentColor" d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z"></path>
-          </svg>
+          </svg> -->
             {/if}
           </button>
         </div>
