@@ -154,7 +154,7 @@ import * as Alert from "$lib/components/ui/alert/index.js";
             
             <button 
               type="button"
-              class="flex-1 relative z-10 flex sm:flex-col items-center justify-center h-12 text-base sm:w-[100%] sm:text-base font-aeonik font-normal transition-colors duration-300 {inputType === 'text' ? 'text-white' : 'text-gray-800'}"
+              class="flex-1 relative z-10 flex sm:flex-col items-center justify-center h-12 text-base sm:w-[100%] font-aeonik font-normal transition-colors duration-300 {inputType === 'text' ? 'text-white' : 'text-gray-800'}"
               on:click={() => setInputType('text')}
               aria-pressed={inputType === 'text'}
             >
@@ -193,11 +193,11 @@ import * as Alert from "$lib/components/ui/alert/index.js";
         </div>
         {:else}        
         <div class="form-control">
-          <label for="job-description" class="block text-sm font-medium text-gray-700 mb-1">Job Description</label>
+          <label for="job-description" class="block text-xl font-medium text-gray-700 mb-1">Job Description</label>
           <textarea
             id="job-description"
             placeholder="Paste your job description here..."
-            class="w-full px-4 py-3 border bg-white border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all min-h-[200px] {!isDescriptionValid ? 'border-red-500' : ''}"
+            class="w-full px-4 py-3 border bg-[#f8f8f8] border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all min-h-[200px] {!isDescriptionValid ? 'border-red-500' : ''}"
             bind:value={jobDescription}
             disabled={isLoading}
           ></textarea>
@@ -228,10 +228,11 @@ import * as Alert from "$lib/components/ui/alert/index.js";
         </div>
         {/if}
         
-        <div class="form-submit mt-24">
+        <div class="form-submit mt-24 relative max-w-md mx-auto">
+          <div class="absolute -inset-0.5 w-[calc(100%+8px)] mx-auto bg-gradient-to-r from-[#ff00f7]/70 via-[#fa3d1d] to-[#0358f7]/70 rounded-full blur opacity-50 animate-pulse"></div>
           <button
             type="submit"
-            class="mx-auto cta-button text-lg sm:text-2xl text-center flex items-center gap-2 bg-black hover:bg-gray-700 transition-colors duration-300 text-white py-2 px-8 rounded-full font-aeonik tracking-wider font-normal"
+            class="relative mx-auto cta-button w-[calc(100%-4px)] text-lg sm:text-2xl text-center flex items-center justify-center gap-2 bg-black hover:bg-gray-700 transition-colors duration-300 text-white py-2 px-8 rounded-full font-aeonik tracking-wider font-normal"
             disabled={isLoading}
           >
             {#if isLoading}

@@ -67,18 +67,18 @@
 	</div>
 {:else}
 	<Sidebar.Provider open={false}>
-		<div class="flex flex-col min-h-screen w-full max-w-[1600px] mx-auto">
+		<div class="flex flex-col min-h-screen w-full bg-[#f8f8f8] overflow-x-hidden">
 			<Navbar hideLoginButton={isLoginRoute || isResultsRoute} justLogo={false} />
 
 			<!-- Empty space to offset the fixed navbar -->
-			<div class="h-16"></div>
+			<!-- <div class="h-16"></div> -->
 
 			<!-- Main content area with sidebar -->
 			<div class="flex flex-grow w-full">
 				<!-- Sidebar navigation -->
 				<AppSidebar />
 
-				<main class="w-full mt-8 px-4">
+				<main class="w-full">
 					<!-- Main content -->
 					{@render children?.()}
 				</main>

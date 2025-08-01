@@ -31,28 +31,28 @@
   ];
 </script>
 
-<section class="relative py-16 bg-white border-2 border-gray-100 rounded-2xl mb-8 overflow-hidden font-aeonik">
+<section class="relative py-16 bg-white border-2 border-white border-b-[#f8f8f8] rounded-2xl mb-8 overflow-hidden font-aeonik" style="background-image: url('/bkg2.png'); background-repeat: no-repeat; background-position: right center; background-size: cover;">
   <div class="w-full relative">
     <!-- Two-column layout with full bleed image -->  
     <div class="flex flex-col lg:flex-row">
       <!-- Left content column with padding -->  
       <div class="w-[90%] sm:w-[80%] lg:w-[80%] xl:w-[55%] px-8 md:px-8 pb-12 font-aeonik">
         <div class="text-left mb-12 font-aeonik">
-          <h2 class="text-3xl md:text-4xl lg:text-5xl font-normal pb-8 leading-tight tracking-tight text-gray-900">We help teams craft job posts
+          <h2 class="text-3xl md:text-4xl lg:text-5xl font-normal pt-16 pb-8 leading-tight tracking-tight text-gray-900">We help teams craft job posts
             that introduce new levels of readability, relevance, and reach</h2>
-          <p class="text-gray-500 text-left text-base w-[80%] font-normal leading-relaxed tracking-normal">Your <b>JobPostScore</b> is an intelligent job post analyzer that reads your content, scores your optimization, and shows you exactly what to fix — instantly.
+          <p class="text-gray-500 text-left text-base w-[80%] font-normal leading-relaxed tracking-normal font-aeonik">Your <b>JobPostScore</b> is an intelligent job post analyzer that reads your content, scores your optimization, and shows you exactly what to fix — instantly.
           </p>
         </div>
       </div>
       
       <!-- Right column with image flush to edge -->
-      <div class="w-full hidden xl:block  xl:w-[55%] relative h-[350px] lg:h-[500px] xl:h-[600px] overflow-hidden mt-8 lg:mt-0">
+      <div class="w-full hidden xl:block xl:w-[55%] relative">
         <FadeImage 
-          src="/job-post-score-02.png"
+          src="/jobPostScoreBrowser.png"
           alt="JobPostScore Group" 
-          fadeDirection="bottom"
-          fadeIntensity="medium"
-          className="absolute top-0 right-0 h-full w-auto min-w-full max-w-none object-cover lg:object-right rounded-lg lg:rounded-l-lg lg:rounded-r-none"
+          fadeDirection="right"
+          fadeIntensity="none"
+          className="absolute top-0 right-0 object-contain"
         />
       </div>
     </div>
