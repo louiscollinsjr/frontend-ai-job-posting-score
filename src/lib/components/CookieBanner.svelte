@@ -3,66 +3,49 @@
   import { browser } from '$app/environment';
   import * as Button from '$lib/components/ui/button/index.js';
   
-  let showBanner = false;
-  
+  let showBanner = true;
+
   // Check if user has already made a choice
   onMount(() => {
     if (browser) {
       const analyticsConsent = localStorage.getItem('analytics-consent');
       if (analyticsConsent === null) {
-        // No choice made yet, show banner
         showBanner = true;
-      } else if (analyticsConsent === 'accepted') {
-        // User accepted analytics, enable PostHog
-        enablePostHog();
+      } else if (analyticsConsent === 'accepted' && window.posthog) {
+        window.posthog.opt_in_capturing();
       }
     }
   });
 
-  // Enable PostHog tracking
-  function enablePostHog() {
-    if (browser && window.posthog) {
-      window.posthog.opt_in_capturing();
-    }
-  }
-
-  // Disable PostHog tracking
-  function disablePostHog() {
-    if (browser && window.posthog) {
-      window.posthog.opt_out_capturing();
-    }
-  }
-  
   // Accept analytics tracking
   function acceptAnalytics() {
     localStorage.setItem('analytics-consent', 'accepted');
-    enablePostHog();
+    if (window.posthog) window.posthog.opt_in_capturing();
     showBanner = false;
   }
   
   // Decline analytics tracking
   function declineAnalytics() {
     localStorage.setItem('analytics-consent', 'declined');
-    disablePostHog();
+    if (window.posthog) window.posthog.opt_out_capturing();
     showBanner = false;
   }
 </script>
 
 {#if showBanner}
-  <div class="fixed bottom-0 left-0 right-0 bg-white shadow-lg z-[100] border-t border-gray-200 p-4">
+  <div class="fixed bottom-4 left-0 right-0 bg-white shadow-lg z-[100] border-t border-gray-200 p-2 max-w-5xl mx-auto rounded-full">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="text-sm text-gray-700 pr-4">
-        <p>
-          We use analytics to understand how our service is used and improve our features.
-          No personal data is collected. Learn more in our <a href="/privacy" class="underline text-black font-medium">Privacy Policy</a>.
+      <div class="text-sm text-gray-600/70 px-4 w-[50%]">
+        <p class="flex items-center">
+          <img src="/Cookie.svg" alt="Cookie" class="w-6 h-6 inline" /> <span class="inline ml-4 text-xs font-aeonik tracking-wide">We use cookies to enhance your experience, analyze our traffic, and provide personalized content. Cookie preferences. Learn more in our <a href="/privacy" class="underline text-black font-medium">Privacy Policy</a>.</span>
         </p>
       </div>
-      <div class="flex flex-wrap gap-2 justify-end">
-        <Button.Root on:click={declineAnalytics} variant="outline" size="sm">
-          Decline
+      <div class="flex flex-wrap gap-2 justify-center w-[30%]">
+        <Button.Root on:click={() => declineAnalytics()} variant="outline" size="sm" class="text-gray-600 rounded-full bg-gray-50 text-xs font-aeonik tracking-wide">
+          Reject non-essential
         </Button.Root>
-        <Button.Root on:click={acceptAnalytics} variant="default" size="sm" class="bg-black text-white hover:bg-gray-800">
-          Accept
+        <Button.Root on:click={() => acceptAnalytics()} variant="default" size="sm" class="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-full text-xs font-aeonik tracking-wide">
+          Accept all cookies
         </Button.Root>
       </div>
     </div>

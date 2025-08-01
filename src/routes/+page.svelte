@@ -163,7 +163,7 @@
 				scrollTo="#hero"
 			/>
 		</div>
-		<div class="container max-w-7xl mx-auto">
+		<div class="container max-w-8xl mx-auto">
 		<WhatWeDo />
 		</div>
 
