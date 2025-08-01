@@ -8,7 +8,9 @@ const config = {
 		postcss: true // Ensure PostCSS processing is explicitly enabled
 	}),
 	kit: {
-		adapter: adapter(),
+		adapter: adapter({
+			runtime: 'nodejs20.x'
+		}),
 		paths: {
 			relative: false // Required for PostHog session replay to work correctly
 		}

@@ -4,7 +4,7 @@
   import FadeImage from '$lib/components/ui/fade-image/fade-image.svelte';
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
-  import { analyzeJob, rewriteJob } from '../services/jobService'; // Hypothetical service functions
+  import { analyzeJob, rewriteJob } from '$lib/services/jobService'; // Hypothetical service functions
 
   // Feature items with descriptions and image positions
   const features = [

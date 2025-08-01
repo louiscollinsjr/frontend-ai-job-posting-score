@@ -7,7 +7,6 @@
   
   export let original_text = '';
   export let improvedText = '';
-  export let recommendations = [];
   export let score = 0; // This could be the DB total_score or a calculated score
   export let jobId = '';
   

@@ -89,45 +89,16 @@
 </svelte:head>
 
 <style>
-  /* Gradient text styling based on project memory */
-  .gradient-text {
-    background: linear-gradient(90deg, #4F46E5 0%, #EC4899 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-  }
-  
   /* Responsive grid for pricing cards */
  
-  
-  /* Customization section styles */
-  .customization-section {
-    margin-top: 3rem;
-  }
   
   /* Add-ons section styles */
   .addons-section {
     margin-top: 2rem;
   }
   
-  /* Summary card styles */
-  .summary-card {
-    margin-top: 3rem;
-    background-color: #f9fafb;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-  }
-  
   /* Responsive adjustments */
   @media (max-width: 768px) {
-    .pricing-grid {
-      grid-template-columns: 1fr;
-    }
-    
-    .customization-inputs {
-      flex-direction: column;
-    }
   }
 </style>
 

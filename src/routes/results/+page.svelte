@@ -414,9 +414,13 @@
   
   <div class="pt-16"> <!-- Add padding to account for the fixed navbar -->
     {#if rewriteData}
-      <div class="back-button" on:click={handleBackToResults}>
+      <button 
+        class="back-button" 
+        on:click={handleBackToResults}
+        on:keydown={(e) => e.key === 'Enter' && handleBackToResults()}
+      >
         ← Back to Results
-      </div>
+      </button>
       <JobRewrite 
         original_text={rewriteData.original_text} 
         improvedText={rewriteData.improvedText}
