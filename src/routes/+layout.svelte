@@ -66,7 +66,7 @@
 		<CookieBanner />
 	</div>
 {:else}
-	<Sidebar.Provider defaultOpen={false}>
+	<Sidebar.Provider open={false}>
 		<div class="flex flex-col min-h-screen w-full max-w-[1600px] mx-auto">
 			<Navbar hideLoginButton={isLoginRoute || isResultsRoute} justLogo={false} />
 

@@ -101,10 +101,10 @@
 </svelte:head>
 
 <div class="pb-64">
-<div class="bg-[url('/bkg.png')] bg-no-repeat bg-cover bg-center rounded-3xl bg-opacity-100">
+<div class="bg-[url('/bkg.png')] bg-no-repeat bg-cover bg-center rounded-xl bg-opacity-100">
   
     <!-- Hero Section with Audit Form -->
-    <section class="mb-4 sm:mb-8 bg-[radial-gradient(ellipse_at_center,white_0%,transparent_70%)] p-2 rounded-3xl border-gray-200 border-none min-h-[400px] sm:h-[85vh] relative">
+    <section class="mb-4 sm:mb-8 bg-[radial-gradient(ellipse_at_center,white_0%,transparent_70%)] p-2 rounded-xl border-gray-200 border-none min-h-[400px] sm:h-[85vh] relative">
       <div class="container sm:pt-16">
         
         <div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-center mx-auto">
