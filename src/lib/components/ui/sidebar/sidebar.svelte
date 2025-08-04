@@ -21,7 +21,7 @@
 
 	const sidebar = useSidebar();
 </script>
-
+<!-- pushin main content to the right when sidebar is open-->
 {#if collapsible === "none"}
 	<div
 		class={cn(
