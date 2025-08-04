@@ -41,8 +41,8 @@
   // Prefer PUBLIC_SITE_URL (set differently per environment), fallback to current origin
   let redirectUrl = '';
   onMount(() => {
-    const baseUrl = PUBLIC_SITE_URL || (browser ? window.location.origin : '');
-    // We don't have a dedicated /auth/callback route; supabase-js will handle the hash on any page
+    // Vite exposes envs via import.meta.env
+    const baseUrl = import.meta.env.PUBLIC_SITE_URL || (browser ? window.location.origin : '');
     redirectUrl = baseUrl || '';
   });
 
