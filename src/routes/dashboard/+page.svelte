@@ -373,14 +373,14 @@
 
 <svelte:window on:click={handleClickOutside} />
 
-<div class="flex min-h-screen w-full">
+<div class="flex min-h-screen w-full relative z-10">
   <!-- Sidebar -->
   <!-- <div class="hidden md:block w-64 border-r border-gray-100">
     <AppSidebar />
   </div> -->
   
   <!-- Main Content -->
-  <div class="flex-1 p-8 w-full pt-32 max-w-7xl">
+  <div class="flex-1 p-8 w-full pt-32 max-w-7xl relative z-10">
     <!-- Dashboard Header - Always visible with skeleton loaders when needed -->
     <div class="flex justify-between items-center mb-10 w-full">
       <div>

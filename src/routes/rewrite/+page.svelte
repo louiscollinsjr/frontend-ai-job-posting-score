@@ -125,7 +125,7 @@
   }
 </script>
 
-<div class="container mx-auto px-4 py-8 pt-32">
+<div class="container mx-auto px-4 py-8 pt-32 ">
   <div class="flex justify-between items-center mb-6">
     <h1 class="text-2xl font-bold">
       {#if viewOnly}

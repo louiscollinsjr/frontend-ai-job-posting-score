@@ -2,8 +2,6 @@
   import Navbar from '$lib/components/Navbar.svelte';
 </script>
 
-<Navbar />
-
-<main class="min-h-screen bg-white">
+<main class="min-h-screen bg-[#f8f8f8]">
   <slot />
 </main>

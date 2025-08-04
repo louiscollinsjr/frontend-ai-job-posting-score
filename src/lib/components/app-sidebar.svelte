@@ -69,8 +69,8 @@
   ];
 </script>
 
-<Sidebar.Root class="bg-[#f8f8f8] border-none pt-16">
-  <Sidebar.Content class="bg-[#f8f8f8] border-none flex flex-col h-full overflow-y-auto">
+<Sidebar.Root class="border-none pt-16">
+  <Sidebar.Content class="border-none flex flex-col h-full overflow-y-auto">
     <!-- Navigation Menu -->
     <Sidebar.Group>
       <!-- <Sidebar.GroupLabel class="text-2xl text-black pt-10">Reach<b class="text-black">Score</b> <sup class=" hidden text-xs align-super">™</sup></Sidebar.GroupLabel>
@@ -100,7 +100,7 @@
       </Sidebar.GroupContent>
     </Sidebar.Group>
   </Sidebar.Content>
-    <Sidebar.Footer class="bg-[#f8f8f8]">
+    <Sidebar.Footer class="bg-transparent">
       
     <!-- Footer with site purpose and links -->
     <div class="mt-20 px-6 pb-20">

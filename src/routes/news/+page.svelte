@@ -11,7 +11,7 @@
   ];
 </script>
 
-<div class="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+<div class="max-w-3xl mx-auto py-12 px-4 pt-32 sm:px-6 lg:px-8 bg-[#f8f8f8]">
   <h1 class="text-3xl font-bold mb-24">News & Updates</h1>
   
   {#each posts as post}

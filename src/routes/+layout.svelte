@@ -60,19 +60,21 @@
 	</div>
 {:else}
 	<Sidebar.Provider open={false}>
-		<div class="flex flex-col min-h-screen w-full bg-[#f8f8f8]">
-			<Navbar hideLoginButton={isLoginRoute || isResultsRoute} justLogo={false} />
-
-			<!-- Empty space to offset the fixed navbar -->
-			<!-- <div class="h-16"></div> -->
+		<div class="flex flex-col min-h-screen w-full bg-[#f8f8f8] overflow-x-hidden">
+			<div
+			class="absolute inset-0 bg-[url('/bkg2.png')] bg-no-repeat bg-contain sm:bg-cover bg-center blur-lg opacity-90"
+		></div>
+		<div
+			class="absolute inset-0 bg-gradient-to-b from-[#f8f8f8]/0 via-[#f8f8f8]/0 to-[#f8f8f8]/0 2xl:from-[#f8f8f8]/0 2xl:via-[#f8f8f8]/0 2xl:to-[#f8f8f8]/0"
+		></div>
+			<Navbar hideLoginButton={isLoginRoute} justLogo={false} />
 
 			<!-- Main content area with sidebar -->
-			<div class="flex flex-grow w-full">
+			<div class="flex flex-grow w-full transition-all duration-200 ease-in-out">
 				<!-- Sidebar navigation -->
-				<AppSidebar />
+				<AppSidebar class="flex-shrink-0" />
 
-				<main class="w-full">
-					<!-- Main content -->
+				<main class="flex-1 min-w-0 transition-all duration-200 ease-in-out mx-auto max-w-[1600px] w-full px-4">
 					{@render children?.()}
 				</main>
 			</div>

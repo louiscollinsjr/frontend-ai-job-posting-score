@@ -102,7 +102,7 @@
   }
 </style>
 
-<div class="container mx-auto px-4 py-20 pt-8 max-w-7xl">
+<div class="container mx-auto px-4 py-20 pt-8 max-w-7xl pt-32">
   <!-- Page Header -->
   <div class="text-center mb-40">
     <h1 class="text-4xl md:text-5xl font-bold mb-4">Build Your Perfect Plan</h1>
@@ -111,9 +111,9 @@
       or choose a plan that fits your needs.
     </p>
     <div class="mt-8 flex justify-center">
-      <div class="bg-muted p-1 rounded-lg flex items-center gap-1">
-        <Button variant={billingCycle === 'monthly' ? 'white' : 'ghost'} on:click={() => billingCycle = 'monthly'}>Monthly</Button>
-        <Button variant={billingCycle === 'annual' ? 'white' : 'ghost'} on:click={() => billingCycle = 'annual'}>Annually (Save 20%)</Button>
+      <div class="bg-gray-200 p-1 rounded-full flex items-center gap-1">
+        <Button class="rounded-full" variant={billingCycle === 'monthly' ? 'default' : 'ghost'} on:click={() => billingCycle = 'monthly'}>Monthly</Button>
+        <Button class="rounded-full" variant={billingCycle === 'annual' ? 'default' : 'ghost'} on:click={() => billingCycle = 'annual'}>Annually (Save 20%)</Button>
       </div>
     </div>
   </div>

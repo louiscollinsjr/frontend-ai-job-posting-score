@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   
-  let showBanner = true;
+  let showBanner = false;
 
   // Check if user has already made a choice
   onMount(() => {
@@ -10,8 +10,11 @@
       const analyticsConsent = localStorage.getItem('analytics-consent');
       if (analyticsConsent === null) {
         showBanner = true;
-      } else if (analyticsConsent === 'accepted' && window.posthog) {
-        window.posthog.opt_in_capturing();
+      } else {
+        showBanner = false;
+        if (analyticsConsent === 'accepted' && window.posthog) {
+          window.posthog.opt_in_capturing();
+        }
       }
     }
   });

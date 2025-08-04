@@ -34,7 +34,7 @@
   $: offset = circumference - (score / 100) * circumference;
 </script>
 
-<div class="score-visualizer p-6 pt-0 pb-8 bg-white rounded-lg shadow-none">
+<div class="score-visualizer p-6 pt-32 pb-8 bg-[#f8f8f8] rounded-lg shadow-none">
   <!-- Visibility Score Circle -->
   <div class="mb-6">
     <h1 class="text-3xl text-center mb-2">Your <b class="text-black">JobPostScore</b> Analysis</h1>
