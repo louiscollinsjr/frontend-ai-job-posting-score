@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { supabase } from '$lib/stores/auth.js';
   import { browser } from '$app/environment';
+  import { PUBLIC_SITE_URL } from '$env/static/public';
   import { createEventDispatcher } from 'svelte';
 
   // Dispatch events for parent components
@@ -36,14 +37,13 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  // Get the current site URL for the redirect URL
+  // Compute redirect URL for magic link
+  // Prefer PUBLIC_SITE_URL (set differently per environment), fallback to current origin
   let redirectUrl = '';
   onMount(() => {
-    if (browser) {
-      // Create the redirect URL to the auth callback page
-      const baseUrl = window.location.origin;
-      redirectUrl = `${baseUrl}/auth/callback`;
-    }
+    const baseUrl = PUBLIC_SITE_URL || (browser ? window.location.origin : '');
+    // We don't have a dedicated /auth/callback route; supabase-js will handle the hash on any page
+    redirectUrl = baseUrl || '';
   });
 
   async function handleLogin() {
