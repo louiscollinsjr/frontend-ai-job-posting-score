@@ -42,15 +42,8 @@
 
 	onMount(() => {
 		return supabase.auth.onAuthStateChange((event, session) => {
-			if (event === 'SIGNED_IN') {
-				// Only redirect if we have a guest report
-				const guestReport = localStorage.getItem('guest_audit_report');
-				if (guestReport) {
-					goto('/results');
-				} else {
-					goto('/dashboard');
-				}
-			}
+			// Removed automatic redirection to let the auth callback handle it
+			// This prevents the unwanted redirect to /results when the page loads
 		});
 	});
 </script>
@@ -67,7 +60,7 @@
 	</div>
 {:else}
 	<Sidebar.Provider open={false}>
-		<div class="flex flex-col min-h-screen w-full bg-[#f8f8f8] overflow-x-hidden">
+		<div class="flex flex-col min-h-screen w-full bg-[#f8f8f8]">
 			<Navbar hideLoginButton={isLoginRoute || isResultsRoute} justLogo={false} />
 
 			<!-- Empty space to offset the fixed navbar -->

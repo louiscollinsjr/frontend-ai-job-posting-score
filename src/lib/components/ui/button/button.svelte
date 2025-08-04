@@ -73,6 +73,7 @@
 		class={cn(buttonVariants({ variant, size }), className)}
 		{type}
 		{disabled}
+		on:click
 		{...restProps}
 	>
 		{@render children?.()}

@@ -398,8 +398,6 @@
 </script>
 
 <div class="results-page-container">
-  <Navbar justLogo={true} />
-  
   <!-- Success message toast notification -->
   {#if showSuccessMessage}
     <div class="fixed top-20 right-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md transition-opacity duration-300 z-50 max-w-sm">

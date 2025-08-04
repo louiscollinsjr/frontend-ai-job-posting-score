@@ -1,7 +1,6 @@
 <script>
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
-  import * as Button from '$lib/components/ui/button/index.js';
   
   let showBanner = true;
 
@@ -41,12 +40,18 @@
         </p>
       </div>
       <div class="flex flex-wrap gap-2 justify-center w-[30%]">
-        <Button.Root on:click={() => declineAnalytics()} variant="outline" size="sm" class="text-gray-600 rounded-full bg-gray-50 text-xs font-aeonik tracking-wide">
+        <button 
+          on:click={() => declineAnalytics()}
+          class="px-4 py-2 text-gray-600 rounded-full bg-gray-50 text-xs font-aeonik tracking-wide border border-gray-300 hover:bg-gray-100"
+        >
           Reject non-essential
-        </Button.Root>
-        <Button.Root on:click={() => acceptAnalytics()} variant="default" size="sm" class="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-full text-xs font-aeonik tracking-wide">
+        </button>
+        <button 
+          on:click={() => acceptAnalytics()}
+          class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-full text-xs font-aeonik tracking-wide hover:from-blue-700 hover:to-blue-900"
+        >
           Accept all cookies
-        </Button.Root>
+        </button>
       </div>
     </div>
   </div>

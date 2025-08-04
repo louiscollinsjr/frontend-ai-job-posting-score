@@ -37,7 +37,7 @@
     <div class="flex flex-col lg:flex-row">
       <!-- Left content column with padding -->  
       <div class="w-[90%] sm:w-[80%] lg:w-[80%] xl:w-[55%] px-8 md:px-8 pb-12 font-aeonik">
-        <div class="text-left mb-12 font-aeonik">
+        <div class="text-left mb-12 font-aeonik pl-8">
           <h2 class="text-3xl md:text-4xl lg:text-5xl font-normal pt-16 pb-8 leading-tight tracking-tight text-gray-900">We help teams craft job posts
             that introduce new levels of readability, relevance, and reach</h2>
           <p class="text-gray-500 text-left text-base w-[80%] font-normal leading-relaxed tracking-normal font-aeonik">Your <b>JobPostScore</b> is an intelligent job post analyzer that reads your content, scores your optimization, and shows you exactly what to fix — instantly.

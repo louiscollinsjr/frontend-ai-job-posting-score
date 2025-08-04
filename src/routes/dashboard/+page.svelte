@@ -131,36 +131,7 @@
     return 0; // Default score if no data available
   }
   
-  // Chart data derived from reports
-  $: chartData = {
-    labels: ['Inclusivity', 'Clarity', 'Tone', 'Requirements', 'Benefits'],
-    datasets: [
-      {
-        label: 'Average Scores',
-        data: generateChartData(reports)
-      }
-    ]
-  };
-  
-  // Generate chart data from reports
-  function generateChartData(reportsList) {
-    // Default values if no reports
-    if (!reportsList || reportsList.length === 0) {
-      return [0, 0, 0, 0, 0];
-    }
-    
-    // For real implementation, you would extract category scores from reports
-    // For now, generate some values based on the overall scores
-    const avgScore = Math.round(reportsList.reduce((sum, report) => sum + report.score, 0) / reportsList.length);
-    
-    return [
-      Math.min(100, avgScore + Math.floor(Math.random() * 10) - 5),  // Inclusivity
-      Math.min(100, avgScore + Math.floor(Math.random() * 10) - 5),  // Clarity
-      Math.min(100, avgScore + Math.floor(Math.random() * 10) - 5),  // Tone
-      Math.min(100, avgScore + Math.floor(Math.random() * 10) - 5),  // Requirements
-      Math.min(100, avgScore + Math.floor(Math.random() * 10) - 5)   // Benefits
-    ];
-  }
+
   
   onMount(async () => {
     // Initialize the user store
@@ -400,6 +371,8 @@
   }
 </script>
 
+<svelte:window on:click={handleClickOutside} />
+
 <div class="flex min-h-screen w-full">
   <!-- Sidebar -->
   <!-- <div class="hidden md:block w-64 border-r border-gray-100">
@@ -407,7 +380,7 @@
   </div> -->
   
   <!-- Main Content -->
-  <div class="flex-1 p-8 w-full">
+  <div class="flex-1 p-8 w-full pt-32 max-w-7xl">
     <!-- Dashboard Header - Always visible with skeleton loaders when needed -->
     <div class="flex justify-between items-center mb-10 w-full">
       <div>
@@ -426,7 +399,7 @@
         class="bg-black hover:bg-gray-800 text-white"
         disabled={loading}
       >
-        New Audit
+        New JobPostScore
       </Button.Root>
     </div>
     
@@ -497,7 +470,7 @@
       </div>
     {:else}  
         <!-- Reports Table -->
-        <div class="bg-white rounded-lg shadow-none w-full pb-32">
+        <div class="bg-[#f8f8f8] rounded-lg shadow-none w-full pb-32">
           <div class="p-6 pl-2 border-0 border-gray-100 flex flex-col sm:flex-row justify-between gap-4 w-full">
             <div class="">
               <h2 class="text-base font-medium text-gray-700">Your Reports</h2>
@@ -559,11 +532,24 @@
 
                   <Table.Body class="text-xs">
                     {#each reports as report}
-                      <Table.Row class="hover:bg-gray-50">
+                      <Table.Row 
+                        class="hover:bg-gray-50 cursor-pointer"
+                        on:click={(e) => {
+                          const target = e.target;
+                          // Don't navigate when clicking on interactive controls or action areas
+                          if (
+                            target instanceof Element &&
+                            target.closest('button, a, input, textarea, select, [role="button"], [data-row-action]')
+                          ) {
+                            return;
+                          }
+                          viewReport(report.id);
+                        }}
+                      >
                         <Table.Cell class="p-4">
                           <Checkbox.Root 
                             checked={selectedReports.includes(report.id)}
-                            on:click={() => toggleSelectReport(report.id)}
+                            on:click={(e) => { e.stopPropagation(); toggleSelectReport(report.id); }}
                           />
                         </Table.Cell>
                         <!-- <Table.Cell class="font-mono text-xs">{report.id ? report.id.substring(0, 8) : 'N/A'}</Table.Cell> -->
@@ -587,13 +573,11 @@
                           </div>
                         </Table.Cell>
                         <Table.Cell class="text-right">
-                          <div class="relative">
-                            <Button.Root 
-                              variant="outline" 
-                              size="sm"
-                              class="h-8 w-8 p-0" 
+                          <div class="relative" data-row-action on:click|stopPropagation>
+                            <button
+                              class="h-8 w-8 p-0 inline-flex items-center justify-center rounded-md border border-input bg-background text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
                               data-dropdown-trigger={report.id}
-                              on:click={(e) => { e.stopPropagation(); toggleDropdown(report.id, e); }}
+                              on:click={(e) => toggleDropdown(report.id, e)}
                             >
                               <span class="sr-only">Open menu</span>
                               <svg 
@@ -606,12 +590,13 @@
                               >
                                 <path d="M3.625 7.5C3.625 8.12132 3.12132 8.625 2.5 8.625C1.87868 8.625 1.375 8.12132 1.375 7.5C1.375 6.87868 1.87868 6.375 2.5 6.375C3.12132 6.375 3.625 6.87868 3.625 7.5ZM8.625 7.5C8.625 8.12132 8.12132 8.625 7.5 8.625C6.87868 8.625 6.375 8.12132 6.375 7.5C6.375 6.87868 6.87868 6.375 7.5 6.375C8.12132 6.375 8.625 6.87868 8.625 7.5ZM13.625 7.5C13.625 8.12132 13.1213 8.625 12.5 8.625C11.8787 8.625 11.375 8.12132 11.375 7.5C11.375 6.87868 11.8787 6.375 12.5 6.375C13.1213 6.375 13.625 6.87868 13.625 7.5Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path>
                               </svg>
-                            </Button.Root>
+                            </button>
                             
                             {#if activeDropdown === report.id}
                               <div 
                                 class="fixed bg-white rounded-md shadow-lg border border-gray-200 py-1 z-[9999]"
                                 use:positionDropdown={report.id}
+                                on:click|stopPropagation
                               >
                                 <button 
                                   class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
