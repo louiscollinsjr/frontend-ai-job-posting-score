@@ -49,28 +49,28 @@
 </script>
 
 {#if isLoginRoute}
+<div class="flex flex-col min-h-screen w-full bg-[#f8f8f8] overflow-x-hidden">
+	<div class="absolute inset-0 bg-[url('/bkg2.png')] bg-no-repeat bg-contain sm:bg-cover bg-center blur-lg opacity-90"></div>
+	<div class="absolute inset-0 bg-gradient-to-b from-[#f8f8f8]/0 via-[#f8f8f8]/0 to-[#f8f8f8]/0 2xl:from-[#f8f8f8]/0 2xl:via-[#f8f8f8]/0 2xl:to-[#f8f8f8]/0"></div>
 	<Navbar justLogo={true} />
-	<div class="flex flex-col h-screen w-full overflow-hidden">
-		<main class="bg-white w-full mx-auto flex-grow overflow-auto">
+	<div class="flex flex-grow w-full transition-all duration-200 ease-in-out">
+		<main class="flex-1 min-w-0 transition-all duration-200 ease-in-out mx-auto max-w-[1600px] w-full px-4 z-1">
 			{@render children?.()}
 		</main>
-		
 		<!-- Cookie consent banner -->
 		<CookieBanner />
 	</div>
+</div>
 {:else}
 	<Sidebar.Provider open={false}>
+		
 		<div class="flex flex-col min-h-screen w-full bg-[#f8f8f8] overflow-x-hidden">
-			<div
-			class="absolute inset-0 bg-[url('/bkg2.png')] bg-no-repeat bg-contain sm:bg-cover bg-center blur-lg opacity-90"
-		></div>
-		<div
-			class="absolute inset-0 bg-gradient-to-b from-[#f8f8f8]/0 via-[#f8f8f8]/0 to-[#f8f8f8]/0 2xl:from-[#f8f8f8]/0 2xl:via-[#f8f8f8]/0 2xl:to-[#f8f8f8]/0"
-		></div>
+			<div class="absolute inset-0 bg-[url('/bkg2.png')] bg-no-repeat bg-contain sm:bg-cover bg-center blur-lg opacity-90 z-0"></div>
+			<div class="absolute inset-0 bg-gradient-to-b from-[#f8f8f8]/0 via-[#f8f8f8]/0 to-[#f8f8f8]/0 2xl:from-[#f8f8f8]/0 2xl:via-[#f8f8f8]/0 2xl:to-[#f8f8f8]/0 z-1"></div>
 			<Navbar hideLoginButton={isLoginRoute} justLogo={false} />
 
 			<!-- Main content area with sidebar -->
-			<div class="flex flex-grow w-full transition-all duration-200 ease-in-out">
+			<div class="flex flex-grow w-full transition-all duration-200 ease-in-out z-1">
 				<!-- Sidebar navigation -->
 				<AppSidebar class="flex-shrink-0" />
 

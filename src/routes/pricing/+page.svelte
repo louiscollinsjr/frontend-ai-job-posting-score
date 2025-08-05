@@ -102,7 +102,7 @@
   }
 </style>
 
-<div class="container mx-auto px-4 py-20 pt-8 max-w-7xl pt-32">
+<div class="container mx-auto px-4 py-20 max-w-7xl pt-32 z-11">
   <!-- Page Header -->
   <div class="text-center mb-40">
     <h1 class="text-4xl md:text-5xl font-bold mb-4">Build Your Perfect Plan</h1>

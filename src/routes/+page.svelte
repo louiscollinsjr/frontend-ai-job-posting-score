@@ -107,7 +107,7 @@
 	/>
 </svelte:head>
 
-<div id="hero" class="pb-64 bg-[#f8f8f8]">
+<div id="hero" class="pb-64 bg-transparent">
 	<div class="relative w-full h-[85vh] overflow-hidden pb-96">
 		
 
