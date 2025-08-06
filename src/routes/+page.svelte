@@ -113,12 +113,12 @@
 
 		<!-- Hero Section with Audit Form -->
 		<section
-			class="mb-4 sm:mb-8 ffbg-[radial-gradient(ellipse_at_center,#f8f8f8_0%,transparent_70%)] p-2 min-h-[400px] sm:h-[85vh] relative"
+			class="mb-4 sm:mb-8 ffbg-[radial-gradient(ellipse_at_center,#f8f8f8_0%,transparent_70%)] p-2 min-h-[600px] sm:min-h-[85vh] relative"
 		>
 			<div class="container mx-auto sm:pt-16">
-				<div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-center mx-auto">
+				<div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-start mx-auto">
 					<div
-						class="px-4 lg:px-16 pb-16 sm:pb-32 rounded-3xl min-h-[350px] sm:min-h-[680px] mx-auto pt-8 sm:pt-24"
+						class="px-4 lg:px-16 pb-20 sm:pb-32 rounded-3xl min-h-[500px] sm:min-h-[680px] mx-auto pt-8 sm:pt-24 w-full"
 					>
 						<h1
 							class="sm:pt-16 pt-16 text-4xl sm:text-7xl font-normal w-[100%] pb-12 leading-tight tracking-tight mx-auto text-center font-aeonik"
