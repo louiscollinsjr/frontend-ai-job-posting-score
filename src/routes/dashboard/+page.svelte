@@ -1,8 +1,6 @@
 <script>
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';  
-  import { get } from 'svelte/store';
-  import { user } from '$lib/stores/auth';
   import { supabase } from '$lib/supabaseClient';
   import { toast } from 'svelte-sonner';
   import * as Button from '$lib/components/ui/button';
@@ -11,111 +9,126 @@
   import * as Checkbox from '$lib/components/ui/checkbox';
   import * as Separator from '$lib/components/ui/separator';
   import Dropdown from '$lib/components/ui/dropdown';
-  import { reportsStore } from '$lib/stores/reports';
   
+  // Data comes from server (page info) and client-side fetching
+  export let data;
+  
+  // Client-side data state
   let reports = [];
-  let loadingReports = false;
+  let pagination = { currentPage: data.page, totalPages: 1, totalReports: 0 };
+  let reportsWithRewrites = [];
   let reportError = null;
+  let userEmail = '';
+  let isAuthenticated = false;
+  let authChecked = false;
+  
   let selectedReports = [];
   let activeDropdown = null;
-  let userEmail = '';
   let loading = false;
   let dropdownPosition = { top: 0, left: 0 };
-  let reportsWithRewrites = [];
 
-  onMount(() => {
+  onMount(async () => {
     document.addEventListener('click', handleClickOutside);
+    
+    // Check authentication and fetch data
+    await checkAuthAndFetchData();
     
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
   });
-  
-  // Subscribe to the reports store
-  const unsubscribe = reportsStore.subscribe(state => {
-    reports = state.reports;
-    loadingReports = state.loading;
-    reportError = state.error;
-  });
-  
-  onMount(async () => {
-    // Get user from localStorage
+
+  async function checkAuthAndFetchData() {
     try {
-      const sessionStr = localStorage.getItem('sb-zincimrcpvxtugvhimny-auth-token');
-      if (sessionStr) {
-        const session = JSON.parse(sessionStr);
-        userEmail = session.user?.email || 'User';
+      // Check if user is authenticated via Supabase
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.access_token) {
+        // Not authenticated, redirect to login
+        goto('/login');
+        return;
       }
       
-      // Fetch all report IDs with rewrites
-      try {
-        const token = JSON.parse(localStorage.getItem('sb-zincimrcpvxtugvhimny-auth-token'))?.access_token;
-        if (token) {
-          const resp = await fetch('https://ai-audit-api.fly.dev/api/v1/job/with-rewrites', {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if (resp.ok) {
-            reportsWithRewrites = await resp.json();
-            console.log('reportsWithRewrites:', reportsWithRewrites);
-          } else {
-            reportsWithRewrites = [];
-            console.log('Failed to fetch reportsWithRewrites, resp not ok');
-          }
-        }
-      } catch (err) {
-        console.error('Failed to fetch reportsWithRewrites:', err);
-        reportsWithRewrites = [];
-      }
+      isAuthenticated = true;
+      userEmail = session.user?.email || 'User';
+      authChecked = true;
       
-      // Try to load from cache first
-      const cachedReports = reportsStore.getCachedReports();
-      if (cachedReports) {
-        reportsStore.setReports(cachedReports);
-      } else {
-        // No cache, fetch fresh data
-        await fetchUserReports();
-      }
+      // Fetch reports data
+      await fetchReports(session.access_token);
+      
     } catch (error) {
-      console.error('Error loading user data', error);
-    }
-    
-    return () => {
-      // Clean up subscription when component is destroyed
-      unsubscribe();
-    };
-  });
-  
-  async function fetchUserReports() {
-    reportsStore.setLoading(true);
-    reportsStore.setError(null);
-    
-    try {
-      const token = JSON.parse(localStorage.getItem('sb-zincimrcpvxtugvhimny-auth-token'))?.access_token;
-      
-      if (!token) {
-        throw new Error('Authentication token not found');
-      }
-      
-      const response = await fetch('https://ai-audit-api.fly.dev/api/v1/', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      reportsStore.setReports(data);
-    } catch (error) {
-      console.error('Failed to fetch reports:', error);
-      reportsStore.setError(error.message);
-    } finally {
-      reportsStore.setLoading(false);
+      console.error('Auth check failed:', error);
+      goto('/login');
     }
   }
-  
+
+  async function fetchReports(accessToken) {
+    try {
+      loading = true;
+      const apiUrl = `https://ai-audit-api.fly.dev/api/v1/reports?page=${data.page}&limit=${data.limit}`;
+      
+      const response = await fetch(apiUrl, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          goto('/login');
+          return;
+        }
+        throw new Error(`Failed to fetch reports: ${response.statusText}`);
+      }
+
+      const responseData = await response.json();
+      
+      // Handle both old and new API response formats
+      if (Array.isArray(responseData)) {
+        // Old API format - simulate pagination
+        reports = responseData;
+        pagination = {
+          currentPage: data.page,
+          totalPages: Math.ceil(responseData.length / data.limit),
+          totalReports: responseData.length
+        };
+      } else {
+        // New API format with pagination
+        reports = responseData.reports || [];
+        pagination = {
+          currentPage: responseData.currentPage || data.page,
+          totalPages: responseData.totalPages || 1,
+          totalReports: responseData.totalReports || 0
+        };
+      }
+
+      // Fetch reports with rewrites
+      try {
+        const rewriteResponse = await fetch('https://ai-audit-api.fly.dev/api/v1/reports/with-rewrites', {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (rewriteResponse.ok) {
+          const rewriteData = await rewriteResponse.json();
+          reportsWithRewrites = rewriteData.reportIds || rewriteData || [];
+        }
+      } catch (error) {
+        console.warn('Failed to fetch rewrite data:', error);
+      }
+      
+      reportError = null;
+    } catch (error) {
+      console.error('Error fetching reports:', error);
+      reportError = 'Failed to load reports. Please try again.';
+    } finally {
+      loading = false;
+    }
+  }
+
   // Helper function to calculate overall score from report data
   function calculateOverallScore(report) {
     if (report.overallScore) return report.overallScore;
@@ -130,156 +143,77 @@
     
     return 0; // Default score if no data available
   }
-  
 
-  
-  onMount(async () => {
-    // Initialize the user store
-    await user.init();
-    
-    // Subscribe to user changes
-    const unsubscribe = user.subscribe((data) => {
-      if (!data) {
-        // Redirect to login if not authenticated
-        goto('/login');
-      } else {
-        userData = data;
-        userEmail = data.email;
-        
-        // Fetch the user's reports
-        fetchUserReports(data.id);
-      }
-      loading = false;
-    });
-    
-    return unsubscribe;
-  });
-  
   // Report action functions
   function viewReport(reportId) {
     goto(`/results?report=${reportId}`);
   }
-  
+
   async function improveReport(reportId) {
+    loading = true;
     try {
-      if (!reportId) {
-        throw new Error('No report ID provided');
+      const sessionStr = localStorage.getItem('sb-zincimrcpvxtugvhimny-auth-token');
+      if (!sessionStr) {
+        toast.error('Authentication required');
+        return;
       }
-      
-      // Show loading indicator
-      const loadingToast = toast.loading('Improving job posting...');
-      
-      // Make API request to improve the job posting
+
+      const session = JSON.parse(sessionStr);
       const response = await fetch(`https://ai-audit-api.fly.dev/api/v1/rewrite-job/${reportId}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
         }
       });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`API returned ${response.status}: ${errorText}`);
+
+      if (response.ok) {
+        toast.success('Report improvement started!');
+        goto(`/results?report=${reportId}`);
+      } else {
+        toast.error('Failed to improve report');
       }
-      
-      // Hide loading toast and show success toast
-      toast.dismiss(loadingToast);
-      toast.success('Job posting improved successfully!');
-      
-      // Navigate to the improved version
-      const data = await response.json();
-      goto(`/results?report=${reportId}&improved=true`);
     } catch (error) {
-      console.error('Rewrite failed:', error);
-      toast.error(`Failed to improve job posting: ${error.message}`);
+      console.error('Error improving report:', error);
+      toast.error('Error improving report');
+    } finally {
+      loading = false;
     }
   }
-  
-  // Function to view rewrite history of a report
-  function viewRewriteHistory(reportId) {
-    if (!reportId) {
-      toast.error('No report ID provided');
+
+  async function deleteReport(reportId) {
+    if (!confirm('Are you sure you want to delete this report?')) {
       return;
     }
-    
-    // Navigate to a dedicated route for viewing rewrite history
-    goto(`/rewrite?report=${reportId}&view_only=true`);
-  }
-  
-  async function viewJsonLd(reportId) {
+
+    loading = true;
     try {
-      if (!reportId) {
-        throw new Error('No report ID provided');
-      }
-      
-      // Show loading indicator
-      const loadingToast = toast.loading('Generating JSON-LD...');
-      
-      // Helper function to download JSON data as a file
-      function downloadJsonFile(jsonData, filename) {
-        const blob = new Blob([jsonData], { type: 'application/ld+json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }
-      
-      // Try to get JSON-LD from backend
-      const response = await fetch(`https://ai-audit-api.fly.dev/api/v1/rewrite-job/${reportId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-        body: JSON.stringify({ generate_json_ld_only: true })
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`API returned ${response.status}: ${errorText}`);
-      }
-      
-      const data = await response.json();
-      const json_ldData = data.json_ld;
-      
-      if (!json_ldData) {
-        throw new Error('No JSON-LD data received');
-      }
-      
-      // Hide loading toast and show success toast
-      toast.dismiss(loadingToast);
-      toast.success('JSON-LD generated successfully!');
-      
-      // Trigger download
-      downloadJsonFile(JSON.stringify(json_ldData, null, 2), `job_${reportId}_schema.jsonld`);
+      const { error } = await supabase
+        .from('reports')
+        .delete()
+        .eq('id', reportId);
+
+      if (error) throw error;
+
+      toast.success('Report deleted successfully');
+      // Refresh the page to update the reports list
+      window.location.reload();
     } catch (error) {
-      console.error('JSON-LD generation failed:', error);
-      toast.error(`Failed to generate JSON-LD: ${error.message}`);
+      console.error('Error deleting report:', error);
+      toast.error('Failed to delete report');
+    } finally {
+      loading = false;
     }
   }
-  
-  function deleteReport(reportId) {
-    if (confirm('Are you sure you want to delete this report?')) {
-      // Here you would call the API to delete the report
-      reports = reports.filter(report => report.id !== reportId);
-      selectedReports = selectedReports.filter(id => id !== reportId);
-    }
+
+  function viewRewriteHistory(reportId) {
+    goto(`/rewrite-history?report=${reportId}`);
   }
-  
-  function archiveSelected() {
-    if (selectedReports.length === 0) return;
-    if (confirm(`Are you sure you want to archive ${selectedReports.length} reports?`)) {
-      // Here you would call the API to archive the selected reports
-      console.log('Archiving reports:', selectedReports);
-      selectedReports = [];
-    }
+
+  function viewJsonLd(reportId) {
+    goto(`/json-ld?report=${reportId}`);
   }
-  
+
   function toggleSelectReport(reportId) {
     if (selectedReports.includes(reportId)) {
       selectedReports = selectedReports.filter(id => id !== reportId);
@@ -287,7 +221,7 @@
       selectedReports = [...selectedReports, reportId];
     }
   }
-  
+
   function toggleSelectAll() {
     if (selectedReports.length === reports.length) {
       selectedReports = [];
@@ -295,359 +229,279 @@
       selectedReports = reports.map(report => report.id);
     }
   }
-  
-  // Define a function to toggle dropdown visibility
-  const toggleDropdown = (reportId, event) => {
+
+  async function archiveSelected() {
+    if (selectedReports.length === 0) return;
+
+    loading = true;
+    try {
+      const { error } = await supabase
+        .from('reports')
+        .update({ archived: true })
+        .in('id', selectedReports);
+
+      if (error) throw error;
+
+      toast.success(`${selectedReports.length} reports archived`);
+      selectedReports = [];
+      // Refresh the page to update the reports list
+      window.location.reload();
+    } catch (error) {
+      console.error('Error archiving reports:', error);
+      toast.error('Failed to archive reports');
+    } finally {
+      loading = false;
+    }
+  }
+
+  function handleClickOutside(event) {
+    if (activeDropdown && !event.target.closest('[data-dropdown-trigger]')) {
+      activeDropdown = null;
+    }
+  }
+
+  function toggleDropdown(reportId, event) {
     event?.preventDefault();
     event?.stopPropagation();
-    
-    // No need to calculate position anymore as we'll use absolute positioning
-    // relative to the button's container
     
     if (activeDropdown === reportId) {
       activeDropdown = null;
     } else {
       activeDropdown = reportId;
     }
-  };
-  
-  // Close dropdown when clicking outside
-  const handleClickOutside = (event) => {
-    // Skip if we're clicking on a button that toggles the dropdown
-    if (event.target.closest('button') && event.target.closest('.relative')) {
-      return;
-    }
-    
-    if (activeDropdown !== null) {
-      activeDropdown = null;
-    }
-  };
-  
-  // Directive to position dropdowns correctly
-  function positionDropdown(node, reportId) {
-    function position() {
-      if (activeDropdown === reportId) {
-        const buttonElement = document.querySelector(`[data-dropdown-trigger="${reportId}"]`);
-        if (buttonElement) {
-          const rect = buttonElement.getBoundingClientRect();
-          // Position to the right and slightly below the button
-          node.style.minWidth = '180px';
-          node.style.top = `${rect.bottom + window.scrollY + 5}px`;
-          node.style.right = `${window.innerWidth - rect.right - window.scrollX}px`;
-        }
-      }
-    }
-    
-    // Position immediately and whenever scroll or resize happens
-    position();
-    
-    // Add event listeners for scroll and resize
-    window.addEventListener('scroll', position, { passive: true });
-    window.addEventListener('resize', position, { passive: true });
-    
-    // Also use ResizeObserver for element size changes
-    const resizeObserver = new ResizeObserver(position);
-    resizeObserver.observe(document.body);
-    
-    return {
-      update(newReportId) {
-        // Update if the report ID changes
-        if (newReportId !== reportId) {
-          reportId = newReportId;
-          position();
-        }
-      },
-      destroy() {
-        // Clean up all event listeners and observers
-        window.removeEventListener('scroll', position);
-        window.removeEventListener('resize', position);
-        resizeObserver.disconnect();
-      }
-    };
   }
-  
-  function newAudit() {
-    goto('/');
+
+  function positionDropdown(node, reportId) {
+    if (activeDropdown === reportId) {
+      const trigger = document.querySelector(`[data-dropdown-trigger="${reportId}"]`);
+      if (trigger) {
+        const rect = trigger.getBoundingClientRect();
+        node.style.top = `${rect.bottom + window.scrollY + 5}px`;
+        node.style.left = `${rect.right + window.scrollX - node.offsetWidth}px`;
+      }
+    }
   }
 </script>
 
 <svelte:window on:click={handleClickOutside} />
 
 <div class="flex min-h-screen w-full relative z-10">
-  <!-- Sidebar -->
-  <!-- <div class="hidden md:block w-64 border-r border-gray-100">
-    <AppSidebar />
-  </div> -->
-  
   <!-- Main Content -->
   <div class="flex-1 p-8 w-full pt-32 max-w-7xl relative z-10">
-    <!-- Dashboard Header - Always visible with skeleton loaders when needed -->
+    <!-- Dashboard Header -->
     <div class="flex justify-between items-center mb-10 w-full">
       <div>
-        {#if loading}
-          <div class="h-8 w-64 bg-gray-200 animate-pulse rounded mb-2"></div>
-          <div class="h-4 w-48 bg-gray-100 animate-pulse rounded"></div>
-        {:else}
-          <h1 class="text-2xl font-bold text-gray-900">JobPostScore Dashboard</h1>
-          <p class="text-sm text-gray-500">Welcome back 👋, {userEmail}</p>
-        {/if}
+        <h1 class="text-2xl font-bold text-gray-900">JobPostScore Dashboard</h1>
+        <p class="text-sm text-gray-500">Welcome back 👋, {userEmail}</p>
       </div>
-      <Button.Root 
-        on:click={newAudit} 
-        variant="default"
-        size="sm" 
-        class="bg-black hover:bg-gray-800 text-white"
-        disabled={loading}
-      >
+      <Button.Root on:click={() => goto('/')} variant="default" size="sm" class="bg-black hover:bg-gray-800 text-white">
         New JobPostScore
       </Button.Root>
     </div>
     
     <Separator.Root class="my-12" />
     
-    {#if loading}
-      <!-- Reports Table with Skeleton Loaders -->
-      <div class="bg-white rounded-lg shadow-none w-full pb-32">
-        <div class="p-6 pl-2 border-0 border-gray-100 flex justify-between items-center w-full">
-          <div>
-            <div class="h-6 w-48 bg-gray-200 animate-pulse rounded mb-2"></div>
-            <div class="h-3 w-24 bg-gray-100 animate-pulse rounded"></div>
-          </div>
-        </div>
-        
-        <div class="w-full overflow-hidden">
-          <div class="relative w-full overflow-auto">
-            <table class="w-full caption-bottom text-sm">
-              <!-- Skeleton Header Row -->
-              <thead class="[&_tr]:border-b">
-                <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                  {#each Array(6) as _, i}
-                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                      {#if i === 0}
-                        <div class="h-4 w-4 bg-gray-200 animate-pulse rounded"></div>
-                      {:else if i === 1}
-                        <div class="h-4 w-32 bg-gray-200 animate-pulse rounded"></div>
-                      {:else if i === 2}
-                        <div class="h-4 w-24 bg-gray-200 animate-pulse rounded"></div>
-                      {:else if i === 3}
-                        <div class="h-4 w-16 bg-gray-200 animate-pulse rounded"></div>
-                      {:else if i === 4}
-                        <div class="h-4 w-16 bg-gray-200 animate-pulse rounded"></div>
-                      {:else}
-                        <div class="h-4 w-24 bg-gray-200 animate-pulse rounded"></div>
-                      {/if}
-                    </th>
-                  {/each}
-                </tr>
-              </thead>
-              <!-- Skeleton Body Rows -->
-              <tbody class="[&_tr:last-child]:border-0">
-                {#each Array(3) as _}
-                  <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                    {#each Array(6) as _, i}
-                      <td class="p-4 align-middle">
-                        {#if i === 0}
-                          <div class="h-4 w-4 bg-gray-100 animate-pulse rounded"></div>
-                        {:else if i === 1}
-                          <div class="h-4 w-32 bg-gray-100 animate-pulse rounded"></div>
-                        {:else if i === 2}
-                          <div class="h-4 w-24 bg-gray-100 animate-pulse rounded"></div>
-                        {:else if i === 3}
-                          <div class="h-4 w-16 bg-gray-100 animate-pulse rounded"></div>
-                        {:else if i === 4}
-                          <div class="h-4 w-16 bg-gray-100 animate-pulse rounded"></div>
-                        {:else}
-                          <div class="h-4 w-12 bg-gray-100 animate-pulse rounded"></div>
-                        {/if}
-                      </td>
-                    {/each}
-                  </tr>
-                {/each}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    {:else}  
-        <!-- Reports Table -->
-        <div class="bg-[#f8f8f8] rounded-lg shadow-none w-full pb-32">
-          <div class="p-6 pl-2 border-0 border-gray-100 flex flex-col sm:flex-row justify-between gap-4 w-full">
-            <div class="">
-              <h2 class="text-base font-medium text-gray-700">Your Reports</h2>
-              {#if reports.length > 0 && !loadingReports}
-                <span class="text-xs text-gray-500">{reports.length} {reports.length === 1 ? 'report' : 'reports'}</span>
-              {/if}
-            </div>
-            
-            {#if selectedReports.length > 0 && !loadingReports}
-              <div class="flex items-center gap-2">
-                <span class="text-sm font-medium">{selectedReports.length} selected</span>
-                <Button.Root on:click={archiveSelected} variant="outline" size="sm" class="text-xs">
-                  Archive Selected
-                </Button.Root>
-              </div>
+    {#if reportError}
+      <Alert.Root class="mb-6">
+        <Alert.Description>
+          {reportError}
+        </Alert.Description>
+      </Alert.Root>
+    {:else}
+      <!-- Reports Table -->
+      <div class="bg-transparent rounded-lg shadow-none w-full pb-32">
+        <div class="p-6 pl-2 border-0 border-gray-100 flex flex-col sm:flex-row justify-between gap-4 w-full">
+          <div class="">
+            <h2 class="text-base font-medium text-gray-700">Your Reports</h2>
+            {#if reports.length > 0}
+              <p class="text-sm text-gray-500 mt-1">
+                Showing {reports.length} of {pagination.totalReports} report{pagination.totalReports === 1 ? '' : 's'}
+              </p>
             {/if}
           </div>
           
-          <!-- Table Container that displays all content without scrolling -->
-          <div class="w-full">
-            {#if loadingReports}
-              <div class="p-12 flex justify-center items-center min-h-[300px]">
-                <div class="animate-spin rounded-full h-8 w-8"></div>
-              </div>
-            {:else if reportError}
-              <Alert.Root class="m-6">
-                <Alert.Title>Error loading reports</Alert.Title>
-                <Alert.Description>{reportError}</Alert.Description>
-              </Alert.Root>
-            {:else if reports.length === 0}
-              <div class="p-12 text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <p class="text-gray-500">No reports found.</p>
-                <Button.Root on:click={newAudit} variant="outline" class="mt-4">
-                  Start New Audit
-                </Button.Root>
-              </div>
-            {:else}
-              <div class="border-2 border-black rounded-lg w-full overflow-visible">
-                <Table.Root class="w-full">
-                  <Table.Header class="text-xs">
-                    <Table.Row class="">
-                      <Table.Head class="w-[5%]">
-                        <Checkbox.Root class="ml-2"
-                          checked={selectedReports.length === reports.length && reports.length > 0}
-                          on:click={toggleSelectAll}
-                        />
-                      </Table.Head>
-                      <Table.Head class="w-[30%]">Job Title</Table.Head>
-                      <Table.Head class="w-[20%]">Company</Table.Head>
-                      <Table.Head class="w-[15%]">Date</Table.Head>
-                      <Table.Head class="w-[10%] text-center">Score</Table.Head>
-                      <Table.Head class="w-[10%]">Status</Table.Head>
-                      <Table.Head class="w-[10%] text-right">Actions</Table.Head>
-                    </Table.Row>
-                  </Table.Header>
-
-                  <Table.Body class="text-xs">
-                    {#each reports as report}
-                      <Table.Row 
-                        class="hover:bg-gray-50 cursor-pointer"
-                        on:click={(e) => {
-                          const target = e.target;
-                          // Don't navigate when clicking on interactive controls or action areas
-                          if (
-                            target instanceof Element &&
-                            target.closest('button, a, input, textarea, select, [role="button"], [data-row-action]')
-                          ) {
-                            return;
-                          }
-                          viewReport(report.id);
-                        }}
-                      >
-                        <Table.Cell class="p-4">
-                          <Checkbox.Root 
-                            checked={selectedReports.includes(report.id)}
-                            on:click={(e) => { e.stopPropagation(); toggleSelectReport(report.id); }}
-                          />
-                        </Table.Cell>
-                        <!-- <Table.Cell class="font-mono text-xs">{report.id ? report.id.substring(0, 8) : 'N/A'}</Table.Cell> -->
-                        <Table.Cell class="font-normal text-[10px] w-[30%]">{report.title || 'Untitled'}</Table.Cell>
-                        <Table.Cell class="text-[10px] w-[20%]">{report.company || 'N/A'}</Table.Cell>
-                        <Table.Cell class="text-[10px] w-[15%]">{report.date || 'N/A'}</Table.Cell>
-                        <Table.Cell class="text-center">
-                          <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] 
-                            {report.score >= 90 ? 'bg-black text-white' : 
-                            report.score >= 70 ? 'bg-black text-white' : 
-                            'bg-black text-white'}"
-                          >
-                            {report.score || 0}
-                          </div>
-                        </Table.Cell>
-                        <Table.Cell>
-                          <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] 
-                            {report.status === 'Local' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}"
-                          >
-                            {report.status || 'Unknown'}
-                          </div>
-                        </Table.Cell>
-                        <Table.Cell class="text-right">
-                          <div class="relative" data-row-action on:click|stopPropagation>
-                            <button
-                              class="h-8 w-8 p-0 inline-flex items-center justify-center rounded-md border border-input bg-background text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-                              data-dropdown-trigger={report.id}
-                              on:click={(e) => toggleDropdown(report.id, e)}
-                            >
-                              <span class="sr-only">Open menu</span>
-                              <svg 
-                                width="15" 
-                                height="15" 
-                                viewBox="0 0 15 15" 
-                                fill="none" 
-                                xmlns="http://www.w3.org/2000/svg" 
-                                class="h-4 w-4"
-                              >
-                                <path d="M3.625 7.5C3.625 8.12132 3.12132 8.625 2.5 8.625C1.87868 8.625 1.375 8.12132 1.375 7.5C1.375 6.87868 1.87868 6.375 2.5 6.375C3.12132 6.375 3.625 6.87868 3.625 7.5ZM8.625 7.5C8.625 8.12132 8.12132 8.625 7.5 8.625C6.87868 8.625 6.375 8.12132 6.375 7.5C6.375 6.87868 6.87868 6.375 7.5 6.375C8.12132 6.375 8.625 6.87868 8.625 7.5ZM13.625 7.5C13.625 8.12132 13.1213 8.625 12.5 8.625C11.8787 8.625 11.375 8.12132 11.375 7.5C11.375 6.87868 11.8787 6.375 12.5 6.375C13.1213 6.375 13.625 6.87868 13.625 7.5Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path>
-                              </svg>
-                            </button>
-                            
-                            {#if activeDropdown === report.id}
-                              <div 
-                                class="fixed bg-white rounded-md shadow-lg border border-gray-200 py-1 z-[9999]"
-                                use:positionDropdown={report.id}
-                                on:click|stopPropagation
-                              >
-                                <button 
-                                  class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
-                                  on:click={() => { viewReport(report.id); activeDropdown = null; }}
-                                >
-                                  <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                  View
-                                </button>
-                                <button 
-                                  class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
-                                  on:click={() => { improveReport(report.id); activeDropdown = null; }}
-                                >
-                                  <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                                  Improve
-                                </button>
-                                {#if reportsWithRewrites && reportsWithRewrites.includes(report.id)}
-  <button 
-    class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
-    on:click={() => { viewRewriteHistory(report.id); activeDropdown = null; }}
-  >
-    <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-    Previous Rewrites
-  </button>
-{/if}
-                                <button 
-                                  class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
-                                  on:click={() => { viewJsonLd(report.id); activeDropdown = null; }}
-                                >
-                                  <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                                  JSON-LD
-                                </button>
-                                <div class="my-1 h-px bg-gray-100"></div>
-                                <button 
-                                  class="w-full text-left px-2 py-1.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 rounded-sm flex items-center"
-                                  on:click={() => { deleteReport(report.id); activeDropdown = null; }}
-                                >
-                                  <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                                  Delete
-                                </button>
-                              </div>
-                            {/if}
-                          </div>
-                        </Table.Cell>
-                      </Table.Row>
-                    {/each}
-                  </Table.Body>
-                </Table.Root>
-              </div>
-            {/if}
-          </div>  
+          {#if selectedReports.length > 0}
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-medium">{selectedReports.length} selected</span>
+              <Button.Root on:click={archiveSelected} variant="outline" size="sm" class="text-xs">
+                Archive Selected
+              </Button.Root>
+            </div>
+          {/if}
         </div>
-      {/if}  
+        
+        <div class="w-full">
+          {#if reports.length === 0}
+            <div class="p-12 text-center min-h-[300px] flex flex-col justify-center items-center">
+              <p class="text-gray-500 mb-4">No reports found. Start by creating your first JobPostScore!</p>
+              <Button.Root on:click={() => goto('/')} variant="default" size="sm" class="bg-black hover:bg-gray-800 text-white">
+                Create Report
+              </Button.Root>
+            </div>
+          {:else}
+            <div class="border-2 border-black rounded-lg w-full overflow-visible">
+              <Table.Root class="w-full">
+                <Table.Header class="text-xs">
+                  <Table.Row class="">
+                    <Table.Head class="w-[5%]">
+                      <Checkbox.Root class="ml-2"
+                        checked={selectedReports.length === reports.length && reports.length > 0}
+                        on:click={toggleSelectAll}
+                      />
+                    </Table.Head>
+                    <Table.Head class="w-[30%]">Job Title</Table.Head>
+                    <Table.Head class="w-[20%]">Company</Table.Head>
+                    <Table.Head class="w-[15%]">Date</Table.Head>
+                    <Table.Head class="w-[10%] text-center">Score</Table.Head>
+                    <Table.Head class="w-[10%]">Status</Table.Head>
+                    <Table.Head class="w-[10%] text-right">Actions</Table.Head>
+                  </Table.Row>
+                </Table.Header>
+
+                <Table.Body class="text-xs">
+                  {#each reports as report}
+                    <Table.Row 
+                      class="hover:bg-gray-50 cursor-pointer"
+                      on:click={(e) => {
+                        const target = e.target;
+                        // Don't navigate when clicking on interactive controls or action areas
+                        if (
+                          target instanceof Element &&
+                          target.closest('button, a, input, textarea, select, [role="button"], [data-row-action]')
+                        ) {
+                          return;
+                        }
+                        viewReport(report.id);
+                      }}
+                    >
+                      <Table.Cell class="p-4">
+                        <Checkbox.Root 
+                          checked={selectedReports.includes(report.id)}
+                          on:click={(e) => { e.stopPropagation(); toggleSelectReport(report.id); }}
+                        />
+                      </Table.Cell>
+                      <Table.Cell class="font-normal text-[10px] w-[30%]">{report.title || 'Untitled'}</Table.Cell>
+                      <Table.Cell class="text-[10px] w-[20%]">{report.company || 'N/A'}</Table.Cell>
+                      <Table.Cell class="text-[10px] w-[15%]">{report.date || 'N/A'}</Table.Cell>
+                      <Table.Cell class="text-center">
+                        <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] 
+                          {report.score >= 90 ? 'bg-black text-white' : 
+                          report.score >= 70 ? 'bg-black text-white' : 
+                          'bg-black text-white'}"
+                        >
+                          {report.score || 0}
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] 
+                          {report.status === 'Local' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}"
+                        >
+                          {report.status || 'Unknown'}
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell class="text-right">
+                        <div class="relative" data-row-action on:click|stopPropagation>
+                          <button
+                            class="h-8 w-8 p-0 inline-flex items-center justify-center rounded-md border border-input bg-background text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                            data-dropdown-trigger={report.id}
+                            on:click={(e) => toggleDropdown(report.id, e)}
+                          >
+                            <span class="sr-only">Open menu</span>
+                            <svg 
+                              width="15" 
+                              height="15" 
+                              viewBox="0 0 15 15" 
+                              fill="none" 
+                              xmlns="http://www.w3.org/2000/svg" 
+                              class="h-4 w-4"
+                            >
+                              <path d="M3.625 7.5C3.625 8.12132 3.12132 8.625 2.5 8.625C1.87868 8.625 1.375 8.12132 1.375 7.5C1.375 6.87868 1.87868 6.375 2.5 6.375C3.12132 6.375 3.625 6.87868 3.625 7.5ZM8.625 7.5C8.625 8.12132 8.12132 8.625 7.5 8.625C6.87868 8.625 6.375 8.12132 6.375 7.5C6.375 6.87868 6.87868 6.375 7.5 6.375C8.12132 6.375 8.625 6.87868 8.625 7.5ZM13.625 7.5C13.625 8.12132 13.1213 8.625 12.5 8.625C11.8787 8.625 11.375 8.12132 11.375 7.5C11.375 6.87868 11.8787 6.375 12.5 6.375C13.1213 6.375 13.625 6.87868 13.625 7.5Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path>
+                            </svg>
+                          </button>
+                          
+                          {#if activeDropdown === report.id}
+                            <div 
+                              class="fixed bg-white rounded-md shadow-lg border border-gray-200 py-1 z-[9999]"
+                              use:positionDropdown={report.id}
+                              on:click|stopPropagation
+                            >
+                              <button 
+                                class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
+                                on:click={() => { viewReport(report.id); activeDropdown = null; }}
+                              >
+                                <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                View
+                              </button>
+                              <button 
+                                class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
+                                on:click={() => { improveReport(report.id); activeDropdown = null; }}
+                              >
+                                <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                Improve
+                              </button>
+                              {#if reportsWithRewrites && reportsWithRewrites.includes(report.id)}
+                                <button 
+                                  class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
+                                  on:click={() => { viewRewriteHistory(report.id); activeDropdown = null; }}
+                                >
+                                  <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                  Previous Rewrites
+                                </button>
+                              {/if}
+                              <button 
+                                class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
+                                on:click={() => { viewJsonLd(report.id); activeDropdown = null; }}
+                              >
+                                <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                JSON-LD
+                              </button>
+                              <div class="my-1 h-px bg-gray-100"></div>
+                              <button 
+                                class="w-full text-left px-2 py-1.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 rounded-sm flex items-center"
+                                on:click={() => { deleteReport(report.id); activeDropdown = null; }}
+                              >
+                                <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                Delete
+                              </button>
+                            </div>
+                          {/if}
+                        </div>
+                      </Table.Cell>
+                    </Table.Row>
+                  {/each}
+                </Table.Body>
+              </Table.Root>
+            </div>
+          {/if}
+        </div>  
+      </div>
+    {/if}
+
+    <!-- Pagination Controls -->
+    {#if pagination && pagination.totalPages > 1}
+      <div class="flex justify-center items-center gap-4 mt-8">
+        <Button.Root 
+          href={`/dashboard?page=${pagination.currentPage - 1}`} 
+          disabled={pagination.currentPage <= 1}
+          variant="outline"
+          size="sm"
+        >
+          Previous
+        </Button.Root>
+        
+        <span class="text-sm text-gray-600">
+          Page {pagination.currentPage} of {pagination.totalPages}
+        </span>
+        
+        <Button.Root 
+          href={`/dashboard?page=${pagination.currentPage + 1}`} 
+          disabled={pagination.currentPage >= pagination.totalPages}
+          variant="outline"
+          size="sm"
+        >
+          Next
+        </Button.Root>
+      </div>
+    {/if}
   </div>
 </div>
