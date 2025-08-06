@@ -118,7 +118,7 @@
 			<div class="container mx-auto sm:pt-16">
 				<div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-center mx-auto">
 					<div
-						class="px-4 lg:px-16 pb-8 sm:pb-20 rounded-3xl min-h-[350px] sm:min-h-[680px] mx-auto pt-8 sm:pt-24"
+						class="px-4 lg:px-16 pb-16 sm:pb-32 rounded-3xl min-h-[350px] sm:min-h-[680px] mx-auto pt-8 sm:pt-24"
 					>
 						<h1
 							class="sm:pt-16 pt-16 text-4xl sm:text-7xl font-normal w-[100%] pb-12 leading-tight tracking-tight mx-auto text-center font-aeonik"
