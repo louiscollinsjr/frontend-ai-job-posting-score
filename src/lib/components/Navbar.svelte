@@ -38,7 +38,7 @@
         
         
         <a href="/" class="flex-shrink-0 flex items-center">
-          <span class="text-2xl text-black"><b class="">JobPostScore</b> <sup class="hidden text-xs align-super">™</sup></span>
+          <img src="/jobpostscore_logo.svg" alt="JobPostScore Logo" class="h-6 sm:h-8 w-auto object-contain" style="image-rendering: crisp-edges; shape-rendering: geometricPrecision;">
         </a>
 
         {#if !justLogo}

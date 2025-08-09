@@ -107,29 +107,26 @@
 	/>
 </svelte:head>
 
-<div id="hero" class="pb-64 bg-[#f8f8f8]">
-	<div class="relative w-full h-[85vh] overflow-hidden pb-96">
+<div id="hero" class="bg-transparent relative mx-auto pb-10 sm:pb-64 pt-6">
+  	<!-- Background elements -->
+  	<!-- <div class="absolute inset-0 bg-[url('/bkg2.png')] bg-no-repeat bg-contain sm:bg-cover bg-center blur-lg opacity-90 z-0"></div>
+  	<div class="absolute inset-0 bg-gradient-to-b from-[#f8f8f8]/0 via-[#f8f8f8]/0 to-[#f8f8f8]/0 2xl:from-[#f8f8f8]/0 2xl:via-[#f8f8f8]/0 2xl:to-[#f8f8f8]/0 z-0"></div>
+  	 -->
+	<div class="relative w-full min-h-[75vh] sm:min-h-[85vh] pb-8 sm:pb-24">
 		
-
 		<!-- Hero Section with Audit Form -->
-		<section
-			class="mb-4 sm:mb-8 ffbg-[radial-gradient(ellipse_at_center,#f8f8f8_0%,transparent_70%)] p-2 min-h-[600px] sm:min-h-[85vh] relative"
-		>
-			<div class="container mx-auto sm:pt-16">
+		<section class="mb-4 sm:mb-8 bg-[radial-gradient(ellipse_at_center,_#f8f8f8_0%,_transparent_70%)] p-2 min-h-[70vh] sm:min-h-[85vh] relative">
+			<div class="container mx-auto pt-8 sm:pt-16">
 				<div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-start mx-auto">
-					<div
-						class="px-4 lg:px-16 pb-20 sm:pb-32 rounded-3xl min-h-[500px] sm:min-h-[680px] mx-auto pt-8 sm:pt-24 w-full"
-					>
-						<h1
-							class="sm:pt-16 pt-16 text-4xl sm:text-7xl font-normal w-[100%] pb-12 leading-tight tracking-tight mx-auto text-center font-aeonik"
-						>
+					<div class="px-4 lg:px-16 pb-10 sm:pb-24 rounded-3xl min-h-0 sm:min-h-[680px] mx-auto pt-6 sm:pt-20 w-full">
+						<h1 class="sm:pt-16 pt-4 text-3xl sm:text-7xl font-normal w-[100%] pb-6 sm:pb-12 leading-tight tracking-tight mx-auto text-center font-aeonik">
 							What is your
 							<span style="min-width: 140px;">
-								<span class="single-sweep" data-text="JobPostScore">JobPostScore?</span>
+								<span class="single-sweep" data-text="JobPostScore">JobPost<b>Score</b>?</span>
 							</span>
 						</h1>
 						<p
-							class="text-base sm:text-xl text-gray-400 text-center mb-12 max-w-3xl mx-auto font-normal font-aeonik"
+							class="text-base sm:text-xl text-gray-400 text-center mb-8 max-w-3xl mx-auto font-normal font-aeonik"
 						>
 							Your JobPostScore is the key to connecting with the 70% of qualified candidates you're
 							currently missing. <span class="hidden sm:inline"
@@ -146,7 +143,7 @@
 	</div>
 	<!-- Job Post Optimization Section -->
 	<!-- <JobPostOptimization /> -->
-	<div class="container mx-auto">
+	<div class="container mx-auto z-10">
 		<BetaBadge />
 		<!-- Call to Action Section -->
 		<div class="pb-24">
@@ -154,7 +151,7 @@
 				header='"This feels like the future of talent acquisition."'
 				ctaText=""
 				ctaButtonText="It is."
-				ctaBackground="bg-[#f8f8f8]"
+				ctaBackground="bg-[#ffffff]"
 				scrollTo="#hero"
 			/>
 		</div>
@@ -162,7 +159,7 @@
 		<WhatWeDo />
 		</div>
 
-		<div class="container mx-auto mt-32">
+		<div class="container mx-auto mt-48">
 			<CallToAction
 			header="Stop guessing, start scoring."
 			ctaText="Discover how your job posts are really performing — and what to do to boost visibility and results."

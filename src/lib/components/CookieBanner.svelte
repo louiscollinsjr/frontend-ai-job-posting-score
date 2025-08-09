@@ -35,14 +35,14 @@
 </script>
 
 {#if showBanner}
-  <div class="fixed bottom-4 left-0 right-0 bg-white shadow-lg z-[100] border-t border-gray-200 p-2 max-w-5xl mx-auto rounded-full">
+  <div class="fixed bottom-4 left-0 right-0 bg-white shadow-lg z-[100] border border-gray-200 p-4 md:p-2 md:max-w-5xl mx-4 md:mx-auto rounded-lg md:rounded-full">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="text-sm text-gray-600/70 px-4 w-[50%]">
+      <div class="text-sm text-gray-600/70 px-0 md:px-4 w-full md:w-1/2">
         <p class="flex items-center">
           <img src="/Cookie.svg" alt="Cookie" class="w-6 h-6 inline" /> <span class="inline ml-4 text-xs font-aeonik tracking-wide">We use cookies to enhance your experience, analyze our traffic, and provide personalized content. Cookie preferences. Learn more in our <a href="/privacy" class="underline text-black font-medium">Privacy Policy</a>.</span>
         </p>
       </div>
-      <div class="flex flex-wrap gap-2 justify-center w-[30%]">
+      <div class="flex flex-wrap gap-2 justify-center md:justify-end w-full md:w-1/3 mt-2 md:mt-0">
         <button 
           on:click={() => declineAnalytics()}
           class="px-4 py-2 text-gray-600 rounded-full bg-gray-50 text-xs font-aeonik tracking-wide border border-gray-300 hover:bg-gray-100"

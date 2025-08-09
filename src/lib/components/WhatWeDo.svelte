@@ -31,7 +31,7 @@
   ];
 </script>
 
-<section class="relative py-16 bg-white border-2 border-white border-b-[#f8f8f8] rounded-2xl mb-8 overflow-hidden font-aeonik" style="background-image: url('/bkg2.png'); background-repeat: no-repeat; background-position: right center; background-size: cover;">
+<section class="relative py-16 bg-white border-2 border-[#f8f8f8] border-b-white rounded-2xl mb-8 overflow-hidden font-aeonik" style="background-image: url('/bkg2.png'); background-repeat: no-repeat; background-position: right center; background-size: cover;">
   <div class="w-full relative">
     <!-- Two-column layout with full bleed image -->  
     <div class="flex flex-col lg:flex-row">
