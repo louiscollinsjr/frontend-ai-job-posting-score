@@ -70,7 +70,7 @@
 				<!-- Sidebar navigation -->
 				<AppSidebar class="flex-shrink-0" />
 
-				<main class="flex-1 min-w-0 transition-all duration-200 ease-in-out mx-auto max-w-[1600px] w-full px-4">
+				<main class="flex-1 min-w-0 transition-all duration-200 ease-in-out mx-auto max-w-[1600px] w-full px-4 z-2">
 					{@render children?.()}
 				</main>
 			</div>

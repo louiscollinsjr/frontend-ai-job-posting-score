@@ -72,7 +72,7 @@
 <Sidebar.Root class="border-none pt-16">
   <Sidebar.Content class="border-none flex flex-col h-full overflow-y-auto">
     <!-- Brand logo -->
-    <div class="pt-6 pl-6">
+    <div class="sm:hidden block pt-6 pl-6">
       <a href="/" class="flex items-center">
         <img src="/jobpostscore_logo.svg" alt="JobPostScore Logo" class="h-6 sm:h-8 w-auto object-contain" style="image-rendering: crisp-edges; shape-rendering: geometricPrecision;">
       </a>

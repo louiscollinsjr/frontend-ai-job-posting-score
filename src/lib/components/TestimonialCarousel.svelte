@@ -115,12 +115,12 @@
     top: 0;
     bottom: 0;
     width: 20%;
-    background-image: linear-gradient(to right, #f8f8f8, rgba(255, 255, 255, 0));
+    background-image: linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0));
   }
   
   .fade-overlay.left-0 {
     left: 0;
-    background-image: linear-gradient(to right, rgba(255, 255, 255, 0), #f8f8f8);
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0), #ffffff);
   }
   
   .fade-overlay.right-0 {
@@ -144,12 +144,12 @@
   
   .marquee-wrapper::before {
     left: 0;
-    background: linear-gradient(90deg, #f8f8f8 0%, rgba(248,248,248,0) 100%);
+    background: linear-gradient(90deg, #ffffff 0%, rgba(255,255,255,0) 100%);
   }
   
   .marquee-wrapper::after {
     right: 0;
-    background: linear-gradient(270deg, #f8f8f8 0%, rgba(248,248,248,0) 100%);
+    background: linear-gradient(270deg, #ffffff 0%, rgba(255,255,255,0) 100%);
   }
   
   .chroma-text {

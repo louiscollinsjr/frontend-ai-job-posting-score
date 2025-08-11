@@ -146,7 +146,7 @@
 	<div class="container mx-auto z-10">
 		<BetaBadge />
 		<!-- Call to Action Section -->
-		<div class="pb-24">
+		<div class="pb-2">
 			<CallToAction
 				header='"This feels like the future of talent acquisition."'
 				ctaText=""

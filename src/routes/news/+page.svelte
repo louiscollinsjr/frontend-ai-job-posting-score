@@ -11,11 +11,11 @@
   ];
 </script>
 
-<div class="max-w-3xl mx-auto py-12 px-4 pt-32 sm:px-6 lg:px-8 bg-[#f8f8f8]">
+<div class="max-w-3xl mx-auto py-12 px-4 pt-32 sm:px-6 lg:px-8">
   <h1 class="text-3xl font-bold mb-24">News & Updates</h1>
   
   {#each posts as post}
-    <article class="mb-12 border-2 rounded-2xl p-6 border-gray-900 pb-8">
+    <article class="mb-12 border-2 rounded-2xl p-6 border-gray-900 pb-8 bg-white">
       <h2 class="text-2xl font-semibold mb-2">{post.title}</h2>
       <div class="text-sm text-gray-500 mb-4">
         {post.date} · {post.author}

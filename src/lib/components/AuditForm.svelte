@@ -3,6 +3,8 @@
 import { z } from 'zod';
 import { fade, fly } from 'svelte/transition';
 import { cubicOut } from 'svelte/easing';
+import Logo from '$lib/components/Logo.svelte';
+import SubmitButton from '$lib/components/SubmitButton.svelte';
 
 // Zod schema for URLs starting with https:// or http://
 const urlSchema = z.string()
@@ -235,22 +237,10 @@ import * as Alert from "$lib/components/ui/alert/index.js";
       </div>
       <!-- Mobile submit button -->
       <div class="sm:hidden form-submit mt-8 sticky bottom-4 relative max-w-md mx-auto" style="padding-bottom: env(safe-area-inset-bottom)">
-        <div class="absolute -inset-0.5 w-[calc(100%+8px)] mx-auto bg-gradient-to-r from-[#ff00f7]/70 via-[#fa3d1d] to-[#0358f7]/70 rounded-full blur opacity-50 animate-pulse"></div>
-        <button
-          type="submit"
-          class="relative mx-auto cta-button w-[calc(100%-4px)] text-lg text-center flex items-center justify-center gap-2 bg-black hover:bg-gray-700 transition-colors duration-300 text-white py-2 px-8 rounded-full font-aeonik tracking-wider font-normal"
-          disabled={isLoading}
-        >
-          {#if isLoading}
-            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Analyzing...
-          {:else}
-            Get JobPostScore
-          {/if}
-        </button>
+        <SubmitButton type="submit" {isLoading}>
+          Get
+          <Logo variant="white" imgClass="h-5 w-auto sm:h-6" />
+        </SubmitButton>
       </div>
       {#key inputType}
       <div class="hidden sm:block" in:fade="{{ duration: 300, delay: 200 }}" out:fade="{{ duration: 200 }}">
@@ -313,26 +303,10 @@ import * as Alert from "$lib/components/ui/alert/index.js";
         {/if}
         
         <div class="form-submit mt-8 sm:mt-24 sticky bottom-4 relative max-w-md mx-auto" style="padding-bottom: env(safe-area-inset-bottom)">
-          <div class="absolute -inset-0.5 w-[calc(100%+8px)] mx-auto bg-gradient-to-r from-[#ff00f7]/70 via-[#fa3d1d] to-[#0358f7]/70 rounded-full blur opacity-50 animate-pulse"></div>
-          <button
-            type="submit"
-            class="relative mx-auto cta-button w-[calc(100%-4px)] text-lg sm:text-2xl text-center flex items-center justify-center gap-2 bg-black hover:bg-gray-700 transition-colors duration-300 text-white py-2 px-8 rounded-full font-aeonik tracking-wider font-normal"
-            disabled={isLoading}
-          >
-            {#if isLoading}
-              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Analyzing...
-            {:else}
-           <span class="block sm:hidden">Get JobPostScore</span>
-           <span class="hidden sm:block">Get Your Free JobPostScore</span>
-           <!-- <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" class=" hidden sm:block ml-1">
-            <path fill="currentColor" d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z"></path>
-          </svg> -->
-            {/if}
-          </button>
+          <SubmitButton type="submit" {isLoading}>
+            <span class="hidden sm:inline">Get</span>
+            <Logo variant="white" imgClass="h-5 w-auto sm:h-6" />
+          </SubmitButton>
         </div>
       </div>
       {/key}

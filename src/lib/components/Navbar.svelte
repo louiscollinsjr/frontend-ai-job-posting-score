@@ -3,6 +3,7 @@
   import * as Sidebar from "$lib/components/ui/sidebar/index.js";
   import { onMount } from 'svelte';
   import { user } from '$lib/stores/auth.js';
+  import Logo from "./Logo.svelte";
   
   // Props
   export let hideLoginButton = false;
@@ -37,9 +38,7 @@
       <div class="flex items-center">
         
         
-        <a href="/" class="flex-shrink-0 flex items-center">
-          <img src="/jobpostscore_logo.svg" alt="JobPostScore Logo" class="h-6 sm:h-8 w-auto object-contain" style="image-rendering: crisp-edges; shape-rendering: geometricPrecision;">
-        </a>
+        <Logo href="/" />
 
         {#if !justLogo}
           {#if !hideLoginButton}
