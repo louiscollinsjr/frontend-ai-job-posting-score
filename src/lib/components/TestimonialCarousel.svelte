@@ -47,7 +47,7 @@
 </script>
 
 <div class="flex flex-col items-center w-full mx-auto mt-24 mb-32 overflow-hidden">
-  <h2 class="relative z-10 mx-auto text-5xl font-aeonik mb-24">
+  <h2 class="relative z-10 mx-auto sm:text-5xl text-3xl font-aeonik mb-24">
     Trusted by Talent Acquisition 
     <span class="inline-flex pb-1 chroma-text chroma-text-animate">&nbsp;Teams</span>
   </h2>

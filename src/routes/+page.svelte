@@ -159,15 +159,17 @@
 				scrollTo="#hero"
 			/>
 		</div>
+
 		<div class="container max-w-8xl mx-auto">
 		<WhatWeDo />
 		</div>
+
 		<BetaBadge />
-		<div class="container mx-auto mt-48">
+		<div class="container mx-auto sm:mt-48 mt-24">
 			<CallToAction
 			header="Stop guessing, start scoring."
 			ctaText="Discover how your job posts are really performing — and what to do to boost visibility and results."
-			ctaButtonText="Get Your JobPostScore"
+			ctaButtonText="Get JobPostScore"
 			ctaBackground="bg-[#f8f8f8]"
 			scrollTo="#hero"
 		/>
