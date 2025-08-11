@@ -4,9 +4,16 @@
 
 <div class="flex flex-col items-center justify-center h-full px-4">
   <div class="w-full max-w-md">
+    <!-- Logo at the top -->
+    <!-- <div class="text-center mb-10">
+      <a href="/" class="inline-block">
+        <span class="text-3xl font-bold text-gray-900">Reach<b>Score</b> <sup class=" hidden text-xs align-super">™</sup></span>
+      </a>
+      <p class="mt-2 text-sm text-gray-600">AI-powered job posting audit tool</p>
+    </div> -->
     
     <!-- Login card -->
-    <div class="rounded-2xl border border-gray-800 border-b-2 border-r-2 p-6 ">
+    <div class="rounded-2xl border border-gray-800 border-b-2 border-r-2 p-6 bg-gray-50">
      
       <MagicLinkLogin />
       

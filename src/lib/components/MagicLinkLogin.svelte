@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { supabase } from '$lib/stores/auth.js';
+  import { supabase } from '$lib/supabaseClient';
   import { browser } from '$app/environment';
   import { PUBLIC_SITE_URL } from '$env/static/public';
   import { createEventDispatcher } from 'svelte';
@@ -41,9 +41,10 @@
   // Prefer PUBLIC_SITE_URL (set differently per environment), fallback to current origin
   let redirectUrl = '';
   onMount(() => {
-    // Vite exposes envs via import.meta.env
-    const baseUrl = import.meta.env.PUBLIC_SITE_URL || (browser ? window.location.origin : '');
-    redirectUrl = baseUrl || '';
+    const base = (PUBLIC_SITE_URL && PUBLIC_SITE_URL.trim()) || (browser ? window.location.origin : '');
+    const normalizedBase = base.replace(/\/$/, '');
+    redirectUrl = `${normalizedBase}/auth/callback`;
+    console.log('[MagicLinkLogin] redirectUrl:', redirectUrl);
   });
 
   async function handleLogin() {
@@ -67,10 +68,11 @@
       });
       
       if (supabaseError) {
+        console.log('[MagicLinkLogin] signInWithOtp error:', supabaseError);
         error = supabaseError.message;
       } else {
         success = 'Magic link sent! Check your email.';
-        console.log('Mock magic link sent to:', email);
+        console.log('[MagicLinkLogin] Magic link requested for:', email);
         
         // Dispatch success event with email for parent components
         dispatch('success', { email });
