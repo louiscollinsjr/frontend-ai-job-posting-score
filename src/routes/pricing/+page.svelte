@@ -4,6 +4,7 @@
   import { Checkbox } from '$lib/components/ui/checkbox/index.js';
   import { onMount } from 'svelte';
   import * as Accordion from '$lib/components/ui/accordion/index.js';
+	import BetaBadge from '$lib/components/BetaBadge.svelte'; 
   // Simple icon for checkmark
   const Check = () => '<svg class="inline-block mr-2 h-4 w-4 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>';
 
@@ -81,6 +82,22 @@
   function selectPlan(plan) {
     selectedPlanId = plan.id;
   }
+  
+  // Tally embed configuration (replace with your real Tally form ID)
+  const TALLY_FORM_ID = '3jVVYx';
+  const TALLY_FORM_URL = `https://tally.so/r/${TALLY_FORM_ID}`;
+
+  // Load Tally embed script on client if not already present
+  onMount(() => {
+    if (typeof window === 'undefined') return;
+    const src = 'https://tally.so/widgets/embed.js';
+    if (!document.querySelector(`script[src="${src}"]`)) {
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      document.head.appendChild(s);
+    }
+  });
 </script>
 
 <svelte:head>
@@ -102,9 +119,9 @@
   }
 </style>
 
-<div class="container mx-auto px-4 py-20 pt-8 max-w-7xl pt-32">
+<div class="container mx-auto px-4 py-20 max-w-7xl pt-32">
   <!-- Page Header -->
-  <div class="text-center mb-40">
+  <div class="text-center mb-12">
     <h1 class="text-4xl md:text-5xl font-bold mb-4">Build Your Perfect Plan</h1>
     <p class="text-lg text-muted-foreground max-w-2xl mx-auto mb-12">
       Get actionable insights to improve your job post visibility. Start with our free plan,
@@ -116,7 +133,14 @@
         <Button class="rounded-full" variant={billingCycle === 'annual' ? 'default' : 'ghost'} on:click={() => billingCycle = 'annual'}>Annually (Save 20%)</Button>
       </div>
     </div>
+    <section class="flex flex-col justify-center items-center py-16 gap-8">
+      <!--Request access link-->
+      <Button class="rounded-full max-w-xs bg-blue-600 text-white"  on:click={() => window.open(TALLY_FORM_URL, '_blank')}>Request Early Access</Button>
+      <BetaBadge />
+    </section>
   </div>
+
+  
 
   <!-- Two-column layout -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-32">
@@ -255,7 +279,21 @@
             <div class="font-bold text-xl">${total}</div>
           </div>
           <div class="mt-4">
-            <Button class="w-full">Get Started</Button>
+            <Button
+              class="w-full rounded-full"
+              data-tally-open={TALLY_FORM_ID}
+              data-tally-width="380"
+              data-tally-overlay="1"
+              data-tally-emoji-text="👋"
+              data-tally-emoji-animation="wave"
+              data-tally-auto-close="2000"
+              data-tally-darkmode="auto"
+            >
+              Request Early Access
+            </Button>
+          </div>
+          <div class="mt-2 text-xs text-muted-foreground text-center">
+            Having trouble with the popup? <a href={TALLY_FORM_URL} target="_blank" rel="noopener noreferrer" class="underline">Open the request form</a>.
           </div>
           <div class="mt-2 text-xs text-muted-foreground">
             Included Features:
