@@ -142,9 +142,13 @@
 		</section>
 	</div>
 	<!-- Job Post Optimization Section -->
-	<!-- <JobPostOptimization /> -->
+	
+	<!--  -->
+
+
 	<div class="container mx-auto z-10">
 		<BetaBadge />
+		<div class="my-24"> <JobPostOptimization /></div>
 		<!-- Call to Action Section -->
 		<div class="pb-2">
 			<CallToAction
@@ -158,7 +162,7 @@
 		<div class="container max-w-8xl mx-auto">
 		<WhatWeDo />
 		</div>
-
+		<BetaBadge />
 		<div class="container mx-auto mt-48">
 			<CallToAction
 			header="Stop guessing, start scoring."

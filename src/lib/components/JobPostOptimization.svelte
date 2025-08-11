@@ -55,15 +55,15 @@
   }
 </script>
 
-<section class="py-12 sm:px-4 bg-white border-2 border-gray-100 rounded-2xl mb-8">
-  <div class="container  px-4 sm:px-6 lg:px-8">
-    <div class="text-left mb-12">
-      <h2 class="text-3xl md:text-5xl mb-4 tracking-tight text-gray-900 md:w-[60%] w-full">Finally, job post optimization that actually works</h2>
+<section class="relative py-16 bg-white border-2 border-[#f8f8f8] border-b-white rounded-2xl mb-8 overflow-hidden font-aeonik" style="background-image: url('/bkg2.png'); background-repeat: no-repeat; background-position: right center; background-size: cover;">
+  <div class="container relative px-4 sm:px-6 lg:px-8">
+    <div class="text-left mb-12 w-[100%] py-16 px-8 md:px-8 pb-0 font-aeonik">
+      <h2 class="text-3xl md:text-5xl mb-4 tracking-tight text-gray-900 md:w-[50%] w-full">Finally, job post optimization that actually works</h2>
       <p class="text-base text-gray-500 max-w-3xl">Your <b class="text-gray-900">JobPostScore</b> shows you what's limiting your reach and how to fix it.</p>
     </div>
     
     <!-- 2x2 grid with second row colspan-2 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 py-24">
       {#each features as feature, index}
         {#if feature.colSpan}
           <div class="col-span-1 md:col-span-2">
@@ -112,28 +112,6 @@
   </div>
 </section>
 
-<!-- Job Input Form -->
-<form on:submit|preventDefault={() => submitJob('text', jobData)}>
-  <textarea bind:value={$jobData.job_body} placeholder="Enter job description..."></textarea>
-  <button type="submit">Analyze Job</button>
-</form>
-
-<!-- Display Analysis Results -->
-{#if $analysisResults}
-  <div>
-    <h2>Analysis Results</h2>
-    <pre>{JSON.stringify($analysisResults, null, 2)}</pre>
-    <button on:click={() => requestRewrite($analysisResults.id)}>Rewrite Job</button>
-  </div>
-{/if}
-
-<!-- Display Improved Job Text -->
-{#if $improvedText}
-  <div>
-    <h2>Improved Job Text</h2>
-    <pre>{$improvedText}</pre>
-  </div>
-{/if}
 
 <style>
   /* Apply any custom styling here if needed */
