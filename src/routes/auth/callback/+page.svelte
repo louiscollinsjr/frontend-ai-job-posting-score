@@ -39,7 +39,23 @@
       // Check if there's a guest report in localStorage
       console.log('[localStorage-auth] Checking for guest_audit_report in associateGuestReport');
       const guestReport = localStorage.getItem('guest_audit_report');
+      const guestReportTsStr = localStorage.getItem('guest_audit_report_ts');
+      const now = Date.now();
+      const MAX_AGE_MS = 30 * 60 * 1000; // 30 minutes freshness window
+      let isFresh = true;
+      if (guestReportTsStr) {
+        const ts = parseInt(guestReportTsStr, 10);
+        if (!Number.isNaN(ts)) {
+          isFresh = now - ts <= MAX_AGE_MS;
+        }
+      }
       console.log('[localStorage-auth] Guest report found?', !!guestReport, guestReport ? `Size: ${guestReport.length} bytes` : '');
+      if (guestReport && !isFresh) {
+        console.log('[localStorage-auth] Guest report is stale; clearing and skipping redirect');
+        localStorage.removeItem('guest_audit_report');
+        localStorage.removeItem('guest_audit_report_ts');
+        return false;
+      }
       
       if (guestReport) {
         processingReport = true;

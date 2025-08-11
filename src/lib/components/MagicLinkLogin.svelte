@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { supabase } from '$lib/supabaseClient';
-  import { browser } from '$app/environment';
+  import { browser, dev } from '$app/environment';
   import { PUBLIC_SITE_URL } from '$env/static/public';
   import { createEventDispatcher } from 'svelte';
 
@@ -41,7 +41,10 @@
   // Prefer PUBLIC_SITE_URL (set differently per environment), fallback to current origin
   let redirectUrl = '';
   onMount(() => {
-    const base = (PUBLIC_SITE_URL && PUBLIC_SITE_URL.trim()) || (browser ? window.location.origin : '');
+    // In local dev, always use current origin (localhost) to avoid redirecting to production
+    const base = dev
+      ? (browser ? window.location.origin : '')
+      : ((PUBLIC_SITE_URL && PUBLIC_SITE_URL.trim()) || (browser ? window.location.origin : ''));
     const normalizedBase = base.replace(/\/$/, '');
     redirectUrl = `${normalizedBase}/auth/callback`;
     console.log('[MagicLinkLogin] redirectUrl:', redirectUrl);

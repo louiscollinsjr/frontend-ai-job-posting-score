@@ -28,6 +28,21 @@
     fromGuestLogin = params.get('from') === 'guest-login';
   }
 
+  // Proactively clear any stale guest report cache when arriving from guest-login
+  onMount(() => {
+    if (fromGuestLogin) {
+      try {
+        localStorage.removeItem('guest_audit_report');
+        localStorage.removeItem('guest_audit_report_ts');
+        // Optional: clear any old last_job_id that might interfere
+        // localStorage.removeItem('last_job_id');
+        console.log('[results] Cleared guest report cache after guest-login');
+      } catch (e) {
+        console.warn('[results] Failed clearing localStorage guest report cache', e);
+      }
+    }
+  });
+
   // Subscribe to audit store (for non-logged-in/guest flows)
   const unsubscribe = auditStore.subscribe(state => {
     auditResults = state.results;
@@ -176,6 +191,7 @@
         const reportStr = JSON.stringify(report);
         console.log('[localStorage] Writing guest_audit_report, size:', reportStr.length, 'bytes');
         localStorage.setItem('guest_audit_report', reportStr);
+        localStorage.setItem('guest_audit_report_ts', Date.now().toString());
         console.log('[localStorage] Successfully saved guest report');
         return true;
       } catch (err) {
@@ -244,6 +260,7 @@
       // Save the report to localStorage so it can be associated with the user after login
       if (report) {
         localStorage.setItem('guest_audit_report', JSON.stringify(report));
+        localStorage.setItem('guest_audit_report_ts', Date.now().toString());
       }
       
       // Show success message
