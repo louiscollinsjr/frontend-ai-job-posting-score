@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { supabase } from '$lib/stores/auth.js';
   import { browser } from '$app/environment';
+  import { PUBLIC_SITE_URL } from '$env/static/public';
   import { createEventDispatcher } from 'svelte';
 
   // Dispatch events for parent components
@@ -36,14 +37,13 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  // Get the current site URL for the redirect URL
+  // Compute redirect URL for magic link
+  // Prefer PUBLIC_SITE_URL (set differently per environment), fallback to current origin
   let redirectUrl = '';
   onMount(() => {
-    if (browser) {
-      // Create the redirect URL to the auth callback page
-      const baseUrl = window.location.origin;
-      redirectUrl = `${baseUrl}/auth/callback`;
-    }
+    // Vite exposes envs via import.meta.env
+    const baseUrl = import.meta.env.PUBLIC_SITE_URL || (browser ? window.location.origin : '');
+    redirectUrl = baseUrl || '';
   });
 
   async function handleLogin() {
@@ -86,7 +86,7 @@
   }
 </script>
 
-<div class="w-full {compact ? '' : 'max-w-sm mx-auto p-6 bg-white rounded-2xl shadow-none'} flex flex-col gap-4">
+<div class="w-full {compact ? '' : 'max-w-sm mx-auto p-6 bg-transparent rounded-2xl shadow-none'}  flex flex-col gap-4">
   {#if !compact}
     <h2 class="text-3xl font-normal text-gray-900 mb-4">Create an account</h2>
   {/if}
@@ -95,7 +95,7 @@
     <label for="email" class="text-sm font-normal text-gray-700">Email address</label>
     <input
       type="email"
-      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 text-sm placeholder:text-sm text-black placeholder:text-gray-400"
+      class="w-full px-4 py-3 border bg-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 text-sm placeholder:text-sm text-black placeholder:text-gray-400"
       placeholder="your@company.com"
       bind:value={email}
       autocomplete="email"
