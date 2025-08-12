@@ -79,6 +79,47 @@
           goto('/login');
           return;
         }
+        if (response.status === 404) {
+          console.warn('Reports API not found (404). Falling back to Supabase.');
+          // Fallback to Supabase direct query
+          const pageNum = Number(data.page) || 1;
+          const pageSize = Number(data.limit) || 20;
+          const from = (pageNum - 1) * pageSize;
+          const to = from + pageSize - 1;
+
+          // Determine current user for scoping
+          const { data: userData } = await supabase.auth.getUser();
+          const currentUserId = userData?.user?.id;
+
+          // Get total count
+          const { count } = await supabase
+            .from('reports')
+            .select('*', { count: 'exact', head: true })
+            .eq('userid', currentUserId);
+
+          // Get paginated items for current user
+          const { data: sbData, error: sbError } = await supabase
+            .from('reports')
+            .select('*')
+            .eq('userid', currentUserId)
+            .order('savedat', { ascending: false })
+            .range(from, to);
+
+          if (sbError) {
+            console.error('Supabase fallback failed:', sbError);
+            reportError = 'Failed to load reports. Please try again later.';
+          } else {
+            reports = sbData || [];
+            pagination = {
+              currentPage: pageNum,
+              totalPages: count ? Math.max(1, Math.ceil(count / pageSize)) : 1,
+              totalReports: count || (sbData ? sbData.length : 0)
+            };
+            reportError = null;
+          }
+
+          return; // Exit after fallback
+        }
         throw new Error(`Failed to fetch reports: ${response.statusText}`);
       }
 
@@ -123,6 +164,7 @@
       reportError = null;
     } catch (error) {
       console.error('Error fetching reports:', error);
+      // Do not hard fail the page; show a friendly error
       reportError = 'Failed to load reports. Please try again.';
     } finally {
       loading = false;
@@ -142,6 +184,35 @@
     }
     
     return 0; // Default score if no data available
+  }
+  
+  // Normalization helpers so we can handle multiple API shapes consistently
+  function getTitle(r) {
+    return r.title || r.job_title || r.jobTitle || r.jobtitle || 'Untitled';
+  }
+  function getCompany(r) {
+    return r.company || r.company_name || r.companyName || 'N/A';
+  }
+  function getDate(r) {
+    const d = r.date || r.created_at || r.createdAt || r.savedat;
+    try {
+      return d ? new Date(d).toLocaleDateString() : 'N/A';
+    } catch {
+      return 'N/A';
+    }
+  }
+  function getScore(r) {
+    // Prefer DB field when present
+    const dbScore = r.totalscore ?? r.total_score;
+    if (typeof dbScore === 'number') return dbScore;
+    // API shapes
+    const apiScore = r.overallScore ?? r.score;
+    if (typeof apiScore === 'number') return apiScore;
+    // Sometimes original payload is stored in jsonb
+    const origScore = r.originalreport?.total_score ?? r.originalreport?.overallScore ?? r.original_report?.total_score ?? r.original_report?.overallScore;
+    if (typeof origScore === 'number') return origScore;
+    // Fallback: compute from categories
+    return calculateOverallScore(r) ?? 0;
   }
 
   // Report action functions
@@ -349,12 +420,10 @@
                         on:click={toggleSelectAll}
                       />
                     </Table.Head>
-                    <Table.Head class="w-[30%]">Job Title</Table.Head>
-                    <Table.Head class="w-[20%]">Company</Table.Head>
-                    <Table.Head class="w-[15%]">Date</Table.Head>
-                    <Table.Head class="w-[10%] text-center">Score</Table.Head>
-                    <Table.Head class="w-[10%]">Status</Table.Head>
-                    <Table.Head class="w-[10%] text-right">Actions</Table.Head>
+                    <Table.Head class="w-auto">Job Title</Table.Head>
+                    <Table.Head class="w-28 whitespace-nowrap">Date</Table.Head>
+                    <Table.Head class="w-20 text-center">Score</Table.Head>
+                    <Table.Head class="w-10 text-right">Actions</Table.Head>
                   </Table.Row>
                 </Table.Header>
 
@@ -362,17 +431,10 @@
                   {#each reports as report}
                     <Table.Row 
                       class="hover:bg-gray-50 cursor-pointer"
-                      on:click={(e) => {
-                        const target = e.target;
-                        // Don't navigate when clicking on interactive controls or action areas
-                        if (
-                          target instanceof Element &&
-                          target.closest('button, a, input, textarea, select, [role="button"], [data-row-action]')
-                        ) {
-                          return;
-                        }
-                        viewReport(report.id);
-                      }}
+                      role="button"
+                      tabindex="0"
+                      on:click={() => viewReport(report.id)}
+                      on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); viewReport(report.id); } }}
                     >
                       <Table.Cell class="p-4">
                         <Checkbox.Root 
@@ -380,31 +442,35 @@
                           on:click={(e) => { e.stopPropagation(); toggleSelectReport(report.id); }}
                         />
                       </Table.Cell>
-                      <Table.Cell class="font-normal text-[10px] w-[30%]">{report.title || 'Untitled'}</Table.Cell>
-                      <Table.Cell class="text-[10px] w-[20%]">{report.company || 'N/A'}</Table.Cell>
-                      <Table.Cell class="text-[10px] w-[15%]">{report.date || 'N/A'}</Table.Cell>
-                      <Table.Cell class="text-center">
+                      <Table.Cell class="font-normal text-[10px] w-auto">
+                        <a href={`/results?report=${report.id}`} class="block py-3 -my-3 hover:underline">
+                          {getTitle(report)}
+                        </a>
+                      </Table.Cell>
+                      <Table.Cell class="text-[10px] w-28 whitespace-nowrap">
+                        <a href={`/results?report=${report.id}`} class="block py-3 -my-3 hover:underline">
+                          {getDate(report)}
+                        </a>
+                      </Table.Cell>
+                      <Table.Cell class="text-center w-20">
+                        <a href={`/results?report=${report.id}`} class="inline-block">
                         <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] 
-                          {report.score >= 90 ? 'bg-black text-white' : 
-                          report.score >= 70 ? 'bg-black text-white' : 
+                          {getScore(report) >= 90 ? 'bg-black text-white' : 
+                          getScore(report) >= 70 ? 'bg-black text-white' : 
                           'bg-black text-white'}"
                         >
-                          {report.score || 0}
+                          {getScore(report)}
                         </div>
+                        </a>
                       </Table.Cell>
-                      <Table.Cell>
-                        <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] 
-                          {report.status === 'Local' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}"
-                        >
-                          {report.status || 'Unknown'}
-                        </div>
-                      </Table.Cell>
-                      <Table.Cell class="text-right">
-                        <div class="relative" data-row-action on:click|stopPropagation>
+                      <Table.Cell class="text-right w-10">
+                        <div class="relative" data-row-action on:click|stopPropagation on:mousedown|stopPropagation on:keydown|stopPropagation>
                           <button
                             class="h-8 w-8 p-0 inline-flex items-center justify-center rounded-md border border-input bg-background text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
                             data-dropdown-trigger={report.id}
                             on:click={(e) => toggleDropdown(report.id, e)}
+                            on:mousedown|stopPropagation
+                            on:keydown|stopPropagation
                           >
                             <span class="sr-only">Open menu</span>
                             <svg 

@@ -295,17 +295,18 @@
         <p class="text-lg text-gray-600">Analyzing your job posting...</p>
       </div>
     {:else if processedResults}
-      <!-- Always show the score, even for guests -->
-      <div class="space-y-4 mb-2">
-        <ScoreVisualizer 
-          score={processedResults?.overallScore || 0} 
-          categories={processedResults?.categories || {}} 
-          {categoryLabels} 
-        />
-        
-        {#if isLoggedIn}
-          <!-- Suggestions Panel (only for authenticated users) -->
-          <div class="mt-2 p-6 bg-white rounded-lg shadow-sm border border-gray-100">
+      
+      {#if isLoggedIn}
+        <!-- Score Visualizer (Modern chart display for authenticated users) -->
+        <div class="space-y-4 mb-2">
+          <ScoreVisualizer 
+            score={processedResults?.overallScore || 0} 
+            categories={processedResults?.categories || {}} 
+            {categoryLabels} 
+          />
+          
+          <!-- Suggestions Panel -->
+          <div class="mt-2 p-6 bg-white rounded-lg shadow-sm border border-r-2 border-black border-b-2">
             <h3 class="text-xl font-bold uppercase mb-3">Improvement Suggestions</h3>
             {#if processedResults.job_title}
             <div class="mb-4 text-gray-400">
@@ -330,14 +331,14 @@
             
 
           </div>
-        {:else}
-          <!-- Guest prompt under the visible score -->
-          <div class="bg-gray-100 border border-gray-200 rounded-lg p-6 mb-8 text-center py-12">
-            <h3 class="font-semibold text-gray-800 mb-6">Sign in to view detailed results</h3>
-            <p class="text-sm text-gray-700">Provide your email to unlock the complete audit report with category breakdowns, suggestions, and detailed analysis.</p>
-          </div>
-        {/if}
-      </div>
+        </div>
+      {:else}
+        <!-- Message for unauthenticated users -->
+        <div class="bg-gray-100 border border-gray-200 rounded-lg p-6 mb-8 text-center py-12">
+          <h3 class="font-semibold text-gray-800 mb-6">Sign in to view detailed results</h3>
+          <p class="text-sm text-gray-700">Provide your email to unlock the complete audit report with category breakdowns, suggestions, and detailed analysis.</p>
+        </div>
+      {/if}
 
       {#if isLoggedIn}
         <!-- Red Flags (Only for authenticated users) -->

@@ -5,6 +5,8 @@
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
   import { analyzeJob, rewriteJob } from '$lib/services/jobService'; // Hypothetical service functions
+  import CircularProgress from '$lib/components/CircularProgress.svelte';
+  import { fade } from 'svelte/transition';
 
   // Feature items with descriptions and image positions
   const features = [
@@ -18,7 +20,9 @@
       title: "Scores your optimization level",
       description: "JobPostScore evaluates your posts against proven best practices, showing you exactly where you rank on the factors that drive visibility and applications.",
       imagePlaceholder: "Browser03.png",
-      imagePosition: "top"
+      imagePosition: "top",
+      // component: CircularProgress,
+      // props: { value: 99, size: 200, strokeWidth: 8, duration: 1500 }
     },
     {
       title: "Shows you what to fix",
@@ -66,14 +70,18 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 sm:py-24 py-8">
       {#each features as feature, index}
         {#if feature.colSpan}
-          <div class="col-span-1 md:col-span-2">
+          <div class="col-span-1 md:col-span-2" in:fade={{ duration: 400 }} out:fade={{ duration: 200 }}>
             <Card class="border-none shadow-none">
               <CardContent class="p-6">
                 <div class="flex flex-col md:flex-row items-center gap-6">
                   {#if feature.imagePosition === 'left'}
                     <div class="w-full md:w-1/3 mb-4 md:mb-0">
-                      <FadeImage src={feature.imagePlaceholder} alt={feature.title} fadeDirection="bottom"
-                      fadeIntensity="none" />
+                      {#if feature.component}
+                        <svelte:component this={feature.component} {...feature.props} backgroundSrc={feature.imagePlaceholder} />
+                      {:else}
+                        <FadeImage src={feature.imagePlaceholder} alt={feature.title} fadeDirection="bottom"
+                        fadeIntensity="none" />
+                      {/if}
                     </div>
                   {/if}
                   <div class="w-full {feature.imagePosition === 'left' ? 'md:w-2/3' : ''}">
@@ -82,8 +90,12 @@
                   </div>
                   {#if feature.imagePosition === 'right'}
                     <div class="w-full md:w-1/3 mt-4 md:mt-0">
-                      <FadeImage src={feature.imagePlaceholder} alt={feature.title} fadeDirection="bottom"
-                      fadeIntensity="none" />
+                      {#if feature.component}
+                        <svelte:component this={feature.component} {...feature.props} backgroundSrc={feature.imagePlaceholder} />
+                      {:else}
+                        <FadeImage src={feature.imagePlaceholder} alt={feature.title} fadeDirection="bottom"
+                        fadeIntensity="none" />
+                      {/if}
                     </div>
                   {/if}
                 </div>
@@ -91,13 +103,17 @@
             </Card>
           </div>
         {:else}
-          <div>
+          <div in:fade={{ duration: 400 }} out:fade={{ duration: 200 }}>
             <Card class="border-none shadow-none">
               <CardContent class="p-6">
                 <div class="flex flex-col">
                   {#if feature.imagePosition === 'top'}
-                    <div class="mb-4">
-                      <FadeImage src={feature.imagePlaceholder} alt={feature.title} fadeDirection="bottom" fadeIntensity="none" />
+                    <div class="mb-4" in:fade={{ duration: 400 }} out:fade={{ duration: 200 }}>
+                      {#if feature.component}
+                        <svelte:component this={feature.component} {...feature.props} backgroundSrc={feature.imagePlaceholder} />
+                      {:else}
+                        <FadeImage src={feature.imagePlaceholder} alt={feature.title} fadeDirection="bottom" fadeIntensity="none" />
+                      {/if}
                     </div>
                   {/if}
                   <h3 class="text-xl mb-2">{feature.title}</h3>

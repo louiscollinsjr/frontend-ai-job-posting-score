@@ -3,6 +3,7 @@
   export let score = 0; // Overall score (0-100)
   export let categories = {}; // Categories with scores
   export let categoryLabels = []; // Category metadata
+  import Logo from '$lib/components/Logo.svelte';
   
   // Function to determine score color based on value
   function getScoreColor(score, max = 100) {
@@ -34,10 +35,13 @@
   $: offset = circumference - (score / 100) * circumference;
 </script>
 
-<div class="score-visualizer p-6 pt-32 pb-8 bg-[#f8f8f8] rounded-lg shadow-none">
+<div class="score-visualizer p-6 pt-32 pb-8 bg-transparent rounded-lg shadow-none">
   <!-- Visibility Score Circle -->
   <div class="mb-6">
-    <h1 class="text-3xl text-center mb-2">Your <b class="text-black">JobPostScore</b> Analysis</h1>
+    <h1 class="text-3xl mb-2 whitespace-nowrap flex items-center justify-center gap-2 leading-none">
+      <Logo variant="black" alt="JobPostScore" imgClass="h-7 sm:h-10 w-auto align-middle" />
+      <span class="align-middle">Analysis</span>
+    </h1>
     <p class="text-center text-gray-600 mb-12 text-sm">Here's how your job posting performed across key metrics</p>
     
     
