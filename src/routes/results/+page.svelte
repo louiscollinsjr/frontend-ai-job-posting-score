@@ -113,7 +113,6 @@
     // Cleanup function to be returned at the end
     return () => {
       clearTimeout(dialogTimeout);
-      unsubscribe();
       unsubUser();
     };
   });
@@ -251,6 +250,12 @@
 
   // Function to load a specific report by ID from the database
   async function loadReportById(reportId) {
+    if (!reportId) {
+      console.error('Cannot load report - no ID provided');
+      toast.error('Invalid report reference');
+      return false;
+    }
+    
     try {
       console.log('Loading report by ID:', reportId);
       const { data, error } = await supabase
@@ -331,7 +336,6 @@
     // Cleanup function to be returned at the end
     return () => {
       clearTimeout(dialogTimeout);
-      unsubscribe();
       unsubUser();
     };
   });

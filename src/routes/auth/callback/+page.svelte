@@ -135,34 +135,14 @@
         if (authError) {
           error = authError.message;
         } else {
-          // If login successful, associate any guest report with the user
-          let redirected = false;
-          if (data?.user?.id) {
-            const guestReportExisted = await associateGuestReport(data.user.id);
-            // If a guest report was present, redirect to results page
-            if (guestReportExisted) {
-              redirected = true;
-              goto('/results?from=guest-login');
-            }
-          }
-          // If no guest report, redirect to intended destination
-          if (!redirected) {
-            // 1. Check for ?redirect= param in URL
-            let redirectTo = null;
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('redirect')) {
-              redirectTo = urlParams.get('redirect');
-            } else {
-              // 2. Fallback: check localStorage for intended destination
-              redirectTo = localStorage.getItem('intended_destination');
-            }
-            // 3. Fallback: dashboard
-            if (!redirectTo || redirectTo === '/auth/callback') {
-              redirectTo = '/dashboard';
-            }
-            // Clean up localStorage
-            localStorage.removeItem('intended_destination');
-            goto(redirectTo);
+          // After successful auth, check for guest report
+          const hasGuestReport = await associateGuestReport(data.user.id);
+          
+          // Redirect based on whether we had a guest report
+          if (hasGuestReport) {
+            await goto('/results');
+          } else {
+            await goto('/dashboard');
           }
         }
       } catch (err) {
@@ -220,7 +200,7 @@
         <a href="/" class="hover:text-gray-700">Terms</a>
         <a href="/" class="hover:text-gray-700">Privacy</a>
       </div>
-      <p class="mt-4 text-xs text-gray-400">© 2025 JobPostScore. All rights reserved.</p>
+      <p class="mt-4 text-xs text-gray-400"> 2025 JobPostScore. All rights reserved.</p>
     </div>
   </div>
 </div>

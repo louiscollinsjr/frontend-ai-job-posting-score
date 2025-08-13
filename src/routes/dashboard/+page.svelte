@@ -28,6 +28,7 @@
   let dropdownPosition = { top: 0, left: 0 };
   let currentUserId = null;
   let reportsChannel = null;
+  let realtimeSubscribed = false;
 
   onMount(async () => {
     document.addEventListener('click', handleClickOutside);
@@ -40,6 +41,7 @@
       if (reportsChannel) {
         try { supabase.removeChannel(reportsChannel); } catch {}
         reportsChannel = null;
+        realtimeSubscribed = false;
       }
     };
   });
@@ -78,7 +80,7 @@
   async function fetchReports(accessToken) {
     try {
       loading = true;
-      const apiUrl = `https://ai-audit-api.fly.dev/api/v1/audits?page=${data.page}&limit=${data.limit}`;
+      const apiUrl = `https://ai-audit-api.fly.dev/api/v1/reports`;
       
       const response = await fetch(apiUrl, {
         headers: {
@@ -200,25 +202,6 @@
         }
       }
 
-      // Fetch reports with rewrites in background (non-blocking)
-      try {
-        fetch('https://ai-audit-api.fly.dev/api/v1/reports/with-rewrites', {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-          }
-        })
-          .then((r) => (r.ok ? r.json() : null))
-          .then((rewriteData) => {
-            if (rewriteData) {
-              reportsWithRewrites = rewriteData.reportIds || rewriteData || [];
-            }
-          })
-          .catch((err) => console.warn('Failed to fetch rewrite data:', err));
-      } catch (error) {
-        console.warn('Failed to schedule rewrite data fetch:', error);
-      }
-      
       reportError = null;
     } catch (error) {
       console.error('Error fetching reports:', error);
@@ -415,6 +398,7 @@
   function setupRealtime() {
     try {
       if (!currentUserId) return;
+      if (realtimeSubscribed) return; // prevent duplicate subscriptions
       if (reportsChannel) {
         try { supabase.removeChannel(reportsChannel); } catch {}
         reportsChannel = null;
@@ -429,6 +413,7 @@
           }
         )
         .subscribe();
+      realtimeSubscribed = true;
     } catch (e) {
       console.warn('Failed to setup realtime:', e);
     }

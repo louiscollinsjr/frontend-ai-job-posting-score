@@ -22,9 +22,10 @@
 	let isLoading = false;
 	let results = null;
 	let showResults = false;
+	let unsubscribe = null;
 
 	// Subscribe to the store
-	const unsubscribe = auditStore.subscribe((state) => {
+	unsubscribe = auditStore.subscribe((state) => {
 		isLoading = state.isLoading;
 		results = state.results;
 		showResults = state.showResults;
