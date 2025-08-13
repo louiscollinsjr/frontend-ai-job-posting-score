@@ -78,7 +78,7 @@
   async function fetchReports(accessToken) {
     try {
       loading = true;
-      const apiUrl = `https://ai-audit-api.fly.dev/api/v1/reports?page=${data.page}&limit=${data.limit}`;
+      const apiUrl = `https://ai-audit-api.fly.dev/api/v1/audits?page=${data.page}&limit=${data.limit}`;
       
       const response = await fetch(apiUrl, {
         headers: {

@@ -69,7 +69,11 @@
 
 	// Clean up subscription on component unmount
 	onMount(() => {
-		return unsubscribe;
+		return () => {
+			if (unsubscribe) {
+				unsubscribe();
+			}
+		};
 	});
 
 	// Feature card data
