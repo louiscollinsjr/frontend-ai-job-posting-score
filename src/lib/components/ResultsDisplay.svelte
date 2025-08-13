@@ -16,6 +16,46 @@
 
 	let rewriteLoading = false;
 
+	// Print configuration
+	export let printPageSize = 'a4'; // 'a4' or 'letter'
+	function mmToPx(mm) {
+		return mm * (96 / 25.4);
+	}
+	function inToPx(inches) {
+		return inches * 96;
+	}
+	function getPrintableAreaPx() {
+		if (printPageSize === 'a4') {
+			// A4 210x297mm, margins 12mm all around
+			return { w: mmToPx(210 - 24), h: mmToPx(297 - 24) };
+		}
+		// Letter 8.5x11in, margins 0.5in all around
+		return { w: inToPx(8.5 - 1.0), h: inToPx(11 - 1.0) };
+	}
+	function scaleToFitOnePage() {
+		const el = typeof document !== 'undefined' ? document.getElementById('print-root') : null;
+		if (!el) return;
+		// reset and set transform origin
+		el.style.transform = '';
+		el.style.transformOrigin = 'top left';
+
+		const { w, h } = getPrintableAreaPx();
+		const rect = el.getBoundingClientRect();
+		const contentWidth = rect.width;
+		const contentHeight = el.scrollHeight;
+		const scale = Math.min(w / contentWidth, h / contentHeight, 1);
+		el.style.transform = `scale(${scale})`;
+	}
+	function beforePrintHandler() {
+		try {
+			scaleToFitOnePage();
+		} catch (e) {}
+	}
+	function afterPrintHandler() {
+		const el = typeof document !== 'undefined' ? document.getElementById('print-root') : null;
+		if (el) el.style.transform = '';
+	}
+
 	// Format the API response for new 7-category, 100-point rubric
 	$: processedResults = results && {
 		...results,
@@ -65,6 +105,16 @@
 		// Navigate back to form
 		window.history.back();
 	}
+
+	onMount(() => {
+		if (typeof window === 'undefined') return;
+		window.addEventListener('beforeprint', beforePrintHandler);
+		window.addEventListener('afterprint', afterPrintHandler);
+		return () => {
+			window.removeEventListener('beforeprint', beforePrintHandler);
+			window.removeEventListener('afterprint', afterPrintHandler);
+		};
+	});
 
 	// Function to print report (user can save as PDF)
 	function downloadReport() {
@@ -263,9 +313,10 @@
 	}
 </script>
 
+
 <div class="results-page pb-32 bg-[#f8f8f8]/0">
 	<!-- Main content area -->
-	<div class="max-w-2xl mx-auto pb-8 px-4">
+	<div id="print-root" class="max-w-2xl mx-auto pb-8 px-4 print:mx-auto print:bg-white print:shadow-none print:text-[12px] print:leading-tight" class:print-a4={printPageSize === 'a4'} class:print-letter={printPageSize === 'letter'}>
 		{#if loading}
 			<div class="flex flex-col items-center justify-center py-12">
 				<svg
@@ -287,7 +338,7 @@
 		{:else if processedResults}
 			{#if isLoggedIn}
 				<!-- Full Score Visualizer and detailed breakdown for authenticated users -->
-				<div class="space-y-4 mb-2">
+				<div class="space-y-4 mb-2 print:space-y-2">
 					<ScoreVisualizer
 						score={processedResults?.overallScore || 0}
 						categories={processedResults?.categories || {}}
@@ -296,7 +347,7 @@
 
 					<!-- Suggestions Panel -->
 					<div
-						class="mt-2 p-6 bg-white rounded-lg shadow-sm border border-r-2 border-black border-b-2"
+						class="mt-2 p-6 bg-white rounded-lg shadow-sm border border-r-2 border-black border-b-2 avoid-break print:p-4"
 					>
 						<h3 class="text-xl font-bold uppercase mb-3">Improvement Suggestions</h3>
 						{#if processedResults.job_title}
@@ -322,7 +373,7 @@
 				</div>
 
 				<!-- Action buttons -->
-				<div class="flex flex-wrap justify-center gap-4 mt-8 bg-gray-100 p-6 rounded-lg py-12">
+				<div class="flex flex-wrap justify-center gap-4 mt-8 bg-gray-100 p-6 rounded-lg py-12 print:hidden">
 					<Button variant="default" size="sm" on:click={downloadReport}>Download Report</Button>
 
 					<Button variant="default" size="sm" id="downloadButton" on:click={downloadJobData}>
@@ -341,7 +392,7 @@
 				</div>
 			{:else}
 				<!-- Always show the score prominently with progress circle -->
-				<div class="text-center mb-8">
+				<div class="text-center mb-8 avoid-break print:mb-4">
 					<h1
 						class="text-3xl mb-2 whitespace-nowrap flex items-center justify-center gap-2 leading-none"
 					>
@@ -352,7 +403,7 @@
 						Here's how your job posting performed across key metrics
 					</p>
 					<div class="relative flex justify-center">
-						<div class="relative w-64 h-64">
+						<div class="relative w-64 h-64 print:w-48 print:h-48">
 							<!-- SVG Circle Progress -->
 							<svg class="w-full h-full" viewBox="0 0 100 100">
 								<!-- Background circle -->
@@ -376,7 +427,7 @@
 
 							<!-- Score value -->
 							<div class="absolute inset-0 flex flex-col items-center justify-center">
-								<span class="text-3xl sm:text-7xl font-bold text-black"
+								<span class="text-3xl sm:text-7xl font-bold text-black print:text-5xl"
 									>{Math.round(processedResults?.overallScore || 0)}</span
 								>
 								<span class="text-xs text-gray-500">(0-100)</span>
@@ -404,7 +455,7 @@
 				</div>
 				<!-- Magic link gate for detailed analysis -->
 				<div
-					class="bg-gray-50 border border-black border-b-2 border-r-2 rounded-lg p-8 py-20 mt-24 mb-16 text-center"
+					class="bg-gray-50 border border-black border-b-2 border-r-2 rounded-lg p-8 py-20 mt-24 mb-16 text-center avoid-break print:p-4 print:py-6 print:mt-6 print:mb-6"
 				>
 					<div class="mb-6">
 						<!-- <svg class="w-16 h-16 mx-auto text-blue-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -427,7 +478,7 @@
 
 					<div class="space-y-4">
 						<button
-							class="bg-black text-white font-semibold py-3 px-8 rounded-full transition-colors duration-200 shadow-md hover:shadow-lg"
+							class="bg-black text-white font-semibold py-3 px-8 rounded-full transition-colors duration-200 shadow-md hover:shadow-lg print:hidden"
 							on:click={() => dispatch('accesslater')}
 						>
 							Get complete report
@@ -445,4 +496,34 @@
 <!-- Fallback for no results shown inside component -->
 
 <style>
+  /* Component-scoped utilities for printing */
+  :global(.avoid-break) {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  @media print {
+    /* Ensure colors are preserved when printing */
+    :global(body) {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* Constrain printable width per selected paper size */
+    :global(#print-root.print-a4) {
+      width: 186mm; /* 210mm - 24mm total margins */
+    }
+    :global(#print-root.print-letter) {
+      width: 7.5in; /* 8.5in - 1in total margins */
+    }
+    :global(#print-root) {
+      margin: 0 auto;
+    }
+
+    /* Optional utility if you want to force a new page before a section */
+    :global(.print-break-before) {
+      break-before: page;
+      page-break-before: always;
+    }
+  }
 </style>
