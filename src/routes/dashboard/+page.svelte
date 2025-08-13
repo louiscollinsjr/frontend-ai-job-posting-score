@@ -26,6 +26,8 @@
   let activeDropdown = null;
   let loading = false;
   let dropdownPosition = { top: 0, left: 0 };
+  let currentUserId = null;
+  let reportsChannel = null;
 
   onMount(async () => {
     document.addEventListener('click', handleClickOutside);
@@ -35,6 +37,10 @@
     
     return () => {
       document.removeEventListener('click', handleClickOutside);
+      if (reportsChannel) {
+        try { supabase.removeChannel(reportsChannel); } catch {}
+        reportsChannel = null;
+      }
     };
   });
 
@@ -51,10 +57,17 @@
       
       isAuthenticated = true;
       userEmail = session.user?.email || 'User';
+      // Resolve current user id for scoping and realtime
+      try {
+        const { data: userData } = await supabase.auth.getUser();
+        currentUserId = userData?.user?.id;
+      } catch {}
       authChecked = true;
       
       // Fetch reports data
       await fetchReports(session.access_token);
+      // Start realtime listener to reflect DB changes instantly
+      setupRealtime();
       
     } catch (error) {
       console.error('Auth check failed:', error);
@@ -124,41 +137,86 @@
       }
 
       const responseData = await response.json();
-      
-      // Handle both old and new API response formats
+
+      // Normalize various possible API response shapes
+      let items = [];
+      let totalReports = 0;
+      let totalPages = 1;
+      let currentPage = Number(data.page) || 1;
+
       if (Array.isArray(responseData)) {
-        // Old API format - simulate pagination
-        reports = responseData;
-        pagination = {
-          currentPage: data.page,
-          totalPages: Math.ceil(responseData.length / data.limit),
-          totalReports: responseData.length
-        };
-      } else {
-        // New API format with pagination
-        reports = responseData.reports || [];
-        pagination = {
-          currentPage: responseData.currentPage || data.page,
-          totalPages: responseData.totalPages || 1,
-          totalReports: responseData.totalReports || 0
-        };
+        // Array-only response
+        items = responseData;
+        totalReports = responseData.length;
+        totalPages = Math.max(1, Math.ceil((responseData.length || 0) / (Number(data.limit) || 20)));
+      } else if (responseData && typeof responseData === 'object') {
+        // Common keys seen across versions
+        items = responseData.reports ?? responseData.data ?? responseData.items ?? responseData.results ?? [];
+        totalReports = responseData.totalReports ?? responseData.total ?? responseData.totalCount ?? (Array.isArray(items) ? items.length : 0);
+        totalPages = responseData.totalPages ?? responseData.pageCount ?? responseData.pages ?? 1;
+        currentPage = responseData.currentPage ?? responseData.page ?? currentPage;
       }
 
-      // Fetch reports with rewrites
+      reports = Array.isArray(items) ? items : [];
+      pagination = {
+        currentPage,
+        totalPages: totalPages || 1,
+        totalReports: totalReports || (Array.isArray(items) ? items.length : 0)
+      };
+
+      // If API returns OK but no items (shape mismatch or server-side filter), gracefully fall back to Supabase
+      if (reports.length === 0) {
+        try {
+          const pageNum = Number(data.page) || 1;
+          const pageSize = Number(data.limit) || 20;
+          const from = (pageNum - 1) * pageSize;
+          const to = from + pageSize - 1;
+
+          const { data: userData } = await supabase.auth.getUser();
+          const currentUserId = userData?.user?.id;
+
+          const { count } = await supabase
+            .from('reports')
+            .select('*', { count: 'exact', head: true })
+            .eq('userid', currentUserId);
+
+          const { data: sbData, error: sbError } = await supabase
+            .from('reports')
+            .select('*')
+            .eq('userid', currentUserId)
+            .order('savedat', { ascending: false })
+            .range(from, to);
+
+          if (!sbError) {
+            reports = sbData || [];
+            pagination = {
+              currentPage: pageNum,
+              totalPages: count ? Math.max(1, Math.ceil(count / pageSize)) : 1,
+              totalReports: count || (sbData ? sbData.length : 0)
+            };
+          }
+        } catch (fallbackErr) {
+          console.warn('Supabase fallback (on empty API) failed:', fallbackErr);
+        }
+      }
+
+      // Fetch reports with rewrites in background (non-blocking)
       try {
-        const rewriteResponse = await fetch('https://ai-audit-api.fly.dev/api/v1/reports/with-rewrites', {
+        fetch('https://ai-audit-api.fly.dev/api/v1/reports/with-rewrites', {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
           }
-        });
-        
-        if (rewriteResponse.ok) {
-          const rewriteData = await rewriteResponse.json();
-          reportsWithRewrites = rewriteData.reportIds || rewriteData || [];
-        }
+        })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((rewriteData) => {
+            if (rewriteData) {
+              reportsWithRewrites = rewriteData.reportIds || rewriteData || [];
+            }
+          })
+          .catch((err) => console.warn('Failed to fetch rewrite data:', err));
       } catch (error) {
-        console.warn('Failed to fetch rewrite data:', error);
+        console.warn('Failed to schedule rewrite data fetch:', error);
       }
       
       reportError = null;
@@ -352,6 +410,57 @@
       }
     }
   }
+
+  // Realtime updates from Supabase for immediate UI refresh
+  function setupRealtime() {
+    try {
+      if (!currentUserId) return;
+      if (reportsChannel) {
+        try { supabase.removeChannel(reportsChannel); } catch {}
+        reportsChannel = null;
+      }
+      reportsChannel = supabase
+        .channel('reports_changes')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'reports', filter: `userid=eq.${currentUserId}` },
+          (payload) => {
+            handleReportChange(payload);
+          }
+        )
+        .subscribe();
+    } catch (e) {
+      console.warn('Failed to setup realtime:', e);
+    }
+  }
+
+  function handleReportChange(payload) {
+    try {
+      const evt = payload.eventType;
+      const newRow = payload.new || {};
+      const oldRow = payload.old || {};
+      if (evt === 'INSERT') {
+        if (newRow.userid !== currentUserId) return;
+        // Prepend and sort by savedat/created_at desc
+        reports = [newRow, ...reports].sort((a, b) => {
+          const ad = new Date(a.savedat || a.created_at || a.createdAt || 0).getTime();
+          const bd = new Date(b.savedat || b.created_at || b.createdAt || 0).getTime();
+          return bd - ad;
+        });
+        pagination = { ...pagination, totalReports: (pagination.totalReports || 0) + 1 };
+      } else if (evt === 'UPDATE') {
+        reports = reports.map((r) => (r.id === newRow.id ? { ...r, ...newRow } : r));
+      } else if (evt === 'DELETE') {
+        const before = reports.length;
+        reports = reports.filter((r) => r.id !== (oldRow.id || oldRow.reportid));
+        if (reports.length < before) {
+          pagination = { ...pagination, totalReports: Math.max(0, (pagination.totalReports || 0) - 1) };
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to apply realtime change:', e);
+    }
+  }
 </script>
 
 <svelte:window on:click={handleClickOutside} />
@@ -402,11 +511,30 @@
         </div>
         
         <div class="w-full">
-          {#if reports.length === 0}
+          {#if loading}
+            <div class="border-2 border-black rounded-lg w-full overflow-visible">
+              <div class="animate-pulse divide-y divide-gray-100">
+                <div class="p-4 flex items-center gap-4">
+                  <div class="ml-2 h-4 w-4 bg-gray-200 rounded"></div>
+                  <div class="h-4 w-1/3 bg-gray-200 rounded"></div>
+                  <div class="ml-auto h-4 w-24 bg-gray-200 rounded"></div>
+                </div>
+                {#each Array.from({ length: 6 }) as _, idx}
+                  <div class="p-4 grid grid-cols-[5%_auto_7rem_5rem_2rem] items-center gap-2" role="presentation">
+                    <div class="h-4 w-4 bg-gray-200 rounded ml-2"></div>
+                    <div class="h-3 w-2/3 bg-gray-200 rounded"></div>
+                    <div class="h-3 w-20 bg-gray-200 rounded justify-self-start"></div>
+                    <div class="h-6 w-12 bg-gray-200 rounded-full justify-self-center"></div>
+                    <div class="h-6 w-6 bg-gray-200 rounded justify-self-end"></div>
+                  </div>
+                {/each}
+              </div>
+            </div>
+          {:else if reports.length === 0}
             <div class="p-12 text-center min-h-[300px] flex flex-col justify-center items-center">
-              <p class="text-gray-500 mb-4">No reports found. Start by creating your first JobPostScore!</p>
+              <p class="text-gray-500 mb-4">No reports found. Start by getting your first JobPostScore.</p>
               <Button.Root on:click={() => goto('/')} variant="default" size="sm" class="bg-black hover:bg-gray-800 text-white">
-                Create Report
+                Get JobPostScore
               </Button.Root>
             </div>
           {:else}

@@ -59,7 +59,7 @@
 		<CookieBanner />
 	</div>
 {:else}
-	<Sidebar.Provider open={false}>
+	<Sidebar.Provider open={true}>
 		<div class="flex flex-col min-h-screen w-full bg-[#ffffff] overflow-x-hidden">
 			<div class="absolute inset-0 bg-[url('/bkg_white.png')] bg-no-repeat bg-contain sm:bg-cover bg-center blur-lg opacity-90 z-0"></div>
 			<div class="absolute inset-0 bg-gradient-to-b from-[#f8f8f8]/0 via-[#f8f8f8]/0 to-[#f8f8f8]/0 2xl:from-[#f8f8f8]/0 2xl:via-[#f8f8f8]/0 2xl:to-[#f8f8f8]/0 z-0"></div>

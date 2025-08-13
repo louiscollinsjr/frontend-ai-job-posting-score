@@ -41,166 +41,134 @@
         console.warn('[results] Failed clearing localStorage guest report cache', e);
       }
     }
-  });
 
-  // Subscribe to audit store (for non-logged-in/guest flows)
-  const unsubscribe = auditStore.subscribe(state => {
-    auditResults = state.results;
-  });
+    // Subscribe to audit store (for non-logged-in/guest flows)
+    const unsubscribe = auditStore.subscribe(state => {
+      auditResults = state.results;
+    });
 
-  // User store subscription
-  let userVal = null;
-  const unsubUser = user.subscribe(val => {
-    userVal = val;
-    isLoggedIn = !!(val && val.id);
-  });
+    // User store subscription
+    let userVal = null;
+    const unsubUser = user.subscribe(val => {
+      userVal = val;
+      isLoggedIn = !!(val && val.id);
+    });
 
-  // Format report data to match the database schema
-  function formatReportForDB(report: any, userId: string): any {
-    // Ensure all required fields are present and match DB schema
-    return {
-      userid: userId,
-      job_title: report.job_title || 'Untitled Job',
-      job_body: report.job_body || report.content || '',
-      feedback: report.feedback || '',
-      total_score: report.total_score || 0,
-      categories: report.categories || {},
-      recommendations: report.recommendations || [],
-      red_flags: report.red_flags || [],
-      savedat: new Date().toISOString(),
-      source: report.source || 'web_app',
-      original_text: report.job_body || report.content || '',
-      original_report: report.job_body || report.content || ''
+    // Format report data to match the database schema
+    function formatReportForDB(report: any, userId: string): any {
+      // Ensure all required fields are present and match DB schema
+      return {
+        userid: userId,
+        job_title: report.job_title || 'Untitled Job',
+        job_body: report.job_body || report.content || '',
+        feedback: report.feedback || '',
+        total_score: report.total_score || 0,
+        categories: report.categories || {},
+        recommendations: report.recommendations || [],
+        red_flags: report.red_flags || [],
+        savedat: new Date().toISOString(),
+        source: report.source || 'web_app',
+        original_text: report.job_body || report.content || '',
+        original_report: report.job_body || report.content || ''
+      };
+    }
+
+    // Load guest report from localStorage if not logged in
+    if (!auditResults && !isLoggedIn) {
+      try {
+        const guestReport = localStorage.getItem('guest_audit_report');
+        if (guestReport) {
+          auditResults = JSON.parse(guestReport);
+          console.log('Loaded guest report from localStorage');
+        }
+      } catch (e) {
+        console.error('Error loading guest report:', e);
+      }
+    }
+
+    // Check URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromParam = urlParams.get('from');
+    const reportId = urlParams.get('report');
+    
+    // Priority 1: Load specific report if report ID is provided
+    if (reportId && isLoggedIn) {
+      loadReportById(reportId);
+    }
+    // Priority 2: Clear guest cache after login
+    else if (fromParam === 'guest-login') {
+      console.log('[localStorage] Clearing guest reports after login');
+      try {
+        localStorage.removeItem('guest_audit_report');
+        localStorage.removeItem('guest_audit_report_ts');
+      } catch (e) {
+        console.warn('Failed to clear guest reports:', e);
+      }
+    }
+    // Priority 3: For normal visits, just prompt guests to save (no auto-save)
+    else {
+      gentlyPromptSave();
+    }
+
+    // Cleanup function to be returned at the end
+    return () => {
+      clearTimeout(dialogTimeout);
+      unsubscribe();
+      unsubUser();
     };
-  }
+  });
 
-  // Save report to localStorage for guests or to database for logged-in users
+  // Updated saveReport function
   async function saveReport(report: any) {
     if (!report) return;
+  
+    try {
+      const userId = isLoggedIn && userVal?.id ? userVal.id : null;
+      const formattedReport = formatReportForDB(report, userId);
     
-    if (isLoggedIn && userVal?.id) {
-      try {
-        const formattedReport = formatReportForDB(report, userVal.id);
-        
-        // Save to database
-        const { data, error } = await supabase
-          .from('reports')
-          .insert([formattedReport])
-          .select('id, json_ld, job_title, job_body, feedback, total_score')
-          .single();
-          
-        if (error) throw error;
-        
-        console.log('Report saved successfully with ID:', data.id);
-        
-        // Update the audit store safely
+      const { data, error } = await supabase
+        .from('reports')
+        .insert([formattedReport])
+        .select('id, json_ld, job_title, job_body, feedback, total_score')
+        .single();
+      
+      if (error) throw error;
+    
+      console.log('Report saved successfully with ID:', data.id);
+    
+      // Update store and local variables
+      auditStore.update(state => ({
+        ...state,
+        results: {
+          ...(state?.results || {}),
+          ...data
+        }
+      }));
+    
+      // Update local references
+      auditResults = {...auditResults, ...data};
+      if (results) results = {...results, ...data};
+    
+      // Remove guest cache if exists
+      if (!isLoggedIn) {
+        localStorage.removeItem('guest_audit_report');
+        localStorage.removeItem('guest_audit_report_ts');
+      }
+    
+      return true;
+    } catch (err) {
+      console.error('Error saving report:', err);
+    
+      // Fallback to localStorage for guests
+      if (!isLoggedIn) {
         try {
-          console.log('Updating store with saved data:', { 
-            id: data.id, 
-            hasJsonLd: !!data.json_ld 
-          });
-          
-          // Verify we have JSON-LD data before updating store
-          if (!data.json_ld) {
-            console.warn('No JSON-LD in saved report, attempting to retrieve it specifically');
-            try {
-              // Try to retrieve JSON-LD specifically
-              const { data: jsonLdData, error: jsonLdError } = await supabase
-                .from('reports')
-                .select('json_ld')
-                .eq('id', data.id)
-                .single();
-                
-              if (jsonLdData?.json_ld) {
-                console.log('Retrieved JSON-LD separately:', !!jsonLdData.json_ld);
-                data.json_ld = jsonLdData.json_ld;
-              } else if (jsonLdError) {
-                console.warn('Error retrieving JSON-LD:', jsonLdError);
-              }
-            } catch (jsonLdErr) {
-              console.error('Error in JSON-LD retrieval:', jsonLdErr);
-            }
-          }
-          
-          // Update the store with all available data
-          auditStore.update(state => {
-            if (!state || !state.results) {
-              return { 
-                results: {
-                  id: data.id,
-                  json_ld: data.json_ld,
-                  job_title: data.job_title,
-                  job_body: data.job_body,
-                  feedback: data.feedback,
-                  total_score: data.total_score
-                }
-              };
-            }
-            
-            return {
-              ...state,
-              results: {
-                ...state.results,
-                id: data.id,
-                json_ld: data.json_ld,
-                job_title: data.job_title,
-                job_body: data.job_body,
-                feedback: data.feedback,
-                total_score: data.total_score
-              }
-            };
-          });
-          
-          // Also update any local variables used by components
-          if (typeof results !== 'undefined') {
-            results = {
-              ...results,
-              id: data.id,
-              json_ld: data.json_ld
-            };
-          }
-          
-          // Update the auditResults variable if it exists
-          if (typeof auditResults !== 'undefined') {
-            auditResults = {
-              ...auditResults,
-              id: data.id,
-              json_ld: data.json_ld
-            };
-          }
-          
-          console.log('Store updated successfully with data including JSON-LD:', !!data.json_ld);
-        } catch (storeErr) {
-          console.error('Error updating store:', storeErr);
+          localStorage.setItem('guest_audit_report', JSON.stringify(report));
+          return true;
+        } catch (e) {
+          console.error('LocalStorage fallback failed:', e);
         }
-        
-        // Store the ID in localStorage as fallback
-        if (data.id) {
-          localStorage.setItem('last_job_id', data.id);
-          console.log('Saved job ID to localStorage:', data.id);
-        }
-        
-        return true;
-      } catch (err) {
-        console.error('Error saving report:', err);
-        return false;
       }
-    } else {
-      // For guests, save to localStorage
-      try {
-        const reportStr = JSON.stringify(report);
-        console.log('[localStorage] Writing guest_audit_report, size:', reportStr.length, 'bytes');
-        localStorage.setItem('guest_audit_report', reportStr);
-        localStorage.setItem('guest_audit_report_ts', Date.now().toString());
-        console.log('[localStorage] Successfully saved guest report');
-        return true;
-      } catch (err) {
-        console.error('[localStorage] Failed to save guest report:', err);
-        if (err.name === 'QuotaExceededError') {
-          console.error('[localStorage] Storage quota exceeded, report may be too large');
-        }
-        return false;
-      }
+      return false;
     }
   }
 
@@ -323,6 +291,19 @@
   }
 
   onMount(() => {
+    // Load guest report from localStorage if not logged in
+    if (!auditResults && !isLoggedIn) {
+      try {
+        const guestReport = localStorage.getItem('guest_audit_report');
+        if (guestReport) {
+          auditResults = JSON.parse(guestReport);
+          console.log('Loaded guest report from localStorage');
+        }
+      } catch (e) {
+        console.error('Error loading guest report:', e);
+      }
+    }
+
     // Check URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const fromParam = urlParams.get('from');
@@ -332,54 +313,22 @@
     if (reportId && isLoggedIn) {
       loadReportById(reportId);
     }
-    // Priority 2: Handle guest login redirect
+    // Priority 2: Clear guest cache after login
     else if (fromParam === 'guest-login') {
-      console.log('[localStorage] Checking for guest_audit_report after login');
-      const guestReport = localStorage.getItem('guest_audit_report');
-      if (guestReport) {
-        console.log('[localStorage] Found guest report, size:', guestReport.length, 'bytes');
-        try {
-          auditResults = JSON.parse(guestReport);
-          // Save report to database now that user is logged in
-          const userId = userVal?.id;
-          async function saveGuestReport() {
-            const { data: reportData, error: reportError } = await supabase
-              .from('reports')
-              .insert([{
-                userid: userId,
-                jobtitle: guestReport.job_title,
-                job_body: guestReport.job_body,
-                feedback: guestReport.feedback,
-                totalscore: guestReport.total_score,
-                categories: guestReport.categories,
-                recommendations: guestReport.recommendations,
-                redflags: guestReport.red_flags,
-                savedat: new Date().toISOString(),
-                source: guestReport.source,
-                originalreport: guestReport.original_report
-              }])
-              .select('*');
-            if (reportError) {
-              console.error('Error saving guest report:', reportError);
-            } else {
-              console.log('Guest report saved successfully:', reportData);
-              // Optionally, show a toast or success message
-              showSavedMessage();
-            }
-          }
-          saveGuestReport();
-        } catch (e) {
-          console.error('[localStorage] Failed to parse guest report after login:', e);
-        }
-      } else {
-        console.warn('[localStorage] No guest report found after login redirect');
+      console.log('[localStorage] Clearing guest reports after login');
+      try {
+        localStorage.removeItem('guest_audit_report');
+        localStorage.removeItem('guest_audit_report_ts');
+      } catch (e) {
+        console.warn('Failed to clear guest reports:', e);
       }
     }
     // Priority 3: For normal visits, just prompt guests to save (no auto-save)
     else {
       gentlyPromptSave();
     }
-    
+
+    // Cleanup function to be returned at the end
     return () => {
       clearTimeout(dialogTimeout);
       unsubscribe();

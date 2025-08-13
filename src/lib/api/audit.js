@@ -8,6 +8,18 @@ import { supabase } from '../supabaseClient';
 // API base URL
 const API_BASE_URL = 'https://ai-audit-api.fly.dev';
 
+// Helper: fetch with timeout + abort to avoid hanging requests
+async function fetchWithTimeout(resource, options = {}, timeoutMs = 15000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const resp = await fetch(resource, { ...options, signal: controller.signal });
+    return resp;
+  } finally {
+    clearTimeout(id);
+  }
+}
+
 /**
  * Submit a job posting for audit via URL
  * @param {string} url - The URL of the job posting to analyze 
@@ -22,7 +34,7 @@ export async function auditJobUrl(url) {
       headers['Authorization'] = `Bearer ${session.data.session.access_token}`;
     }
     
-    const response = await fetch(`${API_BASE_URL}/api/audit-job-post`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/api/audit-job-post`, {
       method: 'POST',
       headers,
       body: JSON.stringify({ url })
@@ -33,7 +45,8 @@ export async function auditJobUrl(url) {
     return await response.json();
   } catch (error) {
     console.error('Error auditing job URL:', error);
-    throw new Error('Failed to analyze job posting URL. Please try again.');
+    const aborted = error?.name === 'AbortError';
+    throw new Error(aborted ? 'Request timed out. Please try again.' : 'Failed to analyze job posting URL. Please try again.');
   }
 }
 
@@ -51,7 +64,7 @@ export async function auditJobText(text) {
       headers['Authorization'] = `Bearer ${session.data.session.access_token}`;
     }
     
-    const response = await fetch(`${API_BASE_URL}/api/audit-job-post`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/api/audit-job-post`, {
       method: 'POST',
       headers,
       body: JSON.stringify({ text })
@@ -62,7 +75,8 @@ export async function auditJobText(text) {
     return await response.json();
   } catch (error) {
     console.error('Error auditing job text:', error);
-    throw new Error('Failed to analyze job description. Please try again.');
+    const aborted = error?.name === 'AbortError';
+    throw new Error(aborted ? 'Request timed out. Please try again.' : 'Failed to analyze job description. Please try again.');
   }
 }
 
@@ -77,7 +91,7 @@ export async function auditJobFile(file) {
     const formData = new FormData();
     formData.append('file', file);
     
-    const response = await fetch(`${API_BASE_URL}/api/audit-job-file`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/api/audit-job-file`, {
       method: 'POST',
       body: formData
     });
@@ -89,7 +103,8 @@ export async function auditJobFile(file) {
     return await response.json();
   } catch (error) {
     console.error('Error auditing job file:', error);
-    throw new Error('Failed to analyze job posting file. Please try again.');
+    const aborted = error?.name === 'AbortError';
+    throw new Error(aborted ? 'Request timed out. Please try again.' : 'Failed to analyze job posting file. Please try again.');
   }
 }
 
@@ -210,7 +225,7 @@ export async function analyzeJob(inputType, inputData) {
       formData.append('file', inputData);
       formData.append('inputType', 'file');
       
-      const response = await fetch(`${API_BASE_URL}/api/analyze-job/file`, {
+      const response = await fetchWithTimeout(`${API_BASE_URL}/api/analyze-job/file`, {
         method: 'POST',
         body: formData
       });
@@ -230,7 +245,7 @@ export async function analyzeJob(inputType, inputData) {
       headers['Authorization'] = `Bearer ${session.data.session.access_token}`;
     }
     
-    const response = await fetch(`${API_BASE_URL}/api/analyze-job`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/api/analyze-job`, {
       method: 'POST',
       headers,
       body: JSON.stringify({ inputType, inputData })
@@ -243,7 +258,8 @@ export async function analyzeJob(inputType, inputData) {
     return await response.json();
   } catch (error) {
     console.error('Error analyzing job:', error);
-    throw new Error(`Failed to analyze job posting. ${error.message}`);
+    const aborted = error?.name === 'AbortError';
+    throw new Error(aborted ? 'Request timed out. Please try again.' : `Failed to analyze job posting. ${error.message}`);
   }
 }
 
@@ -262,7 +278,7 @@ export async function rewriteJob(jobId, saveToDatabase = true) {
       headers['Authorization'] = `Bearer ${session.data.session.access_token}`;
     }
     
-    const response = await fetch(`${API_BASE_URL}/api/rewrite-job/${jobId}`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/api/rewrite-job/${jobId}`, {
       method: 'POST',
       headers,
       body: JSON.stringify({ saveToDatabase })
@@ -275,7 +291,8 @@ export async function rewriteJob(jobId, saveToDatabase = true) {
     return await response.json();
   } catch (error) {
     console.error('Error rewriting job:', error);
-    throw new Error(`Failed to rewrite job posting. ${error.message}`);
+    const aborted = error?.name === 'AbortError';
+    throw new Error(aborted ? 'Request timed out. Please try again.' : `Failed to rewrite job posting. ${error.message}`);
   }
 }
 

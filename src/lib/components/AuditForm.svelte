@@ -14,6 +14,17 @@ const urlSchema = z.string()
     { message: 'URL must start with https:// or http://' }
   );
 
+// Precompiled URL pattern and lightweight debounce helper
+const urlPattern = /^(https?:\/\/)(([\da-z.-]+)\.([a-z.]{2,6})|(([\d.]+)|(\[[a-f0-9:]+\])))(:[0-9]+)?([\/\w.-]*)*\/?$/i;
+
+function debounce(fn, delay = 200) {
+  let t;
+  return (...args) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...args), delay);
+  };
+}
+
 import { createEventDispatcher } from 'svelte';
 import { auditJobUrl, auditJobText } from '$lib/api/audit.js';
 import { goto } from '$app/navigation';
@@ -36,6 +47,10 @@ import * as Alert from "$lib/components/ui/alert/index.js";
   
   // Form validation state
   let isDescriptionValid = true;
+  const validateUrlDebounced = debounce((value) => {
+    isUrlValid = validateUrl(value);
+    error = '';
+  }, 200);
   
   // Toggle between URL and text/file input
   function setInputType(type) {
@@ -45,9 +60,7 @@ import * as Alert from "$lib/components/ui/alert/index.js";
   
   // Validate URL format
   function validateUrl(url) {
-    // Basic URL validation
-    const pattern = /^(https?:\/\/)?(([\da-z.-]+)\.([a-z.]{2,6})|(([\d.]+)|(\[[a-f0-9:]+\])))(:[0-9]+)?([/\w .-]*)*\/?$/;
-    return pattern.test(url);
+    return urlPattern.test((url || '').trim());
   }
   
   // Validate text input
@@ -74,6 +87,7 @@ import * as Alert from "$lib/components/ui/alert/index.js";
   
   // Handle form submission
   async function handleSubmit() {
+    if (isLoading) return; // guard against double submit
     error = '';
     
     // Validate based on input type
@@ -209,8 +223,13 @@ import * as Alert from "$lib/components/ui/alert/index.js";
             class="w-full px-4 py-3 border bg-white border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all {!isUrlValid ? 'border-red-500' : ''}"
             bind:value={jobUrl}
             bind:this={urlInputEl}
-            disabled={isLoading}
-            on:input={() => { isUrlValid = validateUrl(jobUrl); error = ''; }}
+            on:input={() => validateUrlDebounced(jobUrl)}
+            on:paste={() => setTimeout(() => validateUrlDebounced(jobUrl), 0)}
+            inputmode="url"
+            autocomplete="url"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
           />
         </div>
         <!-- File Upload Option (mobile) -->
@@ -254,8 +273,13 @@ import * as Alert from "$lib/components/ui/alert/index.js";
             class="w-full px-4 py-3 border bg-white border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all {!isUrlValid ? 'border-red-500' : ''}"
             bind:value={jobUrl}
             bind:this={urlInputEl}
-            disabled={isLoading}
-            on:input={() => { isUrlValid = validateUrl(jobUrl); error = ''; }}
+            on:input={() => validateUrlDebounced(jobUrl)}
+            on:paste={() => setTimeout(() => validateUrlDebounced(jobUrl), 0)}
+            inputmode="url"
+            autocomplete="url"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
           />
           {#if !isUrlValid && error}
   <Alert.Root variant="destructive" class="mt-6 text-xs bg-transparent border-none">
@@ -273,7 +297,6 @@ import * as Alert from "$lib/components/ui/alert/index.js";
             placeholder="Paste your job description here..."
             class="w-full px-4 py-3 border bg-[#f8f8f8] border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all min-h-[200px] {!isDescriptionValid ? 'border-red-500' : ''}"
             bind:value={jobDescription}
-            disabled={isLoading}
           ></textarea>
           
           <!-- File Upload Option -->
