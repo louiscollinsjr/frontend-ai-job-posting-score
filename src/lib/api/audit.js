@@ -39,14 +39,26 @@ export async function auditJobUrl(url) {
       headers,
       body: JSON.stringify({ url })
     });
+    // Handle anti-bot response from backend
+    if (response.status === 403) {
+      let payload;
+      try { payload = await response.json(); } catch {}
+      if (payload?.error === 'site_protected') {
+        throw new Error('This site is protected by anti-bot. Please paste the job text or upload a file instead.');
+      }
+      throw new Error('Access denied by target site. Please paste the job text or upload a file.');
+    }
     if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+      let payload;
+      try { payload = await response.json(); } catch {}
+      const msg = payload?.message || payload?.error || `API error: ${response.status}`;
+      throw new Error(msg);
     }
     return await response.json();
   } catch (error) {
     console.error('Error auditing job URL:', error);
     const aborted = error?.name === 'AbortError';
-    throw new Error(aborted ? 'Request timed out. Please try again.' : 'Failed to analyze job posting URL. Please try again.');
+    throw new Error(aborted ? 'Request timed out. Please try again.' : (error?.message || 'Failed to analyze job posting URL. Please try again.'));
   }
 }
 
