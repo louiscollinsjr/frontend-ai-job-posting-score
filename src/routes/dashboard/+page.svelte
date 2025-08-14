@@ -398,13 +398,24 @@
   function setupRealtime() {
     try {
       if (!currentUserId) return;
-      if (realtimeSubscribed) return; // prevent duplicate subscriptions
-      if (reportsChannel) {
-        try { supabase.removeChannel(reportsChannel); } catch {}
-        reportsChannel = null;
+      if (realtimeSubscribed) {
+        console.log('Realtime already subscribed, skipping');
+        return; // prevent duplicate subscriptions
       }
+      
+      // Clean up any existing channel first
+      if (reportsChannel) {
+        try { 
+          supabase.removeChannel(reportsChannel);
+          console.log('Removed existing channel');
+        } catch {}
+        reportsChannel = null;
+        realtimeSubscribed = false;
+      }
+      
+      console.log('Setting up new realtime subscription');
       reportsChannel = supabase
-        .channel('reports_changes')
+        .channel(`reports_changes_${currentUserId}_${Date.now()}`) // unique channel name
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'reports', filter: `userid=eq.${currentUserId}` },
@@ -414,8 +425,10 @@
         )
         .subscribe();
       realtimeSubscribed = true;
+      console.log('Realtime subscription setup complete');
     } catch (e) {
       console.warn('Failed to setup realtime:', e);
+      realtimeSubscribed = false;
     }
   }
 
