@@ -295,51 +295,6 @@
     }
   }
 
-  onMount(() => {
-    // Load guest report from localStorage if not logged in
-    if (!auditResults && !isLoggedIn) {
-      try {
-        const guestReport = localStorage.getItem('guest_audit_report');
-        if (guestReport) {
-          auditResults = JSON.parse(guestReport);
-          console.log('Loaded guest report from localStorage');
-        }
-      } catch (e) {
-        console.error('Error loading guest report:', e);
-      }
-    }
-
-    // Check URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const fromParam = urlParams.get('from');
-    const reportId = urlParams.get('report');
-    
-    // Priority 1: Load specific report if report ID is provided
-    if (reportId && isLoggedIn) {
-      loadReportById(reportId);
-    }
-    // Priority 2: Clear guest cache after login
-    else if (fromParam === 'guest-login') {
-      console.log('[localStorage] Clearing guest reports after login');
-      try {
-        localStorage.removeItem('guest_audit_report');
-        localStorage.removeItem('guest_audit_report_ts');
-      } catch (e) {
-        console.warn('Failed to clear guest reports:', e);
-      }
-    }
-    // Priority 3: For normal visits, just prompt guests to save (no auto-save)
-    else {
-      gentlyPromptSave();
-    }
-
-    // Cleanup function to be returned at the end
-    return () => {
-      clearTimeout(dialogTimeout);
-      unsubUser();
-    };
-  });
-
   // Dummy data following new API response format
   const defaultResults = {
     job_title: "Senior Frontend Developer",
