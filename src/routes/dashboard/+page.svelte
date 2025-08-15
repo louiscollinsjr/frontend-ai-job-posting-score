@@ -29,6 +29,7 @@
   let currentUserId = null;
   let reportsChannel = null;
   let realtimeSubscribed = false;
+  let authSubscription = null;
 
   onMount(async () => {
     document.addEventListener('click', handleClickOutside);
@@ -36,12 +37,36 @@
     // Check authentication and fetch data
     await checkAuthAndFetchData();
     
+    // Re-fetch when auth state changes (e.g., right after magic link sign-in)
+    try {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          try {
+            isAuthenticated = !!session;
+            userEmail = session?.user?.email || userEmail;
+            currentUserId = session?.user?.id || currentUserId;
+            if (session?.access_token) {
+              await fetchReports(session.access_token);
+              setupRealtime();
+            }
+          } catch (e) {
+            console.warn('Auth change handler failed:', e);
+          }
+        }
+      });
+      authSubscription = subscription;
+    } catch {}
+    
     return () => {
       document.removeEventListener('click', handleClickOutside);
       if (reportsChannel) {
         try { supabase.removeChannel(reportsChannel); } catch {}
         reportsChannel = null;
         realtimeSubscribed = false;
+      }
+      if (authSubscription) {
+        try { authSubscription.unsubscribe(); } catch {}
+        authSubscription = null;
       }
     };
   });
@@ -70,6 +95,19 @@
       await fetchReports(session.access_token);
       // Start realtime listener to reflect DB changes instantly
       setupRealtime();
+      // If initial load yields no items (API eventual consistency), retry once shortly after
+      try {
+        setTimeout(async () => {
+          try {
+            if (Array.isArray(reports) && reports.length === 0) {
+              const { data: { session: s } } = await supabase.auth.getSession();
+              if (s?.access_token) await fetchReports(s.access_token);
+            }
+          } catch (retryErr) {
+            console.warn('Delayed re-fetch failed:', retryErr);
+          }
+        }, 1200);
+      } catch {}
       
     } catch (error) {
       console.error('Auth check failed:', error);

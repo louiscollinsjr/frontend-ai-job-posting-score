@@ -1,6 +1,6 @@
 // src/lib/types/report.ts
 
-// The interface using camelCase for frontend code
+// The interface for frontend code (API/results payload). Note: uses snake_case to match backend payload
 export type Report = {
     id?: string; // Supabase will auto-generate if serial or UUID
     userId: string;
@@ -16,19 +16,19 @@ export type Report = {
     original_report: any; // jsonb type in Supabase (can store any valid JSON)
 };
 
-// The interface using lowercase for Supabase database operations
-// This matches the actual column names in the database
+// The interface for Supabase database operations
+// Matches the actual column names in the database (snake_case)
 export type SupabaseReport = {
     id?: string;
     userid: string;
-    jobtitle: string;
-    jobbody: string;
+    job_title: string;
+    job_body: string;
     feedback: string;
-    totalscore: number;
+    total_score: number;
     categories: Record<string, any>;
     recommendations: string[];
-    redflags: string[];
-    savedat: string;
+    red_flags: string[];
+    savedat: string; // existing column name without underscore
     source: string;
-    originalreport: any; // jsonb type in Supabase
+    original_report: any; // jsonb type in Supabase
 };

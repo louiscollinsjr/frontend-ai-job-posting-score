@@ -63,39 +63,42 @@
         
         // Format the report to match the database schema
         const formattedReport = formatReportForDB(reportData, userId);
-        console.log('Saving formatted guest report to Supabase:', formattedReport);
+        console.log('Saving formatted guest report to Supabase (snake_case columns):', formattedReport);
         
         // Save report to Supabase 'reports' table
         if (typeof window !== 'undefined') {
-          // Transform to match Supabase's lowercase column names (SupabaseReport interface)
+          // Use snake_case column names to match the current Supabase schema
           const dbReport = {
-            // Map camelCase fields to lowercase for Supabase
             userid: formattedReport.userId,
-            jobtitle: formattedReport.job_title,
-            jobbody: formattedReport.job_body,
+            job_title: formattedReport.job_title,
+            job_body: formattedReport.job_body,
             feedback: formattedReport.feedback,
-            totalscore: formattedReport.total_score,
+            total_score: formattedReport.total_score,
             // Ensure JSON fields are properly formatted
-            categories: typeof formattedReport.categories === 'string' 
-              ? JSON.parse(formattedReport.categories) 
+            categories: typeof formattedReport.categories === 'string'
+              ? JSON.parse(formattedReport.categories)
               : formattedReport.categories,
-            recommendations: Array.isArray(formattedReport.recommendations) 
-              ? formattedReport.recommendations 
+            recommendations: Array.isArray(formattedReport.recommendations)
+              ? formattedReport.recommendations
               : [],
-            redflags: Array.isArray(formattedReport.red_flags) 
-              ? formattedReport.red_flags 
+            red_flags: Array.isArray(formattedReport.red_flags)
+              ? formattedReport.red_flags
               : [],
             savedat: formattedReport.savedAt,
             source: formattedReport.source,
             // Store original as JSON object for the jsonb column
-            originalreport: typeof formattedReport.original_report === 'string' 
-              ? JSON.parse(formattedReport.original_report) 
-              : formattedReport
+            original_report: typeof formattedReport.original_report === 'string'
+              ? JSON.parse(formattedReport.original_report)
+              : formattedReport.original_report || formattedReport
           };
           
           console.log('Final report object being sent to Supabase:', dbReport);
-          
-          const { data, error: dbError } = await supabase.from('reports').insert([dbReport]).select();
+
+          const { data, error: dbError } = await supabase
+            .from('reports')
+            .insert([dbReport])
+            .select('id')
+            ;
           if (dbError) {
             console.error('Error saving report to database:', dbError);
             console.error('Supabase error code:', dbError.code);
@@ -103,12 +106,18 @@
             console.error('Supabase error details:', dbError.details);
           } else {
             console.log('Guest report saved to database for user:', userId, data);
+            // Return the newly created report ID so the caller can redirect directly
+            const insertedId = Array.isArray(data) && data.length > 0 ? data[0]?.id : null;
+            if (insertedId) {
+              return insertedId;
+            }
           }
         } else {
           console.log('Not running in browser, skipping DB save.');
         }
         
         // Do NOT clear the guest report here; let the results page remove it after display
+        // Return true to indicate we had a guest report even if insert failed
         return true;
       }
       return false;
@@ -121,37 +130,62 @@
   }
   
   onMount(async () => {
-    // Get the URL hash
-    const hash = window.location.hash;
-    
-    if (hash && hash.includes('access_token')) {
-      try {
-        // Process the callback URL with Supabase
-        const { data, error: authError } = await supabase.auth.setSession({
-          access_token: hash.split('access_token=')[1].split('&')[0],
-          refresh_token: hash.split('refresh_token=')[1].split('&')[0],
-        });
-        
-        if (authError) {
-          error = authError.message;
-        } else {
-          // After successful auth, check for guest report
-          const hasGuestReport = await associateGuestReport(data.user.id);
-          
-          // Redirect based on whether we had a guest report
-          if (hasGuestReport) {
-            await goto('/results');
-          } else {
-            await goto('/dashboard');
-          }
+    try {
+      const href = window.location.href;
+      const hash = window.location.hash || '';
+      let sessionEstablished = false;
+      let userId: string | null = null;
+
+      // 1) Try implicit flow (tokens in hash fragment)
+      if (hash.includes('access_token') && hash.includes('refresh_token')) {
+        const access_token = hash.split('access_token=')[1]?.split('&')[0];
+        const refresh_token = hash.split('refresh_token=')[1]?.split('&')[0];
+        if (access_token && refresh_token) {
+          const { data, error: authError } = await supabase.auth.setSession({
+            access_token,
+            refresh_token
+          });
+          if (authError) throw authError;
+          userId = data?.session?.user?.id ?? null;
+          sessionEstablished = true;
         }
-      } catch (err) {
-        error = 'Failed to process authentication. Please try again.';
-        console.error('Auth callback error:', err);
       }
-    } else {
-      // If no hash with tokens, redirect to login
-      goto('/login');
+
+      // 2) Fallback to PKCE/code flow (code/state in query string)
+      if (!sessionEstablished) {
+        const { data, error: pkceError } = await supabase.auth.exchangeCodeForSession(href);
+        if (pkceError) throw pkceError;
+        userId = data?.session?.user?.id ?? null;
+        sessionEstablished = true;
+      }
+
+      if (!sessionEstablished) {
+        throw new Error('Could not establish session from URL.');
+      }
+
+      // Ensure we have a user id
+      if (!userId) {
+        const { data: userData, error: userErr } = await supabase.auth.getUser();
+        if (userErr || !userData?.user) throw userErr ?? new Error('No user in session');
+        userId = userData.user.id;
+      }
+
+      // After successful auth, check for guest report
+      const hasGuestReport = await associateGuestReport(userId);
+
+      // Redirect based on whether we had a guest report
+      if (hasGuestReport) {
+        if (typeof hasGuestReport === 'string' && hasGuestReport.length > 0) {
+          await goto(`/results?report=${hasGuestReport}`);
+        } else {
+          await goto('/results?from=guest-login');
+        }
+      } else {
+        await goto('/dashboard');
+      }
+    } catch (err) {
+      error = 'Failed to process authentication. Please try again.';
+      console.error('Auth callback error:', err);
     }
     
     return () => {
