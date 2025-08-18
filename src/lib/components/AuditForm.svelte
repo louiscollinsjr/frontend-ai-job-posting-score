@@ -60,7 +60,14 @@ import * as Alert from "$lib/components/ui/alert/index.js";
   
   // Validate URL format
   function validateUrl(url) {
-    return urlPattern.test((url || '').trim());
+    const str = (url || '').trim();
+    if (!str) return false;
+    try {
+      const u = new URL(str);
+      return u.protocol === 'http:' || u.protocol === 'https:';
+    } catch {
+      return false;
+    }
   }
   
   // Validate text input
