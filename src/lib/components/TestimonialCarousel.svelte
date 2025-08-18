@@ -120,7 +120,7 @@
   
   .fade-overlay.left-0 {
     left: 0;
-    background-image: linear-gradient(to right, rgba(255, 255, 255, 0), #ffffff);
+    background-image: linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0));
   }
   
   .fade-overlay.right-0 {

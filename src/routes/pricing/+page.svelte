@@ -135,7 +135,15 @@
     </div>
     <section class="flex flex-col justify-center items-center py-16 gap-8">
       <!--Request access link-->
-      <Button class="rounded-full max-w-xs bg-blue-600 text-white"  on:click={() => window.open(TALLY_FORM_URL, '_blank')}>Request Early Access</Button>
+      <a
+        href={TALLY_FORM_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Request Early Access (opens in a new tab)"
+        class="rounded-full max-w-xs bg-blue-600 text-white px-4 py-2 inline-flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600"
+      >
+        Request Early Access
+      </a>
       <BetaBadge />
     </section>
   </div>

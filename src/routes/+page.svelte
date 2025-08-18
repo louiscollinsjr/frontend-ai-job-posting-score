@@ -22,14 +22,8 @@
 	let isLoading = false;
 	let results = null;
 	let showResults = false;
-	let unsubscribe = null;
 
-	// Subscribe to the store
-	unsubscribe = auditStore.subscribe((state) => {
-		isLoading = state.isLoading;
-		results = state.results;
-		showResults = state.showResults;
-	});
+	// Subscribe to the store on mount (client-only)
 
 	// Handle audit form submission
 	function handleAudit(event) {
@@ -68,12 +62,15 @@
 		}
 	}
 
-	// Clean up subscription on component unmount
+	// Subscribe and cleanup on component mount/unmount
 	onMount(() => {
+		const unsubscribe = auditStore.subscribe((state) => {
+			isLoading = state.isLoading;
+			results = state.results;
+			showResults = state.showResults;
+		});
 		return () => {
-			if (unsubscribe) {
-				unsubscribe();
-			}
+			unsubscribe();
 		};
 	});
 

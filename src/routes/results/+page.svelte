@@ -11,6 +11,7 @@
   import { auditStore } from '$lib/stores/audit.js';
   import { user } from '$lib/stores/auth.js';
   import type { Report } from '$lib/types/report';
+  import { get } from 'svelte/store';
 
   let auditResults: Report | null = null;
   let showDialog = false;
@@ -20,6 +21,50 @@
   let successMessageTimeout;
   let rewriteData = null;
   let results = null;
+
+  // Format report data to match the database schema (component scope)
+  function formatReportForDB(report: any, userId: string | null): any {
+    const safeParse = (maybeJson: any, fallback: any) => {
+      try {
+        if (typeof maybeJson === 'string') return JSON.parse(maybeJson);
+        if (maybeJson == null) return fallback;
+        return maybeJson;
+      } catch {
+        return fallback;
+      }
+    };
+
+    // Ensure jsonb/object types
+    const parsedCategories = safeParse(report?.categories, {});
+    const categories = parsedCategories && typeof parsedCategories === 'object' && !Array.isArray(parsedCategories)
+      ? parsedCategories
+      : {};
+
+    const parsedRecommendations = safeParse(report?.recommendations, []);
+    const recommendations = Array.isArray(parsedRecommendations) ? parsedRecommendations : [];
+
+    const parsedRedFlags = safeParse(report?.red_flags, []);
+    const red_flags = Array.isArray(parsedRedFlags) ? parsedRedFlags : [];
+
+    // Ensure jsonb column gets an object, not a string
+    const original_report = safeParse(report?.original_report ?? report, {});
+
+    // Ensure all required fields are present and match DB schema
+    return {
+      userid: userId,
+      job_title: report?.job_title || 'Untitled Job',
+      job_body: report?.job_body || report?.content || '',
+      feedback: report?.feedback || '',
+      total_score: report?.total_score || 0,
+      categories,
+      recommendations,
+      red_flags,
+      savedat: new Date().toISOString(),
+      source: report?.source || 'web_app',
+      original_text: report?.job_body || report?.content || '',
+      original_report
+    };
+  }
 
   // Check if we just logged in from a guest session
   let fromGuestLogin = false;
@@ -53,25 +98,6 @@
       userVal = val;
       isLoggedIn = !!(val && val.id);
     });
-
-    // Format report data to match the database schema
-    function formatReportForDB(report: any, userId: string): any {
-      // Ensure all required fields are present and match DB schema
-      return {
-        userid: userId,
-        job_title: report.job_title || 'Untitled Job',
-        job_body: report.job_body || report.content || '',
-        feedback: report.feedback || '',
-        total_score: report.total_score || 0,
-        categories: report.categories || {},
-        recommendations: report.recommendations || [],
-        red_flags: report.red_flags || [],
-        savedat: new Date().toISOString(),
-        source: report.source || 'web_app',
-        original_text: report.job_body || report.content || '',
-        original_report: report.job_body || report.content || ''
-      };
-    }
 
     // Load guest report from localStorage if not logged in
     if (!auditResults && !isLoggedIn) {
@@ -122,7 +148,9 @@
     if (!report) return;
   
     try {
-      const userId = isLoggedIn && userVal?.id ? userVal.id : null;
+      // Get current user once; no temporary subscription needed
+      const currentUser = get(user);
+      const userId = currentUser?.id ?? null;
       const formattedReport = formatReportForDB(report, userId);
     
       const { data, error } = await supabase
@@ -250,7 +278,7 @@
 
   // Function to load a specific report by ID from the database
   async function loadReportById(reportId) {
-    if (!reportId) {
+    if (!reportId || typeof reportId !== 'string') {
       console.error('Cannot load report - no ID provided');
       toast.error('Invalid report reference');
       return false;

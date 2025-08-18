@@ -9,10 +9,9 @@
   let processingReport = false;
   let currentUser = null;
   
-  // Subscribe to user store to get current user
-  const unsubUser = user.subscribe(val => {
-    currentUser = val;
-  });
+  // Subscribe to user store on mount (client-only)
+  // and clean up on unmount to prevent leaks across navigations/requests
+  // (avoids SSR-time side effects)
   
   // Format report data to match the database schema
   function formatReportForDB(report: any, userId: string): any {
@@ -75,9 +74,16 @@
             feedback: formattedReport.feedback,
             total_score: formattedReport.total_score,
             // Ensure JSON fields are properly formatted
-            categories: typeof formattedReport.categories === 'string'
-              ? JSON.parse(formattedReport.categories)
-              : formattedReport.categories,
+            categories: (() => {
+              try {
+                return typeof formattedReport.categories === 'string'
+                  ? JSON.parse(formattedReport.categories)
+                  : formattedReport.categories || {};
+              } catch {
+                console.warn('Failed to parse categories, using empty object');
+                return {};
+              }
+            })(),
             recommendations: Array.isArray(formattedReport.recommendations)
               ? formattedReport.recommendations
               : [],
@@ -87,9 +93,18 @@
             savedat: formattedReport.savedAt,
             source: formattedReport.source,
             // Store original as JSON object for the jsonb column
-            original_report: typeof formattedReport.original_report === 'string'
-              ? JSON.parse(formattedReport.original_report)
-              : formattedReport.original_report || formattedReport
+            original_report: (() => {
+              try {
+                const src = formattedReport.original_report ?? formattedReport;
+                if (typeof src === 'string') {
+                  return JSON.parse(src);
+                }
+                return src || {};
+              } catch {
+                console.warn('Failed to parse original_report, storing empty object');
+                return {};
+              }
+            })()
           };
           
           console.log('Final report object being sent to Supabase:', dbReport);
@@ -130,6 +145,9 @@
   }
   
   onMount(async () => {
+    const unsubUser = user.subscribe((val) => {
+      currentUser = val;
+    });
     try {
       const href = window.location.href;
       const hash = window.location.hash || '';
@@ -138,8 +156,9 @@
 
       // 1) Try implicit flow (tokens in hash fragment)
       if (hash.includes('access_token') && hash.includes('refresh_token')) {
-        const access_token = hash.split('access_token=')[1]?.split('&')[0];
-        const refresh_token = hash.split('refresh_token=')[1]?.split('&')[0];
+        const hashParams = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash);
+        const access_token = hashParams.get('access_token');
+        const refresh_token = hashParams.get('refresh_token');
         if (access_token && refresh_token) {
           const { data, error: authError } = await supabase.auth.setSession({
             access_token,
@@ -162,6 +181,11 @@
       if (!sessionEstablished) {
         throw new Error('Could not establish session from URL.');
       }
+
+      // Remove hash fragment (access_token/refresh_token) from URL for security
+      try {
+        window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+      } catch {}
 
       // Ensure we have a user id
       if (!userId) {

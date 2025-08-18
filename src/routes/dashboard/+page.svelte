@@ -85,16 +85,28 @@
       isAuthenticated = true;
       userEmail = session.user?.email || 'User';
       // Resolve current user id for scoping and realtime
-      try {
-        const { data: userData } = await supabase.auth.getUser();
-        currentUserId = userData?.user?.id;
-      } catch {}
+      currentUserId = session.user?.id ?? currentUserId;
+      // Start realtime listener only after we have the user ID
+      if (currentUserId) {
+        setupRealtime();
+      } else {
+        try {
+          const { data: userData } = await supabase.auth.getUser();
+          currentUserId = userData?.user?.id;
+          if (currentUserId) {
+            setupRealtime();
+          } else {
+            console.warn('No user ID in session or getUser(); skipping realtime setup');
+          }
+        } catch (e) {
+          console.warn('Failed to resolve user ID from supabase.getUser()', e);
+        }
+      }
       authChecked = true;
       
       // Fetch reports data
       await fetchReports(session.access_token);
-      // Start realtime listener to reflect DB changes instantly
-      setupRealtime();
+      // Realtime setup is already handled above once user ID is known
       // If initial load yields no items (API eventual consistency), retry once shortly after
       try {
         setTimeout(async () => {
@@ -141,9 +153,14 @@
           const to = from + pageSize - 1;
 
           // Determine current user for scoping
-          const { data: userData } = await supabase.auth.getUser();
-          const currentUserId = userData?.user?.id;
-
+          if (!currentUserId) {
+            const { data: userData } = await supabase.auth.getUser();
+            currentUserId = userData?.user?.id;
+          }
+          if (!currentUserId) {
+            console.warn('No user ID available; skipping Supabase fallback.');
+            return;
+          }
           // Get total count
           const { count } = await supabase
             .from('reports')
@@ -212,8 +229,15 @@
           const from = (pageNum - 1) * pageSize;
           const to = from + pageSize - 1;
 
-          const { data: userData } = await supabase.auth.getUser();
-          const currentUserId = userData?.user?.id;
+          if (!currentUserId) {
+            const { data: userData } = await supabase.auth.getUser();
+            currentUserId = userData?.user?.id;
+          }
+
+          if (!currentUserId) {
+            console.warn('No user ID available; skipping Supabase fallback.');
+            return;
+          }
 
           const { count } = await supabase
             .from('reports')
@@ -292,6 +316,14 @@
     if (typeof origScore === 'number') return origScore;
     // Fallback: compute from categories
     return calculateOverallScore(r) ?? 0;
+  }
+
+  // Helper to get a sortable date value from a report-like item
+  function dateValue(item) {
+    const dateStr = item?.savedat || item?.created_at || item?.createdAt;
+    if (!dateStr) return 0;
+    const t = new Date(dateStr).getTime();
+    return Number.isFinite(t) ? t : 0;
   }
 
   // Report action functions
@@ -478,11 +510,7 @@
       if (evt === 'INSERT') {
         if (newRow.userid !== currentUserId) return;
         // Prepend and sort by savedat/created_at desc
-        reports = [newRow, ...reports].sort((a, b) => {
-          const ad = new Date(a.savedat || a.created_at || a.createdAt || 0).getTime();
-          const bd = new Date(b.savedat || b.created_at || b.createdAt || 0).getTime();
-          return bd - ad;
-        });
+        reports = [newRow, ...reports].sort((a, b) => dateValue(b) - dateValue(a));
         pagination = { ...pagination, totalReports: (pagination.totalReports || 0) + 1 };
       } else if (evt === 'UPDATE') {
         reports = reports.map((r) => (r.id === newRow.id ? { ...r, ...newRow } : r));
