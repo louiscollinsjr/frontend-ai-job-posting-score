@@ -69,7 +69,7 @@
   ];
 </script>
 
-<Sidebar.Root class="border-none pt-16">
+<Sidebar.Root class="border-none pt-16 print:hidden">
   <Sidebar.Content class="border-none flex flex-col h-full overflow-y-auto">
     <!-- Brand logo -->
     <div class="sm:hidden block pt-6 pl-6">

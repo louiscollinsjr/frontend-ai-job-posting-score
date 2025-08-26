@@ -25,6 +25,16 @@
     return 'text-red-600';
   }
   
+  // Hex colors aligned with Tailwind scale used elsewhere
+  function getScoreColorHex100(score, max = 100) {
+    const pct = score / max;
+    if (pct >= 0.85) return '#16a34a'; // green-600
+    if (pct >= 0.7) return '#65a30d'; // lime-600 (closest to existing text scale)
+    if (pct >= 0.5) return '#ca8a04'; // yellow-600
+    if (pct >= 0.3) return '#f97316'; // orange-500
+    return '#dc2626'; // red-600
+  }
+  
   // Function to calculate score percentage for bar width
   function getScorePercentage(score, max) {
     return (score / max) * 100;
@@ -63,7 +73,7 @@
             cx="50"
             cy="50"
             r="42"
-            stroke="#000000"
+            stroke={getScoreColorHex100(score, 100)}
             stroke-width="8"
             fill="none"
             stroke-linecap="round"

@@ -139,3 +139,72 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Global print overrides */
+@page {
+  size: A4;
+  margin: 12mm;
+}
+
+@media print {
+  html, body, :root {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* If a dark class is present, neutralize it during print */
+  .dark {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  /* Hide generic interactive UI chrome if present */
+  nav, footer, .no-print, [data-no-print], .print:hidden {
+    display: none !important;
+  }
+
+  /* Force-hide sidebar library elements by slot identifiers (but NOT the wrapper) */
+  [data-slot="sidebar"],
+  [data-slot="sidebar-gap"],
+  [data-slot="sidebar-container"],
+  [data-slot="sidebar-inner"] {
+    display: none !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    inset: auto !important;
+  }
+
+  /* Hide any mobile/offcanvas sheet content rendered as a sidebar */
+  [data-sidebar="sidebar"] {
+    display: none !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Let main content take full width in print */
+  main {
+    max-width: none !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Results route: remove container spacing for print, but do not hide everything */
+  .results-page-container {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  /* Ensure print root is explicitly visible */
+  #print-root {
+    display: block !important;
+    visibility: visible !important;
+  }
+}

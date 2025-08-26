@@ -49,34 +49,34 @@
 </script>
 
 {#if isLoginRoute}
-	<Navbar justLogo={true} />
+    <div class="print:hidden"><Navbar justLogo={true} /></div>
 	<div class="flex flex-col h-screen w-full overflow-hidden">
 		<main class="bg-white w-full mx-auto flex-grow overflow-auto">
 			{@render children?.()}
 		</main>
 		
-		<!-- Cookie consent banner -->
-		<CookieBanner />
+		        <!-- Cookie consent banner -->
+        <div class="print:hidden"><CookieBanner /></div>
 	</div>
 {:else}
-	<Sidebar.Provider open={true}>
-		<div class="flex flex-col min-h-screen w-full bg-[#ffffff] overflow-x-hidden">
-			<div class="absolute inset-0 bg-[url('/bkg_white.png')] bg-no-repeat bg-contain sm:bg-cover bg-center blur-lg opacity-90 z-0"></div>
-			<div class="absolute inset-0 bg-gradient-to-b from-[#f8f8f8]/0 via-[#f8f8f8]/0 to-[#f8f8f8]/0 2xl:from-[#f8f8f8]/0 2xl:via-[#f8f8f8]/0 2xl:to-[#f8f8f8]/0 z-0"></div>
-			<Navbar hideLoginButton={isLoginRoute} justLogo={false} />
+	    <Sidebar.Provider open={true}>
+        <div class="flex flex-col min-h-screen w-full bg-[#ffffff] overflow-x-hidden print:bg-white">
+            <div class="absolute inset-0 bg-[url('/bkg_white.png')] bg-no-repeat bg-contain sm:bg-cover bg-center blur-lg opacity-90 z-0 print:hidden"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-[#f8f8f8]/0 via-[#f8f8f8]/0 to-[#f8f8f8]/0 2xl:from-[#f8f8f8]/0 2xl:via-[#f8f8f8]/0 2xl:to-[#f8f8f8]/0 z-0 print:hidden"></div>
+            <div class="print:hidden"><Navbar hideLoginButton={isLoginRoute} justLogo={false} /></div>
 
 			<!-- Main content area with sidebar -->
-			<div class="flex flex-grow w-full transition-all duration-200 ease-in-out">
+			<div class="flex flex-grow w-full transition-all duration-200 ease-in-out print:block">
 				<!-- Sidebar navigation -->
-				<AppSidebar class="flex-shrink-0" />
+				<div class="print:hidden"><AppSidebar /></div>
 
-				<main class="flex-1 min-w-0 transition-all duration-200 ease-in-out mx-auto max-w-[1600px] w-full px-4 z-2">
+				<main class="flex-1 min-w-0 transition-all duration-200 ease-in-out mx-auto max-w-[1600px] w-full px-4 z-2 print:max-w-none print:px-0 print:w-full">
 					{@render children?.()}
 				</main>
 			</div>
-		</div>
+        </div>
 		
 		<!-- Cookie consent banner -->
-		<CookieBanner />
+		<div class="print:hidden"><CookieBanner /></div>
 	</Sidebar.Provider>
 {/if}

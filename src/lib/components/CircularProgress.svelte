@@ -25,9 +25,15 @@
   // Derived reactive values
   $: current = $progress;
   $: dashoffset = circumference - (current / 100) * circumference;
-  // Hue from 0 (red) to 120 (green)
-  $: hue = (current / 100) * 120;
-  $: color = `hsl(${hue}, 80%, 50%)`;
+  // Threshold-based hex colors (consistent with other components)
+  function getScoreColorHex100(score, max = 100) {
+    const pct = score / max;
+    if (pct >= 0.85) return '#16a34a'; // green-600
+    if (pct >= 0.6) return '#ca8a04'; // yellow-600
+    if (pct >= 0.4) return '#f97316'; // orange-500
+    return '#dc2626'; // red-600
+  }
+  $: colorHex = getScoreColorHex100(current, 100);
   $: bgSize = size * backgroundScale;
   $: bgOffset = (size - bgSize) / 2;
 </script>
@@ -60,7 +66,7 @@
             cx="50"
             cy="50"
             r={radius}
-            stroke={color}
+            stroke={colorHex}
             stroke-width={strokeWidth}
             fill="none"
             stroke-linecap="round"
@@ -75,7 +81,7 @@
           <span 
             class="font-bold leading-none"
             style="
-              color: {color};
+              color: {colorHex};
               font-size: min(9vw, 9vh, 4.5rem);
               width: 100%;
               text-align: center;

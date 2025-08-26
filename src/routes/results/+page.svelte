@@ -136,10 +136,22 @@
       gentlyPromptSave();
     }
 
+    // Add a subscription to the page store to react to URL changes
+    const unsubscribePage = page.subscribe(($page) => {
+      const reportId = $page.url.searchParams.get('report');
+      if (reportId && isLoggedIn) {
+        loadReportById(reportId);
+      } else {
+        gentlyPromptSave();
+      }
+    });
+
     // Cleanup function to be returned at the end
     return () => {
       clearTimeout(dialogTimeout);
       unsubUser();
+      unsubscribe();
+      unsubscribePage(); // Unsubscribe the page subscription
     };
   });
 
@@ -322,6 +334,15 @@
       return false;
     }
   }
+  // Reactively load report by ID when URL or auth state changes (handles client-side navigation)
+  $: if (browser && isLoggedIn) {
+    const rid = $page.url.searchParams.get('report');
+    // Avoid refetching the same report
+    const currentId = auditResults && (auditResults.id ?? auditResults?.report_id);
+    if (rid && rid !== currentId) {
+      loadReportById(rid);
+    }
+  }
 
   // Dummy data following new API response format
   const defaultResults = {
@@ -350,7 +371,7 @@
 
 </script>
 
-<div class="results-page-container relative z-10">
+<div class="results-page-container relative z-10 print:bg-white">
   <!-- Success message toast notification -->
   {#if showSuccessMessage}
     <div class="fixed top-20 right-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md transition-opacity duration-300 z-50 max-w-sm print:hidden">
@@ -363,7 +384,7 @@
     </div>
   {/if}
   
-  <div class="pt-16  relative z-10"> <!-- Add padding to account for the fixed navbar -->
+  <div class="pt-16  relative z-10 print:pt-0"> <!-- Add padding to account for the fixed navbar -->
     {#if rewriteData}
       <button 
         class="back-button" 
@@ -413,5 +434,13 @@
     width: 100%;
     min-height: 100vh;
     /* background-color: #ffffff; */
+  }
+
+  @media print {
+    .results-page-container {
+      min-height: auto;
+      background: #ffffff !important;
+      padding: 0 !important;
+    }
   }
 </style>
