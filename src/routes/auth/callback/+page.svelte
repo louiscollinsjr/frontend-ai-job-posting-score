@@ -4,6 +4,7 @@
   import { onMount } from 'svelte';
   import { user } from '$lib/stores/auth.js';
   import type { Report, SupabaseReport } from '$lib/types/report';
+  import { formatReportForDB } from '$lib/utils/reportMapper';
   
   let error = null;
   let processingReport = false;
@@ -13,24 +14,7 @@
   // and clean up on unmount to prevent leaks across navigations/requests
   // (avoids SSR-time side effects)
   
-  // Format report data to match the database schema
-  function formatReportForDB(report: any, userId: string): any {
-    // Ensure all required fields are present
-    return {
-      userId: userId,
-      job_title: report.job_title || 'Untitled Job',
-      job_body: report.job_body || report.content || '',
-      feedback: report.feedback || '',
-      total_score: report.total_score || 0,
-      categories: report.categories || {},
-      recommendations: report.recommendations || [],
-      red_flags: report.red_flags || [],
-      savedAt: new Date().toISOString(),
-      source: report.source || 'guest_conversion',
-      // Store the original report JSON for future use
-      original_report: JSON.stringify(report)
-    };
-  }
+  // Format logic is centralized in $lib/utils/reportMapper
 
   // Function to associate guest report with user account
   async function associateGuestReport(userId) {
@@ -60,60 +44,16 @@
         processingReport = true;
         const reportData = JSON.parse(guestReport);
         
-        // Format the report to match the database schema
+        // Format the report to match the database schema (shared utility)
         const formattedReport = formatReportForDB(reportData, userId);
         console.log('Saving formatted guest report to Supabase (snake_case columns):', formattedReport);
         
         // Save report to Supabase 'reports' table
         if (typeof window !== 'undefined') {
-          // Use snake_case column names to match the current Supabase schema
-          const dbReport = {
-            userid: formattedReport.userId,
-            job_title: formattedReport.job_title,
-            job_body: formattedReport.job_body,
-            feedback: formattedReport.feedback,
-            total_score: formattedReport.total_score,
-            // Ensure JSON fields are properly formatted
-            categories: (() => {
-              try {
-                return typeof formattedReport.categories === 'string'
-                  ? JSON.parse(formattedReport.categories)
-                  : formattedReport.categories || {};
-              } catch {
-                console.warn('Failed to parse categories, using empty object');
-                return {};
-              }
-            })(),
-            recommendations: Array.isArray(formattedReport.recommendations)
-              ? formattedReport.recommendations
-              : [],
-            red_flags: Array.isArray(formattedReport.red_flags)
-              ? formattedReport.red_flags
-              : [],
-            savedat: formattedReport.savedAt,
-            source: formattedReport.source,
-            // Store original as JSON object for the jsonb column
-            original_report: (() => {
-              try {
-                const src = formattedReport.original_report ?? formattedReport;
-                if (typeof src === 'string') {
-                  return JSON.parse(src);
-                }
-                return src || {};
-              } catch {
-                console.warn('Failed to parse original_report, storing empty object');
-                return {};
-              }
-            })()
-          };
-          
-          console.log('Final report object being sent to Supabase:', dbReport);
-
           const { data, error: dbError } = await supabase
             .from('reports')
-            .insert([dbReport])
-            .select('id')
-            ;
+            .insert([formattedReport])
+            .select('id');
           if (dbError) {
             console.error('Error saving report to database:', dbError);
             console.error('Supabase error code:', dbError.code);

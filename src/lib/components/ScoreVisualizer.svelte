@@ -4,36 +4,11 @@
   export let categories = {}; // Categories with scores
   export let categoryLabels = []; // Category metadata
   import Logo from '$lib/components/Logo.svelte';
+  import { getScoreColorHex100, getScoreBarClass100, getTextColorClass100 } from '$lib/utils/colors';
   
-  // Function to determine score color based on value
-  function getScoreColor(score, max = 100) {
-    const pct = score / max;
-    if (pct >= 0.85) return 'bg-green-500';
-    if (pct >= 0.7) return 'bg-lime-500';
-    if (pct >= 0.5) return 'bg-yellow-300';
-    if (pct >= 0.3) return 'bg-orange-400';
-    return 'bg-red-500';
-  }
+  // Use shared class helpers for consistency
   
-  // Function to determine text color based on score
-  function getTextColor(score, max = 100) {
-    const pct = score / max;
-    if (pct >= 0.85) return 'text-green-600';
-    if (pct >= 0.7) return 'text-lime-600';
-    if (pct >= 0.5) return 'text-yellow-600';
-    if (pct >= 0.3) return 'text-orange-600';
-    return 'text-red-600';
-  }
-  
-  // Hex colors aligned with Tailwind scale used elsewhere
-  function getScoreColorHex100(score, max = 100) {
-    const pct = score / max;
-    if (pct >= 0.85) return '#16a34a'; // green-600
-    if (pct >= 0.7) return '#65a30d'; // lime-600 (closest to existing text scale)
-    if (pct >= 0.5) return '#ca8a04'; // yellow-600
-    if (pct >= 0.3) return '#f97316'; // orange-500
-    return '#dc2626'; // red-600
-  }
+  // Using shared hex color mapping for consistency across components
   
   // Function to calculate score percentage for bar width
   function getScorePercentage(score, max) {
@@ -86,7 +61,7 @@
         
         <!-- Score value -->
         <div class="absolute inset-0 flex flex-col items-center justify-center">
-          <span class="text-5xl font-bold text-green-black">{Math.round(score)}</span>
+          <span class="text-5xl font-bold text-black">{Math.round(score)}</span>
           <span class="text-xs text-gray-500">(0-100)</span>
         </div>
         
@@ -112,7 +87,7 @@
           </div>
           <div class="w-full bg-gray-200 rounded-full h-2.5">
             <div 
-              class="h-2.5 rounded-full {getScoreColor(categoryScore, category.max)}"
+              class="h-2.5 rounded-full {getScoreBarClass100(categoryScore, category.max)}"
               style="width: {percentage}%"
             ></div>
           </div>

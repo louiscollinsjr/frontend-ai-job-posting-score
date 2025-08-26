@@ -77,7 +77,7 @@
                   {#if feature.imagePosition === 'left'}
                     <div class="w-full md:w-1/3 mb-4 md:mb-0">
                       {#if feature.component}
-                        <svelte:component this={feature.component} {...feature.props} backgroundSrc={feature.imagePlaceholder} />
+                        <svelte:component this={feature.component} {...(feature.props || {})} backgroundSrc={feature.imagePlaceholder} />
                       {:else}
                         <FadeImage src={feature.imagePlaceholder} alt={feature.title} fadeDirection="bottom"
                         fadeIntensity="none" />
@@ -91,7 +91,7 @@
                   {#if feature.imagePosition === 'right'}
                     <div class="w-full md:w-1/3 mt-4 md:mt-0">
                       {#if feature.component}
-                        <svelte:component this={feature.component} {...feature.props} backgroundSrc={feature.imagePlaceholder} />
+                        <svelte:component this={feature.component} {...(feature.props || {})} backgroundSrc={feature.imagePlaceholder} />
                       {:else}
                         <FadeImage src={feature.imagePlaceholder} alt={feature.title} fadeDirection="bottom"
                         fadeIntensity="none" />
@@ -110,7 +110,7 @@
                   {#if feature.imagePosition === 'top'}
                     <div class="mb-4" in:fade={{ duration: 400 }} out:fade={{ duration: 200 }}>
                       {#if feature.component}
-                        <svelte:component this={feature.component} {...feature.props} backgroundSrc={feature.imagePlaceholder} />
+                        <svelte:component this={feature.component} {...(feature.props || {})} backgroundSrc={feature.imagePlaceholder} />
                       {:else}
                         <FadeImage src={feature.imagePlaceholder} alt={feature.title} fadeDirection="bottom" fadeIntensity="none" />
                       {/if}

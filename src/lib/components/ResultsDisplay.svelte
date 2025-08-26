@@ -2,6 +2,7 @@
   import ScoreVisualizer from '$lib/components/ScoreVisualizer.svelte';
   import Logo from '$lib/components/Logo.svelte';
   import { Button } from '$lib/components/ui/button/index.js';
+  import { getScoreColorHex100 as utilGetScoreColorHex100, getTextColorClass100 as utilGetTextColorClass100 } from '$lib/utils/colors';
   // Safe defaults to avoid runtime ReferenceErrors when props not provided by parent
   export let printPageSize = 'a4'; // 'a4' | 'letter'
   export let loading = false;
@@ -89,8 +90,10 @@
   export let downloadJobData = () => {};
 
   // Fallback color helpers if not injected by parent
-  export let getScoreColor100 = (score) => (score >= 70 ? 'text-green-600' : score >= 40 ? 'text-yellow-600' : 'text-red-600');
-  export let getScoreColorHex100 = (score) => (score >= 70 ? '#16a34a' : score >= 40 ? '#ca8a04' : '#dc2626');
+  // Delegate to shared utility class helper for consistency
+  export let getScoreColor100 = (score) => utilGetTextColorClass100(score, 100);
+  // Delegate to shared utility by default; parent may still override via prop
+  export let getScoreColorHex100 = (score) => utilGetScoreColorHex100(score, 100);
 </script>
 
 <div class="results-page pb-32 bg-[#f8f8f8]/0 print:bg-white print:pb-0">

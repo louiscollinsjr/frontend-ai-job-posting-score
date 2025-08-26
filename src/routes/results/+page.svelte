@@ -7,6 +7,8 @@
   import { onMount } from 'svelte';
   import { supabase } from '$lib/supabaseClient';
   import { toast } from 'svelte-sonner';
+  import { page } from '$app/stores';
+  import { formatReportForDB } from '$lib/utils/reportMapper';
 
   import { auditStore } from '$lib/stores/audit.js';
   import { user } from '$lib/stores/auth.js';
@@ -21,50 +23,8 @@
   let successMessageTimeout;
   let rewriteData = null;
   let results = null;
-
-  // Format report data to match the database schema (component scope)
-  function formatReportForDB(report: any, userId: string | null): any {
-    const safeParse = (maybeJson: any, fallback: any) => {
-      try {
-        if (typeof maybeJson === 'string') return JSON.parse(maybeJson);
-        if (maybeJson == null) return fallback;
-        return maybeJson;
-      } catch {
-        return fallback;
-      }
-    };
-
-    // Ensure jsonb/object types
-    const parsedCategories = safeParse(report?.categories, {});
-    const categories = parsedCategories && typeof parsedCategories === 'object' && !Array.isArray(parsedCategories)
-      ? parsedCategories
-      : {};
-
-    const parsedRecommendations = safeParse(report?.recommendations, []);
-    const recommendations = Array.isArray(parsedRecommendations) ? parsedRecommendations : [];
-
-    const parsedRedFlags = safeParse(report?.red_flags, []);
-    const red_flags = Array.isArray(parsedRedFlags) ? parsedRedFlags : [];
-
-    // Ensure jsonb column gets an object, not a string
-    const original_report = safeParse(report?.original_report ?? report, {});
-
-    // Ensure all required fields are present and match DB schema
-    return {
-      userid: userId,
-      job_title: report?.job_title || 'Untitled Job',
-      job_body: report?.job_body || report?.content || '',
-      feedback: report?.feedback || '',
-      total_score: report?.total_score || 0,
-      categories,
-      recommendations,
-      red_flags,
-      savedat: new Date().toISOString(),
-      source: report?.source || 'web_app',
-      original_text: report?.job_body || report?.content || '',
-      original_report
-    };
-  }
+  let lastReportId: string | null = null;
+  let reportId: string | null = null;
 
   // Check if we just logged in from a guest session
   let fromGuestLogin = false;
@@ -138,10 +98,8 @@
 
     // Add a subscription to the page store to react to URL changes
     const unsubscribePage = page.subscribe(($page) => {
-      const reportId = $page.url.searchParams.get('report');
-      if (reportId && isLoggedIn) {
-        loadReportById(reportId);
-      } else {
+      const rid = $page.url.searchParams.get('report');
+      if (!(rid && isLoggedIn)) {
         gentlyPromptSave();
       }
     });
@@ -286,7 +244,6 @@
     rewriteData = null;
   }
 
-  import { page } from '$app/stores';
 
   // Function to load a specific report by ID from the database
   async function loadReportById(reportId) {
@@ -334,13 +291,16 @@
       return false;
     }
   }
-  // Reactively load report by ID when URL or auth state changes (handles client-side navigation)
-  $: if (browser && isLoggedIn) {
-    const rid = $page.url.searchParams.get('report');
-    // Avoid refetching the same report
-    const currentId = auditResults && (auditResults.id ?? auditResults?.report_id);
-    if (rid && rid !== currentId) {
-      loadReportById(rid);
+  // Handle report ID changes safely (avoid async side-effects directly in reactive body)
+  $: reportId = $page.url.searchParams.get('report');
+  $: if (browser && isLoggedIn && reportId && reportId !== lastReportId) {
+    const currentId = auditResults?.id ?? (auditResults as any)?.report_id;
+    if (reportId !== currentId) {
+      loadReportById(reportId).then(() => {
+        lastReportId = reportId;
+      });
+    } else {
+      lastReportId = reportId;
     }
   }
 

@@ -2,6 +2,7 @@
   import { tweened } from 'svelte/motion';
   import { cubicOut } from 'svelte/easing';
   import { fade } from 'svelte/transition';
+  import { getScoreColorHex100 } from '$lib/utils/colors';
 
   // Props
   export let value = 100; // target value (0-100)
@@ -13,7 +14,9 @@
   export let backgroundScale = 1.3; // Scale background larger than progress
 
   // Geometry based on a 100x100 viewBox
-  const radius = 50 - strokeWidth / 2;
+  // Scale stroke width to viewBox dimensions (100x100)
+  const scaledStrokeWidth = (strokeWidth / size) * 100;
+  const radius = 50 - scaledStrokeWidth / 2;
   const circumference = 2 * Math.PI * radius;
 
   // Animated progress value (0-100)
@@ -25,17 +28,8 @@
   // Derived reactive values
   $: current = $progress;
   $: dashoffset = circumference - (current / 100) * circumference;
-  // Threshold-based hex colors (consistent with other components)
-  function getScoreColorHex100(score, max = 100) {
-    const pct = score / max;
-    if (pct >= 0.85) return '#16a34a'; // green-600
-    if (pct >= 0.6) return '#ca8a04'; // yellow-600
-    if (pct >= 0.4) return '#f97316'; // orange-500
-    return '#dc2626'; // red-600
-  }
   $: colorHex = getScoreColorHex100(current, 100);
-  $: bgSize = size * backgroundScale;
-  $: bgOffset = (size - bgSize) / 2;
+
 </script>
 
 <div class="relative w-full aspect-[4/3] min-h-[220px] overflow-hidden rounded-xl bg-white opacity-80" in:fade={{ duration: 600 }}>
@@ -58,7 +52,7 @@
             cy="50"
             r={radius}
             stroke="#e5e7eb"
-            stroke-width={strokeWidth}
+            stroke-width={scaledStrokeWidth}
             fill="none"
           />
           <!-- Progress -->
@@ -67,7 +61,7 @@
             cy="50"
             r={radius}
             stroke={colorHex}
-            stroke-width={strokeWidth}
+            stroke-width={scaledStrokeWidth}
             fill="none"
             stroke-linecap="round"
             stroke-dasharray={circumference}

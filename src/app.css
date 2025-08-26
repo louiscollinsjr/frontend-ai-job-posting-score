@@ -147,6 +147,37 @@
 }
 
 @media print {
+  /* Reset design tokens for print to ensure light-on-white output */
+  :root,
+  .dark {
+    --background: #ffffff !important;
+    --foreground: #000000 !important;
+    --card: #ffffff !important;
+    --card-foreground: #000000 !important;
+    --popover: #ffffff !important;
+    --popover-foreground: #000000 !important;
+    --primary: #000000 !important;
+    --primary-foreground: #ffffff !important;
+    --secondary: #f5f5f5 !important;
+    --secondary-foreground: #000000 !important;
+    --muted: #f5f5f5 !important;
+    --muted-foreground: #444444 !important;
+    --accent: #f5f5f5 !important;
+    --accent-foreground: #000000 !important;
+    --destructive: #cc0000 !important;
+    --border: #dddddd !important;
+    --input: #dddddd !important;
+    --ring: #888888 !important;
+    --sidebar: #ffffff !important;
+    --sidebar-foreground: #000000 !important;
+    --sidebar-primary: #000000 !important;
+    --sidebar-primary-foreground: #ffffff !important;
+    --sidebar-accent: #f5f5f5 !important;
+    --sidebar-accent-foreground: #000000 !important;
+    --sidebar-border: #e6e6e6 !important;
+    --sidebar-ring: #888888 !important;
+  }
+
   html, body, :root {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
@@ -163,7 +194,7 @@
   }
 
   /* Hide generic interactive UI chrome if present */
-  nav, footer, .no-print, [data-no-print], .print:hidden {
+  nav, footer, .no-print, [data-no-print], .print\:hidden {
     display: none !important;
   }
 
