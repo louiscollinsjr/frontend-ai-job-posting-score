@@ -9,6 +9,7 @@
   import * as Checkbox from '$lib/components/ui/checkbox';
   import * as Separator from '$lib/components/ui/separator';
   import Dropdown from '$lib/components/ui/dropdown';
+  import { env } from '$env/dynamic/public';
   
   // Data comes from server (page info) and client-side fetching
   export let data;
@@ -30,6 +31,8 @@
   let reportsChannel = null;
   let realtimeSubscribed = false;
   let authSubscription = null;
+
+  const API_BASE_URL = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
 
   onMount(async () => {
     document.addEventListener('click', handleClickOutside);
@@ -130,7 +133,9 @@
   async function fetchReports(accessToken) {
     try {
       loading = true;
-      const apiUrl = `https://ai-audit-api.fly.dev/api/v1/reports`;
+      const pageNum = Number(data.page) || 1;
+      const pageSize = Number(data.limit) || 20;
+      const apiUrl = `${API_BASE_URL}/api/v1/reports?page=${pageNum}&limit=${pageSize}`;
       
       const response = await fetch(apiUrl, {
         headers: {
@@ -341,7 +346,7 @@
       }
 
       const session = JSON.parse(sessionStr);
-      const response = await fetch(`https://ai-audit-api.fly.dev/api/v1/rewrite-job/${reportId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/rewrite-job/${reportId}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${session.access_token}`,

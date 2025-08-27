@@ -2,12 +2,13 @@
 import * as Dialog from "$lib/components/ui/dialog/index.js";
 import { createEventDispatcher } from "svelte";
 import MagicLinkLogin from './MagicLinkLogin.svelte';
+import type { Report } from '$lib/types/report';
 
-const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher<{ submit: { email: string; report: Report | null } }>();
 
 // Export the open prop for two-way binding
-export let open = false;
-export let report = null;
+export let open: boolean = false;
+export let report: Report | null = null;
 
 // Log when open state changes
 $: {
@@ -15,7 +16,7 @@ $: {
 }
 
 // Handle magic link submission from the MagicLinkLogin component
-function handleMagicLinkSubmit(event) {
+function handleMagicLinkSubmit(event: CustomEvent<{ email: string }>) {
   const { email } = event.detail;
   // Dispatch event to parent with both email and report data
   dispatch("submit", { email, report });

@@ -14,7 +14,7 @@
   // Inline styles to preserve crisp rendering
   export let style: string = 'image-rendering: crisp-edges; shape-rendering: geometricPrecision;';
 
-  const src = variant === 'white' ? '/jobpostscore_logo_white.svg' : '/jobpostscore_logo.svg';
+  $: src = variant === 'white' ? '/jobpostscore_logo_white.svg' : '/jobpostscore_logo.svg';
 </script>
 
 {#if href}

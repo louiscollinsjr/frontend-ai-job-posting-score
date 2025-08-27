@@ -46,7 +46,7 @@
       </div>
       
       <!-- Right column with image flush to edge -->
-      <div class="w-full hidden xl:block xl:w-[55%] relative">
+      <div class="w-full hidden xl:block xl:w-[45%] relative">
         <FadeImage 
           src="/jobPostScoreBrowser.png"
           alt="JobPostScore Group" 

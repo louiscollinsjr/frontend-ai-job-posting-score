@@ -25,6 +25,8 @@
   let results = null;
   let lastReportId: string | null = null;
   let reportId: string | null = null;
+  let isLoadingReport = false;
+  let pendingReportId: string | null = null;
 
   // Check if we just logged in from a guest session
   let fromGuestLogin = false;
@@ -33,18 +35,77 @@
     fromGuestLogin = params.get('from') === 'guest-login';
   }
 
+  // Queued loader to avoid overlapping async work from reactive changes
+  function queueLoadReportById(id) {
+    if (!id) return;
+    const currentId = auditResults?.id ?? (auditResults && (auditResults).report_id);
+    if (id === lastReportId || id === currentId) {
+      lastReportId = id;
+      return;
+    }
+    if (isLoadingReport) {
+      pendingReportId = id;
+      return;
+    }
+    isLoadingReport = true;
+    const requestedId = id;
+    loadReportById(requestedId)
+      .then(() => {
+        lastReportId = requestedId;
+      })
+      .finally(async () => {
+        isLoadingReport = false;
+        if (pendingReportId && pendingReportId !== lastReportId) {
+          const nextId = pendingReportId;
+          pendingReportId = null;
+          isLoadingReport = true;
+          try {
+            await loadReportById(nextId);
+            lastReportId = nextId;
+          } finally {
+            isLoadingReport = false;
+          }
+        }
+      });
+  }
+
+  function clearGuestCache() {
+    try {
+      localStorage.removeItem('guest_audit_report');
+      localStorage.removeItem('guest_audit_report_ts');
+      if (import.meta.env.DEV) console.log('[results] Cleared guest report cache after guest-login');
+    } catch (e) {
+      console.warn('[results] Failed clearing localStorage guest report cache', e);
+    }
+  }
+
+  // Guest report helpers
+  function setGuestReport(report) {
+    try {
+      localStorage.setItem('guest_audit_report', JSON.stringify(report));
+      localStorage.setItem('guest_audit_report_ts', Date.now().toString());
+      return true;
+    } catch (e) {
+      console.error('LocalStorage fallback failed:', e);
+      return false;
+    }
+  }
+
+  function getGuestReport() {
+    try {
+      const raw = localStorage.getItem('guest_audit_report');
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) {
+      console.error('Error loading guest report:', e);
+      return null;
+    }
+  }
+
   // Proactively clear any stale guest report cache when arriving from guest-login
   onMount(() => {
     if (fromGuestLogin) {
-      try {
-        localStorage.removeItem('guest_audit_report');
-        localStorage.removeItem('guest_audit_report_ts');
-        // Optional: clear any old last_job_id that might interfere
-        // localStorage.removeItem('last_job_id');
-        console.log('[results] Cleared guest report cache after guest-login');
-      } catch (e) {
-        console.warn('[results] Failed clearing localStorage guest report cache', e);
-      }
+      clearGuestCache();
     }
 
     // Subscribe to audit store (for non-logged-in/guest flows)
@@ -61,14 +122,10 @@
 
     // Load guest report from localStorage if not logged in
     if (!auditResults && !isLoggedIn) {
-      try {
-        const guestReport = localStorage.getItem('guest_audit_report');
-        if (guestReport) {
-          auditResults = JSON.parse(guestReport);
-          console.log('Loaded guest report from localStorage');
-        }
-      } catch (e) {
-        console.error('Error loading guest report:', e);
+      const guest = getGuestReport();
+      if (guest) {
+        auditResults = guest;
+        if (import.meta.env.DEV) console.log('Loaded guest report from localStorage');
       }
     }
 
@@ -81,17 +138,7 @@
     if (reportId && isLoggedIn) {
       loadReportById(reportId);
     }
-    // Priority 2: Clear guest cache after login
-    else if (fromParam === 'guest-login') {
-      console.log('[localStorage] Clearing guest reports after login');
-      try {
-        localStorage.removeItem('guest_audit_report');
-        localStorage.removeItem('guest_audit_report_ts');
-      } catch (e) {
-        console.warn('Failed to clear guest reports:', e);
-      }
-    }
-    // Priority 3: For normal visits, just prompt guests to save (no auto-save)
+    // Priority 2: For normal visits, just prompt guests to save (no auto-save)
     else {
       gentlyPromptSave();
     }
@@ -99,7 +146,9 @@
     // Add a subscription to the page store to react to URL changes
     const unsubscribePage = page.subscribe(($page) => {
       const rid = $page.url.searchParams.get('report');
-      if (!(rid && isLoggedIn)) {
+      if (isLoggedIn && rid) {
+        queueLoadReportById(rid);
+      } else {
         gentlyPromptSave();
       }
     });
@@ -130,8 +179,8 @@
         .single();
       
       if (error) throw error;
-    
-      console.log('Report saved successfully with ID:', data.id);
+  
+      if (import.meta.env.DEV) console.log('Report saved successfully with ID:', data.id);
     
       // Update store and local variables
       auditStore.update(state => ({
@@ -151,19 +200,14 @@
         localStorage.removeItem('guest_audit_report');
         localStorage.removeItem('guest_audit_report_ts');
       }
-    
+  
       return true;
     } catch (err) {
       console.error('Error saving report:', err);
-    
+  
       // Fallback to localStorage for guests
       if (!isLoggedIn) {
-        try {
-          localStorage.setItem('guest_audit_report', JSON.stringify(report));
-          return true;
-        } catch (e) {
-          console.error('LocalStorage fallback failed:', e);
-        }
+        return setGuestReport(report);
       }
       return false;
     }
@@ -193,7 +237,7 @@
     if (!isLoggedIn) {
       // Show dialog after delay for guests
       dialogTimeout = setTimeout(() => {
-        console.log('Timed prompt: Setting showDialog to true');
+        if (import.meta.env.DEV) console.log('Timed prompt: Setting showDialog to true');
         showDialog = true;
       }, 6000); // 6 seconds
     }
@@ -202,7 +246,7 @@
 
   // Manual trigger for Save/Export/Access Later
   async function triggerSaveDialog(event) {
-    console.log('Save dialog triggered:', event.type || 'direct call');
+    if (import.meta.env.DEV) console.log('Save dialog triggered:', event.type || 'direct call');
     
     if (isLoggedIn) {
       // For logged-in users, save directly
@@ -211,7 +255,7 @@
     } else {
       // For guests, show the dialog
       showDialog = true;
-      console.log('Dialog should be showing now, showDialog =', showDialog);
+      if (import.meta.env.DEV) console.log('Dialog should be showing now, showDialog =', showDialog);
     }
   }
 
@@ -223,10 +267,7 @@
       // The MagicLinkLogin component now handles sending the magic link
       
       // Save the report to localStorage so it can be associated with the user after login
-      if (report) {
-        localStorage.setItem('guest_audit_report', JSON.stringify(report));
-        localStorage.setItem('guest_audit_report_ts', Date.now().toString());
-      }
+      if (report) setGuestReport(report);
       
       // Show success message
       toast.success('Magic link sent! Check your email.');
@@ -254,7 +295,7 @@
     }
     
     try {
-      console.log('Loading report by ID:', reportId);
+      if (import.meta.env.DEV) console.log('Loading report by ID:', reportId);
       const { data, error } = await supabase
         .from('reports')
         .select('*')
@@ -268,7 +309,7 @@
       }
       
       if (data) {
-        console.log('Successfully loaded report:', data.id);
+        if (import.meta.env.DEV) console.log('Successfully loaded report:', data.id);
         
         // Update the audit store with the loaded report
         auditStore.update(state => ({
@@ -291,18 +332,7 @@
       return false;
     }
   }
-  // Handle report ID changes safely (avoid async side-effects directly in reactive body)
-  $: reportId = $page.url.searchParams.get('report');
-  $: if (browser && isLoggedIn && reportId && reportId !== lastReportId) {
-    const currentId = auditResults?.id ?? (auditResults as any)?.report_id;
-    if (reportId !== currentId) {
-      loadReportById(reportId).then(() => {
-        lastReportId = reportId;
-      });
-    } else {
-      lastReportId = reportId;
-    }
-  }
+  // Removed reactive async block; loading handled via page.subscribe
 
   // Dummy data following new API response format
   const defaultResults = {

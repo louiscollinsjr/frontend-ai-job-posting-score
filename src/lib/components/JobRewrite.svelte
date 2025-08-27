@@ -4,11 +4,13 @@
   import './JobRewrite.css';
   import Button from '$lib/components/ui/button/button.svelte';
   import * as Select from '$lib/components/ui/select';
+  import { env } from '$env/dynamic/public';
   
   export let original_text = '';
   export let improvedText = '';
   export let score = 0; // This could be the DB total_score or a calculated score
   export let jobId = ''; // Add required job ID prop
+  const API_BASE_URL = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
 
   // Format score for display
   $: formattedScore = typeof score === 'number' ? Math.round(score) : 0;
@@ -48,7 +50,7 @@
       
       const token = JSON.parse(sessionStr)?.access_token;
 
-      const response = await fetch(`https://ai-audit-api.fly.dev/api/v1/job/${jobId}/versions`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/job/${jobId}/versions`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -83,7 +85,7 @@
       if (!sessionStr) throw new Error('No session found');
       const token = JSON.parse(sessionStr)?.access_token;
       
-      const response = await fetch(`https://ai-audit-api.fly.dev/api/v1/job/${jobId}/versions`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/job/${jobId}/versions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

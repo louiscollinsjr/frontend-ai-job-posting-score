@@ -1,12 +1,13 @@
 import { supabase } from '../supabaseClient';
+import { env } from '$env/dynamic/public';
 
 /**
  * API utilities for the job posting audit functionality
  * Connects to backend services deployed on Fly.io
  */
 
-// API base URL
-const API_BASE_URL = 'https://ai-audit-api.fly.dev';
+// API base URL (configurable)
+const API_BASE_URL = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
 
 // Helper: fetch with timeout + abort to avoid hanging requests
 async function fetchWithTimeout(resource, options = {}, timeoutMs = 15000) {

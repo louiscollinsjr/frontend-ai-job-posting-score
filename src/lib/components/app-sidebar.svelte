@@ -3,6 +3,7 @@
   import { user } from '$lib/stores/auth.js';
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
+  import Logo from '$lib/components/Logo.svelte';
   
   // Track authentication state - default to false
   let isLoggedIn = false;
@@ -73,9 +74,7 @@
   <Sidebar.Content class="border-none flex flex-col h-full overflow-y-auto">
     <!-- Brand logo -->
     <div class="sm:hidden block pt-6 pl-6">
-      <a href="/" class="flex items-center">
-        <img src="/jobpostscore_logo.svg" alt="JobPostScore Logo" class="h-6 sm:h-8 w-auto object-contain" style="image-rendering: crisp-edges; shape-rendering: geometricPrecision;">
-      </a>
+      <Logo href="/" imgClass="h-6 sm:h-8 w-auto object-contain" />
     </div>
     <!-- Navigation Menu -->
     <Sidebar.Group>

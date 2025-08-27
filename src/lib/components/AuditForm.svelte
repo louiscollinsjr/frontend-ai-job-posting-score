@@ -14,9 +14,7 @@ const urlSchema = z.string()
     { message: 'URL must start with https:// or http://' }
   );
 
-// Precompiled URL pattern and lightweight debounce helper
-const urlPattern = /^(https?:\/\/)(([\da-z.-]+)\.([a-z.]{2,6})|(([\d.]+)|(\[[a-f0-9:]+\])))(:[0-9]+)?([\/\w.-]*)*\/?$/i;
-
+// Lightweight debounce helper
 function debounce(fn, delay = 200) {
   let t;
   return (...args) => {
@@ -220,7 +218,7 @@ import * as Alert from "$lib/components/ui/alert/index.js";
       <!-- Mobile-only simplified inputs: URL field + file upload -->
       <div class="sm:hidden space-y-4">
         <div class="form-control">
-          <label for="job-url" class="block text-sm sm:text-xl font-medium text-gray-700 mb-2 text-center">
+          <label for="job-url-mobile" class="block text-sm sm:text-xl font-medium text-gray-700 mb-2 text-center">
             Paste Job Posting URL to Get Your Score
           </label>
           <input
@@ -269,7 +267,7 @@ import * as Alert from "$lib/components/ui/alert/index.js";
         </SubmitButton>
       </div>
       {#key inputType}
-      <div class="hidden sm:block" in:fade="{{ duration: 300, delay: 200 }}" out:fade="{{ duration: 200 }}">
+      <div class="hidden sm:block" in:fade={{ duration: 300, delay: 200 }} out:fade={{ duration: 200 }}>
         {#if inputType === 'url'}
         <div class="form-control">
           <label for="job-url" class="block text-base sm:text-xl font-medium text-gray-700 mb-2">Paste Job Posting URL to Get Your Score</label>

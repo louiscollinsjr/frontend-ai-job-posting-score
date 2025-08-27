@@ -70,7 +70,7 @@
 				<!-- Sidebar navigation -->
 				<div class="print:hidden"><AppSidebar /></div>
 
-				<main class="flex-1 min-w-0 transition-all duration-200 ease-in-out mx-auto max-w-[1600px] w-full px-4 z-2 print:max-w-none print:px-0 print:w-full">
+				<main class="flex-1 min-w-0 transition-all duration-200 ease-in-out mx-auto max-w-[1600px] w-full px-4 z-10 print:max-w-none print:px-0 print:w-full">
 					{@render children?.()}
 				</main>
 			</div>

@@ -276,7 +276,7 @@
 
   @page {
     size: A4;
-    margin: 12mm;
+    margin: 6mm; /* Reduce default page margins */
   }
 
   @media print {
@@ -286,6 +286,8 @@
       print-color-adjust: exact;
       background: #ffffff !important;
       color: #000 !important;
+      margin: 0 !important; /* Remove UA default margins */
+      padding: 0 !important;
     }
 
     :global(.results-page),
@@ -295,13 +297,14 @@
 
     /* Constrain printable width per selected paper size */
     :global(#print-root.print-a4) {
-      width: 186mm; /* 210mm - 24mm total margins */
+      width: 198mm; /* 210mm - 12mm total margins */
     }
     :global(#print-root.print-letter) {
-      width: 7.5in; /* 8.5in - 1in total margins */
+      width: 8.03in; /* 8.5in - ~0.47in total margins (6mm top/bottom equiv) */
     }
     :global(#print-root) {
       margin: 0 auto;
+      padding-top: 0 !important;
       /* Allow content to flow and break naturally on pages */
       overflow: visible;
     }
@@ -309,6 +312,8 @@
     :global(#print-content) {
       transform-origin: top center;
       width: 100%;
+      /* Slightly scale down to reduce overall footprint */
+      transform: scale(0.95);
       /* Allow natural page breaks within content */
     }
 

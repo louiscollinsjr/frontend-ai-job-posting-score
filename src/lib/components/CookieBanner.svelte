@@ -39,7 +39,7 @@
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
       <div class="text-sm text-gray-600/70 px-0 md:px-4 w-full md:w-1/2">
         <p class="flex items-center">
-          <img src="/Cookie.svg" alt="Cookie" class="w-6 h-6 inline" /> <span class="inline ml-4 text-xs font-aeonik tracking-wide">We use cookies to enhance your experience, analyze our traffic, and provide personalized content. Cookie preferences. Learn more in our <a href="/privacy" class="underline text-black font-medium">Privacy Policy</a>.</span>
+          <img src="/Cookie.svg" alt="Cookie" class="w-6 h-6 inline" /> <span class="inline ml-4 text-xs font-aeonik tracking-wide">We use cookies to enhance your experience, analyze traffic, and provide personalized content. You can manage your preferences below. Learn more in our <a href="/privacy" class="underline text-black font-medium">Privacy Policy</a>.</span>
         </p>
       </div>
       <div class="flex flex-wrap gap-2 justify-center md:justify-end w-full md:w-1/3 mt-2 md:mt-0">

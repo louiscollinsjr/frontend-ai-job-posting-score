@@ -6,6 +6,7 @@
   import { toast } from 'svelte-sonner';
   import * as Alert from '$lib/components/ui/alert';
   import * as Button from '$lib/components/ui/button';
+  import { env } from '$env/dynamic/public';
 
   // Query parameters
   let reportId = '';
@@ -19,11 +20,14 @@
   let recommendations = [];
   let score = 0;
   let rewriteVersions = [];
+  const API_BASE_URL = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
 
   onMount(async () => {
     // Get query parameters
     reportId = $page.url.searchParams.get('report') || '';
     viewOnly = $page.url.searchParams.get('view_only') === 'true';
+    const versionsPage = Number($page.url.searchParams.get('page') || '1');
+    const versionsLimit = Number($page.url.searchParams.get('limit') || '20');
     
     if (!reportId) {
       error = 'No report ID provided';
@@ -46,7 +50,7 @@
       console.log(`Using token (first 10 chars): ${token.substring(0, 10)}...`);
       
       // Fetch the report details including original text
-      const reportUrl = `https://ai-audit-api.fly.dev/api/v1/reports/${reportId}`;
+      const reportUrl = `${API_BASE_URL}/api/v1/reports/${reportId}`;
       console.log(`Making request to: ${reportUrl}`);
       
       const response = await fetch(reportUrl, {
@@ -81,7 +85,7 @@
       // Fetch rewrite versions (history)
       try {
         // Log request details for rewrite versions
-        const versionsUrl = `https://ai-audit-api.fly.dev/api/v1/job/${reportId}/versions`;
+        const versionsUrl = `${API_BASE_URL}/api/v1/job/${reportId}/versions?page=${versionsPage}&limit=${versionsLimit}`;
         console.log(`Making versions request to: ${versionsUrl}`);
         
         const versionsResp = await fetch(versionsUrl, {

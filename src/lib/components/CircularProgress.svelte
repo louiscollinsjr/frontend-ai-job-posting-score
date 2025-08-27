@@ -37,7 +37,7 @@
     <img 
       src={backgroundSrc} 
       alt="Browser background" 
-      class="absolute inset-0 w-full h-full object-contain transition-opacity duration-700 opacity-65"
+      class="absolute inset-0 w-full h-full object-contain transition-opacity duration-700 opacity-60"
       in:fade={{ delay: 100 }}
     />
   {/if}

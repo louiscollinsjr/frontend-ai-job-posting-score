@@ -198,7 +198,7 @@
         <a href="/" class="hover:text-gray-700">Terms</a>
         <a href="/" class="hover:text-gray-700">Privacy</a>
       </div>
-      <p class="mt-4 text-xs text-gray-400"> 2025 JobPostScore. All rights reserved.</p>
+      <p class="mt-4 text-xs text-gray-400">© 2025 JobPostScore. All rights reserved.</p>
     </div>
   </div>
 </div>
