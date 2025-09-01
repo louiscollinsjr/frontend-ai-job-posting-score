@@ -7,8 +7,6 @@ export default defineConfig({
 	plugins: [
 		sveltekit(),
 		devtoolsJson(),
-		tailwindcss({
-			config: './tailwind.config.cjs'
-		})
+		tailwindcss(),
 	]
 });

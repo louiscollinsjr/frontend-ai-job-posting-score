@@ -1,5 +1,6 @@
 <script>
   // Props
+  // Props
   export let score = 0; // Overall score (0-100)
   export let categories = {}; // Categories with scores
   export let categoryLabels = []; // Category metadata
