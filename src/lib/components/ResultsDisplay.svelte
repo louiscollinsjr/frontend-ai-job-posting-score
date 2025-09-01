@@ -88,7 +88,6 @@
     (cat) => Array.isArray(resolvedCategories?.[cat.key]?.suggestions) && resolvedCategories[cat.key].suggestions.length > 0
   );
 
-<<<<<<< Updated upstream
   // Compute sorted categories for print view
   $: sortedCategories = effectiveCategoryLabels
     .map(cat => ({
@@ -100,14 +99,6 @@
     .filter(cat => cat.data?.suggestions?.length)
     .sort((a, b) => a.percentage - b.percentage)
     .slice(0, 3);
-
-  // No-op handlers to avoid ReferenceErrors if parent doesn't pass them
-=======
-  // Event handler functions passed from parent
->>>>>>> Stashed changes
-  export let handleRewrite = () => {};
-  export let downloadReport = () => {};
-  export let downloadJobData = () => {};
 
   // Delegate to shared utility class helper for consistency
   export let getScoreColor100 = (score) => utilGetTextColorClass100(score, 100);
@@ -189,7 +180,7 @@
           <div class="flex flex-wrap justify-center gap-4 mt-8 bg-gray-100 p-6 rounded-lg py-12 print:hidden no-print" data-no-print>
             <button 
               class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-8 gap-1.5 px-3"
-              on:click={downloadReport}
+              onclick={downloadReport}
             >
               Download Report
             </button>
@@ -197,7 +188,7 @@
             <button 
               class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-8 gap-1.5 px-3"
               id="downloadButton" 
-              on:click={downloadJobData}
+              onclick={downloadJobData}
             >
               Download JSON-LD Data
             </button>
@@ -205,7 +196,7 @@
             <!-- if enterprise account-->
             <button
               class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-8 gap-1.5 px-3"
-              on:click={handleRewrite}
+              onclick={handleRewrite}
               disabled={rewriteLoading || loading}
             >
               {rewriteLoading ? 'Improving...' : 'Improve This Posting'}

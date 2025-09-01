@@ -21,7 +21,7 @@
   let isLoggedIn = false;
   let showSuccessMessage = false;
   let successMessageTimeout;
-  let rewriteData = null;
+  let rewriteData: any = null;
   let rewriteLoading = false;
   let loading = false;
   let results = null;
@@ -271,7 +271,7 @@
   }
 
   // Handle magic link submission from SaveReportDialog
-  async function handleMagicLink(event) {
+  async function handleMagicLink(event: any) {
     const { email, report } = event.detail;
     try {
       // In production, this would use the real Supabase client
@@ -307,7 +307,7 @@
     
     try {
       // Extract JSON-LD data from the report
-      const jsonLdData = auditResults.json_ld || auditResults.jsonLd || {};
+      const jsonLdData = (auditResults as any).json_ld || (auditResults as any).jsonLd || {};
       
       // Create downloadable JSON file
       const dataStr = JSON.stringify(jsonLdData, null, 2);
@@ -342,10 +342,11 @@
     
     // Set rewrite data to trigger the JobRewrite component
     rewriteData = {
-      jobTitle: auditResults.job_title || auditResults.jobTitle || '',
-      jobBody: auditResults.job_body || auditResults.jobBody || '',
-      feedback: auditResults.feedback || {},
-      categories: auditResults.categories || {}
+      original_text: auditResults.job_body || (auditResults as any).jobBody || '',
+      improvedText: '', // Will be populated by the rewrite API
+      recommendations: auditResults.feedback || {},
+      score: auditResults.overallScore || (auditResults as any).total_score || 0,
+      id: auditResults.id || ''
     };
   }
   
@@ -355,7 +356,7 @@
 
 
   // Function to load a specific report by ID from the database
-  async function loadReportById(reportId) {
+  async function loadReportById(reportId: string) {
     if (!reportId || typeof reportId !== 'string') {
       console.error('Cannot load report - no ID provided');
       toast.error('Invalid report reference');
@@ -466,7 +467,7 @@
     {:else if auditResults}
       <!-- Use actual results from audit store if available -->
       <ResultsDisplay 
-        results={auditResults} 
+        results={auditResults as any} 
         visible={true} 
         isLoggedIn={isLoggedIn}
         rewriteLoading={rewriteLoading}
@@ -483,7 +484,7 @@
       />
     {:else if browser && (new URLSearchParams(window.location.search).get('from') === 'default')}
       <!-- Only show default data if URL contains ?from=default -->
-      <ResultsDisplay results={defaultResults} visible={true} />
+      <ResultsDisplay results={defaultResults as any} visible={true} />
     {:else}
       <!-- Show nothing or a friendly message if no data -->
       <div class="text-center text-gray-500 py-16">
