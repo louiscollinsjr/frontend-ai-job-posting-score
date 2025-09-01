@@ -1,7 +1,6 @@
 <script>
   import ScoreVisualizer from '$lib/components/ScoreVisualizer.svelte';
   import Logo from '$lib/components/Logo.svelte';
-  import { Button } from '$lib/components/ui/button/index.js';
   import { getScoreColorHex100 as utilGetScoreColorHex100, getTextColorClass100 as utilGetTextColorClass100 } from '$lib/utils/colors';
   // Safe defaults to avoid runtime ReferenceErrors when props not provided by parent
   export let printPageSize = 'a4'; // 'a4' | 'letter'
@@ -10,6 +9,11 @@
   export let results = null;
   export let categoryLabels = [];
   export let rewriteLoading = false;
+
+  // Event handler functions passed from parent
+  export let handleRewrite = () => {};
+  export let downloadReport = () => {};
+  export let downloadJobData = () => {};
 
   // Map incoming results to the expected internal structure
   let processedResults = null;
@@ -84,6 +88,7 @@
     (cat) => Array.isArray(resolvedCategories?.[cat.key]?.suggestions) && resolvedCategories[cat.key].suggestions.length > 0
   );
 
+<<<<<<< Updated upstream
   // Compute sorted categories for print view
   $: sortedCategories = effectiveCategoryLabels
     .map(cat => ({
@@ -97,11 +102,13 @@
     .slice(0, 3);
 
   // No-op handlers to avoid ReferenceErrors if parent doesn't pass them
+=======
+  // Event handler functions passed from parent
+>>>>>>> Stashed changes
   export let handleRewrite = () => {};
   export let downloadReport = () => {};
   export let downloadJobData = () => {};
 
-  // Fallback color helpers if not injected by parent
   // Delegate to shared utility class helper for consistency
   export let getScoreColor100 = (score) => utilGetTextColorClass100(score, 100);
   // Delegate to shared utility by default; parent may still override via prop
@@ -180,21 +187,29 @@
 
           <!-- Action buttons -->
           <div class="flex flex-wrap justify-center gap-4 mt-8 bg-gray-100 p-6 rounded-lg py-12 print:hidden no-print" data-no-print>
-            <Button variant="default" size="sm" on:click={downloadReport}>Download Report</Button>
+            <button 
+              class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-8 gap-1.5 px-3"
+              on:click={downloadReport}
+            >
+              Download Report
+            </button>
 
-            <Button variant="default" size="sm" id="downloadButton" on:click={downloadJobData}>
+            <button 
+              class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-8 gap-1.5 px-3"
+              id="downloadButton" 
+              on:click={downloadJobData}
+            >
               Download JSON-LD Data
-            </Button>
+            </button>
 
             <!-- if enterprise account-->
-            <Button
-              variant="default"
-              size="sm"
+            <button
+              class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-8 gap-1.5 px-3"
               on:click={handleRewrite}
               disabled={rewriteLoading || loading}
             >
               {rewriteLoading ? 'Improving...' : 'Improve This Posting'}
-            </Button>
+            </button>
           </div>
         {:else}
           <!-- Always show the score prominently with progress circle -->

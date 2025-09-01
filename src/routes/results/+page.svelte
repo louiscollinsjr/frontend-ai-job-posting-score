@@ -22,6 +22,8 @@
   let showSuccessMessage = false;
   let successMessageTimeout;
   let rewriteData = null;
+  let rewriteLoading = false;
+  let loading = false;
   let results = null;
   let lastReportId: string | null = null;
   let reportId: string | null = null;
@@ -162,6 +164,15 @@
     };
   });
 
+  // Add this reactive statement to handle auth state changes and URL parameters
+  $: if (browser && isLoggedIn) {
+    const params = new URLSearchParams(window.location.search);
+    const reportId = params.get('report');
+    if (reportId && !auditResults) {
+      queueLoadReportById(reportId);
+    }
+  }
+
   // Updated saveReport function
   async function saveReport(report: any) {
     if (!report) return;
@@ -277,8 +288,65 @@
     }
   }
 
-  function handleRewrite(event) {
-    rewriteData = event.detail;
+  // Button handler functions
+  function downloadReport() {
+    if (!auditResults) {
+      toast.error('No report data available');
+      return;
+    }
+    
+    // Trigger browser print dialog
+    window.print();
+  }
+
+  function downloadJobData() {
+    if (!auditResults) {
+      toast.error('No report data available');
+      return;
+    }
+    
+    try {
+      // Extract JSON-LD data from the report
+      const jsonLdData = auditResults.json_ld || auditResults.jsonLd || {};
+      
+      // Create downloadable JSON file
+      const dataStr = JSON.stringify(jsonLdData, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      
+      // Create download link
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `job-posting-data-${auditResults.id || Date.now()}.json`;
+      
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up
+      URL.revokeObjectURL(url);
+      
+      toast.success('JSON-LD data downloaded successfully');
+    } catch (error) {
+      console.error('Error downloading JSON-LD data:', error);
+      toast.error('Failed to download JSON-LD data');
+    }
+  }
+
+  function handleRewrite() {
+    if (!auditResults) {
+      toast.error('No report data available');
+      return;
+    }
+    
+    // Set rewrite data to trigger the JobRewrite component
+    rewriteData = {
+      jobTitle: auditResults.job_title || auditResults.jobTitle || '',
+      jobBody: auditResults.job_body || auditResults.jobBody || '',
+      feedback: auditResults.feedback || {},
+      categories: auditResults.categories || {}
+    };
   }
   
   function handleBackToResults() {
@@ -390,17 +458,23 @@
         score={rewriteData.score}
         jobId={rewriteData.id}
       />
+    {:else if isLoadingReport}  <!-- Show loading indicator when loading -->
+      <div class="text-center py-16">
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <p class="mt-4 text-gray-500">Loading report...</p>
+      </div>
     {:else if auditResults}
       <!-- Use actual results from audit store if available -->
       <ResultsDisplay 
         results={auditResults} 
         visible={true} 
         isLoggedIn={isLoggedIn}
-        on:save={() => triggerSaveDialog({type: 'save'})} 
-        on:export={() => triggerSaveDialog({type: 'export'})} 
-        on:accesslater={() => triggerSaveDialog({type: 'accesslater'})} 
-        on:tips={() => triggerSaveDialog({type: 'tips'})} 
-        on:rewrite={handleRewrite}
+        rewriteLoading={rewriteLoading}
+        loading={loading}
+        on:save={triggerSaveDialog}
+        {downloadReport}
+        {downloadJobData}
+        {handleRewrite}
       />
       <SaveReportDialog
         bind:open={showDialog}
