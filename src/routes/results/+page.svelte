@@ -2,7 +2,7 @@
   import ResultsDisplay from '$lib/components/ResultsDisplay.svelte';
   import Navbar from '$lib/components/Navbar.svelte';
   import SaveReportDialog from '$lib/components/SaveReportDialog.svelte';
-  import JobRewrite from '$lib/components/JobRewrite.svelte';
+  import JobOptimizationExecutive from '$lib/components/JobOptimizationExecutive.svelte';
   import { browser } from '$app/environment';
   import { onMount } from 'svelte';
   import { supabase } from '$lib/supabaseClient';
@@ -452,12 +452,10 @@
       >
         ← Back to Results
       </button>
-      <JobRewrite 
-        original_text={rewriteData.original_text} 
-        improvedText={rewriteData.improvedText}
-        recommendations={rewriteData.recommendations}
-        score={rewriteData.score}
-        jobId={rewriteData.id}
+      <JobOptimizationExecutive 
+        originalText={rewriteData.original_text || auditResults?.original_report?.text || ''} 
+        reportId={rewriteData.id || reportId}
+        initialData={rewriteData.optimizationData}
       />
     {:else if isLoadingReport}  <!-- Show loading indicator when loading -->
       <div class="text-center py-16">

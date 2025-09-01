@@ -1,0 +1,246 @@
+<script>
+  import { onMount } from 'svelte';
+  import { env } from '$env/dynamic/public';
+  import Button from '$lib/components/ui/button/button.svelte';
+  import WorkingWellPanel from './WorkingWellPanel.svelte';
+  import ImprovementCard from './ImprovementCard.svelte';
+  import ScoreDisplay from './ScoreDisplay.svelte';
+  
+  export let originalText = '';
+  export let reportId = '';
+  export let initialData = null;
+  
+  let optimizationData = null;
+  let isLoading = false;
+  let error = null;
+  let isApplyingFixes = false;
+  
+  // API base URL (configurable)
+  // Fallback to production fly.io URL if PUBLIC_API_BASE_URL is not set
+  const apiBaseUrl = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
+  
+  // Initialize with provided data or fetch optimization
+  onMount(async () => {
+    if (initialData) {
+      optimizationData = initialData;
+    } else if (originalText && originalText.trim()) {
+      await optimizeJobPost();
+    } else {
+      // Try to load cached optimization data for this report
+      await loadCachedOptimization();
+    }
+  });
+  
+  // Load cached optimization data from backend if available
+  async function loadCachedOptimization() {
+    if (!reportId) return;
+    
+    try {
+      isLoading = true;
+      const response = await fetch(`${apiBaseUrl}/api/v1/optimize-job/${reportId}`);
+      if (response.ok) {
+        optimizationData = await response.json();
+      }
+    } catch (err) {
+      console.log('No cached optimization found, will need to optimize when text is available');
+    } finally {
+      isLoading = false;
+    }
+  }
+  
+  async function optimizeJobPost() {
+    isLoading = true;
+    error = null;
+    
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/v1/optimize-job`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          text: originalText,
+          job_id: reportId
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Optimization failed: ${response.status}`);
+      }
+      
+      optimizationData = await response.json();
+    } catch (err) {
+      console.error('Error optimizing job post:', err);
+      error = err.message;
+    } finally {
+      isLoading = false;
+    }
+  }
+  
+  async function applyAllFixes() {
+    isApplyingFixes = true;
+    
+    try {
+      // In a real implementation, this would apply all remaining improvements
+      // For now, we'll simulate the action
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Refresh optimization data to show applied fixes
+      await optimizeJobPost();
+    } catch (err) {
+      console.error('Error applying fixes:', err);
+    } finally {
+      isApplyingFixes = false;
+    }
+  }
+  
+  function handleFixItem(improvementId) {
+    // Handle individual fix application
+    console.log('Fixing item:', improvementId);
+  }
+  
+  $: totalImprovementPoints = optimizationData?.appliedImprovements?.reduce((sum, imp) => sum + (imp.impactPoints || 0), 0) || 0;
+</script>
+
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <div class="bg-white border-b px-6 py-4">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">Job Posting Optimization</h1>
+          <p class="text-gray-600 mt-1">AI-powered improvements to boost your posting performance</p>
+        </div>
+        
+        {#if optimizationData}
+          <ScoreDisplay 
+            currentScore={optimizationData.originalScore}
+            optimizedScore={optimizationData.optimizedScore}
+            improvement={optimizationData.scoreImprovement}
+          />
+        {/if}
+      </div>
+    </div>
+  </div>
+  
+  {#if isLoading}
+    <div class="flex justify-center items-center h-96">
+      <div class="flex flex-col items-center gap-4">
+        <div class="animate-spin rounded-full h-8 w-8 border-2 border-blue-600 border-t-transparent"></div>
+        <p class="text-gray-600">Optimizing your job posting...</p>
+      </div>
+    </div>
+  {:else if error}
+    <div class="max-w-7xl mx-auto px-6 py-8">
+      <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+        <h3 class="text-red-800 font-medium">Optimization Error</h3>
+        <p class="text-red-600 mt-2">{error}</p>
+        <Button class="mt-4" on:click={optimizeJobPost}>Try Again</Button>
+      </div>
+    </div>
+  {:else if optimizationData}
+    <div class="max-w-7xl mx-auto px-6 py-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- Left Column: Optimized Job Post -->
+        <div class="space-y-6">
+          <div class="bg-white rounded-lg border shadow-sm">
+            <div class="px-6 py-4 border-b">
+              <h2 class="text-lg font-semibold text-gray-900">Optimized Job Posting</h2>
+              <p class="text-sm text-gray-600 mt-1">Enhanced version with improvements applied</p>
+            </div>
+            <div class="p-6">
+              <div class="prose prose-sm max-w-none">
+                <div class="whitespace-pre-wrap text-gray-800 leading-relaxed">
+                  {optimizationData.optimizedText}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right Column: Improvements & Analysis -->
+        <div class="space-y-6">
+          
+          <!-- What's Working Well (Original) -->
+        {#if optimizationData.workingWell?.length > 0}
+          <div class="bg-white rounded-lg border shadow-sm">
+            <div class="px-6 py-4 border-b">
+              <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                <span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                What's Working Well
+              </h3>
+              <p class="text-sm text-gray-600 mt-1">Strong aspects from your original posting</p>
+            </div>
+            <WorkingWellPanel items={optimizationData.workingWell} />
+          </div>
+        {/if}
+          
+          <!-- Recommended Improvements -->
+          <div class="bg-white rounded-lg border shadow-sm">
+            <div class="px-6 py-4 border-b flex items-center justify-between">
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                  <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                  Applied Improvements
+                </h3>
+                <p class="text-sm text-gray-600 mt-1">Changes made to optimize your posting</p>
+              </div>
+              <Button 
+                size="sm" 
+                class="text-xs"
+                disabled={isLoading}
+                on:click={optimizeJobPost}
+              >
+                {#if isLoading}
+                  Optimizing...
+                {:else}
+                  Improve Again
+                {/if}
+              </Button>
+            </div>
+            
+            <div class="divide-y">
+              {#each optimizationData.appliedImprovements || [] as improvement, index}
+                <ImprovementCard 
+                  {improvement}
+                  on:fix={() => handleFixItem(improvement.category)}
+                />
+              {/each}
+              
+              {#if (!optimizationData.appliedImprovements || optimizationData.appliedImprovements.length === 0)}
+                <div class="p-6 text-center text-gray-500">
+                  <div class="text-2xl mb-2">✅</div>
+                  <p class="font-medium">All improvements applied!</p>
+                  <p class="text-sm">Your job posting is fully optimized.</p>
+                </div>
+              {/if}
+            </div>
+          </div>
+          
+          <!-- Potential Future Improvements -->
+          {#if optimizationData.potentialImprovements?.length > 0}
+            <div class="bg-gray-50 rounded-lg border border-gray-200">
+              <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="font-medium text-gray-700">Future Enhancement Opportunities</h3>
+                <p class="text-sm text-gray-600 mt-1">Advanced optimizations for maximum impact</p>
+              </div>
+              <div class="p-6 space-y-3">
+                {#each optimizationData.potentialImprovements as potential}
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                      <h4 class="text-sm font-medium text-gray-700">{potential.category}</h4>
+                      <p class="text-sm text-gray-600 mt-1">{potential.description}</p>
+                    </div>
+                    <span class="text-xs text-gray-500 ml-4">+{potential.potentialPoints} pts</span>
+                  </div>
+                {/each}
+              </div>
+            </div>
+          {/if}
+          
+        </div>
+      </div>
+    </div>
+  {/if}
+</div>

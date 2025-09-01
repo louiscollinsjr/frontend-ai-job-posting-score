@@ -129,30 +129,28 @@
   }
 </script>
 
-<div class="container mx-auto px-4 py-8 pt-32 ">
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold">
-      {#if viewOnly}
-        Rewrite History
-      {:else}
-        Job Rewrite
-      {/if}
-    </h1>
-    <Button.Root variant="outline" on:click={goBack}>
-      Back to Dashboard
-    </Button.Root>
-  </div>
-
+<div class="h-screen overflow-hidden">
   {#if isLoading}
-    <div class="flex justify-center items-center h-96">
-      <div class="animate-spin rounded-full h-8 w-8 border-2 border-black border-t-transparent"></div>
+    <div class="flex justify-center items-center h-full">
+      <div class="flex flex-col items-center gap-4">
+        <div class="animate-spin rounded-full h-8 w-8 border-2 border-black border-t-transparent"></div>
+        <p class="text-gray-600">Loading job posting editor...</p>
+      </div>
     </div>
   {:else if error}
-    <Alert.Root>
-      <Alert.Title>Error</Alert.Title>
-      <Alert.Description>{error}</Alert.Description>
-    </Alert.Root>
+    <div class="flex justify-center items-center h-full">
+      <Alert.Root class="max-w-md">
+        <Alert.Title>Error</Alert.Title>
+        <Alert.Description>{error}</Alert.Description>
+        <div class="mt-4">
+          <Button.Root variant="outline" on:click={goBack}>
+            Back to Dashboard
+          </Button.Root>
+        </div>
+      </Alert.Root>
+    </div>
   {:else}
+    <!-- Full-screen editor -->
     <JobRewrite
       original_text={originalText}
       improvedText={improvedText}
@@ -161,5 +159,15 @@
       jobId={reportId}
       rewriteVersions={rewriteVersions}
     />
+    
+    <!-- Floating back button -->
+    <div class="fixed top-4 left-4 z-20">
+      <Button.Root variant="outline" size="sm" on:click={goBack}>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Back
+      </Button.Root>
+    </div>
   {/if}
 </div>
