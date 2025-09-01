@@ -100,10 +100,14 @@
     .sort((a, b) => a.percentage - b.percentage)
     .slice(0, 3);
 
-  // Delegate to shared utility class helper for consistency
-  export let getScoreColor100 = (score) => utilGetTextColorClass100(score, 100);
-  // Delegate to shared utility by default; parent may still override via prop
-  export let getScoreColorHex100 = (score) => utilGetScoreColorHex100(score, 100);
+  // Helper functions for score colors
+  function getScoreColor100(score) {
+    return utilGetTextColorClass100(score, 100);
+  }
+  
+  function getScoreColorHex100(score) {
+    return utilGetScoreColorHex100(score, 100);
+  }
 </script>
 
 <div class="results-page pb-32 bg-[#f8f8f8]/0 print:bg-white print:pb-0">
