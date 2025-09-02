@@ -446,14 +446,27 @@
         return false;
       }
       
-      // Check for latest rewrite version
-      const { data: latestRewrite } = await supabase
-        .from('rewrite_versions')
-        .select('*')
-        .eq('job_id', reportId)
-        .order('version_number', { ascending: false })
-        .limit(1)
-        .single();
+      // Check for latest rewrite version (handle gracefully if table doesn't exist)
+      let latestRewrite = null;
+      try {
+        const { data, error } = await supabase
+          .from('rewrite_versions')
+          .select('*')
+          .eq('job_id', reportId)
+          .order('version_number', { ascending: false })
+          .limit(1)
+          .maybeSingle(); // Use maybeSingle to avoid error when no results
+        
+        if (!error) {
+          latestRewrite = data;
+        } else if (import.meta.env.DEV) {
+          console.warn('Could not query rewrite_versions table:', error.message);
+        }
+      } catch (err) {
+        if (import.meta.env.DEV) {
+          console.warn('rewrite_versions table may not exist or have RLS issues:', err.message);
+        }
+      }
       
       // Enhance report data with rewrite information
       const enhancedReport = {
