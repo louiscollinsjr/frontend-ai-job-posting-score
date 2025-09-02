@@ -5,6 +5,7 @@
   import WorkingWellPanel from './WorkingWellPanel.svelte';
   import ImprovementCard from './ImprovementCard.svelte';
   import ScoreDisplay from './ScoreDisplay.svelte';
+  // import BetaBadge from '$lib/components/BetaBadge.svelte';
   
   export let originalText = '';
   export let reportId = '';
@@ -102,14 +103,17 @@
   $: totalImprovementPoints = optimizationData?.appliedImprovements?.reduce((sum, imp) => sum + (imp.impactPoints || 0), 0) || 0;
 </script>
 
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-gray-transparent pt-20">
   <!-- Header -->
-  <div class="bg-white border-b px-6 py-4">
+  <div class="bg-transparent border-b px-6 py-4">
     <div class="max-w-7xl mx-auto">
       <div class="flex items-center justify-between">
-        <div>
-          <h1 class="text-2xl font-bold text-gray-900">Job Posting Optimization</h1>
-          <p class="text-gray-600 mt-1">AI-powered improvements to boost your posting performance</p>
+        <!-- Logo Header Section -->
+        <div class="flex items-center space-x-2">
+          <img src="/jobpostscore_logo.svg" alt="JobPostScore Logo" class="h-10 w-auto" />
+         
+            <p class="text-3xl font-bold text-gray-900 pt-1">Optimization</p>
+      
         </div>
         
         {#if optimizationData}
