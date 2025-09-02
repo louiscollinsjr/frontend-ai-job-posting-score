@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { env } from '$env/dynamic/public';
+  import { marked } from 'marked';
   import Button from '$lib/components/ui/button/button.svelte';
   import WorkingWellPanel from './WorkingWellPanel.svelte';
   import ImprovementCard from './ImprovementCard.svelte';
@@ -129,6 +130,12 @@
     }));
   }
   
+  // Function to convert markdown to HTML
+  function processMarkdown(text) {
+    if (!text) return '';
+    return marked(text);
+  }
+  
   $: totalImprovementPoints = optimizationData?.appliedImprovements?.reduce((sum, imp) => sum + (imp.impactPoints || 0), 0) || 0;
 </script>
 
@@ -184,8 +191,8 @@
             </div>
             <div class="p-6">
               <div class="prose prose-sm max-w-none">
-                <div class="whitespace-pre-wrap text-gray-800 leading-relaxed">
-                  {optimizationData.optimizedText}
+                <div class="text-gray-800 leading-relaxed">
+                  {@html processMarkdown(optimizationData.optimizedText)}
                 </div>
               </div>
             </div>
