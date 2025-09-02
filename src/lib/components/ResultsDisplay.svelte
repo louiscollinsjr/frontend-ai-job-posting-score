@@ -197,14 +197,32 @@
               Download JSON-LD Data
             </button>
 
-            <!-- if enterprise account-->
-            <button
-              class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-8 gap-1.5 px-3"
-              onclick={handleRewrite}
-              disabled={rewriteLoading || loading}
-            >
-              {rewriteLoading ? 'Improving...' : 'Improve This Posting'}
-            </button>
+            <!-- Improvement Status & Action -->
+            {#if results?.hasRewrite}
+              <div class="flex items-center gap-2">
+                <div class="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                  </svg>
+                  Improved v{results.rewriteVersion || 1}
+                </div>
+                <button
+                  class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/90 h-8 gap-1.5 px-3"
+                  onclick={handleRewrite}
+                  disabled={rewriteLoading || loading}
+                >
+                  {rewriteLoading ? 'Viewing...' : 'View Latest Improvement'}
+                </button>
+              </div>
+            {:else}
+              <button
+                class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-8 gap-1.5 px-3"
+                onclick={handleRewrite}
+                disabled={rewriteLoading || loading}
+              >
+                {rewriteLoading ? 'Improving...' : 'Improve This Posting'}
+              </button>
+            {/if}
           </div>
         {:else}
           <!-- Always show the score prominently with progress circle -->

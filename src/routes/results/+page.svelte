@@ -334,20 +334,81 @@
     }
   }
 
-  function handleRewrite() {
+  async function handleRewrite() {
     if (!auditResults) {
       toast.error('No report data available');
       return;
     }
     
-    // Set rewrite data to trigger the JobRewrite component
-    rewriteData = {
-      original_text: auditResults.job_body || (auditResults as any).jobBody || '',
-      improvedText: '', // Will be populated by the rewrite API
-      recommendations: auditResults.feedback || {},
-      score: auditResults.overallScore || (auditResults as any).total_score || 0,
-      id: auditResults.id || ''
-    };
+    const reportId = auditResults.id || auditResults.report_id;
+    if (!reportId) {
+      toast.error('No report ID available');
+      return;
+    }
+    
+    rewriteLoading = true;
+    
+    try {
+      // Check if rewrite already exists
+      const existingResponse = await fetch(`${import.meta.env.PUBLIC_API_BASE_URL || 'https://ai-audit-api.fly.dev'}/api/v1/rewrite-job/${reportId}`);
+      
+      if (existingResponse.ok) {
+        const existingData = await existingResponse.json();
+        
+        // If we have existing improved text, show that
+        if (existingData.improvedText && existingData.improvedText.trim()) {
+          rewriteData = {
+            original_text: existingData.original_text || auditResults.job_body || (auditResults as any).jobBody || '',
+            improvedText: existingData.improvedText,
+            recommendations: existingData.recommendations || auditResults.recommendations || [],
+            score: existingData.score || auditResults.total_score || 0,
+            id: reportId,
+            optimizationData: auditResults.optimization_data || null
+          };
+          rewriteLoading = false;
+          return;
+        }
+      }
+      
+      // No existing rewrite, create new one
+      const response = await fetch(`${import.meta.env.PUBLIC_API_BASE_URL || 'https://ai-audit-api.fly.dev'}/api/v1/rewrite-job/${reportId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ saveToDatabase: true })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Rewrite failed: ${response.status}`);
+      }
+      
+      const rewriteResult = await response.json();
+      
+      // Set rewrite data to trigger the optimization view
+      rewriteData = {
+        original_text: rewriteResult.original_text || auditResults.job_body || (auditResults as any).jobBody || '',
+        improvedText: rewriteResult.improvedText || '',
+        recommendations: rewriteResult.recommendations || auditResults.recommendations || [],
+        score: rewriteResult.score || auditResults.total_score || 0,
+        id: reportId,
+        optimizationData: auditResults.optimization_data || null
+      };
+      
+      // Update the audit results with the rewritten text
+      auditResults = {
+        ...auditResults,
+        improved_text: rewriteResult.improvedText
+      };
+      
+      toast.success('Job posting rewritten successfully!');
+      
+    } catch (error) {
+      console.error('Error rewriting job posting:', error);
+      toast.error('Failed to rewrite job posting. Please try again.');
+    } finally {
+      rewriteLoading = false;
+    }
   }
   
   function handleBackToResults() {
@@ -365,6 +426,8 @@
     
     try {
       if (import.meta.env.DEV) console.log('Loading report by ID:', reportId);
+      
+      // Load the base report
       const { data, error } = await supabase
         .from('reports')
         .select('*')
@@ -377,24 +440,47 @@
         return false;
       }
       
-      if (data) {
-        if (import.meta.env.DEV) console.log('Successfully loaded report:', data.id);
-        
-        // Update the audit store with the loaded report
-        auditStore.update(state => ({
-          ...state,
-          results: data
-        }));
-        
-        // Update local variable
-        auditResults = data;
-        
-        return true;
-      } else {
+      if (!data) {
         console.warn('No report found with ID:', reportId);
         toast.error('Report not found');
         return false;
       }
+      
+      // Check for latest rewrite version
+      const { data: latestRewrite } = await supabase
+        .from('rewrite_versions')
+        .select('*')
+        .eq('job_id', reportId)
+        .order('version_number', { ascending: false })
+        .limit(1)
+        .single();
+      
+      // Enhance report data with rewrite information
+      const enhancedReport = {
+        ...data,
+        hasRewrite: !!(latestRewrite || data.improved_text),
+        latestImprovedText: latestRewrite?.improved_text || data.improved_text,
+        rewriteVersion: latestRewrite?.version_number || (data.improved_text ? 1 : 0),
+        lastRewriteDate: latestRewrite?.created_at || data.savedat
+      };
+      
+      if (import.meta.env.DEV) {
+        console.log('Successfully loaded report:', enhancedReport.id);
+        if (enhancedReport.hasRewrite) {
+          console.log('Report has rewrite version:', enhancedReport.rewriteVersion);
+        }
+      }
+      
+      // Update the audit store with the enhanced report
+      auditStore.update(state => ({
+        ...state,
+        results: enhancedReport
+      }));
+      
+      // Update local variable
+      auditResults = enhancedReport;
+      
+      return true;
     } catch (err) {
       console.error('Exception loading report:', err);
       toast.error('Error loading report');
@@ -453,9 +539,12 @@
         ← Back to Results
       </button>
       <JobOptimizationExecutive 
-        originalText={rewriteData.original_text || auditResults?.original_report?.text || ''} 
+        originalText={rewriteData.original_text || auditResults?.original_report?.text || ''}
+        improvedText={rewriteData.improvedText || ''}
         reportId={rewriteData.id || reportId}
         initialData={rewriteData.optimizationData}
+        recommendations={rewriteData.recommendations || []}
+        score={rewriteData.score || 0}
       />
     {:else if isLoadingReport}  <!-- Show loading indicator when loading -->
       <div class="text-center py-16">

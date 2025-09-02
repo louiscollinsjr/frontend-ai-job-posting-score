@@ -8,8 +8,11 @@
   // import BetaBadge from '$lib/components/BetaBadge.svelte';
   
   export let originalText = '';
+  export let improvedText = '';
   export let reportId = '';
   export let initialData = null;
+  export let recommendations = [];
+  export let score = 0;
   
   let optimizationData = null;
   let isLoading = false;
@@ -24,6 +27,18 @@
   onMount(async () => {
     if (initialData) {
       optimizationData = initialData;
+    } else if (improvedText && improvedText.trim()) {
+      // We have improved text, create optimization data from it
+      optimizationData = {
+        originalText: originalText,
+        optimizedText: improvedText,
+        originalScore: score,
+        optimizedScore: score + 10, // Estimate improvement
+        scoreImprovement: 10,
+        workingWell: [],
+        appliedImprovements: createImprovementsFromRecommendations(recommendations),
+        potentialImprovements: []
+      };
     } else if (originalText && originalText.trim()) {
       await optimizeJobPost();
     } else {
@@ -98,6 +113,20 @@
   function handleFixItem(improvementId) {
     // Handle individual fix application
     console.log('Fixing item:', improvementId);
+  }
+  
+  // Helper function to create improvements from recommendations
+  function createImprovementsFromRecommendations(recs) {
+    if (!recs || !Array.isArray(recs)) return [];
+    
+    return recs.map((rec, index) => ({
+      category: `Improvement ${index + 1}`,
+      description: typeof rec === 'string' ? rec : JSON.stringify(rec),
+      impactPoints: 5,
+      applied: true,
+      impact: 'Medium Impact',
+      scoreContribution: '+5 points'
+    }));
   }
   
   $: totalImprovementPoints = optimizationData?.appliedImprovements?.reduce((sum, imp) => sum + (imp.impactPoints || 0), 0) || 0;
