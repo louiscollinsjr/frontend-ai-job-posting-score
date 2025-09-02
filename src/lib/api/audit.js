@@ -10,7 +10,7 @@ import { env } from '$env/dynamic/public';
 const API_BASE_URL = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
 
 // Helper: fetch with timeout + abort to avoid hanging requests
-async function fetchWithTimeout(resource, options = {}, timeoutMs = 15000) {
+async function fetchWithTimeout(resource, options = {}, timeoutMs = 30000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeoutMs);
   try {
