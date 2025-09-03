@@ -277,35 +277,35 @@ export async function analyzeJob(inputType, inputData) {
 }
 
 /**
- * Rewrite a job posting to improve its visibility
- * @param {string} jobId - The ID of the job to rewrite
- * @param {boolean} saveToDatabase - Whether to save the rewritten text to the database
- * @returns {Promise<object>} - The rewritten job posting
+ * Optimize a job posting to improve its score and visibility.
+ * @param {string} reportId - The ID of the report to optimize.
+ * @returns {Promise<object>} - The optimization results, including the new version.
  */
-export async function rewriteJob(jobId, saveToDatabase = true) {
+export async function optimizeJob(reportId) {
   try {
     const headers = { 'Content-Type': 'application/json' };
-    // Add auth token if available
     const session = await supabase.auth.getSession();
     if (session?.data?.session?.access_token) {
       headers['Authorization'] = `Bearer ${session.data.session.access_token}`;
     }
-    
-    const response = await fetchWithTimeout(`${API_BASE_URL}/api/rewrite-job/${jobId}`, {
+
+    const response = await fetchWithTimeout(`${API_BASE_URL}/api/v1/optimize-job`, {
       method: 'POST',
       headers,
-      body: JSON.stringify({ saveToDatabase })
-    });
-    
+      body: JSON.stringify({ report_id: reportId })
+    }, 120000); // 2 minute timeout for LLM optimization
+
     if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+      const errorPayload = await response.json().catch(() => ({}));
+      const message = errorPayload.message || `API error: ${response.status}`;
+      throw new Error(message);
     }
-    
+
     return await response.json();
   } catch (error) {
-    console.error('Error rewriting job:', error);
+    console.error('Error optimizing job:', error);
     const aborted = error?.name === 'AbortError';
-    throw new Error(aborted ? 'Request timed out. Please try again.' : `Failed to rewrite job posting. ${error.message}`);
+    throw new Error(aborted ? 'Request timed out. Please try again.' : `Failed to optimize job posting. ${error.message}`);
   }
 }
 

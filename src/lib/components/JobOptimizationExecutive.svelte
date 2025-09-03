@@ -27,6 +27,8 @@
   // Initialize with provided data or fetch optimization
   onMount(async () => {
     if (initialData) {
+      console.log('[DEBUG] JobOptimizationExecutive received initialData:', initialData);
+      console.log('[DEBUG] appliedImprovements array:', initialData.appliedImprovements);
       optimizationData = initialData;
     } else if (improvedText && improvedText.trim()) {
       // We have improved text, create optimization data from it
@@ -219,14 +221,12 @@
           
           <!-- Recommended Improvements -->
           <div class="bg-white rounded-lg border shadow-sm py-4">
-            <div class="px-6 py-2 flex items-center justify-between">
-              <div>
+            <div class="px-6 py-4 flex items-center justify-between border-b">
+              <div class="">
                 <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                  <!-- <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span> -->
                   Applied Improvements
                 </h3>
                 <p class="text-sm text-gray-600 mt-1">Changes made to optimize your posting</p>
-                <div class="border-t my-4"></div>
               </div>
               <Button 
                 size="sm" 
@@ -240,10 +240,14 @@
                   Improve Again
                 {/if}
               </Button>
+              
             </div>
-            
+          
             <div class="p-1 pb-0">
               {#each optimizationData.appliedImprovements || [] as improvement, index}
+                {#if index === 0}
+                  <script>console.log('[DEBUG] appliedImprovements:', optimizationData.appliedImprovements);</script>
+                {/if}
                 <ImprovementCard 
                   {improvement}
                   on:fix={() => handleFixItem(improvement.category)}

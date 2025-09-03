@@ -1,4 +1,5 @@
 <script>
+  import { createEventDispatcher } from 'svelte';
   import ScoreVisualizer from '$lib/components/ScoreVisualizer.svelte';
   import Logo from '$lib/components/Logo.svelte';
   import { getScoreColorHex100 as utilGetScoreColorHex100, getTextColorClass100 as utilGetTextColorClass100 } from '$lib/utils/colors';
@@ -10,8 +11,7 @@
   export let categoryLabels = [];
   export let rewriteLoading = false;
 
-  // Event handler functions passed from parent
-  export let handleRewrite = () => {};
+  const dispatch = createEventDispatcher();
   export let downloadReport = () => {};
   export let downloadJobData = () => {};
 
@@ -184,7 +184,7 @@
           <div class="flex flex-wrap justify-center gap-4 mt-8 bg-gray-100 p-6 rounded-lg py-12 print:hidden no-print" data-no-print>
             <button 
               class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-8 gap-1.5 px-3"
-              onclick={downloadReport}
+              on:click={downloadReport}
             >
               Download Report
             </button>
@@ -192,7 +192,7 @@
             <button 
               class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-8 gap-1.5 px-3"
               id="downloadButton" 
-              onclick={downloadJobData}
+              on:click={downloadJobData}
             >
               Download JSON-LD Data
             </button>
@@ -208,7 +208,7 @@
                 </div>
                 <button
                   class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/90 h-8 gap-1.5 px-3"
-                  onclick={handleRewrite}
+                  on:click={() => dispatch('optimize')}
                   disabled={rewriteLoading || loading}
                 >
                   {rewriteLoading ? 'Viewing...' : 'View Latest Improvement'}
@@ -217,7 +217,7 @@
             {:else}
               <button
                 class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-8 gap-1.5 px-3"
-                onclick={handleRewrite}
+                on:click={() => dispatch('optimize')}
                 disabled={rewriteLoading || loading}
               >
                 {rewriteLoading ? 'Improving...' : 'Improve This Posting'}

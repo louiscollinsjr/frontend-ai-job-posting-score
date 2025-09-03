@@ -10,6 +10,7 @@
   import * as Separator from '$lib/components/ui/separator';
   import Dropdown from '$lib/components/ui/dropdown';
   import { env } from '$env/dynamic/public';
+  import { optimizeJob } from '$lib/api/audit.js';
   
   // Data comes from server (page info) and client-side fetching
   export let data;
@@ -336,33 +337,15 @@
     goto(`/results?report=${reportId}`);
   }
 
-  async function improveReport(reportId) {
+  async function optimizeReport(reportId) {
     loading = true;
     try {
-      const sessionStr = localStorage.getItem('sb-zincimrcpvxtugvhimny-auth-token');
-      if (!sessionStr) {
-        toast.error('Authentication required');
-        return;
-      }
-
-      const session = JSON.parse(sessionStr);
-      const response = await fetch(`${API_BASE_URL}/api/v1/rewrite-job/${reportId}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        toast.success('Report improvement started!');
-        goto(`/results?report=${reportId}`);
-      } else {
-        toast.error('Failed to improve report');
-      }
+      await optimizeJob(reportId);
+      toast.success('Optimization started! Redirecting to results...');
+      goto(`/results?report=${reportId}`);
     } catch (error) {
-      console.error('Error improving report:', error);
-      toast.error('Error improving report');
+      console.error('Error optimizing report:', error);
+      toast.error(`Optimization failed: ${error.message}`);
     } finally {
       loading = false;
     }
@@ -697,7 +680,7 @@
                               </button>
                               <button 
                                 class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
-                                on:click={() => { improveReport(report.id); activeDropdown = null; }}
+                                on:click={() => { optimizeReport(report.id); activeDropdown = null; }}
                               >
                                 <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                 Improve

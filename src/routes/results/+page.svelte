@@ -9,6 +9,7 @@
   import { toast } from 'svelte-sonner';
   import { page } from '$app/stores';
   import { formatReportForDB } from '$lib/utils/reportMapper';
+  import { optimizeJob } from '$lib/api/audit.js';
 
   import { auditStore } from '$lib/stores/audit.js';
   import { user } from '$lib/stores/auth.js';
@@ -334,78 +335,46 @@
     }
   }
 
-  async function handleRewrite() {
+  async function handleOptimize() {
     if (!auditResults) {
-      toast.error('No report data available');
+      toast.error('No report data available to optimize.');
       return;
     }
-    
+
     const reportId = auditResults.id || auditResults.report_id;
     if (!reportId) {
-      toast.error('No report ID available');
+      toast.error('Report ID is missing, cannot optimize.');
       return;
     }
-    
+
     rewriteLoading = true;
-    
+
     try {
-      // Check if rewrite already exists
-      const existingResponse = await fetch(`${import.meta.env.PUBLIC_API_BASE_URL || 'https://ai-audit-api.fly.dev'}/api/v1/rewrite-job/${reportId}`);
-      
-      if (existingResponse.ok) {
-        const existingData = await existingResponse.json();
-        
-        // If we have existing improved text, show that
-        if (existingData.improvedText && existingData.improvedText.trim()) {
-          rewriteData = {
-            original_text: existingData.original_text || auditResults.job_body || (auditResults as any).jobBody || '',
-            improvedText: existingData.improvedText,
-            recommendations: existingData.recommendations || auditResults.recommendations || [],
-            score: existingData.score || auditResults.total_score || 0,
-            id: reportId,
-            optimizationData: auditResults.optimization_data || null
-          };
-          rewriteLoading = false;
-          return;
-        }
-      }
-      
-      // No existing rewrite, create new one
-      const response = await fetch(`${import.meta.env.PUBLIC_API_BASE_URL || 'https://ai-audit-api.fly.dev'}/api/v1/rewrite-job/${reportId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ saveToDatabase: true })
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Rewrite failed: ${response.status}`);
-      }
-      
-      const rewriteResult = await response.json();
-      
-      // Set rewrite data to trigger the optimization view
+      const optimizationResult = await optimizeJob(reportId);
+
+      // The API now returns the new optimization record, including rewritten text and changes.
       rewriteData = {
-        original_text: rewriteResult.original_text || auditResults.job_body || (auditResults as any).jobBody || '',
-        improvedText: rewriteResult.improvedText || '',
-        recommendations: rewriteResult.recommendations || auditResults.recommendations || [],
-        score: rewriteResult.score || auditResults.total_score || 0,
+        original_text: auditResults.job_body || (auditResults as any).jobBody || '',
+        improvedText: optimizationResult.rewritten_text,
+        score: optimizationResult.new_score,
         id: reportId,
-        optimizationData: auditResults.optimization_data || null
+        optimizationData: {
+          change_log: optimizationResult.change_log,
+          unaddressed_items: optimizationResult.unaddressed_items
+        }
       };
-      
-      // Update the audit results with the rewritten text
+
+      // Update the main report view with the new score and improved text
       auditResults = {
         ...auditResults,
-        improved_text: rewriteResult.improvedText
+        total_score: optimizationResult.new_score,
+        improved_text: optimizationResult.rewritten_text
       };
-      
-      toast.success('Job posting rewritten successfully!');
-      
+
+      toast.success('Job posting optimized successfully!');
     } catch (error) {
-      console.error('Error rewriting job posting:', error);
-      toast.error('Failed to rewrite job posting. Please try again.');
+      console.error('Error optimizing job posting:', error);
+      toast.error(`Optimization failed: ${error.message}`);
     } finally {
       rewriteLoading = false;
     }
@@ -447,34 +416,58 @@
       }
       
       // Check for latest rewrite version (handle gracefully if table doesn't exist)
-      let latestRewrite = null;
+      let latestOptimization = null;
       try {
         const { data, error } = await supabase
-          .from('rewrite_versions')
+          .from('optimizations')
           .select('*')
-          .eq('job_id', reportId)
+          .eq('report_id', reportId)
           .order('version_number', { ascending: false })
-          .limit(1)
-          .maybeSingle(); // Use maybeSingle to avoid error when no results
-        
-        if (!error) {
-          latestRewrite = data;
-        } else if (import.meta.env.DEV) {
-          console.warn('Could not query rewrite_versions table:', error.message);
+          .limit(1);
+
+        if (!error && data && data.length > 0) {
+          latestOptimization = data[0];
+          console.log('[DEBUG] Found optimization data:', latestOptimization);
+          console.log('[DEBUG] change_log type:', typeof latestOptimization.change_log);
+          console.log('[DEBUG] change_log value:', latestOptimization.change_log);
+          // If we have an optimization, populate rewriteData for the UI
+          rewriteData = {
+            original_text: latestOptimization.original_text_snapshot,
+            improvedText: latestOptimization.optimized_text,
+            score: latestOptimization.optimized_score,
+            id: reportId,
+            optimizationData: {
+              originalText: latestOptimization.original_text_snapshot || auditResults.job_body,
+              optimizedText: latestOptimization.optimized_text,
+              originalScore: latestOptimization.original_score || 0,
+              optimizedScore: latestOptimization.optimized_score,
+              scoreImprovement: latestOptimization.optimized_score - (latestOptimization.original_score || 0),
+              appliedImprovements: Array.isArray(latestOptimization.change_log) 
+                ? latestOptimization.change_log 
+                : JSON.parse(latestOptimization.change_log || '[]'),
+              potentialImprovements: Array.isArray(latestOptimization.unaddressed_items)
+                ? latestOptimization.unaddressed_items
+                : JSON.parse(latestOptimization.unaddressed_items || '[]'),
+              workingWell: []
+            }
+          };
+          console.log('[DEBUG] Set rewriteData:', rewriteData);
+        } else if (import.meta.env.DEV && error) {
+          console.warn('Could not query optimizations table:', error.message);
         }
       } catch (err) {
         if (import.meta.env.DEV) {
-          console.warn('rewrite_versions table may not exist or have RLS issues:', err.message);
+          console.warn('optimizations table may not exist or have RLS issues:', err.message);
         }
       }
       
-      // Enhance report data with rewrite information
+      // Enhance report data with optimization information
       const enhancedReport = {
         ...data,
-        hasRewrite: !!(latestRewrite || data.improved_text),
-        latestImprovedText: latestRewrite?.improved_text || data.improved_text,
-        rewriteVersion: latestRewrite?.version_number || (data.improved_text ? 1 : 0),
-        lastRewriteDate: latestRewrite?.created_at || data.savedat
+        hasRewrite: !!(latestOptimization || data.improved_text),
+        latestImprovedText: latestOptimization?.optimized_text || data.improved_text,
+        rewriteVersion: latestOptimization?.version_number || (data.improved_text ? 1 : 0),
+        lastRewriteDate: latestOptimization?.created_at || data.savedat
       };
       
       if (import.meta.env.DEV) {
@@ -573,9 +566,9 @@
         rewriteLoading={rewriteLoading}
         loading={loading}
         on:save={triggerSaveDialog}
+        on:optimize={handleOptimize}
         {downloadReport}
         {downloadJobData}
-        {handleRewrite}
       />
       <SaveReportDialog
         bind:open={showDialog}

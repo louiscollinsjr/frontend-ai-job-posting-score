@@ -4,7 +4,6 @@
   import FadeImage from '$lib/components/ui/fade-image/fade-image.svelte';
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
-  import { analyzeJob, rewriteJob } from '$lib/services/jobService'; // Hypothetical service functions
   import CircularProgress from '$lib/components/CircularProgress.svelte';
   import { fade } from 'svelte/transition';
 
@@ -33,30 +32,6 @@
     }
   ];
 
-  // Store for job data
-  const jobData = writable({});
-  const analysisResults = writable(null);
-  const improvedText = writable('');
-
-  // Function to submit job for analysis
-  async function submitJob(inputType, inputData) {
-    try {
-      const result = await analyzeJob(inputType, inputData);
-      analysisResults.set(result);
-    } catch (error) {
-      console.error('Error analyzing job:', error);
-    }
-  }
-
-  // Function to request job rewrite
-  async function requestRewrite(jobId) {
-    try {
-      const result = await rewriteJob(jobId);
-      improvedText.set(result.improvedText);
-    } catch (error) {
-      console.error('Error rewriting job:', error);
-    }
-  }
 </script>
 
 <section class="relative sm:py-16 py-8 bg-white border-2 border-[#f8f8f8] border-b-white rounded-2xl mb-8 overflow-hidden font-aeonik" style="background-image: url('/bkg2.png'); background-repeat: no-repeat; background-position: right center; background-size: cover;">
