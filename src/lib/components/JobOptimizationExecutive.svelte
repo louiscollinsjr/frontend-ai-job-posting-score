@@ -183,13 +183,14 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
         <!-- Left Column: Optimized Job Post -->
-        <div class="space-y-6">
-          <div class="bg-white rounded-lg border shadow-sm">
-            <div class="px-6 py-4 border-b">
+        <div class="space-y-6 bg-white">
+          <div class="bg-white rounded-lg border-3 border-black shadow-sm ">
+            <div class="px-6 py-4 ">
               <h2 class="text-lg font-semibold text-gray-900">Optimized Job Posting</h2>
               <p class="text-sm text-gray-600 mt-1">Enhanced version with improvements applied</p>
+              <div class="border-t my-4"></div>
             </div>
-            <div class="p-6">
+            <div class="p-6 pt-0">
               <div class="prose prose-sm max-w-none">
                 <div class="text-gray-800 leading-relaxed">
                   {@html processMarkdown(optimizationData.optimizedText)}
@@ -217,14 +218,15 @@
         {/if}
           
           <!-- Recommended Improvements -->
-          <div class="bg-white rounded-lg border shadow-sm">
-            <div class="px-6 py-4 border-b flex items-center justify-between">
+          <div class="bg-white rounded-lg border shadow-sm py-4">
+            <div class="px-6 py-2 flex items-center justify-between">
               <div>
                 <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                  <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                  <!-- <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span> -->
                   Applied Improvements
                 </h3>
                 <p class="text-sm text-gray-600 mt-1">Changes made to optimize your posting</p>
+                <div class="border-t my-4"></div>
               </div>
               <Button 
                 size="sm" 
@@ -240,7 +242,7 @@
               </Button>
             </div>
             
-            <div class="divide-y">
+            <div class="p-1 pb-0">
               {#each optimizationData.appliedImprovements || [] as improvement, index}
                 <ImprovementCard 
                   {improvement}
@@ -272,7 +274,7 @@
                       <h4 class="text-sm font-medium text-gray-700">{potential.category}</h4>
                       <p class="text-sm text-gray-600 mt-1">{potential.description}</p>
                     </div>
-                    <span class="text-xs text-gray-500 ml-4">+{potential.potentialPoints} pts</span>
+                    <!-- <span class="text-xs text-gray-500 ml-4">+{potential.potentialPoints} pts</span> -->
                   </div>
                 {/each}
               </div>

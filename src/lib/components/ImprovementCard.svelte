@@ -18,35 +18,35 @@
                   improvement.impact === 'Medium Impact' ? '🟡' : '⚪';
 </script>
 
-<div class="p-6">
-  <div class="space-y-4">
+<div class="p-2 px-4">
+  <div class="">
     <!-- Header -->
     <div class="flex items-start justify-between">
       <div class="flex-1">
-        <div class="flex items-center gap-2 mb-2">
-          <h4 class="font-medium text-gray-900">{improvement.category}</h4>
+        <!-- <div class="flex items-center gap-2 mb-2"> -->
+          <!-- <h4 class="font-medium text-gray-900">{improvement.category}</h4>
           <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {impactColor}">
             {improvement.impact}
-          </span>
-          <span class="text-xs text-green-600 font-medium">{improvement.scoreContribution}</span>
-        </div>
-        <p class="text-sm text-gray-600">{improvement.description}</p>
+          </span> -->
+          <!-- <span class="text-xs text-green-600 font-medium">{improvement.scoreContribution}</span> -->
+        <!-- </div> -->
+        <li class="text-xs text-gray-600">{improvement.description}</li>
       </div>
       
-      <Button 
+      <!-- <Button 
         size="sm" 
         variant="outline" 
         class="text-xs ml-4"
         on:click={handleFix}
       >
         Fix This
-      </Button>
+      </Button> -->
     </div>
     
     <!-- Before/After Comparison -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- <div class="grid grid-cols-1 md:grid-cols-2 gap-4"> -->
       <!-- Before -->
-      <div class="space-y-2">
+      <!-- <div class="space-y-2">
         <div class="flex items-center text-xs font-medium text-red-600">
           <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
           BEFORE
@@ -62,9 +62,9 @@
           </div>
         </div>
       </div>
-      
+       -->
       <!-- After -->
-      <div class="space-y-2">
+      <!-- <div class="space-y-2">
         <div class="flex items-center text-xs font-medium text-green-600">
           <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
           AFTER
@@ -79,7 +79,7 @@
              'Enhanced with specific details and clarity'}
           </div>
         </div>
-      </div>
-    </div>
+      </div> -->
+    <!-- </div> -->
   </div>
 </div>
