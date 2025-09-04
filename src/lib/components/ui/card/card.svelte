@@ -2,6 +2,17 @@
 	import type { HTMLAttributes } from "svelte/elements";
 	import { cn, type WithElementRef } from "$lib/utils.js";
 
+	// Allow consumers to use on:click, on:keydown, etc. on this component
+	interface $$Events {
+		click: MouseEvent;
+		keydown: KeyboardEvent;
+		keyup: KeyboardEvent;
+		focus: FocusEvent;
+		blur: FocusEvent;
+		mouseenter: MouseEvent;
+		mouseleave: MouseEvent;
+	}
+
 	let {
 		ref = $bindable(null),
 		class: className,

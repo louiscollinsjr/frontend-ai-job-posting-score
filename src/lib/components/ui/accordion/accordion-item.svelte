@@ -7,6 +7,17 @@
 		class: className,
 		...restProps
 	}: AccordionPrimitive.ItemProps = $props();
+
+	// DOM event typings
+	export interface $$Events {
+		click: MouseEvent;
+		keydown: KeyboardEvent;
+		keyup: KeyboardEvent;
+		focus: FocusEvent;
+		blur: FocusEvent;
+		mouseenter: MouseEvent;
+		mouseleave: MouseEvent;
+	}
 </script>
 
 <AccordionPrimitive.Item

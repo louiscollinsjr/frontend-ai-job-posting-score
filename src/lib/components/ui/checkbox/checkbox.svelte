@@ -11,6 +11,18 @@
 		class: className,
 		...restProps
 	}: WithoutChildrenOrChild<CheckboxPrimitive.RootProps> = $props();
+
+	// DOM event typings
+	export interface $$Events {
+		click: MouseEvent;
+		keydown: KeyboardEvent;
+		keyup: KeyboardEvent;
+		focus: FocusEvent;
+		blur: FocusEvent;
+		mouseenter: MouseEvent;
+		mouseleave: MouseEvent;
+		change: Event;
+	}
 </script>
 
 <CheckboxPrimitive.Root
