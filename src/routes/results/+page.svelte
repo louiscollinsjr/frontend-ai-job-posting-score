@@ -428,30 +428,6 @@
         if (!error && data && data.length > 0) {
           latestOptimization = data[0];
           console.log('[DEBUG] Found optimization data:', latestOptimization);
-          console.log('[DEBUG] change_log type:', typeof latestOptimization.change_log);
-          console.log('[DEBUG] change_log value:', latestOptimization.change_log);
-          // If we have an optimization, populate rewriteData for the UI
-          rewriteData = {
-            original_text: latestOptimization.original_text_snapshot,
-            improvedText: latestOptimization.optimized_text,
-            score: latestOptimization.optimized_score,
-            id: reportId,
-            optimizationData: {
-              originalText: latestOptimization.original_text_snapshot || auditResults.job_body,
-              optimizedText: latestOptimization.optimized_text,
-              originalScore: latestOptimization.original_score || 0,
-              optimizedScore: latestOptimization.optimized_score,
-              scoreImprovement: latestOptimization.optimized_score - (latestOptimization.original_score || 0),
-              appliedImprovements: Array.isArray(latestOptimization.change_log) 
-                ? latestOptimization.change_log 
-                : JSON.parse(latestOptimization.change_log || '[]'),
-              potentialImprovements: Array.isArray(latestOptimization.unaddressed_items)
-                ? latestOptimization.unaddressed_items
-                : JSON.parse(latestOptimization.unaddressed_items || '[]'),
-              workingWell: []
-            }
-          };
-          console.log('[DEBUG] Set rewriteData:', rewriteData);
         } else if (import.meta.env.DEV && error) {
           console.warn('Could not query optimizations table:', error.message);
         }
@@ -485,6 +461,34 @@
       
       // Update local variable
       auditResults = enhancedReport;
+      
+      // Now that we have complete audit results, create rewriteData if we have optimization data
+      if (latestOptimization) {
+        console.log('[DEBUG] change_log type:', typeof latestOptimization.change_log);
+        console.log('[DEBUG] change_log value:', latestOptimization.change_log);
+        // Create rewriteData with complete audit results available
+        rewriteData = {
+          original_text: latestOptimization.original_text_snapshot,
+          improvedText: latestOptimization.optimized_text,
+          score: latestOptimization.optimized_score,
+          id: reportId,
+          optimizationData: {
+            originalText: latestOptimization.original_text_snapshot || auditResults.job_body,
+            optimizedText: latestOptimization.optimized_text,
+            originalScore: latestOptimization.original_score || 0,
+            optimizedScore: latestOptimization.optimized_score,
+            scoreImprovement: latestOptimization.optimized_score - (latestOptimization.original_score || 0),
+            appliedImprovements: Array.isArray(latestOptimization.change_log) 
+              ? latestOptimization.change_log 
+              : JSON.parse(latestOptimization.change_log || '[]'),
+            potentialImprovements: Array.isArray(latestOptimization.unaddressed_items)
+              ? latestOptimization.unaddressed_items
+              : JSON.parse(latestOptimization.unaddressed_items || '[]'),
+            workingWell: []
+          }
+        };
+        console.log('[DEBUG] Set rewriteData:', rewriteData);
+      }
       
       return true;
     } catch (err) {
