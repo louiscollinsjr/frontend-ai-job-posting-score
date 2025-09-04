@@ -195,7 +195,7 @@
             <div class="p-6 pt-0">
               <div class="prose prose-sm max-w-none">
                 <div class="text-gray-800 leading-relaxed">
-                  {@html processMarkdown(optimizationData.optimizedText)}
+                  {@html processMarkdown(optimizationData?.optimizedText || '')}
                 </div>
               </div>
             </div>
@@ -206,7 +206,7 @@
         <div class="space-y-6">
           
           <!-- What's Working Well (Original) -->
-        {#if optimizationData.workingWell?.length > 0}
+        {#if optimizationData && optimizationData.workingWell?.length > 0}
           <div class="bg-white rounded-lg border shadow-sm">
             <div class="px-6 py-4 border-b">
               <h3 class="text-lg font-semibold text-gray-900 flex items-center">
@@ -215,7 +215,7 @@
               </h3>
               <p class="text-sm text-gray-600 mt-1">Strong aspects from your original posting</p>
             </div>
-            <WorkingWellPanel items={optimizationData.workingWell} />
+            <WorkingWellPanel items={optimizationData?.workingWell || []} />
           </div>
         {/if}
           
@@ -244,8 +244,8 @@
             </div>
           
             <div class="p-1 pb-0">
-              {#each optimizationData.appliedImprovements || [] as improvement, index}
-                {#if index === 0}
+              {#each optimizationData?.appliedImprovements || [] as improvement, index}
+                {#if index === 0 && optimizationData}
                   <script>console.log('[DEBUG] appliedImprovements:', optimizationData.appliedImprovements);</script>
                 {/if}
                 <ImprovementCard 
@@ -254,7 +254,7 @@
                 />
               {/each}
               
-              {#if (!optimizationData.appliedImprovements || optimizationData.appliedImprovements.length === 0)}
+              {#if (!optimizationData?.appliedImprovements || optimizationData.appliedImprovements.length === 0)}
                 <div class="p-6 text-center text-gray-500">
                   <div class="text-2xl mb-2">✅</div>
                   <p class="font-medium">All improvements applied!</p>
@@ -265,7 +265,7 @@
           </div>
           
           <!-- Potential Future Improvements -->
-          {#if optimizationData.potentialImprovements?.length > 0}
+          {#if optimizationData && optimizationData.potentialImprovements?.length > 0}
             <div class="bg-gray-50 rounded-lg border border-gray-200">
               <div class="px-6 py-4 border-b border-gray-200">
                 <h3 class="font-medium text-gray-700">Future Enhancement Opportunities</h3>
