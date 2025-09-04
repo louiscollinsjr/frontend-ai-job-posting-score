@@ -1,8 +1,8 @@
 <script lang="ts">
   import ResultsDisplay from '$lib/components/ResultsDisplay.svelte';
-  import Navbar from '$lib/components/Navbar.svelte';
   import SaveReportDialog from '$lib/components/SaveReportDialog.svelte';
   import JobOptimizationExecutive from '$lib/components/JobOptimizationExecutive.svelte';
+  import type { OptimizationData, RawOptimizationData } from '$lib/types/optimization';
   import { browser } from '$app/environment';
   import { onMount } from 'svelte';
   import { supabase } from '$lib/supabaseClient';
@@ -16,16 +16,33 @@
   import type { Report } from '$lib/types/report';
   import { get } from 'svelte/store';
 
+  // Local helper types
+  type SupaUser = { id?: string } & Record<string, any>;
+  type OptimizeJobResponse = {
+    rewritten_text: string;
+    new_score: number;
+    change_log?: string | any[];
+    unaddressed_items?: string | any[];
+  };
+
   let auditResults: Report | null = null;
   let showDialog = false;
-  let dialogTimeout;
+  let dialogTimeout: ReturnType<typeof setTimeout> | null = null;
   let isLoggedIn = false;
   let showSuccessMessage = false;
-  let successMessageTimeout;
-  let rewriteData: any = null;
+  let successMessageTimeout: ReturnType<typeof setTimeout> | null = null;
+  type RewriteData = {
+    original_text: string;
+    improvedText: string;
+    score: number;
+    id: string;
+    optimizationData?: OptimizationData | RawOptimizationData;
+    recommendations?: string[];
+  };
+  let rewriteData: RewriteData | null = null;
   let rewriteLoading = false;
   let loading = false;
-  let results = null;
+  let results: Report | null = null;
   let lastReportId: string | null = null;
   let reportId: string | null = null;
   let isLoadingReport = false;
@@ -39,7 +56,7 @@
   }
 
   // Queued loader to avoid overlapping async work from reactive changes
-  function queueLoadReportById(id) {
+  function queueLoadReportById(id: string) {
     if (!id) return;
     const currentId = auditResults?.id ?? (auditResults && (auditResults).report_id);
     if (id === lastReportId || id === currentId) {
@@ -83,7 +100,7 @@
   }
 
   // Guest report helpers
-  function setGuestReport(report) {
+  function setGuestReport(report: any) {
     try {
       localStorage.setItem('guest_audit_report', JSON.stringify(report));
       localStorage.setItem('guest_audit_report_ts', Date.now().toString());
@@ -112,13 +129,13 @@
     }
 
     // Subscribe to audit store (for non-logged-in/guest flows)
-    const unsubscribe = auditStore.subscribe(state => {
+    const unsubscribe = auditStore.subscribe((state: any) => {
       auditResults = state.results;
     });
 
     // User store subscription
-    let userVal = null;
-    const unsubUser = user.subscribe(val => {
+    let userVal: SupaUser | null = null;
+    const unsubUser = user.subscribe((val: SupaUser | null) => {
       userVal = val;
       isLoggedIn = !!(val && val.id);
     });
@@ -134,7 +151,6 @@
 
     // Check URL parameters
     const urlParams = new URLSearchParams(window.location.search);
-    const fromParam = urlParams.get('from');
     const reportId = urlParams.get('report');
     
     // Priority 1: Load specific report if report ID is provided
@@ -158,7 +174,7 @@
 
     // Cleanup function to be returned at the end
     return () => {
-      clearTimeout(dialogTimeout);
+      if (dialogTimeout) clearTimeout(dialogTimeout);
       unsubUser();
       unsubscribe();
       unsubscribePage(); // Unsubscribe the page subscription
@@ -180,7 +196,7 @@
   
     try {
       // Get current user once; no temporary subscription needed
-      const currentUser = get(user);
+      const currentUser = get(user) as SupaUser | null;
       const userId = currentUser?.id ?? null;
       const formattedReport = formatReportForDB(report, userId);
     
@@ -195,17 +211,17 @@
       if (import.meta.env.DEV) console.log('Report saved successfully with ID:', data.id);
     
       // Update store and local variables
-      auditStore.update(state => ({
+      auditStore.update((state: any) => ({
         ...state,
         results: {
           ...(state?.results || {}),
           ...data
         }
       }));
-    
+  
       // Update local references
-      auditResults = {...auditResults, ...data};
-      if (results) results = {...results, ...data};
+      auditResults = { ...(auditResults || {}), ...data } as Report;
+      if (results) results = { ...results, ...data } as Report;
     
       // Remove guest cache if exists
       if (!isLoggedIn) {
@@ -214,7 +230,7 @@
       }
   
       return true;
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Error saving report:', err);
   
       // Fallback to localStorage for guests
@@ -257,8 +273,8 @@
   }
 
   // Manual trigger for Save/Export/Access Later
-  async function triggerSaveDialog(event) {
-    if (import.meta.env.DEV) console.log('Save dialog triggered:', event.type || 'direct call');
+  async function triggerSaveDialog(event?: Event) {
+    if (import.meta.env.DEV) console.log('Save dialog triggered:', event?.type || 'direct call');
     
     if (isLoggedIn) {
       // For logged-in users, save directly
@@ -350,7 +366,7 @@
     rewriteLoading = true;
 
     try {
-      const optimizationResult = await optimizeJob(reportId);
+      const optimizationResult: OptimizeJobResponse = await optimizeJob(reportId);
 
       // The API now returns the new optimization record, including rewritten text and changes.
       rewriteData = {
@@ -372,9 +388,10 @@
       };
 
       toast.success('Job posting optimized successfully!');
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error optimizing job posting:', error);
-      toast.error(`Optimization failed: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(`Optimization failed: ${message}`);
     } finally {
       rewriteLoading = false;
     }
@@ -431,9 +448,10 @@
         } else if (import.meta.env.DEV && error) {
           console.warn('Could not query optimizations table:', error.message);
         }
-      } catch (err) {
+      } catch (err: unknown) {
         if (import.meta.env.DEV) {
-          console.warn('optimizations table may not exist or have RLS issues:', err.message);
+          const msg = err instanceof Error ? err.message : String(err);
+          console.warn('optimizations table may not exist or have RLS issues:', msg);
         }
       }
       
@@ -473,7 +491,7 @@
           score: latestOptimization.optimized_score,
           id: reportId,
           optimizationData: {
-            originalText: latestOptimization.original_text_snapshot || auditResults.job_body,
+            originalText: latestOptimization.original_text_snapshot || auditResults?.job_body,
             optimizedText: latestOptimization.optimized_text,
             originalScore: latestOptimization.original_score || 0,
             optimizedScore: latestOptimization.optimized_score,
@@ -491,7 +509,7 @@
       }
       
       return true;
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Exception loading report:', err);
       toast.error('Error loading report');
       return false;
@@ -551,7 +569,7 @@
       <JobOptimizationExecutive 
         originalText={rewriteData.original_text || auditResults?.original_report?.text || ''}
         improvedText={rewriteData.improvedText || ''}
-        reportId={rewriteData.id || reportId}
+        reportId={rewriteData.id ?? reportId ?? undefined}
         initialData={rewriteData.optimizationData}
         recommendations={rewriteData.recommendations || []}
         score={rewriteData.score || 0}
@@ -565,7 +583,6 @@
       <!-- Use actual results from audit store if available -->
       <ResultsDisplay 
         results={auditResults as any} 
-        visible={true} 
         isLoggedIn={isLoggedIn}
         rewriteLoading={rewriteLoading}
         loading={loading}
@@ -581,7 +598,7 @@
       />
     {:else if browser && (new URLSearchParams(window.location.search).get('from') === 'default')}
       <!-- Only show default data if URL contains ?from=default -->
-      <ResultsDisplay results={defaultResults as any} visible={true} />
+      <ResultsDisplay results={defaultResults as any} />
     {:else}
       <!-- Show nothing or a friendly message if no data -->
       <div class="text-center text-gray-500 py-16">

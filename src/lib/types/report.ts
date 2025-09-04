@@ -19,6 +19,15 @@ export type Report = {
     original_report?: any; // jsonb type in Supabase (can store any valid JSON)
     // Some records may include a backend-emitted report_id separate from id
     report_id?: string;
+    // Optional fields used when an optimization has been applied
+    improved_text?: string;
+    // UI convenience fields (enhanced on the client after loading)
+    hasRewrite?: boolean;
+    rewriteVersion?: number;
+    lastRewriteDate?: string;
+    latestImprovedText?: string;
+    // Some APIs may return JSON-LD alongside the report
+    json_ld?: any;
 };
 
 // Database shape for Supabase operations. Field names match DB columns.

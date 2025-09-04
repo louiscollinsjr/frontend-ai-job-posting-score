@@ -1,33 +1,27 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
   import JobRewrite from '$lib/components/JobRewrite.svelte';
-  import { toast } from 'svelte-sonner';
   import * as Alert from '$lib/components/ui/alert';
   import * as Button from '$lib/components/ui/button';
   import { env } from '$env/dynamic/public';
 
   // Query parameters
-  let reportId = '';
-  let viewOnly = false;
-  let isLoading = true;
-  let error = null;
+  let reportId: string = '';
+  let isLoading: boolean = true;
+  let error: string | null = null;
 
   // Report data
-  let originalText = '';
-  let improvedText = '';
-  let recommendations = [];
-  let score = 0;
-  let rewriteVersions = [];
-  const API_BASE_URL = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
+  let originalText: string = '';
+  let improvedText: string = '';
+  let score: number = 0;
+  const API_BASE_URL: string = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
 
   onMount(async () => {
     // Get query parameters
     reportId = $page.url.searchParams.get('report') || '';
-    viewOnly = $page.url.searchParams.get('view_only') === 'true';
-    const versionsPage = Number($page.url.searchParams.get('page') || '1');
-    const versionsLimit = Number($page.url.searchParams.get('limit') || '20');
+    // Versions are fetched inside JobRewrite; page and limit are not needed here
     
     if (!reportId) {
       error = 'No report ID provided';
@@ -43,11 +37,13 @@
         goto('/login');
         return;
       }
-      const token = JSON.parse(sessionStr)?.access_token;
+      const token: string | undefined = JSON.parse(sessionStr)?.access_token;
 
       // Log request details for debugging
       console.log(`Fetching report with ID: ${reportId}`);
-      console.log(`Using token (first 10 chars): ${token.substring(0, 10)}...`);
+      if (typeof token === 'string') {
+        console.log(`Using token (first 10 chars): ${token.substring(0, 10)}...`);
+      }
       
       // Fetch the report details including original text
       const reportUrl = `${API_BASE_URL}/api/v1/reports/${reportId}`;
@@ -71,7 +67,7 @@
         // return;
       }
 
-      let reportData = {};
+      let reportData: { original_text?: string; total_score?: number } = {};
       if (response.ok) {
         reportData = await response.json();
         originalText = reportData.original_text || '';
@@ -82,42 +78,13 @@
         score = 0;
       }
 
-      // Fetch rewrite versions (history)
-      try {
-        // Log request details for rewrite versions
-        const versionsUrl = `${API_BASE_URL}/api/v1/job/${reportId}/versions?page=${versionsPage}&limit=${versionsLimit}`;
-        console.log(`Making versions request to: ${versionsUrl}`);
-        
-        const versionsResp = await fetch(versionsUrl, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
-        // Log versions response
-        console.log(`Versions fetch response status: ${versionsResp.status}`);
-        
-        if (versionsResp.ok) {
-          rewriteVersions = await versionsResp.json();
-          console.log(`Fetched ${rewriteVersions.length} rewrite versions:`, rewriteVersions);
-          
-          // If we got versions but no original report, create a placeholder
-          if (!response.ok && rewriteVersions.length > 0) {
-            console.log('Creating placeholder original report from versions');
-            // The report fetch failed but we have versions, so show those
-            originalText = 'Original report not available';
-            // Use the most recent version's data for display if needed
-          }
-        } else {
-          console.warn(`Failed to fetch rewrite versions: ${versionsResp.status} ${versionsResp.statusText}`);
-        }
-      } catch (err) {
-        console.error('Error fetching rewrite versions:', err);
-      }
+      // Versions are fetched inside JobRewrite; no need to duplicate here.
 
       // If we're not in view-only mode and there are no versions yet,
       // we could potentially offer to create a new rewrite
 
       isLoading = false;
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Error fetching report data:', err);
       error = 'Error loading report data';
       isLoading = false;
@@ -154,10 +121,8 @@
     <JobRewrite
       original_text={originalText}
       improvedText={improvedText}
-      recommendations={recommendations}
       score={score}
       jobId={reportId}
-      rewriteVersions={rewriteVersions}
     />
     
     <!-- Floating back button -->

@@ -51,6 +51,11 @@
 		children,
 		...restProps
 	}: ButtonProps = $props();
+
+  // Declare supported events so consumers can use on:click without TS errors
+  export interface $$Events {
+    click: MouseEvent;
+  }
 </script>
 
 {#if href}

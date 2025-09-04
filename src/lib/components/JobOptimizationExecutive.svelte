@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import { env } from '$env/dynamic/public';
   import { marked } from 'marked';
@@ -8,43 +8,104 @@
   import ScoreDisplay from './ScoreDisplay.svelte';
   // import BetaBadge from '$lib/components/BetaBadge.svelte';
   
-  export let originalText = '';
-  export let improvedText = '';
-  export let reportId = '';
-  export let initialData = null;
-  export let recommendations = [];
-  export let score = 0;
+  // Types
+  export type AppliedImprovement = {
+    category: string;
+    description: string;
+    impactPoints?: number;
+    applied?: boolean;
+    impact?: string;
+    scoreContribution?: string;
+  };
+
+  export type PotentialImprovement = {
+    category: string;
+    description: string;
+    potentialPoints?: number;
+  };
+
+  export type OptimizationData = {
+    originalText: string;
+    optimizedText: string;
+    originalScore: number;
+    optimizedScore: number;
+    scoreImprovement: number;
+    workingWell: string[];
+    appliedImprovements: AppliedImprovement[];
+    potentialImprovements: PotentialImprovement[];
+  };
+
+  // Shape we might receive directly from DB/API before mapping
+  export type RawOptimizationData = {
+    change_log?: string | AppliedImprovement[];
+    unaddressed_items?: string | PotentialImprovement[];
+    workingWell?: string[];
+    original_text_snapshot?: string;
+    optimized_text?: string;
+    original_score?: number;
+    optimized_score?: number;
+  } & Record<string, unknown>;
+
+  function isOptimizationData(value: unknown): value is OptimizationData {
+    const v = value as any;
+    return (
+      v &&
+      typeof v === 'object' &&
+      'appliedImprovements' in v &&
+      Array.isArray(v.appliedImprovements) &&
+      'optimizedText' in v
+    );
+  }
   
-  let optimizationData = null;
-  let isLoading = false;
-  let error = null;
-  let isApplyingFixes = false;
+  export let originalText: string = '';
+  export let improvedText: string = '';
+  export let reportId: string | undefined = undefined;
+  export let initialData: OptimizationData | RawOptimizationData | null = null;
+  export let recommendations: string[] = [];
+  export let score: number = 0;
+  
+  let optimizationData: OptimizationData | null = null;
+  let isLoading: boolean = false;
+  let error: string | null = null;
+  let isApplyingFixes: boolean = false;
+  let totalImprovementPoints: number = 0;
   
   // API base URL (configurable)
   // Fallback to production fly.io URL if PUBLIC_API_BASE_URL is not set
   const apiBaseUrl = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
   
-  // Transform raw database data to expected format
-  function transformInitialData(data) {
+  // Transform raw database/API data to the expected OptimizationData format
+  function transformInitialData(data: OptimizationData | RawOptimizationData | null): OptimizationData | null {
     if (!data) return null;
-    
-    // If data has change_log and unaddressed_items (raw database format), transform it
-    if (data.change_log && !data.appliedImprovements) {
-      console.log('[DEBUG] Transforming raw database format to component format');
-      return {
-        ...data,
-        appliedImprovements: Array.isArray(data.change_log) 
-          ? data.change_log 
-          : JSON.parse(data.change_log || '[]'),
-        potentialImprovements: Array.isArray(data.unaddressed_items)
-          ? data.unaddressed_items
-          : JSON.parse(data.unaddressed_items || '[]'),
-        workingWell: data.workingWell || []
-      };
-    }
-    
-    // Data is already in expected format
-    return data;
+
+    // Already in the desired shape
+    if (isOptimizationData(data)) return data;
+
+    const raw = data as RawOptimizationData;
+    // Parse arrays from possible JSON strings
+    const appliedImprovements: AppliedImprovement[] = Array.isArray(raw.change_log)
+      ? (raw.change_log as AppliedImprovement[])
+      : JSON.parse((raw.change_log as string | undefined) || '[]');
+
+    const potentialImprovements: PotentialImprovement[] = Array.isArray(raw.unaddressed_items)
+      ? (raw.unaddressed_items as PotentialImprovement[])
+      : JSON.parse((raw.unaddressed_items as string | undefined) || '[]');
+
+    const originalScore = typeof raw.original_score === 'number' ? raw.original_score : score || 0;
+    const optimizedScore = typeof raw.optimized_score === 'number' ? raw.optimized_score : originalScore + 10;
+    const origText = (raw.original_text_snapshot as string | undefined) ?? originalText ?? '';
+    const optText = (raw.optimized_text as string | undefined) ?? improvedText ?? '';
+
+    return {
+      originalText: origText,
+      optimizedText: optText,
+      originalScore,
+      optimizedScore,
+      scoreImprovement: optimizedScore - originalScore,
+      workingWell: raw.workingWell || [],
+      appliedImprovements,
+      potentialImprovements
+    };
   }
 
   // Reactively handle changes to initialData
@@ -81,23 +142,25 @@
   });
   
   // Load cached optimization data from backend if available
-  async function loadCachedOptimization() {
+  async function loadCachedOptimization(): Promise<void> {
     if (!reportId) return;
     
     try {
       isLoading = true;
       const response = await fetch(`${apiBaseUrl}/api/v1/optimize-job/${reportId}`);
       if (response.ok) {
-        optimizationData = await response.json();
+        const raw = await response.json();
+        const transformed = transformInitialData(raw as any);
+        optimizationData = transformed;
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.log('No cached optimization found, will need to optimize when text is available');
     } finally {
       isLoading = false;
     }
   }
   
-  async function optimizeJobPost() {
+  async function optimizeJobPost(): Promise<void> {
     isLoading = true;
     error = null;
     
@@ -117,10 +180,11 @@
         throw new Error(`Optimization failed: ${response.status}`);
       }
       
-      optimizationData = await response.json();
-    } catch (err) {
+      const raw = await response.json();
+      optimizationData = transformInitialData(raw as any);
+    } catch (err: unknown) {
       console.error('Error optimizing job post:', err);
-      error = err.message;
+      error = err instanceof Error ? err.message : String(err);
     } finally {
       isLoading = false;
     }
@@ -143,16 +207,16 @@
     }
   }
   
-  function handleFixItem(improvementId) {
+  function handleFixItem(improvementId: string) {
     // Handle individual fix application
     console.log('Fixing item:', improvementId);
   }
   
   // Helper function to create improvements from recommendations
-  function createImprovementsFromRecommendations(recs) {
+  function createImprovementsFromRecommendations(recs: string[]): AppliedImprovement[] {
     if (!recs || !Array.isArray(recs)) return [];
     
-    return recs.map((rec, index) => ({
+    return recs.map((rec: string, index: number): AppliedImprovement => ({
       category: `Improvement ${index + 1}`,
       description: typeof rec === 'string' ? rec : JSON.stringify(rec),
       impactPoints: 5,
@@ -163,12 +227,12 @@
   }
   
   // Function to convert markdown to HTML
-  function processMarkdown(text) {
+  function processMarkdown(text: string): string {
     if (!text) return '';
     return marked(text);
   }
   
-  $: totalImprovementPoints = optimizationData?.appliedImprovements?.reduce((sum, imp) => sum + (imp.impactPoints || 0), 0) || 0;
+  $: totalImprovementPoints = optimizationData?.appliedImprovements?.reduce((sum: number, imp: AppliedImprovement) => sum + (imp.impactPoints || 0), 0) || 0;
 </script>
 
 <div class="min-h-screen bg-gray-transparent pt-20">
@@ -184,13 +248,13 @@
       
         </div>
         
-        {#if optimizationData}
+        <!-- {#if optimizationData}
           <ScoreDisplay 
             currentScore={optimizationData.originalScore}
             optimizedScore={optimizationData.optimizedScore}
             improvement={optimizationData.scoreImprovement}
           />
-        {/if}
+        {/if} -->
       </div>
     </div>
   </div>
@@ -234,7 +298,13 @@
         
         <!-- Right Column: Improvements & Analysis -->
         <div class="space-y-6">
-          
+          {#if optimizationData}
+          <ScoreDisplay 
+            currentScore={optimizationData.originalScore}
+            optimizedScore={optimizationData.optimizedScore}
+            improvement={optimizationData.scoreImprovement}
+          />
+        {/if}
           <!-- What's Working Well (Original) -->
         {#if optimizationData && optimizationData.workingWell?.length > 0}
           <div class="bg-white rounded-lg border shadow-sm">

@@ -188,7 +188,6 @@ JobPostScore shows you exactly how your job posts compare to market standards, r
 <!-- <ResultsDisplay 
   results={results} 
   loading={isLoading} 
-  visible={showResults} 
   on:close={handleCloseResults} 
   on:export={handleExport} 
 /> -->
