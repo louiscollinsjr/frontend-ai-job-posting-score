@@ -24,12 +24,42 @@
   // Fallback to production fly.io URL if PUBLIC_API_BASE_URL is not set
   const apiBaseUrl = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
   
+  // Transform raw database data to expected format
+  function transformInitialData(data) {
+    if (!data) return null;
+    
+    // If data has change_log and unaddressed_items (raw database format), transform it
+    if (data.change_log && !data.appliedImprovements) {
+      console.log('[DEBUG] Transforming raw database format to component format');
+      return {
+        ...data,
+        appliedImprovements: Array.isArray(data.change_log) 
+          ? data.change_log 
+          : JSON.parse(data.change_log || '[]'),
+        potentialImprovements: Array.isArray(data.unaddressed_items)
+          ? data.unaddressed_items
+          : JSON.parse(data.unaddressed_items || '[]'),
+        workingWell: data.workingWell || []
+      };
+    }
+    
+    // Data is already in expected format
+    return data;
+  }
+
+  // Reactively handle changes to initialData
+  $: if (initialData) {
+    console.log('[DEBUG] JobOptimizationExecutive reactive update - initialData:', initialData);
+    const transformedData = transformInitialData(initialData);
+    console.log('[DEBUG] appliedImprovements array:', transformedData?.appliedImprovements);
+    optimizationData = transformedData;
+  }
+
   // Initialize with provided data or fetch optimization
   onMount(async () => {
     if (initialData) {
-      console.log('[DEBUG] JobOptimizationExecutive received initialData:', initialData);
-      console.log('[DEBUG] appliedImprovements array:', initialData.appliedImprovements);
-      optimizationData = initialData;
+      // Already handled by reactive statement above
+      return;
     } else if (improvedText && improvedText.trim()) {
       // We have improved text, create optimization data from it
       optimizationData = {
@@ -245,9 +275,6 @@
           
             <div class="p-1 pb-0">
               {#each optimizationData?.appliedImprovements || [] as improvement, index}
-                {#if index === 0 && optimizationData}
-                  <script>console.log('[DEBUG] appliedImprovements:', optimizationData.appliedImprovements);</script>
-                {/if}
                 <ImprovementCard 
                   {improvement}
                   on:fix={() => handleFixItem(improvement.category)}
