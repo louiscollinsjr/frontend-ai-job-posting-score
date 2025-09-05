@@ -34,22 +34,32 @@
   // Images to use for each block
   const images = [
     '/Browser01.png',
-    '/Browser01.png',
+    '/Browser02.png',
+    '/Browser03.png',
+    '/Browser02.png',
     '/Browser01.png'
   ];
 
   const sections = [
     {
-      header: 'Reads your job posts completely',
-      text: `JobPostScore analyzes every element of your job content — titles, descriptions, requirements, benefits — understanding clarity, structure, and searchability.`
+      header: 'Step 1: Paste Your Job Post',
+      text: `“Get started in seconds.” Copy and paste or attach your job listing into JobPostScore. We review it completely then evaluates for clarity, structure, and discoverability.`
     },
     {
-      header: 'Scores your optimization level',
-      text: `JobPostScore evaluates your posts against proven best practices, showing you exactly where you rank on the factors that drive visibility and applications.`
+      header: 'Step 2: See Your Score',
+      text: `“Know exactly where you stand.” JobPostScore evaluates your listing against proven best practices and shows your optimization level, so you immediately know which areas need improvement.`
     },
     {
-      header: 'Shows you what to fix',
-      text: `Just paste your job post. JobPostScore identifies what's limiting your reach and gives you the specific changes that improve your score — no guesswork.`
+      header: 'Step 3: Identify What to Fix',
+      text: `“No guesswork, just action.” JobPostScore highlights what’s limiting your reach and gives specific recommendations to improve every factor that drives AI visibility and candidate applications.`
+    },
+    {
+      header: 'Step 4: Optimize for AI Discovery',
+      text: `“Be found where candidates search.” Your job is optimized for AI-driven platforms like ChatGPT, Gemini, and other AI job-matching tools, ensuring more qualified candidates see it.`
+    },
+    {
+      header: 'Step 5: Track Your Results',
+      text: `“Measure your impact over time.” Monitor your JobPostScore as you make changes, track improvements, and see how AI discoverability and candidate applications increase.`
     }
   ];
 

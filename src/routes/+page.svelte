@@ -130,8 +130,8 @@
 						<p
 							class="text-base sm:text-xl text-gray-400 text-center mb-8 max-w-3xl mx-auto font-normal font-aeonik"
 						>
-							Your JobPostScore is the key to connecting with the 70% of qualified candidates you're
-							currently missing. <span class="hidden sm:inline"
+						Your JobPostScore reveals how visible your job is across AI-powered platforms, where more and more applicants now begin their job search. 
+						<span class="hidden sm:inline"
 								>Audit your post, improve your visibility, and start attracting the right
 								candidates—before your competitors do.</span
 							>
@@ -161,6 +161,8 @@
 				scrollTo="#hero"
 			/>
 		</div>
+
+		<ScrollTellingHowItWorks /> 
 
 		<div class="container max-w-8xl mx-auto">
 		<WhatWeDo />
