@@ -42,24 +42,29 @@
 
   const sections = [
     {
+      title: '“Get started in seconds.”',
       header: 'Step 1: Paste Your Job Post',
-      text: `“Get started in seconds.” Copy and paste or attach your job listing into JobPostScore. We review it completely then evaluates for clarity, structure, and discoverability.`
+      text: ` Copy and paste or attach your job listing into JobPostScore. We review it completely then evaluates for clarity, structure, and discoverability.`
     },
     {
+      title: '“Know exactly where you stand.”',
       header: 'Step 2: See Your Score',
-      text: `“Know exactly where you stand.” JobPostScore evaluates your listing against proven best practices and shows your optimization level, so you immediately know which areas need improvement.`
-    },
+      text: ` JobPostScore evaluates your listing against proven best practices and shows your optimization level, so you immediately know which areas need improvement.`
+    },  
     {
+      title: '“No guesswork, just action.”',
       header: 'Step 3: Identify What to Fix',
-      text: `“No guesswork, just action.” JobPostScore highlights what’s limiting your reach and gives specific recommendations to improve every factor that drives AI visibility and candidate applications.`
+      text: ` JobPostScore highlights what’s limiting your reach and gives specific recommendations to improve every factor that drives AI visibility and candidate applications.`
     },
     {
+      title: '“Be found where candidates search.”',
       header: 'Step 4: Optimize for AI Discovery',
-      text: `“Be found where candidates search.” Your job is optimized for AI-driven platforms like ChatGPT, Gemini, and other AI job-matching tools, ensuring more qualified candidates see it.`
+      text: ` Your job is optimized for AI-driven platforms like ChatGPT, Gemini, and other AI job-matching tools, ensuring more qualified candidates see it.`
     },
     {
+      title: '“Measure your impact over time.”',
       header: 'Step 5: Track Your Results',
-      text: `“Measure your impact over time.” Monitor your JobPostScore as you make changes, track improvements, and see how AI discoverability and candidate applications increase.`
+      text: ` Monitor your JobPostScore as you make changes, track improvements, and see how AI discoverability and candidate applications increase.`
     }
   ];
 
@@ -173,16 +178,22 @@
           </div>
         </div>
         <!-- Right scroll-telling text -->
-        <div class="text-column flex flex-col gap-48 order-1 md:order-2 padding">
+        <div class="text-column flex flex-col gap-20 order-1 md:order-2 padding">
+         
           {#each sections as section, i}
-            <div
-              class="scroll-telling-block min-h-[350px] flex flex-col justify-center py-24 md:py-36"
-              bind:this={blocks[i]}
-              data-index={i}
-            >
-              <h3 class="text-2xl md:text-3xl font-semibold mb-4 text-black">{section.header}</h3>
-              <p class="text-lg md:text-xl text-gray-700 max-w-2xl">{section.text}</p>
-            </div>
+            <h3 class="text-2xl md:text-3xl font-semibold mb-4 text-black">{section.title}</h3>
+            <!--image bsaed on section index-->
+            <img
+              src={images[i]}
+              alt="How JobPostScore works step {i+1}"
+              class="w-full h-auto"
+              style=" z-index: {activeIndex === i ? 2 : 1}; pointer-events: none;"
+              draggable="false"
+            />
+              <p class="text-base md:text-base  text-gray-700 max-w-2xl">
+                <strong class="text-base md:text-base  text-black">{section.header}</strong>
+                {section.text}
+              </p>
           {/each}
         </div>
       </div>
@@ -255,11 +266,6 @@
       height: 200px !important;
       object-fit: contain;
       margin-bottom: 2.5rem;
-    }
-    
-    .scroll-telling-block {
-      min-height: 180px;
-      margin-bottom: 4rem;
     }
     
     .text-column {
