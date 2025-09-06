@@ -180,9 +180,9 @@
 		</div>
 		
 </div>
-<div class="mx-auto sm:mt-64">
+<!-- <div class="mx-auto sm:mt-64">
 	<TestimonialCarousel />
-</div>		
+</div>		 -->
 
 <div class="container mx-auto">
 	<CallToAction
