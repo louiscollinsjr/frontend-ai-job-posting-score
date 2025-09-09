@@ -42,29 +42,35 @@
 
   const sections = [
     {
-      title: '“Get started in seconds.”',
-      header: 'Step 1: Paste Your Job Post',
-      text: ` Copy and paste or attach your job listing into JobPostScore. We review it completely then evaluates for clarity, structure, and discoverability.`
+      title: 'Every word matters.',
+      header: 'Every word matters.',
+      text: `Copy and paste or attach your job listing into JobPostScore. We review it completely then evaluates for clarity, structure, and discoverability.`,
+      images: ['/Browser01.png']
     },
     {
-      title: '“Know exactly where you stand.”',
-      header: 'Step 2: See Your Score',
-      text: ` JobPostScore evaluates your listing against proven best practices and shows your optimization level, so you immediately know which areas need improvement.`
+      title: 'Know exactly where you stand.',
+      header: 'Know exactly where you stand.',
+      text: `JobPostScore evaluates your listing against proven best practices and shows your optimization level, so you immediately know which areas need improvement.`,
+      images: ['/Browser01.png']
     },  
     {
-      title: '“No guesswork, just action.”',
-      header: 'Step 3: Identify What to Fix',
-      text: ` JobPostScore highlights what’s limiting your reach and gives specific recommendations to improve every factor that drives AI visibility and candidate applications.`
+      title: 'No guesswork, just action.',
+      header: 'No guesswork, just action.',
+      text: `JobPostScore highlights what’s limiting your reach and gives specific recommendations to improve every factor that drives AI visibility and candidate applications.`,
+      images: ['/Browser01.png']
     },
     {
-      title: '“Be found where candidates search.”',
-      header: 'Step 4: Optimize for AI Discovery',
-      text: ` Your job is optimized for AI-driven platforms like ChatGPT, Gemini, and other AI job-matching tools, ensuring more qualified candidates see it.`
+      title: 'Be found where candidates search.',
+      header: 'Be found where candidates search.',
+      text: `Your job is optimized for AI-driven platforms like ChatGPT, Gemini, and other AI job-matching tools, ensuring more qualified candidates see it.
+`,
+      images: ['/Browser01.png']
     },
     {
-      title: '“Measure your impact over time.”',
-      header: 'Step 5: Track Your Results',
-      text: ` Monitor your JobPostScore as you make changes, track improvements, and see how AI discoverability and candidate applications increase.`
+      title: 'Measure your impact over time.',
+      header: 'Measure your impact over time.',
+      text: `Monitor your JobPostScore as you make changes, track improvements, and see how AI discoverability and candidate applications increase.`,
+      images: ['/Browser01.png']
     }
   ];
 
@@ -184,7 +190,7 @@
             <h3 class="text-2xl md:text-3xl font-semibold mb-4 text-black">{section.title}</h3>
             <!--image bsaed on section index-->
             <img
-              src={images[i]}
+              src={section.images[0]}
               alt="How JobPostScore works step {i+1}"
               class="w-full h-auto"
               style=" z-index: {activeIndex === i ? 2 : 1}; pointer-events: none;"

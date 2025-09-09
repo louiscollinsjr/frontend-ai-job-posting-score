@@ -16,6 +16,8 @@
 	import TrustQuoteCombo from '$lib/components/TrustQuoteCombo.svelte';
 	import BetaBadge from '$lib/components/BetaBadge.svelte';
 	import TestimonialCarousel from '$lib/components/TestimonialCarousel.svelte';
+	import HowItWorks from '$lib/components/HowItWorks.svelte';
+	import Refinedgrid from '$lib/components/Refinedgrid.svelte';
 	// Supports weights 400-900 
 
 	// Store subscription
@@ -162,7 +164,9 @@
 			/>
 		</div>
 
-		<ScrollTellingHowItWorks /> 
+		<!-- <ScrollTellingHowItWorks />  -->
+        <!-- <HowItWorks />	 -->
+		 <Refinedgrid /> 
 
 		<div class="container max-w-8xl mx-auto">
 		<WhatWeDo />
@@ -180,9 +184,9 @@
 		</div>
 		
 </div>
-<!-- <div class="mx-auto sm:mt-64">
+<div class="mx-auto sm:mt-64">
 	<TestimonialCarousel />
-</div>		 -->
+</div>		
 
 <div class="container mx-auto">
 	<CallToAction
