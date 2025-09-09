@@ -17,9 +17,10 @@
 	import BetaBadge from '$lib/components/BetaBadge.svelte';
 	import TestimonialCarousel from '$lib/components/TestimonialCarousel.svelte';
 	import HowItWorks from '$lib/components/HowItWorks.svelte';
-	import Refinedgrid from '$lib/components/Refinedgrid.svelte';
+	import RefinedGrid from '$lib/components/RefinedGrid.svelte';
 	import Logo from '$lib/components/Logo.svelte';
 	import SearchAnimation from '$lib/components/SearchAnimation.svelte';
+
 	// Supports weights 400-900 
 
 	// Store subscription
@@ -166,7 +167,7 @@
 
 		<!-- <ScrollTellingHowItWorks />  -->
         <!-- <HowItWorks />	 -->
-		 <Refinedgrid /> 
+		 <RefinedGrid /> 
 
 		<div class="container max-w-8xl mx-auto">
 		<WhatWeDo />
