@@ -201,8 +201,6 @@
 		scrollTo="#hero"
 		/>
 	</div>
-
-	<SearchAnimation />
 </div>
 
 <style lang="scss">
