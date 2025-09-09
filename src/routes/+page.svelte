@@ -19,6 +19,7 @@
 	import HowItWorks from '$lib/components/HowItWorks.svelte';
 	import Refinedgrid from '$lib/components/Refinedgrid.svelte';
 	import Logo from '$lib/components/Logo.svelte';
+	import SearchAnimation from '$lib/components/SearchAnimation.svelte';
 	// Supports weights 400-900 
 
 	// Store subscription
@@ -199,6 +200,8 @@
 		scrollTo="#hero"
 		/>
 	</div>
+
+	<SearchAnimation />
 </div>
 
 <style lang="scss">
