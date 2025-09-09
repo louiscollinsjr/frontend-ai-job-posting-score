@@ -18,6 +18,7 @@
 	import TestimonialCarousel from '$lib/components/TestimonialCarousel.svelte';
 	import HowItWorks from '$lib/components/HowItWorks.svelte';
 	import Refinedgrid from '$lib/components/Refinedgrid.svelte';
+	import Logo from '$lib/components/Logo.svelte';
 	// Supports weights 400-900 
 
 	// Store subscription
@@ -124,7 +125,7 @@
 				<div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-start mx-auto">
 					<div class="px-4 lg:px-16 pb-10 sm:pb-24 rounded-3xl min-h-0 sm:min-h-[680px] mx-auto pt-6 sm:pt-20 w-full">
 						<h1 class="sm:pt-16 pt-4 text-3xl sm:text-7xl font-normal w-[100%] pb-6 sm:pb-12 leading-tight tracking-tight mx-auto text-center font-aeonik">
-							What is your
+							What's your
 							<span style="min-width: 140px;">
 								<span class="single-sweep" data-text="JobPostScore">JobPost<b>Score</b>?</span>
 							</span>
@@ -132,11 +133,11 @@
 						<p
 							class="text-base sm:text-xl text-gray-400 text-center mb-8 max-w-3xl mx-auto font-normal font-aeonik"
 						>
-						Your JobPostScore reveals how visible your job is across AI-powered platforms, where more and more applicants now begin their job search. 
-						<span class="hidden sm:inline"
+						Your JobPostScore reveals how visible your job is across AI-powered platforms, where more and more applicants now begin their job search. It’s the fastest way to see if your job is discoverable — or disappearing in search results.
+						<!-- <span class="hidden sm:inline"
 								>Audit your post, improve your visibility, and start attracting the right
 								candidates—before your competitors do.</span
-							>
+							> -->
 						</p>
 						<!-- <ChatAuditForm on:audit={handleAudit} /> -->
 						<AuditForm on:audit={handleAudit} />
@@ -146,8 +147,6 @@
 		</section>
 	</div>
 	<!-- Job Post Optimization Section -->
-	
-	<!--  -->
 
 
 	<div class="container mx-auto z-10">
@@ -175,12 +174,15 @@
 		<BetaBadge />
 		<div class="container mx-auto sm:mt-48 mt-24">
 			<CallToAction
-			header="Stop guessing, start scoring."
+			header="Measure performance, uncover gaps, and boost visibility instantly."
 			ctaText="Discover how your job posts are really performing — and what to do to boost visibility and results."
-			ctaButtonText="Get JobPostScore"
 			ctaBackground="bg-[#f8f8f8]"
 			scrollTo="#hero"
-		/>
+		>
+			<svelte:fragment slot="button">
+				<Logo variant="white" class="h-4 w-auto mr-2" />
+			</svelte:fragment>
+		</CallToAction>
 		</div>
 		
 </div>

@@ -6,40 +6,34 @@
   
   export let testimonials = [
     {
-      quote: "JobPostScore helped us improve our hiring diversity by 40% in just 3 months.",
+      quote: "JobPostScore showed us why our posts weren’t being seen, and helped the right candidates find us.",
       name: "Sarah Johnson",
-      role: "HR Director",
+      role: "Talent Acquisition Manager",
       image: "https://randomuser.me/api/portraits/women/44.jpg"
     },
     {
-      quote: "Our job post response rate doubled after using JobPostScore's optimization tools.",
+      quote: "Our response rate doubled after making the fixes JobPostScore recommended.",
       name: "Michael Chen",
-      role: "Talent Acquisition",
+      role: "Recruitment Marketing Specialist",
       image: "https://randomuser.me/api/portraits/men/32.jpg"
     },
     {
-      quote: "The analytics helped us understand exactly why our posts weren't performing.",
+      quote: "The analytics made it clear why our posts underperformed and what to change.",
       name: "David Wilson",
-      role: "Recruiting Manager",
+      role: "HR Director",
       image: "https://randomuser.me/api/portraits/men/75.jpg"
     },
     {
-      quote: "JobPostScore helped us improve our hiring diversity by 40% in just 3 months.",
+      quote: "JobPostScore uncovered gaps we missed and brought us a stronger candidate pool.",
       name: "Sarah Johnson",
-      role: "HR Director",
+      role: "Hiring Manager",
       image: "https://randomuser.me/api/portraits/women/44.jpg"
     },
     {
-      quote: "Our job post response rate doubled after using JobPostScore's optimization tools.",
+      quote: "No more guessing. JobPostScore scored our posts and showed us exactly what to fix.",
       name: "Michael Chen",
-      role: "Talent Acquisition",
+      role: "Recruiter",
       image: "https://randomuser.me/api/portraits/men/32.jpg"
-    },
-    {
-      quote: "The analytics helped us understand exactly why our posts weren't performing.",
-      name: "David Wilson",
-      role: "Recruiting Manager",
-      image: "https://randomuser.me/api/portraits/men/75.jpg"
     }
   ]
   
@@ -66,14 +60,14 @@
                 </blockquote>
               </CardContent>
               <CardFooter class="p-0 pt-4 flex items-center gap-3 text-sm">
-                <img 
+                <!-- <img 
                   src={testimonial.image} 
                   alt={`Photo of ${testimonial.name}`} 
                   class="w-12 h-12 rounded-full object-cover" 
                   loading="lazy"
-                />
+                /> -->
                 <div>
-                  <p class="text-gray-600 font-medium">{testimonial.name}</p>
+                  <!-- <p class="text-gray-600 font-medium">{testimonial.name}</p> -->
                   <p class="text-gray-500 text-xs">{testimonial.role}</p>
                 </div>
               </CardFooter>

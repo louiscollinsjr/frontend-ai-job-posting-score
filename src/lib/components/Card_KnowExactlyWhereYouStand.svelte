@@ -1,9 +1,14 @@
 <!-- src/lib/components/Card_KnowExactlyWhereYouStand.svelte -->
 <script>
+    import { onMount } from 'svelte';
+    import { cubicOut } from 'svelte/easing';
+    import { fade, slide } from 'svelte/transition';
+    import { quadInOut } from 'svelte/easing';
+
     // --- Component Data ---
     // This data would typically be passed in as props.
     const jobScore = 85;
-  
+    
     const breakdownCategories = [
       { label: 'Clarity & Readability', score: 85 },
       { label: 'Prompt Alignment', score: 82 },
@@ -13,6 +18,26 @@
       { label: 'Compensation Transparency', score: 0 },
       { label: 'Page Context & Cleanliness', score: 68 },
     ];
+
+    // Animation state
+    let currentIndex = 0;
+    const visibleItems = 4; // Number of items to show at once
+    const animationDuration = 1000; // ms
+    const pauseDuration = 3000; // ms between animations
+    let interval;
+
+    // Function to handle auto-scrolling
+    function startAutoScroll() {
+      interval = setInterval(() => {
+        currentIndex = (currentIndex + 1) % (breakdownCategories.length - visibleItems + 1);
+      }, pauseDuration + animationDuration);
+    }
+
+    // Start and clean up the auto-scroll
+    onMount(() => {
+      startAutoScroll();
+      return () => clearInterval(interval);
+    });
   
     // --- UI Logic ---
     const radius = 52;
@@ -79,22 +104,31 @@
       <hr class="my-6" />
   
       <!-- Breakdown Section -->
-      <div class="flex-grow text-left">
+      <div class="flex-grow text-left overflow-hidden">
         <h4 class="mb-4 text-xs font-bold uppercase tracking-widest text-gray-500">
           Breakdown by Category
         </h4>
-        <div class="space-y-4">
-          {#each breakdownCategories as category}
-            <div>
-              <p class="mb-1.5 text-sm font-medium text-gray-700">{category.label}</p>
-              <div class="relative h-2 w-full rounded-full bg-gray-200">
-                <div
-                  class="absolute h-full rounded-full {getBarColor(category.score)} transition-all duration-700 ease-out"
-                  style="width: {category.score}%;"
-                ></div>
+        <div class="relative h-[200px] overflow-hidden">
+          <div 
+            class="space-y-4 transition-transform duration-1000 ease-in-out"
+            style="transform: translateY(-${currentIndex * (100 / visibleItems)}%);"
+          >
+            {#each breakdownCategories as category, i}
+              <div 
+                in:fade={{ duration: 300, delay: 100 }}
+                out:fade={{ duration: 300 }}
+                class="h-[calc(25%-1rem)]"
+              >
+                <p class="mb-1.5 text-sm font-medium text-gray-700">{category.label}</p>
+                <div class="relative h-2 w-full rounded-full bg-gray-200">
+                  <div
+                    class="absolute h-full rounded-full {getBarColor(category.score)} transition-all duration-700 ease-out"
+                    style="width: {category.score}%;"
+                  ></div>
+                </div>
               </div>
-            </div>
-          {/each}
+            {/each}
+          </div>
         </div>
       </div>
     </div>

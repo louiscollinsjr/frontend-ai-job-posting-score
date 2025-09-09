@@ -37,7 +37,7 @@
 <section class="relative sm:py-16 py-8 bg-white border-2 border-[#f8f8f8] border-b-white rounded-2xl mb-8 overflow-hidden font-aeonik" style="background-image: url('/bkg2.png'); background-repeat: no-repeat; background-position: right center; background-size: cover;">
   <div class="container relative px-4 sm:px-6 lg:px-8">
     <div class="text-left mb-12 w-[100%] sm:py-16 py-2 px-8 md:px-8 pb-0 font-aeonik">
-      <h2 class="text-3xl md:text-5xl mb-4 tracking-tight text-gray-900 md:w-[50%] w-full">Job Descriptions, reimagined for the AI search era.</h2>
+      <h2 class="text-3xl md:text-5xl mb-4 tracking-tight text-gray-900 md:w-[50%] w-full">Job Postings, reimagined for the AI search era.</h2>
       <p class="text-base text-gray-500 max-w-3x font-aeonik">Your <b class="text-gray-900">JobPostScore</b> reveals how easily candidates discover your role in today’s AI-driven job search, highlights visibility gaps, and guides you on how to improve.</p>
     </div>
     

@@ -14,7 +14,7 @@
     <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
       
       <a href={scrollTo} class="cta-button inline-flex items-center gap-2 bg-black hover:bg-gray-700 transition-colors duration-300 text-white rounded-full w-auto max-w-full font-aeonik leading-none text-base sm:text-lg md:text-xl tracking-normal sm:tracking-wide py-2 sm:py-3 px-6 sm:px-8">
-        {ctaButtonText}
+        <slot name="button">{ctaButtonText}</slot>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" class="ml-1 w-4 h-4 sm:w-5 sm:h-5 shrink-0">
           <path fill="currentColor" d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z"></path>
       </svg>

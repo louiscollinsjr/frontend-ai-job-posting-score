@@ -120,7 +120,7 @@
                 <span class="chroma-text text-right" data-text="Boost">Boost</span>
               </span> your job postings70% more visibility. -->
               
-              What is your <span style="min-width: 140px;">
+              What's your <span style="min-width: 140px;">
                 <span class="single-sweep" data-text="JobPostScore">JobPostScore?</span>
               </span>
             </h1>

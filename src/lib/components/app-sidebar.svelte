@@ -111,7 +111,7 @@
     <div class="mt-20 px-6 pb-20">
       <!-- Site purpose description -->
       <p class="text-[11px] font-light text-gray-400 mb-6">
-        We're here to help you create inclusive job postings that reach the widest possible talent pool. JobPostScore helps you audit your job descriptions for bias and improve your hiring outcomes.
+        Optimize your job postings for AI discovery. JobPostScore scores your listings, uncovers what limits reach, and gives clear steps to attract more qualified candidates who use AI to search for jobs. 
       </p>
       
       <!-- Social links -->

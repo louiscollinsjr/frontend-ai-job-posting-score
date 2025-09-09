@@ -38,10 +38,8 @@
       <!-- Left content column with padding -->  
       <div class="w-[100%] sm:w-[80%] lg:w-[80%] xl:w-[55%] px-8 md:px-8 pb-0 font-aeonik">
         <div class="text-left mb-12 font-aeonik">
-          <h2 class="text-2xl md:text-4xl lg:text-5xl font-semibold sm:font-normal pt-2 sm:pt-16 pb-8 leading-tight tracking-normal text-gray-900">We help teams craft job posts
-            that introduce new levels of readability, relevance, and reach</h2>
-          <p class="text-gray-500 text-left text-sm sm:text-base sm:w-[80%] font-normal leading-relaxed tracking-normal font-aeonik">Your <b>JobPostScore</b> is an intelligent job post analyzer that reads your content, scores your optimization, and shows you exactly what to fix — instantly.
-          </p>
+          <h2 class="text-2xl md:text-4xl lg:text-5xl font-semibold sm:font-normal pt-2 sm:pt-16 pb-8 leading-tight tracking-normal text-gray-900"> We help teams create job postings built for the AI-driven hiring era.</h2>
+          <p class="text-gray-500 text-left text-sm sm:text-base sm:w-[80%] font-normal leading-relaxed tracking-normal font-aeonik">JobPost<b>Score</b> intelligently analyzes your content, evaluates performance, and instantly highlights the changes that improve discoverability and help the right candidates find your job.</p>
         </div>
       </div>
       
