@@ -27,15 +27,15 @@
       }
     : null;
 
-  // Default labels and max values if parent doesn't pass any
+  // Default labels and max values matching current scoring system
   const DEFAULT_CATEGORY_LABELS = [
-    { key: 'clarity', label: 'Clarity', max: 20 },
-    { key: 'promptAlignment', label: 'Prompt Alignment', max: 20 },
-    { key: 'structuredData', label: 'Structured Data', max: 15 },
-    { key: 'recency', label: 'Recency', max: 10 },
-    { key: 'keywordTargeting', label: 'Keyword Targeting', max: 15 },
-    { key: 'compensation', label: 'Compensation', max: 10 },
-    { key: 'pageContext', label: 'Page Context', max: 10 }
+    { key: 'structuredData', label: 'Structured Data', max: 70 },
+    { key: 'compensation', label: 'Compensation', max: 15 },
+    { key: 'clarity', label: 'Clarity', max: 5 },
+    { key: 'promptAlignment', label: 'Prompt Alignment', max: 3 },
+    { key: 'keywordTargeting', label: 'Keyword Targeting', max: 3 },
+    { key: 'recency', label: 'Recency', max: 2 },
+    { key: 'pageContext', label: 'Page Context', max: 2 }
   ];
 
   // Choose effective labels
