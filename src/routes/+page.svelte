@@ -153,7 +153,10 @@
 
 	<div class="container mx-auto z-10">
 		<BetaBadge />
-		<div class="my-24"> <JobPostOptimization /></div>
+	<div class="my-24"> <JobPostOptimization /></div>
+	<div class="container max-w-8xl mx-auto">
+		<WhatWeDo />
+		</div>
 		<!-- Call to Action Section -->
 		<div class="pb-2">
 			<CallToAction
@@ -168,10 +171,6 @@
 		<!-- <ScrollTellingHowItWorks />  -->
         <!-- <HowItWorks />	 -->
 		 <RefinedGrid /> 
-
-		<div class="container max-w-8xl mx-auto">
-		<WhatWeDo />
-		</div>
 
 		<BetaBadge />
 		<div class="container mx-auto sm:mt-48 mt-24">

@@ -34,76 +34,21 @@
 
 </script>
 
-<section class="relative sm:py-16 py-8 bg-white border-2 border-[#f8f8f8] border-b-white rounded-2xl mb-8 overflow-hidden font-aeonik" style="background-image: url('/bkg2.png'); background-repeat: no-repeat; background-position: right center; background-size: cover;">
+<div class="decorative-border sm:mb-48 mb-16">
+  <div class="decorative-content">
+    <section class="relative sm:py-4 py-8 border-b-0 bg-gradient-to-b from-blue-100 via-gray-50 to-transparent border-t-gray-100 border-b-transparent rounded-2xl overflow-hidden font-aeonik">
   <div class="container relative px-4 sm:px-6 lg:px-8">
     <div class="text-left mb-12 w-[100%] sm:py-16 py-2 px-8 md:px-8 pb-0 font-aeonik">
       <h2 class="text-3xl md:text-5xl mb-4 tracking-tight text-gray-900 md:w-[50%] w-full">Job Postings, reimagined for the AI search era.</h2>
-      <p class="text-base text-gray-500 max-w-3x font-aeonik">Your <b class="text-gray-900">JobPostScore</b> reveals how easily candidates discover your role in today’s AI-driven job search, highlights visibility gaps, and guides you on how to improve.</p>
-    </div>
-    
-    <!-- 2x2 grid with second row colspan-2 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 sm:py-24 py-8">
-      {#each features as feature, index}
-        {#if feature.colSpan}
-          <div class="col-span-1 md:col-span-2" in:fade={{ duration: 400 }} out:fade={{ duration: 200 }}>
-            <Card class="border-none shadow-none">
-              <CardContent class="p-6">
-                <div class="flex flex-col md:flex-row items-center gap-6">
-                  {#if feature.imagePosition === 'left'}
-                    <div class="w-full md:w-1/3 mb-4 md:mb-0">
-                      {#if feature.component}
-                        <svelte:component this={feature.component} {...(feature.props || {})} backgroundSrc={feature.imagePlaceholder} />
-                      {:else}
-                        <FadeImage src={feature.imagePlaceholder} alt={feature.title} fadeDirection="bottom"
-                        fadeIntensity="none" />
-                      {/if}
-                    </div>
-                  {/if}
-                  <div class="w-full {feature.imagePosition === 'left' ? 'md:w-2/3' : ''}">
-                    <h3 class="text-xl mb-2">{feature.title}</h3>
-                    <p class="text-gray-500 w-full md:w-[70%] text-base text-left sm:text-left">{feature.description}</p>
-                  </div>
-                  {#if feature.imagePosition === 'right'}
-                    <div class="w-full md:w-1/3 mt-4 md:mt-0">
-                      {#if feature.component}
-                        <svelte:component this={feature.component} {...(feature.props || {})} backgroundSrc={feature.imagePlaceholder} />
-                      {:else}
-                        <FadeImage src={feature.imagePlaceholder} alt={feature.title} fadeDirection="bottom"
-                        fadeIntensity="none" />
-                      {/if}
-                    </div>
-                  {/if}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        {:else}
-          <div in:fade={{ duration: 400 }} out:fade={{ duration: 200 }}>
-            <Card class="border-none shadow-none">
-              <CardContent class="p-6">
-                <div class="flex flex-col">
-                  {#if feature.imagePosition === 'top'}
-                    <div class="mb-4" in:fade={{ duration: 400 }} out:fade={{ duration: 200 }}>
-                      {#if feature.component}
-                        <svelte:component this={feature.component} {...(feature.props || {})} backgroundSrc={feature.imagePlaceholder} />
-                      {:else}
-                        <FadeImage src={feature.imagePlaceholder} alt={feature.title} fadeDirection="bottom" fadeIntensity="none" />
-                      {/if}
-                    </div>
-                  {/if}
-                  <h3 class="text-xl mb-2">{feature.title}</h3>
-                  <p class="text-gray-500 w-full md:w-[80%] text-base text-left sm:text-left">{feature.description}</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        {/if}
-      {/each}
+      <p class="text-base text-gray-500 max-w-2xl font-aeonik">Your <b class="text-gray-900">JobPostScore</b> reveals how easily candidates discover your role in today’s AI-driven job search, highlights visibility gaps, and guides you on how to improve.</p>
     </div>
   </div>
-</section>
+    </section>
+  </div>
+</div>
 
 
 <style>
-  /* Apply any custom styling here if needed */
+  
+  
 </style>
