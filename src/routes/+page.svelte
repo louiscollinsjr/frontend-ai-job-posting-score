@@ -150,19 +150,19 @@
 	</div>
 	<!-- Job Post Optimization Section -->
 
-
+<div class="container mx-auto z-10 my-16"><BetaBadge /></div>
 	<div class="container mx-auto z-10">
-		<BetaBadge />
-	<div class="my-24"> <JobPostOptimization /></div>
+		
+	
 	<div class="container max-w-8xl mx-auto">
 		<WhatWeDo />
 		</div>
 		<!-- Call to Action Section -->
 		<div class="pb-2">
 			<CallToAction
-				header='"This feels like the future of talent acquisition."'
+				header='Instantly Scored. Visibility Tested.'
 				ctaText=""
-				ctaButtonText="It is."
+				ctaButtonText="Your job post, refined for maximum visibility."
 				ctaBackground="bg-[#ffffff]"
 				scrollTo="#hero"
 			/>
@@ -170,14 +170,27 @@
 
 		<!-- <ScrollTellingHowItWorks />  -->
         <!-- <HowItWorks />	 -->
+		<!-- <div class="my-0"> <JobPostOptimization /></div> -->
 		 <RefinedGrid /> 
 
-		<BetaBadge />
-		<div class="container mx-auto sm:mt-48 mt-24">
+		<!-- <BetaBadge /> -->
+
+<!-- Call to Action Section -->
+<!-- <div class="pb-2">
+	<CallToAction
+		header='Instantly Scored. Visibility Tested.'
+		ctaText=""
+		ctaButtonText="Your job post, refined for maximum visibility."
+		ctaBackground="bg-[#ffffff]"
+		scrollTo="#hero"
+	/>
+</div> -->
+
+		<div class="container mx-auto sm:mt-48 mt-0">
 			<CallToAction
 			header="Measure performance, uncover gaps, and boost visibility instantly."
 			ctaText="Discover how your job posts are really performing — and what to do to boost visibility and results."
-			ctaBackground="bg-[#f8f8f8]"
+			ctaBackground="bg-[#ffffff]"
 			scrollTo="#hero"
 		>
 			<svelte:fragment slot="button">
@@ -187,11 +200,11 @@
 		</div>
 		
 </div>
-<div class="mx-auto sm:mt-64">
+<div class="mx-auto sm:mt-64 my-32">
 	<TestimonialCarousel />
 </div>		
 
-<div class="container mx-auto">
+<div class="container mx-auto mt-64">
 	<CallToAction
 		header="Ready to transform your job postings?"
 		ctaText="Get started with JobPostScore today and start attracting the right candidates."
@@ -201,6 +214,10 @@
 		/>
 	</div>
 </div>
+
+<div class="container mx-auto text-center my-2 mb-12 text-xs text-gray-400">
+    <BetaBadge />
+	</div>
 
 <style lang="scss">
 	.single-sweep {

@@ -43,7 +43,7 @@
 <div class="flex flex-col items-center w-full mx-auto mt-24 mb-32 overflow-hidden">
   <h2 class="relative z-10 mx-auto sm:text-5xl text-3xl font-aeonik mb-24">
     Trusted by Talent Acquisition 
-    <span class="inline-flex pb-1 chroma-text chroma-text-animate">&nbsp;Teams</span>
+    <span class="inline-flex pb-1 chroma-text chroma-text-animate">Teams</span>
   </h2>
   
   <div class="relative w-full overflow-hidden marquee-wrapper">
@@ -56,7 +56,7 @@
             <Card class="p-6 rounded-3xl bg-white/90 backdrop-blur-lg shadow-sm mx-4 w-72 h-60 flex-shrink-0 flex flex-col">
               <CardContent class="p-0 flex-1">
                 <blockquote class="text-lg text-gray-500 font-aeonik line-clamp-4">
-                  {testimonial.quote}
+                 <span class="chroma-text chroma-text-animate">"</span>{testimonial.quote}"
                 </blockquote>
               </CardContent>
               <CardFooter class="p-0 pt-4 flex items-center gap-3 text-sm">
@@ -77,9 +77,7 @@
       </div>
     </div>
   </div>
-  <div class="container mx-auto text-center mt-24 text-xs text-gray-400">
-    <BetaBadge />
-	</div>
+  
 </div>
 
 <style>

@@ -45,10 +45,11 @@
     <!-- <div class="mx-auto max-w-7xl px-8"> -->
       <!-- Header Text -->
       <div class="text-left">
-        <h2 class="text-lg text-blue-400 font-aeonik">Your job post, refined for maximum visibility.</h2>
-        <p class="text-2xl md:text-5xl text-black font-aeonik mt-3 mb-12">
-            Instantly Scored. Visibility Tested.
+        <!-- <h2 class="text-lg text-blue-400 font-aeonik">Your job post, refined for maximum visibility.</h2> -->
+        <p class="text-2xl md:text-5xl text-black font-aeonik my-3  max-w-3xl">
+          Job Postings, reimagined for the AI search era.
         </p>
+        <p class="text-base text-gray-500 max-w-2xl font-aeonik mb-12">Your <b class="text-gray-900">JobPostScore</b> reveals how easily candidates discover your role in today’s AI-driven job search, highlights visibility gaps, and guides you on how to improve.</p>
       </div>
   
       <!-- Features Grid -->
