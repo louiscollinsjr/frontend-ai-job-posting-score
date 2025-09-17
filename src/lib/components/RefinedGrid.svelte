@@ -5,6 +5,7 @@
     import Card_EveryWordMatters from '$lib/components/Card_EveryWordMatters.svelte';
     import Card_KnowExactlyWhereYouStand from '$lib/components/Card_KnowExactlyWhereYouStand.svelte';
     import Card_Blank from '$lib/components/Card_Blank.svelte';
+    import Card_NoGuessWork from '$lib/components/Card_NoGuessWork.svelte';
   
     const features = [
       {
@@ -20,7 +21,7 @@
         images: ['https://picsum.photos/id/20/600/400']
       },
       {
-        component: Card_Blank,
+        component: Card_NoGuessWork,
         title: 'No guesswork, just action.',
         text: `JobPostScore highlights what’s limiting your reach and gives specific recommendations to improve every factor that drives AI visibility and candidate applications.`,
         images: ['https://picsum.photos/id/30/600/400']
