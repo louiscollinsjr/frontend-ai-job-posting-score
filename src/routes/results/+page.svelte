@@ -62,7 +62,18 @@
     // Handle URL parameters and route changes
     const unsubscribePage = page.subscribe(async ($page) => {
       const reportId = $page.url.searchParams.get('report');
-      
+      const guestFlag = $page.url.searchParams.get('guest');
+      const legacyId = $page.url.searchParams.get('id');
+
+      // Handle legacy guest links like /results?id=...&guest=1
+      if (!isLoggedIn && guestFlag === '1') {
+        const guestReport = GuestManager.loadGuestReport();
+        if (guestReport) {
+          resultsPageStore.setCurrentReport(guestReport);
+        }
+        return; // Do not attempt DB loads for guest links
+      }
+
       if (reportId && isLoggedIn) {
         queueLoadReportById(reportId);
       } else if ($hasReport && !isLoggedIn) {

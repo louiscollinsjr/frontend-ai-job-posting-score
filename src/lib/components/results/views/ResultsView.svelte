@@ -6,15 +6,54 @@
   import { user } from '$lib/stores/auth';
   import { auditStore } from '$lib/stores/audit';
   import { toast } from 'svelte-sonner';
+  import { GuestManager } from '$lib/services/guestManager';
+  import { onMount } from 'svelte';
   
   import ResultsDisplay from '$lib/components/ResultsDisplay.svelte';
   import GuestSavePrompt from '$lib/components/results/GuestSavePrompt.svelte';
+  import GuestReportToast from '$lib/components/GuestReportToast.svelte';
 
   export let isLoggedIn: boolean;
 
   $: currentReport = $resultsPageStore.currentReport;
   $: showDialog = $resultsPageStore.showSaveDialog;
   $: isOptimizing = $resultsPageStore.isOptimizing;
+
+  // Guest toast state
+  let showGuestToast = false;
+  let currentReportId: string | null = null;
+
+  // Debug logging for current state
+  $: {
+    console.log('[ResultsView] Current state:', {
+      isLoggedIn,
+      currentReport: currentReport ? 'EXISTS' : 'NULL',
+      reportId: currentReport?.id || currentReport?.report_id || 'NO_ID',
+      currentReportId
+    });
+  }
+
+  // Auto-cache guest reports - simplified approach
+  $: if (!isLoggedIn && currentReport) {
+    const reportId = currentReport?.id || currentReport?.report_id || Date.now().toString();
+    
+    console.log('[ResultsView] Checking if should cache report:', { reportId, currentReportId, isLoggedIn });
+    
+    // Only cache if this is a new report we haven't seen before
+    if (reportId !== currentReportId) {
+      console.log('[ResultsView] Caching guest report:', reportId, currentReport);
+      const saved = GuestManager.saveReportWithFeedback(currentReport);
+      if (saved) {
+        console.log('[ResultsView] Report cached successfully');
+        showGuestToast = true;
+        currentReportId = reportId;
+      } else {
+        console.error('[ResultsView] Failed to cache report');
+      }
+    } else {
+      console.log('[ResultsView] Report already cached, skipping');
+    }
+  }
 
   async function handleSave() {
     if (!currentReport) return;
@@ -42,8 +81,10 @@
     } catch (error) {
       if (!isLoggedIn) {
         // Fallback to localStorage for guests
-        const saved = GuestReportsAPI.save(currentReport);
+        const saved = GuestManager.saveReportWithFeedback(currentReport);
         if (saved) {
+          showGuestToast = true;
+          currentReportId = currentReport?.id || currentReport?.report_id || null;
           resultsPageStore.showSuccessToast();
         } else {
           toast.error('Failed to save report');
@@ -177,4 +218,12 @@
     on:submit={handleMagicLink}
     on:close={() => resultsPageStore.hideSaveDialog()}
   />
+  
+  <!-- Guest Report Toast - Only show for guest users -->
+  {#if !isLoggedIn}
+    <GuestReportToast 
+      bind:show={showGuestToast}
+      {currentReportId}
+    />
+  {/if}
 {/if}

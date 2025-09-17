@@ -10,7 +10,10 @@
 	import CallToAction from '$lib/components/CallToAction.svelte';
 	import ScrollTellingHowItWorks from '$lib/components/ScrollTellingHowItWorks.svelte';
 	import { auditStore } from '$lib/stores/audit.js';
+	import { user } from '$lib/stores/auth';
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { browser } from '$app/environment';
 	import AuditForm from '$lib/components/AuditForm.svelte';
 	import EnterpriseTalentTeams from '$lib/components/EnterpriseTalentTeams.svelte';
 	import TrustQuoteCombo from '$lib/components/TrustQuoteCombo.svelte';
@@ -21,6 +24,7 @@
 	import Logo from '$lib/components/Logo.svelte';
 	import SearchAnimation from '$lib/components/SearchAnimation.svelte';
 	import ScrollIndicator from '$lib/components/ScrollIndicator.svelte';
+	import GuestReportBadge from '$lib/components/GuestReportBadge.svelte';
 
 	// Supports weights 400-900 
 
@@ -28,6 +32,14 @@
 	let isLoading = false;
 	let results = null;
 	let showResults = false;
+	
+	// Message handling
+	let showMessage = false;
+	let messageText = '';
+	let messageType = 'info';
+	
+	// Authentication status for guest badge
+	let isLoggedIn = false;
 
 	// Subscribe to the store on mount (client-only)
 
@@ -68,6 +80,11 @@
 		}
 	}
 
+	// Handle message dismissal
+	function dismissMessage() {
+		showMessage = false;
+	}
+
 	// Subscribe and cleanup on component mount/unmount
 	onMount(() => {
 		const unsubscribe = auditStore.subscribe((state) => {
@@ -75,8 +92,33 @@
 			results = state.results;
 			showResults = state.showResults;
 		});
+
+		// Subscribe to user authentication state
+		const unsubscribeUser = user.subscribe((currentUser) => {
+			isLoggedIn = !!(currentUser?.id);
+		});
+
+		// Check for URL messages
+		const unsubscribePage = page.subscribe(($page) => {
+			if (browser) {
+				const msg = $page.url.searchParams.get('msg');
+				if (msg === 'no-reports') {
+					showMessage = true;
+					messageText = "You don't have any cached reports yet. Analyze a job posting to get started!";
+					messageType = 'info';
+					
+					// Auto-dismiss after 5 seconds
+					setTimeout(() => {
+						showMessage = false;
+					}, 5000);
+				}
+			}
+		});
+
 		return () => {
 			unsubscribe();
+			unsubscribeUser();
+			unsubscribePage();
 		};
 	});
 
@@ -120,6 +162,34 @@
   	<!-- <div class="absolute inset-0 bg-[url('/bkg2.png')] bg-no-repeat bg-contain sm:bg-cover bg-center blur-lg opacity-90 z-0"></div>
   	<div class="absolute inset-0 bg-gradient-to-b from-[#f8f8f8]/0 via-[#f8f8f8]/0 to-[#f8f8f8]/0 2xl:from-[#f8f8f8]/0 2xl:via-[#f8f8f8]/0 2xl:to-[#f8f8f8]/0 z-0"></div>
   	 -->
+
+	<!-- Message Notification -->
+	{#if showMessage}
+		<div class="fixed top-4 right-4 z-50 max-w-md">
+			<div class="bg-blue-50 border border-blue-200 rounded-lg shadow-lg p-4 flex items-start space-x-3">
+				<div class="flex-shrink-0">
+					<svg class="w-6 h-6 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+						<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+					</svg>
+				</div>
+				<div class="flex-1">
+					<p class="text-sm text-blue-800 font-medium">{messageText}</p>
+				</div>
+				<div class="flex-shrink-0">
+					<button
+						type="button"
+						class="bg-blue-50 rounded-md inline-flex text-blue-400 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+						on:click={dismissMessage}
+					>
+						<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+							<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+						</svg>
+					</button>
+				</div>
+			</div>
+		</div>
+	{/if}
+
 	<div class="relative w-full min-h-[75vh] sm:min-h-[85vh] pb-8 sm:pb-24">
 		
 		<!-- Hero Section with Audit Form -->
@@ -146,6 +216,11 @@
 						<AuditForm on:audit={handleAudit} />
 					</div>
 				</div>
+				
+				<!-- Guest Report Badge - Shows last cached report for non-authenticated users -->
+				{#if !isLoggedIn}
+					<GuestReportBadge />
+				{/if}
 			</div>
 			
 		</section>

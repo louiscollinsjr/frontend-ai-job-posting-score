@@ -27,9 +27,9 @@ export class GuestManager {
   // Handle guest-to-authenticated migration
   static handleGuestLogin() {
     // Clear guest cache when user logs in from guest session
-    GuestReportsAPI.clear();
+    GuestReportsAPI.clearAll();
     if (import.meta.env.DEV) {
-      console.log('[GuestManager] Cleared guest cache after login');
+      console.log('[GuestManager] Cleared all guest cache after login');
     }
   }
 
@@ -58,6 +58,36 @@ export class GuestManager {
     } catch (e) {
       return false;
     }
+  }
+
+  // Save report and show success feedback
+  static saveReportWithFeedback(report: any): boolean {
+    const success = GuestReportsAPI.save(report);
+    if (success && import.meta.env.DEV) {
+      console.log('[GuestManager] Report saved with success feedback');
+    }
+    return success;
+  }
+
+  // Get guest report history for dashboard
+  static getReportHistory() {
+    return GuestReportsAPI.getHistory();
+  }
+
+  // Check if guest has any cached reports
+  static hasAnyReports(): boolean {
+    const current = GuestReportsAPI.hasReport();
+    const history = GuestReportsAPI.getHistory();
+    return current || history.length > 0;
+  }
+
+  // Get shareable URL for a report
+  static getShareableUrl(reportId: string): string {
+    if (!browser) return '';
+    const baseUrl = window.location.origin;
+    // For guest users, always link to the generic results page.
+    // The results page will load the cached report from localStorage.
+    return `${baseUrl}/results`;
   }
 
   // Cleanup all guest-related timeouts and state
