@@ -224,8 +224,8 @@
 		will-change: background-position;
 		-webkit-background-clip: text;
 		background-clip: text;
-		-webkit-text-fill-color: initial;
-		color: #000;
+		-webkit-text-fill-color: transparent;
+		color: transparent;
 		filter: blur(0);
 		animation: chroma-sweep 2s ease-in-out 3s 1 forwards;
 		@supports not (background-clip: text) {

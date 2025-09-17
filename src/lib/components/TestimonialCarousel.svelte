@@ -6,38 +6,43 @@
   
   export let testimonials = [
     {
-      quote: "JobPostScore showed us why our posts weren’t being seen, and helped the right candidates find us.",
+      quote: "JobPostScore showed us why our posts weren't being seen, and helped the right candidates find us.",
       name: "Sarah Johnson",
       role: "Talent Acquisition Manager",
-      image: "https://randomuser.me/api/portraits/women/44.jpg"
+      company: "TechCorp",
+      avatarColor: "bg-[#c679c4]"
     },
     {
       quote: "Our response rate doubled after making the fixes JobPostScore recommended.",
       name: "Michael Chen",
       role: "Recruitment Marketing Specialist",
-      image: "https://randomuser.me/api/portraits/men/32.jpg"
+      company: "GrowthCo",
+      avatarColor: "bg-[#fa3d1d]"
     },
     {
       quote: "The analytics made it clear why our posts underperformed and what to change.",
       name: "David Wilson",
-      role: "HR Director",
-      image: "https://randomuser.me/api/portraits/men/75.jpg"
+      role: "HR Director", 
+      company: "ScaleUp Inc",
+      avatarColor: "bg-[#ffb005]"
     },
     {
       quote: "JobPostScore uncovered gaps we missed and brought us a stronger candidate pool.",
-      name: "Sarah Johnson",
+      name: "Emma Davis",
       role: "Hiring Manager",
-      image: "https://randomuser.me/api/portraits/women/44.jpg"
+      company: "InnovateLab",
+      avatarColor: "bg-[#e1e1fe]"
     },
     {
       quote: "No more guessing. JobPostScore scored our posts and showed us exactly what to fix.",
-      name: "Michael Chen",
+      name: "James Rodriguez",
       role: "Recruiter",
-      image: "https://randomuser.me/api/portraits/men/32.jpg"
+      company: "TalentFirst",
+      avatarColor: "bg-[#0358f7]"
     }
   ]
   
-  let speed = 30; // seconds to complete one full scroll
+  let primarySpeed = 40; // Slower, more professional pace
 </script>
 
 <div class="flex flex-col items-center w-full mx-auto mt-24 mb-32 overflow-hidden">
@@ -47,30 +52,47 @@
   </h2>
   
   <div class="relative w-full overflow-hidden marquee-wrapper">
+    <!-- Professional fade overlays -->
     <div class="fade-overlay left-0"></div>
     <div class="fade-overlay right-0"></div>
+    
     <div class="marquee-container">
-      <div class="marquee-content" style="--speed: {speed}s">
+      <div class="marquee-content" style="--speed: {primarySpeed}s">
         {#each [...testimonials, ...testimonials] as testimonial, i}
           <div class="marquee-item">
-            <Card class="p-6 rounded-3xl bg-white/90 backdrop-blur-lg shadow-sm mx-4 w-72 h-60 flex-shrink-0 flex flex-col">
-              <CardContent class="p-0 flex-1">
-                <blockquote class="text-lg text-gray-500 font-aeonik line-clamp-4">
-                 <span class="chroma-text chroma-text-animate">"</span>{testimonial.quote}"
+            <Card class="testimonial-card bg-white border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md mx-4 w-80 h-64 flex-shrink-0 flex flex-col relative overflow-hidden group">
+              
+              <!-- Subtle decorative quote mark -->
+              <div class="absolute top-5 right-5 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
+                <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z"/>
+                </svg>
+              </div>
+              
+              <CardContent class="p-6 pb-4 flex-1 relative z-10">
+                <blockquote class="text-base text-gray-700 font-aeonik leading-relaxed">
+                  "{testimonial.quote}"
                 </blockquote>
               </CardContent>
-              <CardFooter class="p-0 pt-4 flex items-center gap-3 text-sm">
-                <!-- <img 
-                  src={testimonial.image} 
-                  alt={`Photo of ${testimonial.name}`} 
-                  class="w-12 h-12 rounded-full object-cover" 
-                  loading="lazy"
-                /> -->
-                <div>
-                  <!-- <p class="text-gray-600 font-medium">{testimonial.name}</p> -->
-                  <p class="text-gray-500 text-xs">{testimonial.role}</p>
+              
+              <CardFooter class="px-6 pb-6 pt-2 border-t border-gray-50 bg-gray-50/30">
+                <div class="flex items-center gap-3">
+                  <!-- Colorful avatar with solid backgrounds -->
+                  <div class="w-12 h-12 rounded-full {testimonial.avatarColor} border-2 border-white shadow-sm flex items-center justify-center flex-shrink-0">
+                    <span class="text-sm font-bold text-white">
+                      {testimonial.name.split(' ').map(n => n[0]).join('')}
+                    </span>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">{testimonial.name}</p>
+                    <p class="text-xs text-gray-600 truncate">{testimonial.role}</p>
+                    <p class="text-xs text-gray-500 truncate">{testimonial.company}</p>
+                  </div>
                 </div>
               </CardFooter>
+              
+              <!-- Subtle hover effect -->
+              <div class="absolute inset-0 border border-transparent group-hover:border-gray-200 rounded-lg transition-colors duration-300 pointer-events-none"></div>
             </Card>
           </div>
         {/each}
@@ -102,21 +124,35 @@
     flex-shrink: 0;
   }
   
+  .testimonial-card {
+    border-radius: 12px;
+    transition: all 0.3s ease-out;
+    transform-origin: center;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+  }
+  
+  .testimonial-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
   .fade-overlay {
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 20%;
-    background-image: linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0));
+    width: 8%;
+    z-index: 20;
   }
   
   .fade-overlay.left-0 {
     left: 0;
-    background-image: linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0));
+    background: linear-gradient(90deg, #ffffff 0%, rgba(255,255,255,0.95) 70%, rgba(255,255,255,0) 100%);
   }
   
   .fade-overlay.right-0 {
     right: 0;
+    background: linear-gradient(270deg, #ffffff 0%, rgba(255,255,255,0.95) 70%, rgba(255,255,255,0) 100%);
   }
   
   .marquee-wrapper {
@@ -129,19 +165,19 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 100px;
-    z-index: 10;
+    width: 60px;
+    z-index: 15;
     pointer-events: none;
   }
   
   .marquee-wrapper::before {
     left: 0;
-    background: linear-gradient(90deg, #ffffff 0%, rgba(255,255,255,0) 100%);
+    background: linear-gradient(90deg, #ffffff 0%, rgba(255,255,255,0.8) 80%, rgba(255,255,255,0) 100%);
   }
   
   .marquee-wrapper::after {
     right: 0;
-    background: linear-gradient(270deg, #ffffff 0%, rgba(255,255,255,0) 100%);
+    background: linear-gradient(270deg, #ffffff 0%, rgba(255,255,255,0.8) 80%, rgba(255,255,255,0) 100%);
   }
   
   .chroma-text {
