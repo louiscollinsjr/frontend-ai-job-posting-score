@@ -155,7 +155,7 @@
 
 	
 
-<div class="container mx-auto z-10 my-16"><BetaBadge /></div>
+<div class="container mx-auto z-10 sm:my-24 my-16 sm:mt-32"><BetaBadge /></div>
 <div class="container max-w-8xl mx-auto"> <WhatWeDo /> </div>
 
 <div class="pb-2 my-24">

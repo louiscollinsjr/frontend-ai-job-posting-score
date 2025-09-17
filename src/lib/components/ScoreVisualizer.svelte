@@ -11,9 +11,21 @@
   
   // Using shared hex color mapping for consistency across components
   
-  // Function to calculate score percentage for bar width
+  // Function to calculate score percentage for bar width (clamped between 0-100%)
   function getScorePercentage(score, max) {
-    return (score / max) * 100;
+    const percentage = (score / max) * 100;
+    return Math.min(Math.max(percentage, 0), 100); // Clamp between 0 and 100
+  }
+
+  // Function to get gradient class based on percentage
+  function getGradientClass(percentage) {
+    if (percentage >= 75) {
+      return 'bg-gradient-to-r from-green-800 via-green-500 to-green-500';
+    } else if (percentage >= 50) {
+      return 'bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-300';
+    } else {
+      return 'bg-gradient-to-r from-red-800 via-red-500 to-red-500';
+    }
   }
 
   // Calculate stroke-dasharray and stroke-dashoffset for circle progress
@@ -35,6 +47,28 @@
       <div class="relative w-48 h-48">
         <!-- SVG Circle Progress -->
         <svg class="w-full h-full" viewBox="0 0 100 100">
+          <defs>
+            <!-- Circular gradient that smoothly transitions and returns to starting color -->
+            <linearGradient id="circularScoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#dc2626;stop-opacity:1" />
+              <stop offset="25%" style="stop-color:#ff6900;stop-opacity:1" />
+              <stop offset="50%" style="stop-color:#ffe020;stop-opacity:1" />
+              <stop offset="75%" style="stop-color:#16a34a;stop-opacity:1" />
+              <stop offset="90%" style="stop-color:#16a34a;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+            </linearGradient>
+            
+            <!-- Animated gradient that shifts based on score completion -->
+            <linearGradient id="dynamicScoreGradient" x1="0%" y1="0%" x2="100%" y2="100%" gradientTransform="rotate({score * 3.6})">
+              <stop offset="0%" style="stop-color:#dc2626;stop-opacity:1" />
+              <stop offset="20%" style="stop-color:#ff6900;stop-opacity:1" />
+              <stop offset="40%" style="stop-color:#ffe020;stop-opacity:1" />
+              <stop offset="60%" style="stop-color:#16a34a;stop-opacity:1" />
+              <stop offset="80%" style="stop-color:#16a34a;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          
           <!-- Background circle -->
           <circle
             cx="50"
@@ -44,12 +78,12 @@
             stroke-width="8"
             fill="none"
           />
-          <!-- Progress circle -->
+          <!-- Progress circle with beautiful gradient -->
           <circle
             cx="50"
             cy="50"
             r="42"
-            stroke={getScoreColorHex100(score, 100)}
+            stroke="url(#dynamicScoreGradient)"
             stroke-width="8"
             fill="none"
             stroke-linecap="round"
@@ -84,12 +118,11 @@
         <div>
           <div class="flex justify-between mb-2">
             <span class="text-base font-medium">{category.label}</span>
-            <!-- <span class="text-sm {getTextColor(categoryScore, category.max)}">{categoryScore}</span> -->
           </div>
-          <div class="w-full bg-gray-200 rounded-full h-2.5">
+          <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
             <div 
-              class="h-2.5 rounded-full {getScoreBarClass100(categoryScore, category.max)}"
-              style="width: {percentage}%"
+              class="h-2.5 rounded-full {getGradientClass(percentage)} transition-all duration-500 ease-out"
+              style="width: {percentage}%; max-width: 100%;"
             ></div>
           </div>
         </div>

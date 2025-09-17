@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
+  import { goto } from '$app/navigation';
   import ScoreVisualizer from '$lib/components/ScoreVisualizer.svelte';
   import Logo from '$lib/components/Logo.svelte';
   import { getScoreColorHex100 as utilGetScoreColorHex100, getTextColorClass100 as utilGetTextColorClass100 } from '$lib/utils/colors';
@@ -27,15 +28,15 @@
       }
     : null;
 
-  // Default labels and max values matching current scoring system
+  // Default labels and max values matching actual backend scoring system
   const DEFAULT_CATEGORY_LABELS = [
-    { key: 'structuredData', label: 'Structured Data', max: 70 },
-    { key: 'compensation', label: 'Compensation', max: 15 },
-    { key: 'clarity', label: 'Clarity', max: 5 },
-    { key: 'promptAlignment', label: 'Prompt Alignment', max: 3 },
-    { key: 'keywordTargeting', label: 'Keyword Targeting', max: 3 },
-    { key: 'recency', label: 'Recency', max: 2 },
-    { key: 'pageContext', label: 'Page Context', max: 2 }
+    { key: 'structuredData', label: 'Structured Data', max: 15 },
+    { key: 'compensation', label: 'Compensation', max: 10 },
+    { key: 'clarity', label: 'Clarity', max: 20 },
+    { key: 'promptAlignment', label: 'Prompt Alignment', max: 20 },
+    { key: 'keywordTargeting', label: 'Keyword Targeting', max: 15 },
+    { key: 'recency', label: 'Recency', max: 10 },
+    { key: 'pageContext', label: 'Page Context', max: 10 }
   ];
 
   // Choose effective labels
@@ -111,8 +112,20 @@
 </script>
 
 <div class="results-page pb-32 bg-[#f8f8f8]/0 print:bg-white print:pb-0">
+  <!-- Wide container for navigation (screen only) -->
+  <div class="max-w-6xl mx-auto px-4 print:hidden">
+    <div class="py-6 pt-24">
+      <button
+        class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-black text-white shadow-sm hover:bg-gray-800 h-10 gap-1.5 px-4"
+        on:click={() => goto('/dashboard')}
+      >
+        ← Back to Dashboard
+      </button>
+    </div>
+  </div>
+
+  <!-- Main content container -->
   <div id="print-root" class="max-w-2xl mx-auto pb-8 px-4 print:mx-auto print:bg-white print:shadow-none print:px-0 print:pb-0" class:print-a4={printPageSize === 'a4'} class:print-letter={printPageSize === 'letter'}>
-    
     <!-- Screen Layout -->
     <div class="print:hidden" id="screen-content">
       {#if loading}
@@ -153,6 +166,10 @@
                   <p class="font-normal text-xs">Job Title: {processedResults.job_title}</p>
                   <!--job uuid -->
                   <p class="font-normal text-xs">JobPostScore ID: {processedResults.id}</p>
+                   <!-- job url - only show if exists -->
+                {#if processedResults.job_url}
+                <a href={processedResults.job_url} class="font-normal text-xs text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Job URL: {processedResults.job_url}</a>
+              {/if}
                 </div>
               {/if}
               {#each effectiveCategoryLabels as cat}
@@ -292,6 +309,10 @@
                 <p class="font-normal text-xs">Job Title: {processedResults.job_title}</p>
                 <!--job uuid -->
                 <p class="font-normal text-xs">JobPostScore ID: {processedResults.id}</p>
+                <!-- job url - only show if exists -->
+                {#if processedResults.job_url}
+                  <a href={processedResults.job_url} class="font-normal text-xs text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Job URL: {processedResults.job_url}</a>
+                {/if}
               </div>
             {/if}
 

@@ -609,13 +609,7 @@
 
                 <Table.Body class="text-xs">
                   {#each reports as report}
-                    <Table.Row 
-                      class="hover:bg-gray-50 cursor-pointer"
-                      role="button"
-                      tabindex="0"
-                      on:click={() => viewReport(report.id)}
-                      on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); viewReport(report.id); } }}
-                    >
+                    <Table.Row class="hover:bg-gray-50">
                       <Table.Cell class="p-4">
                         <Checkbox.Root 
                           checked={selectedReports.includes(report.id)}
@@ -623,28 +617,38 @@
                         />
                       </Table.Cell>
                       <Table.Cell class="font-normal text-[10px] w-auto">
-                        <a href={`/results?report=${report.id}`} class="block py-3 -my-3 hover:underline">
+                        <a href={`/results?report=${report.id}`} class="block py-3 -my-3 hover:underline cursor-pointer">
                           {getTitle(report)}
                         </a>
                       </Table.Cell>
                       <Table.Cell class="text-[10px] w-28 whitespace-nowrap">
-                        <a href={`/results?report=${report.id}`} class="block py-3 -my-3 hover:underline">
+                        <a href={`/results?report=${report.id}`} class="block py-3 -my-3 hover:underline cursor-pointer">
                           {getDate(report)}
                         </a>
                       </Table.Cell>
                       <Table.Cell class="text-center w-20">
-                        <a href={`/results?report=${report.id}`} class="inline-block">
+                        <a href={`/results?report=${report.id}`} class="inline-block cursor-pointer">
                         <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] 
-                          {getScore(report) >= 90 ? 'bg-black text-white' : 
-                          getScore(report) >= 70 ? 'bg-black text-white' : 
-                          'bg-black text-white'}"
+                          {getScore(report) >= 85 ? 'bg-green-600 text-white' : 
+                          getScore(report) >= 60 ? 'bg-yellow-500 text-black' : 
+                          getScore(report) >= 40 ? 'bg-orange-500 text-white' :
+                          'bg-red-600 text-white'}"
                         >
                           {getScore(report)}
                         </div>
                         </a>
                       </Table.Cell>
                       <Table.Cell class="text-right w-10">
-                        <div class="relative" data-row-action on:click|stopPropagation on:mousedown|stopPropagation on:keydown|stopPropagation>
+                        <div 
+                          class="relative" 
+                          role="button" 
+                          tabindex="0"
+                          aria-label="Row actions menu"
+                          data-row-action 
+                          on:click|stopPropagation 
+                          on:mousedown|stopPropagation 
+                          on:keydown|stopPropagation
+                        >
                           <button
                             class="h-8 w-8 p-0 inline-flex items-center justify-center rounded-md border border-input bg-background text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
                             data-dropdown-trigger={report.id}
