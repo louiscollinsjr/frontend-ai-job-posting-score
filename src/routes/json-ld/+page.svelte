@@ -107,7 +107,7 @@
           <p><strong>2.</strong> Add it to your website's HTML head section inside a script tag:</p>
           <div class="bg-gray-100 rounded p-3 mt-2 font-mono text-xs">
             &lt;script type="application/ld+json"&gt;<br>
-            {/* Your JSON-LD data here */}<br>
+            <!-- Your JSON-LD data here --><br>
             &lt;/script&gt;
           </div>
           <p><strong>3.</strong> This will help search engines better understand your job posting</p>
@@ -122,4 +122,3 @@
     </Button.Root>
   </div>
 </div>
-</svelte:head>
