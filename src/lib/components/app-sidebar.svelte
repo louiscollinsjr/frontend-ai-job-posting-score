@@ -41,11 +41,11 @@
     //   url: "#",
     //   disabled: false
     // },
-    {
-      title: "Pricing",
-      url: "/pricing",
-      disabled: false
-    },
+    // {
+    //   title: "Pricing",
+    //   url: "/pricing",
+    //   disabled: false
+    // },
     // {
     //   title: "For Enterprise",
     //   url: "/enterprise",
