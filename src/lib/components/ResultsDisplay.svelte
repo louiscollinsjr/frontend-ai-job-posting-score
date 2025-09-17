@@ -3,6 +3,7 @@
   import { goto } from '$app/navigation';
   import ScoreVisualizer from '$lib/components/ScoreVisualizer.svelte';
   import Logo from '$lib/components/Logo.svelte';
+  import SaveReportDialog from '$lib/components/SaveReportDialog.svelte';
   import { getScoreColorHex100 as utilGetScoreColorHex100, getTextColorClass100 as utilGetTextColorClass100 } from '$lib/utils/colors';
   // Safe defaults to avoid runtime ReferenceErrors when props not provided by parent
   export let printPageSize = 'a4'; // 'a4' | 'letter'
@@ -15,6 +16,18 @@
   const dispatch = createEventDispatcher();
   export let downloadReport = () => {};
   export let downloadJobData = () => {};
+  
+  // SaveReportDialog state
+  let showSaveDialog = false;
+  
+  // Handle save report dialog submission
+  function handleSaveReportSubmit(event) {
+    const { email, report } = event.detail;
+    console.log('Save report submitted:', { email, report });
+    // You can dispatch this to parent component for handling
+    dispatch('save-report', { email, report });
+    showSaveDialog = false;
+  }
 
   // Map incoming results to the expected internal structure
   let processedResults = null;
@@ -113,16 +126,18 @@
 
 <div class="results-page pb-32 bg-[#f8f8f8]/0 print:bg-white print:pb-0">
   <!-- Wide container for navigation (screen only) -->
-  <div class="max-w-6xl mx-auto px-4 print:hidden">
-    <div class="py-6 pt-24">
-      <button
-        class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-black text-white shadow-sm hover:bg-gray-800 h-10 gap-1.5 px-4"
-        on:click={() => goto('/dashboard')}
-      >
-        ← Back to Dashboard
-      </button>
+  {#if isLoggedIn}
+    <div class="max-w-6xl mx-auto px-4 print:hidden">
+      <div class="py-6 pt-24">
+        <button
+          class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-black text-white shadow-sm hover:bg-gray-800 h-10 gap-1.5 px-4"
+          on:click={() => goto('/dashboard')}
+        >
+          ← Back to Dashboard
+        </button>
+      </div>
     </div>
-  </div>
+  {/if}
 
   <!-- Main content container -->
   <div id="print-root" class="max-w-2xl mx-auto pb-8 px-4 print:mx-auto print:bg-white print:shadow-none print:px-0 print:pb-0" class:print-a4={printPageSize === 'a4'} class:print-letter={printPageSize === 'letter'}>
@@ -243,40 +258,53 @@
           </div>
         {:else}
           <!-- Always show the score prominently with progress circle -->
-          <div class="text-center mb-8 avoid-break print:mb-4">
-            <h1
-              class="text-3xl mb-2 whitespace-nowrap flex items-center justify-center gap-2 leading-none"
-            >
+          <div class="text-center sm:mt-32 mb-8 avoid-break print:mb-4">
+            <h1 class="text-3xl mb-2 whitespace-nowrap flex items-center justify-center gap-2 leading-none">
               <Logo variant="black" alt="JobPostScore" imgClass="h-7 sm:h-10 w-auto align-middle" />
               <span class="align-middle">Analysis</span>
             </h1>
-            <p class="text-center text-gray-600 mb-12 text-xs">
-              Here's how your job posting performed across key metrics
-            </p>
+            <p class="text-center text-gray-600 mb-12 text-sm">Here's how your job posting performed across key metrics</p>
+            
             <div class="relative flex justify-center">
-              <div class="relative w-64 h-64 print:w-48 print:h-48">
+              <div class="relative w-48 h-48 print:w-48 print:h-48">
                 <!-- SVG Circle Progress -->
-                <svg
-                  class={`w-full h-full ${getScoreColor100(
-                    processedResults?.overallScore || 0,
-                    100
-                  )}`}
-                  viewBox="0 0 100 100"
-                >
+                <svg class="w-full h-full" viewBox="0 0 100 100">
+                  <defs>
+                    <!-- Circular gradient that smoothly transitions and returns to starting color -->
+                    <linearGradient id="circularScoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style="stop-color:#dc2626;stop-opacity:1" />
+                      <stop offset="25%" style="stop-color:#ff6900;stop-opacity:1" />
+                      <stop offset="50%" style="stop-color:#ffe020;stop-opacity:1" />
+                      <stop offset="75%" style="stop-color:#16a34a;stop-opacity:1" />
+                      <stop offset="90%" style="stop-color:#16a34a;stop-opacity:1" />
+                      <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                    </linearGradient>
+                    
+                    <!-- Animated gradient that shifts based on score completion -->
+                    <linearGradient id="dynamicScoreGradient" x1="0%" y1="0%" x2="100%" y2="100%" gradientTransform={`rotate(${(processedResults?.overallScore || 0) * 3.6})`}>
+                      <stop offset="0%" style="stop-color:#dc2626;stop-opacity:1" />
+                      <stop offset="20%" style="stop-color:#ff6900;stop-opacity:1" />
+                      <stop offset="40%" style="stop-color:#ffe020;stop-opacity:1" />
+                      <stop offset="60%" style="stop-color:#16a34a;stop-opacity:1" />
+                      <stop offset="80%" style="stop-color:#16a34a;stop-opacity:1" />
+                      <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                    </linearGradient>
+                  </defs>
+                  
                   <!-- Background circle -->
                   <circle cx="50" cy="50" r="42" stroke="#e5e7eb" stroke-width="8" fill="none" />
-                  <!-- Progress circle -->
+                  
+                  <!-- Progress circle with beautiful gradient -->
                   <circle
                     cx="50"
                     cy="50"
                     r="42"
-                    stroke={getScoreColorHex100(processedResults?.overallScore || 0, 100)}
+                    stroke="url(#dynamicScoreGradient)"
                     stroke-width="8"
                     fill="none"
                     stroke-linecap="round"
                     stroke-dasharray={2 * Math.PI * 42}
-                    stroke-dashoffset={2 * Math.PI * 42 -
-                      ((processedResults?.overallScore || 0) / 100) * 2 * Math.PI * 42}
+                    stroke-dashoffset={2 * Math.PI * 42 - ((processedResults?.overallScore || 0) / 100) * 2 * Math.PI * 42}
                     transform="rotate(-90 50 50)"
                     class="transition-all duration-1000 ease-in-out"
                   />
@@ -284,18 +312,19 @@
 
                 <!-- Score value -->
                 <div class="absolute inset-0 flex flex-col items-center justify-center">
-                  <span class="text-3xl sm:text-7xl font-bold text-black print:text-5xl"
-                    >{Math.round(processedResults?.overallScore || 0)}</span
-                  >
+                  <span class="text-5xl font-bold text-black">{Math.round(processedResults?.overallScore || 0)}</span>
                   <span class="text-xs text-gray-500">(0-100)</span>
                 </div>
               </div>
             </div>
+            
+            <h3 class="text-lg font-bold mt-12 mb-2 text-center">JobPostScore</h3>
+            <p class="text-sm text-gray-600 text-center mb-20">Job Post Visibility & Quality Index</p>
           </div>
 
           <div> <!-- Wrapper for guest content -->
             <h3
-              class="text-[23px] font-bold text-gray-800 mb-2 flex items-center justify-center gap-1 mt-16"
+              class="text-[23px] font-bold text-gray-800 mb-2 flex items-center justify-left gap-1 mt-16"
             >
               Your <Logo
                 variant="black"
@@ -316,8 +345,16 @@
               </div>
             {/if}
 
-            <div class="bg-gray-50 border border-black border-b-2 border-r-2 rounded-lg p-8 py-20 mt-24 mb-16 text-center avoid-break print:hidden">
-              <!-- Magic link gate content -->
+            <div class="bg-gray-50 border border-black border-b-2 border-r-2 rounded-lg p-8 py-12 mt-24 mb-16 text-center avoid-break print:hidden">
+              <h3 class="text-2xl font-bold text-gray-800 mb-4">Want to improve your score?</h3>
+              <p class="text-gray-600 mb-6">Create a free account to unlock detailed insights, get improvement suggestions, and save your progress.</p>
+              <button 
+                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 h-10 px-6"
+                on:click={() => showSaveDialog = true}
+              >
+                Save & Improve This Report
+              </button>
+              <p class="text-xs text-gray-500 mt-3">Free account • No credit card required</p>
             </div>
           </div> <!-- Close guest wrapper div -->
         {/if}
@@ -327,6 +364,8 @@
     <!-- Print Layout -->
     <div class="hidden print:block print:text-sm print:leading-tight" id="print-content">
       {#if processedResults}
+        {#if isLoggedIn}
+          <!-- Full Executive Report for Authenticated Users -->
         {@const overallScore = Math.round(processedResults?.overallScore || 0)}
         {@const scoreColor = overallScore >= 75 ? 'text-green-600' : overallScore >= 50 ? 'text-yellow-600' : 'text-red-600'}
         {@const scoreBg = overallScore >= 75 ? 'bg-green-50' : overallScore >= 50 ? 'bg-yellow-50' : 'bg-red-50'}
@@ -423,6 +462,33 @@
           </div>
         </div>
       {/if}
+      {:else}
+        <!-- Simple Score Print for Guest Users -->
+        <div class="print:text-center print:py-12">
+          <div class="print:flex print:items-center print:justify-center print:gap-2 print:mb-6">
+            <Logo variant="black" alt="JobPostScore" imgClass="print:h-8" />
+            <h1 class="print:text-2xl print:font-bold print:text-gray-800">Analysis</h1>
+          </div>
+          
+          {#if processedResults.job_title}
+            <p class="print:text-sm print:text-gray-600 print:mb-8">{processedResults.job_title}</p>
+          {/if}
+          
+          <div class="print:inline-block print:px-8 print:py-6 print:bg-gray-100 print:rounded-lg">
+            <div class="print:text-6xl print:font-bold print:text-black print:mb-2">{Math.round(processedResults?.overallScore || 0)}</div>
+            <div class="print:text-sm print:text-gray-600">Overall Score (0-100)</div>
+          </div>
+          
+          <div class="print:mt-8">
+            <h3 class="print:text-lg print:font-bold print:mb-2">JobPostScore</h3>
+            <p class="print:text-sm print:text-gray-600">Job Post Visibility & Quality Index</p>
+          </div>
+          
+          <div class="print:mt-8 print:pt-4 print:border-t print:text-xs print:text-gray-500">
+            <p>Create a free account at jobpostingscore.com for detailed insights and improvement suggestions</p>
+          </div>
+        </div>
+      {/if}
     </div> <!-- End print-content -->
     
   </div> <!-- End #print-root -->
@@ -431,6 +497,13 @@
 {#if !loading && !processedResults}
   <!-- Fallback content -->
 {/if}
+
+<!-- Save Report Dialog -->
+<SaveReportDialog 
+  bind:open={showSaveDialog}
+  report={processedResults}
+  on:submit={handleSaveReportSubmit}
+/>
 
 <style>
   /* Component-scoped utilities for printing */

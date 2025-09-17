@@ -28,19 +28,27 @@ function handleMagicLinkSubmit(event: CustomEvent<{ email: string }>) {
 <Dialog.Root bind:open>
   <Dialog.Trigger />
   <Dialog.Content class="max-w-md w-full">
-    <Dialog.Title class="text-lg font-bold mb-2">Save your report</Dialog.Title>
-    <Dialog.Description class="mb-4 text-sm text-gray-600">
-      Want to save this report to view later? <br />
-      <span class="text-gray-900">We'll send you a link to access this anytime.</span>
-    </Dialog.Description>
+    <Dialog.Title class="text-2xl font-bold my-4">
+      <div class="flex flex-wrap items-center gap-1">
+        <span>Save, return, and improve your</span>
+        <img src="/jobpostscore_logo.svg" alt="JobPostScore" class="h-7 w-auto -mt-0.5 mx-0.5" />
+        <span>for free.</span>
+      </div>
+    </Dialog.Title>
+    <!-- <Dialog.Description class="mb-4 text-xs text-gray-600]">
+      <div class="flex items-center gap-2 mb-2">
+        
+       Create a free account and unlock the full details of your <span><img src="/jobpostscore_logo.svg" alt="JobPostScore" class="h-4 w-auto" /></span>
+      </div>
+    </Dialog.Description> -->
     
     <!-- Use the MagicLinkLogin component for consistent login experience -->
     <div class="p-2">
       <MagicLinkLogin on:success={handleMagicLinkSubmit} compact={true} />
     </div>
     
-    <div class="text-xs text-gray-500 mt-4">
-      Already have an account? Check your email for the login link.
+    <div class="text-xs text-gray-500 mt-4 text-center">
+      Having trouble logging in? <a href="mailto:support@jobpostingscore.com">Contact support</a>
     </div>
   </Dialog.Content>
 </Dialog.Root>
