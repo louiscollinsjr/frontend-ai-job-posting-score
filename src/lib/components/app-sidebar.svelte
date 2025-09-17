@@ -73,7 +73,7 @@
     </div>
     <!-- Navigation Menu -->
     <Sidebar.Group>
-      <!-- <Sidebar.GroupLabel class="text-2xl text-black pt-10">Reach<b class="text-black">Score</b> <sup class=" hidden text-xs align-super">™</sup></Sidebar.GroupLabel>
+      <!-- <Sidebar.GroupLabel class="text-2xl text-black pt-10">JobPost<b class="text-black">Score</b> <sup class=" hidden text-xs align-super">™</sup></Sidebar.GroupLabel>
        -->
       <Sidebar.GroupContent class="pt-12 pl-6">
         <Sidebar.Menu>

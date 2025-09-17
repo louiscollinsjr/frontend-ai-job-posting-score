@@ -163,7 +163,7 @@
     <!-- Logo at the top -->
     <div class="text-center mb-10">
       <a href="/" class="inline-block">
-        <span class="text-3xl font-bold text-gray-900">Reach<b>Score</b> <sup class=" hidden text-xs align-super">™</sup></span>
+        <span class="text-3xl font-bold text-gray-900">JobPost<b>Score</b> <sup class=" hidden text-xs align-super">™</sup></span>
       </a>
       <p class="mt-2 text-sm text-gray-600">AI-powered job posting audit tool</p>
     </div>
