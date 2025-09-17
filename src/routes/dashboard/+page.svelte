@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
-  import { goto } from '$app/navigation';  
+  import { goto } from '$app/navigation';
+  import { page } from '$app/stores';  
   import { supabase } from '$lib/supabaseClient';
   import { toast } from 'svelte-sonner';
   import * as Button from '$lib/components/ui/button';
@@ -34,6 +35,16 @@
   let authSubscription = null;
 
   const API_BASE_URL = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
+
+  // Reactive statement to refetch data when page URL changes
+  $: if ($page.url.searchParams.get('page') && authChecked && isAuthenticated) {
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        await fetchReports(session.access_token);
+      }
+    })();
+  }
 
   onMount(async () => {
     document.addEventListener('click', handleClickOutside);
@@ -134,7 +145,9 @@
   async function fetchReports(accessToken) {
     try {
       loading = true;
-      const pageNum = Number(data.page) || 1;
+      // Get current page from URL parameters, fallback to data.page
+      const currentPageParam = $page.url.searchParams.get('page');
+      const pageNum = Number(currentPageParam || data.page) || 1;
       const pageSize = Number(data.limit) || 20;
       const apiUrl = `${API_BASE_URL}/api/v1/reports?page=${pageNum}&limit=${pageSize}`;
       
@@ -153,7 +166,8 @@
         if (response.status === 404) {
           console.warn('Reports API not found (404). Falling back to Supabase.');
           // Fallback to Supabase direct query
-          const pageNum = Number(data.page) || 1;
+          // const currentPageParam = $page.url.searchParams.get('page');
+          const pageNum = Number(currentPageParam || data.page) || 1;
           const pageSize = Number(data.limit) || 20;
           const from = (pageNum - 1) * pageSize;
           const to = from + pageSize - 1;
@@ -205,13 +219,28 @@
       let items = [];
       let totalReports = 0;
       let totalPages = 1;
-      let currentPage = Number(data.page) || 1;
+      // const currentPageParam = $page.url.searchParams.get('page');
+      let currentPage = Number(currentPageParam || data.page) || 1;
 
       if (Array.isArray(responseData)) {
-        // Array-only response
-        items = responseData;
-        totalReports = responseData.length;
-        totalPages = Math.max(1, Math.ceil((responseData.length || 0) / (Number(data.limit) || 20)));
+        // Array-only response - apply client-side pagination if API doesn't handle it
+        const pageSize = Number(data.limit) || 20;
+        const pageNum = Number(currentPageParam || data.page) || 1;
+        const startIndex = (pageNum - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        
+        // If API returned all data, paginate client-side
+        if (responseData.length > pageSize) {
+          items = responseData.slice(startIndex, endIndex);
+          totalReports = responseData.length;
+          totalPages = Math.max(1, Math.ceil(responseData.length / pageSize));
+        } else {
+          // API already paginated
+          items = responseData;
+          // We can't know total from a single page, so estimate or use response length
+          totalReports = responseData.length;
+          totalPages = Math.max(1, Math.ceil(responseData.length / pageSize));
+        }
       } else if (responseData && typeof responseData === 'object') {
         // Common keys seen across versions
         items = responseData.reports ?? responseData.data ?? responseData.items ?? responseData.results ?? [];
@@ -230,7 +259,8 @@
       // If API returns OK but no items (shape mismatch or server-side filter), gracefully fall back to Supabase
       if (reports.length === 0) {
         try {
-          const pageNum = Number(data.page) || 1;
+        //  const currentPageParam = $page.url.searchParams.get('page');
+          const pageNum = Number(currentPageParam || data.page) || 1;
           const pageSize = Number(data.limit) || 20;
           const from = (pageNum - 1) * pageSize;
           const to = from + pageSize - 1;
@@ -526,9 +556,9 @@
         <h1 class="text-2xl font-bold text-gray-900">JobPostScore Dashboard</h1>
         <p class="text-sm text-gray-500">Welcome back 👋, {userEmail}</p>
       </div>
-      <Button.Root on:click={() => goto('/')} variant="default" size="sm" class="bg-black hover:bg-gray-800 text-white">
+      <a href="/" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-black hover:bg-gray-800 rounded-md transition-colors border border-transparent">
         New JobPostScore
-      </Button.Root>
+      </a>
     </div>
     
     <Separator.Root class="my-12" />
@@ -547,7 +577,7 @@
             <h2 class="text-base font-medium text-gray-700">Your Reports</h2>
             {#if reports.length > 0}
               <p class="text-sm text-gray-500 mt-1">
-                Showing {reports.length} of {pagination.totalReports} report{pagination.totalReports === 1 ? '' : 's'}
+                Showing {Math.min(((pagination.currentPage - 1) * (Number(data.limit) || 20)) + 1, pagination.totalReports)}-{Math.min(pagination.currentPage * (Number(data.limit) || 20), pagination.totalReports)} of {pagination.totalReports} report{pagination.totalReports === 1 ? '' : 's'}
               </p>
             {/if}
           </div>
@@ -585,7 +615,7 @@
           {:else if reports.length === 0}
             <div class="p-12 text-center min-h-[300px] flex flex-col justify-center items-center">
               <p class="text-gray-500 mb-4">No reports found. Start by getting your first JobPostScore.</p>
-              <Button.Root on:click={() => goto('/')} variant="default" size="sm" class="bg-black hover:bg-gray-800 text-white">
+              <Button.Root on:click={() => { window.location.href = '/'; }} variant="default" size="sm" class="bg-black hover:bg-gray-800 text-white">
                 Get JobPostScore
               </Button.Root>
             </div>
