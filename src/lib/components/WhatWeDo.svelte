@@ -46,9 +46,9 @@
       <!-- Right column with image flush to edge -->
       <div class="w-full hidden xl:block xl:w-[45%] relative">
         <FadeImage 
-          src="/jobPostScoreBrowser.png"
+          src="/jobPostScoreBrowser-3.png"
           alt="JobPostScore Group" 
-          fadeDirection="right"
+          fadeDirection="bottom"
           fadeIntensity="none"
           className="absolute top-0 right-0 object-contain"
         />

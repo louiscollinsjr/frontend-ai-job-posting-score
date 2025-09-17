@@ -119,7 +119,7 @@
   	<!-- <div class="absolute inset-0 bg-[url('/bkg2.png')] bg-no-repeat bg-contain sm:bg-cover bg-center blur-lg opacity-90 z-0"></div>
   	<div class="absolute inset-0 bg-gradient-to-b from-[#f8f8f8]/0 via-[#f8f8f8]/0 to-[#f8f8f8]/0 2xl:from-[#f8f8f8]/0 2xl:via-[#f8f8f8]/0 2xl:to-[#f8f8f8]/0 z-0"></div>
   	 -->
-	<div class="relative w-full min-h-[75vh] sm:min-h-[85vh] pb-8 sm:pb-24">
+	<div class="relative w-full min-h-[75vh] sm:min-h-[85vh] pb-8 sm:pb-24 bg-amber-200">
 		
 		<!-- Hero Section with Audit Form -->
 		<section class="mb-4 sm:mb-8 bg-[radial-gradient(ellipse_at_center,_#f8f8f8_0%,_transparent_70%)] p-2 min-h-[70vh] sm:min-h-[85vh] relative">
