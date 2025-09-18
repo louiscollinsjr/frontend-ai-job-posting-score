@@ -6,6 +6,7 @@
     import Card_KnowExactlyWhereYouStand from '$lib/components/Card_KnowExactlyWhereYouStand.svelte';
     import Card_Blank from '$lib/components/Card_Blank.svelte';
     import Card_NoGuessWork from '$lib/components/Card_NoGuessWork.svelte';
+    import Card_BeFound from '$lib/components/Card_BeFound.svelte';
   
     const features = [
       {
@@ -27,7 +28,7 @@
         images: ['https://picsum.photos/id/30/600/400']
       },
       {
-        component: Card_Blank,
+        component: Card_BeFound,
         title: 'Be found where candidates search.',
         text: `Your job is optimized for AI-driven platforms like ChatGPT, Gemini, and other AI job-matching tools, ensuring more qualified candidates see it.`,
         images: ['https://picsum.photos/id/40/600/400']
