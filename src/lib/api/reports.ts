@@ -15,14 +15,14 @@ export class ReportsAPI {
       .from('reports')
       .select('*')
       .eq('id', reportId)
-      .single();
-
     if (reportError || !report) {
       throw new Error(`Report not found: ${reportError?.message || 'Unknown error'}`);
     }
 
-    // Load optimization data (handle gracefully if table doesn't exist)
+    // Load optimization data (handle gracefully)
     let latestOptimization = null;
+    console.log('[ReportsAPI] Querying optimizations for report_id:', reportId);
+    
     try {
       const { data, error } = await supabase
         .from('optimizations')
@@ -31,31 +31,34 @@ export class ReportsAPI {
         .order('version_number', { ascending: false })
         .limit(1);
 
+      console.log('[ReportsAPI] Optimization query result - data:', data, 'error:', error);
+
       if (!error && data && data.length > 0) {
         latestOptimization = data[0];
-        if (import.meta.env.DEV) {
-          console.log('[ReportsAPI] Found optimization data:', latestOptimization);
-        }
-      } else if (import.meta.env.DEV && error) {
-        console.warn('Could not query optimizations table:', error.message);
+        console.log('[ReportsAPI] Found optimization data:', latestOptimization);
+      } else if (error) {
+        console.warn('[ReportsAPI] Optimization query error:', error);
+      } else {
+        console.log('[ReportsAPI] No optimization data found for report:', reportId);
       }
     } catch (err: unknown) {
-      if (import.meta.env.DEV) {
-        const msg = err instanceof Error ? err.message : String(err);
-        console.warn('optimizations table may not exist or have RLS issues:', msg);
-      }
+      const msg = err instanceof Error ? err.message : String(err);
+      console.warn('[ReportsAPI] Exception querying optimizations:', msg);
     }
 
     // Enhance report with optimization data
     const enhancedReport: Report = {
       ...report,
-      hasRewrite: !!(latestOptimization || report.improved_text),
+      hasRewrite: !!latestOptimization,  // Only true if optimization exists in database
       latestImprovedText: latestOptimization?.optimized_text || report.improved_text,
-      rewriteVersion: latestOptimization?.version_number || (report.improved_text ? 1 : 0),
+      rewriteVersion: latestOptimization?.version_number || 0,  // 0 if no optimizations
       lastRewriteDate: latestOptimization?.created_at || report.savedat,
       optimizationData: latestOptimization || null
     };
 
+    console.log('[ReportsAPI] Final hasRewrite value:', enhancedReport.hasRewrite);
+    console.log('[ReportsAPI] Final rewriteVersion:', enhancedReport.rewriteVersion);
+    
     if (import.meta.env.DEV) {
       console.log('Successfully loaded report:', enhancedReport.id);
       if (enhancedReport.hasRewrite) {
@@ -144,12 +147,12 @@ export class GuestReportsAPI {
       console.log('[GuestReportsAPI] Saved guest report successfully:', guestReport.id);
       return true;
     } catch (e) {
-      console.error('Failed to save guest report:', e);
+      console.error('[GuestReportsAPI] Failed to save guest report:', e);
       return false;
     }
   }
 
-  static load(): any | null {
+  static load(): any {
     if (!browser) return null;
     
     try {
@@ -191,9 +194,17 @@ export class GuestReportsAPI {
   }
 
   static hasReport(): boolean {
+    if (!browser) return false;
+    
     try {
-      const report = this.load();
-      return !!report;
+      const raw = localStorage.getItem(this.STORAGE_KEY);
+      if (raw) {
+        const guestReport: GuestReport = JSON.parse(raw);
+        // Check if report is expired (24 hours for current report)
+        const isExpired = Date.now() - guestReport.timestamp > 24 * 60 * 60 * 1000;
+        return !isExpired;
+      }
+      return false;
     } catch (e) {
       return false;
     }

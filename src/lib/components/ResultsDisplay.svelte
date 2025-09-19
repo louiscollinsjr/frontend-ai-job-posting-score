@@ -41,6 +41,15 @@
       }
     : null;
 
+  // Debug logging for hasRewrite issue (temporary)
+  $: if (results && import.meta.env.DEV) {
+    console.log('[ResultsDisplay] Report ID:', results?.id);
+    console.log('[ResultsDisplay] hasRewrite:', results?.hasRewrite);
+    console.log('[ResultsDisplay] Has improved_text?', !!results?.improved_text);
+    console.log('[ResultsDisplay] Has optimizationData?', !!results?.optimizationData);
+    console.log('[ResultsDisplay] rewriteVersion:', results?.rewriteVersion);
+  }
+
   // Default labels and max values matching actual backend scoring system
   const DEFAULT_CATEGORY_LABELS = [
     { key: 'structuredData', label: 'Structured Data', max: 15 },
@@ -271,23 +280,30 @@
                 <svg class="w-full h-full" viewBox="0 0 100 100">
                   <defs>
                     <!-- Circular gradient that smoothly transitions and returns to starting color -->
-                    <linearGradient id="circularScoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <!-- <linearGradient id="circularScoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                       <stop offset="0%" style="stop-color:#dc2626;stop-opacity:1" />
                       <stop offset="25%" style="stop-color:#ff6900;stop-opacity:1" />
                       <stop offset="50%" style="stop-color:#ffe020;stop-opacity:1" />
                       <stop offset="75%" style="stop-color:#16a34a;stop-opacity:1" />
                       <stop offset="90%" style="stop-color:#16a34a;stop-opacity:1" />
                       <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
-                    </linearGradient>
+                    </linearGradient> -->
                     
-                    <!-- Animated gradient that shifts based on score completion -->
-                    <linearGradient id="dynamicScoreGradient" x1="0%" y1="0%" x2="100%" y2="100%" gradientTransform={`rotate(${(processedResults?.overallScore || 0) * 3.6})`}>
-                      <stop offset="0%" style="stop-color:#dc2626;stop-opacity:1" />
-                      <stop offset="20%" style="stop-color:#ff6900;stop-opacity:1" />
-                      <stop offset="40%" style="stop-color:#ffe020;stop-opacity:1" />
-                      <stop offset="60%" style="stop-color:#16a34a;stop-opacity:1" />
-                      <stop offset="80%" style="stop-color:#16a34a;stop-opacity:1" />
-                      <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                    <!-- Dynamic gradient that matches category breakdown style (darker to lighter) -->
+                    <linearGradient id="dynamicScoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      {#if (processedResults?.overallScore || 0) >= 85}
+                        <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                        <stop offset="50%" style="stop-color:#16a34a;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#166534;stop-opacity:1" />
+                      {:else if (processedResults?.overallScore || 0) >= 60}
+                        <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+                        <stop offset="50%" style="stop-color:#eab308;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#ca8a04;stop-opacity:1" />
+                      {:else}
+                        <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                        <stop offset="50%" style="stop-color:#dc2626;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#991b1b;stop-opacity:1" />
+                      {/if}
                     </linearGradient>
                   </defs>
                   

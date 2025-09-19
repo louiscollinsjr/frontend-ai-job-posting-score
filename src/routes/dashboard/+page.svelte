@@ -20,6 +20,7 @@
   let reports = [];
   let pagination = { currentPage: data.page, totalPages: 1, totalReports: 0 };
   let reportsWithRewrites = [];
+  let reportOptimizations = new Map(); // Map of reportId -> { originalScore, optimizedScore }
   let reportError = null;
   let userEmail = '';
   let isAuthenticated = false;
@@ -42,6 +43,7 @@
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.access_token) {
         await fetchReports(session.access_token);
+        await fetchOptimizationData();
       }
     })();
   }
@@ -62,6 +64,7 @@
             currentUserId = session?.user?.id || currentUserId;
             if (session?.access_token) {
               await fetchReports(session.access_token);
+              await fetchOptimizationData();
               setupRealtime();
             }
           } catch (e) {
@@ -121,6 +124,8 @@
       
       // Fetch reports data
       await fetchReports(session.access_token);
+      // Fetch optimization data for reports
+      await fetchOptimizationData();
       // Realtime setup is already handled above once user ID is known
       // If initial load yields no items (API eventual consistency), retry once shortly after
       try {
@@ -128,7 +133,10 @@
           try {
             if (Array.isArray(reports) && reports.length === 0) {
               const { data: { session: s } } = await supabase.auth.getSession();
-              if (s?.access_token) await fetchReports(s.access_token);
+              if (s?.access_token) {
+                await fetchReports(s.access_token);
+                await fetchOptimizationData();
+              }
             }
           } catch (retryErr) {
             console.warn('Delayed re-fetch failed:', retryErr);
@@ -301,12 +309,70 @@
       }
 
       reportError = null;
+      // Fetch optimization data after successfully loading reports
+      if (reports.length > 0) {
+        await fetchOptimizationData();
+      }
     } catch (error) {
       console.error('Error fetching reports:', error);
       // Do not hard fail the page; show a friendly error
       reportError = 'Failed to load reports. Please try again.';
     } finally {
       loading = false;
+    }
+  }
+
+  // Fetch optimization data for all reports to show score ranges
+  async function fetchOptimizationData() {
+    if (!reports || reports.length === 0) return;
+
+    try {
+      // Get all report IDs
+      const reportIds = reports.map(report => report.id);
+      
+      // Fetch optimization data for all reports in one query
+      const { data: optimizationData, error } = await supabase
+        .from('optimizations')
+        .select('report_id, original_score, optimized_score')
+        .in('report_id', reportIds)
+        .order('version_number', { ascending: false });
+
+      if (error) {
+        console.warn('Could not fetch optimization data:', error.message);
+        return;
+      }
+
+      // Build a map of report optimizations
+      const optimizationsMap = new Map();
+      if (optimizationData) {
+        // Group by report_id and find min/max scores
+        const groupedOptimizations = optimizationData.reduce((acc, opt) => {
+          const reportId = opt.report_id;
+          if (!acc[reportId]) {
+            acc[reportId] = [];
+          }
+          acc[reportId].push(opt);
+          return acc;
+        }, {});
+
+        // For each report, find lowest and highest scores
+        Object.entries(groupedOptimizations).forEach(([reportId, opts]) => {
+          const scores = opts.flatMap(opt => [opt.original_score, opt.optimized_score]).filter(score => typeof score === 'number');
+          
+          if (scores.length > 0) {
+            optimizationsMap.set(reportId, {
+              lowestScore: Math.min(...scores),
+              highestScore: Math.max(...scores),
+              hasOptimizations: true
+            });
+          }
+        });
+      }
+
+      reportOptimizations = optimizationsMap;
+      console.log('Loaded optimization data for', optimizationsMap.size, 'reports');
+    } catch (error) {
+      console.error('Error fetching optimization data:', error);
     }
   }
 
@@ -658,14 +724,40 @@
                       </Table.Cell>
                       <Table.Cell class="text-center w-20">
                         <a href={`/results?report=${report.id}`} class="inline-block cursor-pointer">
-                        <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] 
-                          {getScore(report) >= 85 ? 'bg-green-600 text-white' : 
-                          getScore(report) >= 60 ? 'bg-yellow-500 text-black' : 
-                          getScore(report) >= 40 ? 'bg-orange-500 text-white' :
-                          'bg-red-600 text-white'}"
-                        >
-                          {getScore(report)}
-                        </div>
+                          {#if reportOptimizations.has(report.id)}
+                            <!-- Show score range for reports with optimizations -->
+                            {@const optimization = reportOptimizations.get(report.id)}
+                            <div class="flex flex-row gap-1">
+                              <!-- Lowest score -->
+                              <div class="inline-flex items-center px-2.5 py-1 rounded-sm text-[9px] 
+                                {optimization.lowestScore >= 85 ? 'bg-green-500 text-white' : 
+                                optimization.lowestScore >= 60 ? 'bg-yellow-300 text-black' : 
+                                optimization.lowestScore >= 40 ? 'bg-red-400 text-white' :
+                                'bg-red-600 text-white'}"
+                              >
+                                {optimization.lowestScore}
+                              </div>
+                              <!-- Highest score -->
+                              <div class="inline-flex items-center px-2.5 py-1 rounded-sm text-[9px] 
+                                {optimization.highestScore >= 85 ? 'bg-green-500 text-white' : 
+                                optimization.highestScore >= 60 ? 'bg-yellow-300 text-black' : 
+                                optimization.highestScore >= 40 ? 'bg-red-400 text-white' :
+                                'bg-red-600 text-white'}"
+                              >
+                                {optimization.highestScore}
+                              </div>
+                            </div>
+                          {:else}
+                            <!-- Show single score for reports without optimizations -->
+                            <div class="inline-flex items-center px-2.5 py-1 rounded-sm text-[10px] 
+                              {getScore(report) >= 85 ? 'bg-green-500 text-white' : 
+                              getScore(report) >= 60 ? 'bg-yellow-300 text-black' : 
+                              getScore(report) >= 40 ? 'bg-red-400 text-white' :
+                              'bg-red-600 text-white'}"
+                            >
+                              {getScore(report)}
+                            </div>
+                          {/if}
                         </a>
                       </Table.Cell>
                       <Table.Cell class="text-right w-10">

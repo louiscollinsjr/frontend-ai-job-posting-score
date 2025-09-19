@@ -17,14 +17,14 @@
     return Math.min(Math.max(percentage, 0), 100); // Clamp between 0 and 100
   }
 
-  // Function to get gradient class based on percentage
+  // Function to get gradient class based on percentage - matches SVG gradient colors
   function getGradientClass(percentage) {
     if (percentage >= 75) {
-      return 'bg-gradient-to-r from-green-800 via-green-500 to-green-500';
+      return 'bg-gradient-to-r from-green-800 via-green-600 to-green-500';
     } else if (percentage >= 50) {
-      return 'bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-300';
+      return 'bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-400';
     } else {
-      return 'bg-gradient-to-r from-red-800 via-red-500 to-red-500';
+      return 'bg-gradient-to-r from-red-800 via-red-500 to-red-400';
     }
   }
 
@@ -48,24 +48,21 @@
         <!-- SVG Circle Progress -->
         <svg class="w-full h-full" viewBox="0 0 100 100">
           <defs>
-            <!-- Circular gradient that smoothly transitions and returns to starting color -->
-            <linearGradient id="circularScoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#dc2626;stop-opacity:1" />
-              <stop offset="25%" style="stop-color:#ff6900;stop-opacity:1" />
-              <stop offset="50%" style="stop-color:#ffe020;stop-opacity:1" />
-              <stop offset="75%" style="stop-color:#16a34a;stop-opacity:1" />
-              <stop offset="90%" style="stop-color:#16a34a;stop-opacity:1" />
-              <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
-            </linearGradient>
-            
-            <!-- Animated gradient that shifts based on score completion -->
-            <linearGradient id="dynamicScoreGradient" x1="0%" y1="0%" x2="100%" y2="100%" gradientTransform="rotate({score * 3.6})">
-              <stop offset="0%" style="stop-color:#dc2626;stop-opacity:1" />
-              <stop offset="20%" style="stop-color:#ff6900;stop-opacity:1" />
-              <stop offset="40%" style="stop-color:#ffe020;stop-opacity:1" />
-              <stop offset="60%" style="stop-color:#16a34a;stop-opacity:1" />
-              <stop offset="80%" style="stop-color:#16a34a;stop-opacity:1" />
-              <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+            <!-- Dynamic gradient that matches category breakdown style (lighter to darker) -->
+            <linearGradient id="dynamicScoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              {#if score >= 85}
+                <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#16a34a;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#166534;stop-opacity:1" />
+              {:else if score >= 60}
+                <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#eab308;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#ca8a04;stop-opacity:1" />
+              {:else}
+                <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#dc2626;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#991b1b;stop-opacity:1" />
+              {/if}
             </linearGradient>
           </defs>
           
