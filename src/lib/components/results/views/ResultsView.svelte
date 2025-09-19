@@ -220,10 +220,10 @@
   />
   
   <!-- Guest Report Toast - Only show for guest users -->
-  {#if !isLoggedIn}
+  <!-- {#if !isLoggedIn}
     <GuestReportToast 
       bind:show={showGuestToast}
       {currentReportId}
     />
-  {/if}
+  {/if} -->
 {/if}

@@ -3,6 +3,7 @@
   import { onMount } from 'svelte';
   import { Badge } from '$lib/components/ui/badge';
   import Logo from '$lib/components/Logo.svelte';
+  import { GuestReportsAPI } from '$lib/api/reports';
 
   export let isVisible = false;
 
@@ -11,26 +12,22 @@
   onMount(() => {
     if (browser) {
       try {
-        // Check localStorage directly without importing problematic modules
-        const historyRaw = localStorage.getItem('jobpostscore_guest_history');
-        const currentRaw = localStorage.getItem('jobpostscore_guest_report');
+        // Use consistent API to check for reports
+        const history = GuestReportsAPI.getHistory();
+        const currentReport = GuestReportsAPI.load();
         
-        if (historyRaw) {
-          const history = JSON.parse(historyRaw);
-          if (history.length > 0) {
-            reportData = history[0]; // Most recent report
-            isVisible = true;
-          }
-        } else if (currentRaw) {
-          const current = JSON.parse(currentRaw);
-          if (current?.data) {
-            reportData = {
-              id: current.data.id,
-              job_title: current.data.job_title,
-              overallScore: current.data.total_score
-            };
-            isVisible = true;
-          }
+        if (currentReport) {
+          // Use current report if available
+          reportData = {
+            id: currentReport.id || 'current',
+            job_title: currentReport.job_title,
+            overallScore: currentReport.overallScore || currentReport.total_score
+          };
+          isVisible = true;
+        } else if (history.length > 0) {
+          // Use most recent from history
+          reportData = history[0];
+          isVisible = true;
         }
       } catch (error) {
         console.error('Error loading guest report data:', error);
@@ -39,8 +36,7 @@
   });
 
   function viewLastReport() {
-    // For guest reports, just go to the results page
-    // The results page will automatically load the cached guest report
+    // Navigate directly to results page
     window.location.href = '/results';
   }
 

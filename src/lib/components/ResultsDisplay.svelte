@@ -318,13 +318,13 @@
               </div>
             </div>
             
-            <h3 class="text-lg font-bold mt-12 mb-2 text-center">JobPostScore</h3>
-            <p class="text-sm text-gray-600 text-center mb-20">Job Post Visibility & Quality Index</p>
+            <!-- <h3 class="text-lg font-bold mt-12 mb-2 text-center">JobPostScore</h3>
+            <p class="text-sm text-gray-600 text-center mb-20">Job Post Visibility & Quality Index</p> -->
           </div>
 
-          <div> <!-- Wrapper for guest content -->
+          <div class="text-center"> <!-- Wrapper for guest content -->
             <h3
-              class="text-[23px] font-bold text-gray-800 mb-2 flex items-center justify-left gap-1 mt-16"
+              class="text-[23px] font-bold text-gray-800 mb-2 flex items-center justify-center gap-1 mt-16"
             >
               Your <Logo
                 variant="black"

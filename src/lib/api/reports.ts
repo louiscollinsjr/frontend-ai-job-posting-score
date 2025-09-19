@@ -199,23 +199,16 @@ export class GuestReportsAPI {
     }
   }
 
-  // Enhanced history management
+  // Enhanced history management - now saves full report data
   private static saveToHistory(guestReport: GuestReport): void {
     try {
-      let history = this.getHistory();
+      let history = this.getFullHistory();
       
       // Remove existing report with same ID
       history = history.filter(h => h.id !== guestReport.id);
       
-      // Add new report to beginning
-      history.unshift({
-        id: guestReport.id,
-        timestamp: guestReport.timestamp,
-        job_title: guestReport.job_title,
-        company_name: guestReport.company_name,
-        overallScore: guestReport.overallScore,
-        shortUrl: guestReport.shortUrl
-      });
+      // Add new report to beginning (save the full guest report with data)
+      history.unshift(guestReport);
       
       // Keep only recent reports
       history = history.slice(0, this.MAX_GUEST_REPORTS);
@@ -226,17 +219,43 @@ export class GuestReportsAPI {
     }
   }
 
-  static getHistory(): GuestReportSummary[] {
+  // Get full history with report data (internal method)
+  private static getFullHistory(): GuestReport[] {
     if (!browser) return [];
     
     try {
       const stored = localStorage.getItem(this.HISTORY_KEY);
-      console.log('[GuestReportsAPI] Loading history from localStorage:', stored);
-      
       if (!stored) return [];
       
-      const history: GuestReportSummary[] = JSON.parse(stored);
-      console.log('[GuestReportsAPI] Parsed history:', history);
+      const parsed = JSON.parse(stored);
+      
+      // Handle backward compatibility - check if we have old format (summaries) or new format (full reports)
+      if (parsed.length === 0) return [];
+      
+      // Check the first item to determine format
+      const firstItem = parsed[0];
+      const isOldFormat = !firstItem.data; // Old format doesn't have 'data' property
+      
+      if (isOldFormat) {
+        console.log('[GuestReportsAPI] Found old format history, converting to new format placeholders');
+        // For old format, convert to new format but mark as incomplete
+        // This allows the UI to show that reports exist, but they can't be viewed
+        const summaries = parsed as GuestReportSummary[];
+        const convertedReports: GuestReport[] = summaries.map(summary => ({
+          id: summary.id,
+          timestamp: summary.timestamp,
+          data: null, // Mark as incomplete - no full data available
+          job_title: summary.job_title,
+          company_name: summary.company_name,
+          overallScore: summary.overallScore,
+          shortUrl: summary.shortUrl || '/results'
+        }));
+        
+        return convertedReports;
+      }
+      
+      // New format - proceed as normal
+      const history: GuestReport[] = parsed;
       
       // Filter out expired reports (7 days for history)
       const validHistory = history.filter(report => {
@@ -247,11 +266,34 @@ export class GuestReportsAPI {
       // Update storage if we filtered anything
       if (validHistory.length !== history.length) {
         localStorage.setItem(this.HISTORY_KEY, JSON.stringify(validHistory));
-        console.log('[GuestReportsAPI] Updated history after filtering expired reports');
       }
       
-      console.log('[GuestReportsAPI] Returning history:', validHistory);
       return validHistory;
+    } catch (error) {
+      console.error('[GuestReportsAPI] Failed to load full history:', error);
+      return [];
+    }
+  }
+
+  static getHistory(): GuestReportSummary[] {
+    if (!browser) return [];
+    
+    try {
+      const fullHistory = this.getFullHistory();
+      console.log('[GuestReportsAPI] Loading history from localStorage, full reports count:', fullHistory.length);
+      
+      // Convert full reports to summaries for display
+      const summaries: GuestReportSummary[] = fullHistory.map(report => ({
+        id: report.id,
+        timestamp: report.timestamp,
+        job_title: report.job_title,
+        company_name: report.company_name,
+        overallScore: report.overallScore,
+        shortUrl: report.shortUrl
+      }));
+      
+      console.log('[GuestReportsAPI] Returning history summaries:', summaries);
+      return summaries;
     } catch (error) {
       console.error('[GuestReportsAPI] Failed to load history:', error);
       return [];
@@ -267,6 +309,93 @@ export class GuestReportsAPI {
       }
     } catch (error) {
       console.error('[GuestReportsAPI] Failed to clear all data:', error);
+    }
+  }
+
+  // Load a specific report from history and set as current report
+  static loadReportFromHistory(reportId: string): any | null {
+    if (!browser) return null;
+    
+    try {
+      console.log('[GuestReportsAPI] Looking for report in history:', reportId);
+      
+      // First try to find in current localStorage under the main storage key
+      const currentRaw = localStorage.getItem(this.STORAGE_KEY);
+      if (currentRaw) {
+        const currentReport: GuestReport = JSON.parse(currentRaw);
+        if (currentReport.id === reportId) {
+          console.log('[GuestReportsAPI] Found report as current:', reportId);
+          return currentReport.data;
+        }
+      }
+      
+      // Check full history for the report data
+      const fullHistory = this.getFullHistory();
+      const fullReport = fullHistory.find(r => r.id === reportId);
+      
+      if (fullReport) {
+        console.log('[GuestReportsAPI] Found report in full history:', reportId);
+        
+        // Check if this is old format data (data is null)
+        if (fullReport.data === null) {
+          console.log('[GuestReportsAPI] Report is in old format - creating minimal report from summary');
+          // Create a minimal report structure from the summary data we have
+          const minimalReport = {
+            id: fullReport.id,
+            job_title: fullReport.job_title || 'Untitled Position',
+            company_name: fullReport.company_name || '',
+            total_score: fullReport.overallScore || 0,
+            overallScore: fullReport.overallScore || 0,
+            timestamp: fullReport.timestamp,
+            isOldFormat: true, // Flag to indicate this is reconstructed from old data
+            // Add minimal structure that the results page expects
+            feedback: {
+              overall: {
+                score: fullReport.overallScore || 0,
+                feedback: "This is a cached report from an earlier session. Generate a new analysis for detailed feedback."
+              }
+            }
+          };
+          
+          this.setCurrentReport(minimalReport, fullReport.id);
+          return minimalReport;
+        }
+        
+        // Set it as the current report so it loads on the results page
+        this.setCurrentReport(fullReport.data, fullReport.id);
+        return fullReport.data;
+      }
+      
+      console.log('[GuestReportsAPI] Report not found in history:', reportId);
+      return null;
+    } catch (error) {
+      console.error('[GuestReportsAPI] Failed to load report from history:', error);
+      return null;
+    }
+  }
+
+  // Set a specific report as the current report (useful for viewing from history)
+  static setCurrentReport(reportData: any, id: string): boolean {
+    if (!browser) return false;
+    
+    try {
+      const guestReport: GuestReport = {
+        id: id,
+        timestamp: Date.now(),
+        data: reportData,
+        job_title: reportData.job_title,
+        company_name: reportData.company_name,
+        url: reportData.job_url,
+        overallScore: reportData.overallScore || reportData.total_score,
+        shortUrl: this.generateShortUrl(id)
+      };
+
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(guestReport));
+      console.log('[GuestReportsAPI] Set report as current:', id);
+      return true;
+    } catch (error) {
+      console.error('[GuestReportsAPI] Failed to set current report:', error);
+      return false;
     }
   }
 

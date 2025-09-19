@@ -56,6 +56,16 @@
       const guestReport = GuestManager.loadGuestReport();
       if (guestReport) {
         resultsPageStore.setCurrentReport(guestReport);
+      } else {
+        // If no current report, try to load the most recent from history
+        const history = GuestReportsAPI.getHistory();
+        if (history.length > 0) {
+          const mostRecent = history[0];
+          const reportData = GuestReportsAPI.loadReportFromHistory(mostRecent.id);
+          if (reportData) {
+            resultsPageStore.setCurrentReport(reportData);
+          }
+        }
       }
     }
 

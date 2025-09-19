@@ -25,8 +25,17 @@
   }
 
   function viewReport(reportId: string) {
-    // Navigate to generic results page; guest report will load from localStorage
-    window.location.href = `/results`;
+    console.log('[GuestDashboard] Viewing report:', reportId);
+    // Load the specific report from history and set as current
+    const reportData = GuestReportsAPI.loadReportFromHistory(reportId);
+    if (reportData) {
+      console.log('[GuestDashboard] Successfully loaded report, navigating to results');
+      // Navigate to results page; the loaded report will be available
+      window.location.href = `/results`;
+    } else {
+      console.error('[GuestDashboard] Failed to load report:', reportId);
+      alert('Unable to load the selected report. It may have been corrupted or expired.');
+    }
   }
 
   function clearHistory() {
