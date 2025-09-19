@@ -6,6 +6,8 @@
   import WorkingWellPanel from './WorkingWellPanel.svelte';
   import ImprovementCard from './ImprovementCard.svelte';
   import ScoreDisplay from './ScoreDisplay.svelte';
+  import ExportButton from './ExportButton.svelte';
+  import type { ExportData } from '$lib/utils/exportUtils';
   // import BetaBadge from '$lib/components/BetaBadge.svelte';
   
   // Types
@@ -233,6 +235,37 @@
   }
   
   $: totalImprovementPoints = optimizationData?.appliedImprovements?.reduce((sum: number, imp: AppliedImprovement) => sum + (imp.impactPoints || 0), 0) || 0;
+  
+  // Export data computed property
+  $: exportData = optimizationData ? {
+    optimizedText: optimizationData.optimizedText,
+    originalScore: optimizationData.originalScore,
+    optimizedScore: optimizationData.optimizedScore,
+    scoreImprovement: optimizationData.scoreImprovement,
+    appliedImprovements: optimizationData.appliedImprovements,
+    workingWell: optimizationData.workingWell,
+    reportId: reportId
+  } as ExportData : {
+    optimizedText: '',
+    originalScore: 0,
+    optimizedScore: 0,
+    scoreImprovement: 0,
+    reportId: reportId
+  } as ExportData;
+
+  // Debug log the export data when it changes
+  $: if (exportData?.appliedImprovements) {
+    console.log('[DEBUG] Export data appliedImprovements:', exportData.appliedImprovements);
+  }
+
+  function handleExportSuccess(event: CustomEvent) {
+    console.log(`Successfully exported as ${event.detail.format}`);
+  }
+
+  function handleExportError(event: CustomEvent) {
+    console.error(`Export failed for ${event.detail.format}:`, event.detail.error);
+    // You could show a toast notification here
+  }
 </script>
 
 <div class="min-h-screen bg-gray-transparent pt-20">
@@ -328,18 +361,12 @@
                 </h3>
                 <p class="text-sm text-gray-600 mt-1">Changes made to optimize your posting</p>
               </div>
-              <Button 
-                size="sm" 
-                class="text-xs"
-                disabled={isLoading}
-                on:click={optimizeJobPost}
-              >
-                {#if isLoading}
-                  Optimizing...
-                {:else}
-                  Export Report
-                {/if}
-              </Button>
+              <ExportButton 
+                data={exportData}
+                disabled={isLoading || !optimizationData?.optimizedText}
+                on:exported={handleExportSuccess}
+                on:export-error={handleExportError}
+              />
               
             </div>
           

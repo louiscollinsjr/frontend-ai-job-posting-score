@@ -244,7 +244,7 @@
             <button 
               class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-8 gap-1.5 px-3"
               id="downloadButton" 
-              on:click={downloadJobData}
+              on:click={() => goto(`/json-ld?report=${results.id}`)}
             >
               Download JSON-LD Data
             </button>
