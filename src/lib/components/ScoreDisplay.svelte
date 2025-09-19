@@ -10,7 +10,7 @@
 <div class="flex items-center justify-between w-full gap-2">
   <!-- Current Score -->
   <div class="flex-1 min-w-0 text-center border-1 border-gray-200 rounded-lg px-3 py-2 bg-gray-200">
-    <div class="text-xs text-gray-600 font-medium">Current Score</div>
+    <div class="text-xs text-gray-600 font-medium">Original Score</div>
     <div class="text-sm font-bold text-black truncate">{currentScore}</div>
   </div>
   

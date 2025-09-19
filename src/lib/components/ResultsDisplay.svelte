@@ -34,8 +34,11 @@
   $: processedResults = results
     ? {
         ...results,
-        // Prefer existing overallScore, else map from common DB fields
-        overallScore: results?.overallScore ?? results?.total_score ?? results?.totalScore ?? 0,
+        // Use original score if optimization exists (to match category breakdown)
+        // Otherwise use total_score (no optimization, scores match)
+        overallScore: results?.hasRewrite && results?.optimizationData?.original_score
+          ? results.optimizationData.original_score
+          : (results?.overallScore ?? results?.total_score ?? results?.totalScore ?? 0),
         // Ensure categories is an object
         categories: results?.categories ?? {},
       }
@@ -48,6 +51,14 @@
     console.log('[ResultsDisplay] Has improved_text?', !!results?.improved_text);
     console.log('[ResultsDisplay] Has optimizationData?', !!results?.optimizationData);
     console.log('[ResultsDisplay] rewriteVersion:', results?.rewriteVersion);
+    console.log('[ResultsDisplay] Score selection:', {
+      hasRewrite: results?.hasRewrite,
+      originalScore: results?.optimizationData?.original_score,
+      totalScore: results?.total_score,
+      selectedScore: results?.hasRewrite && results?.optimizationData?.original_score
+        ? results.optimizationData.original_score
+        : (results?.overallScore ?? results?.total_score ?? results?.totalScore ?? 0)
+    });
   }
 
   // Default labels and max values matching actual backend scoring system
@@ -249,7 +260,7 @@
                 </div>
                 <button
                   class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/90 h-8 gap-1.5 px-3"
-                  on:click={() => dispatch('optimize')}
+                  on:click={() => goto(`/results?report=${results.id}&view=optimized`)}
                   disabled={rewriteLoading || loading}
                 >
                   {rewriteLoading ? 'Viewing...' : 'View Latest Improvement'}

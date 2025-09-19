@@ -51,7 +51,7 @@
   <div class="flex justify-center mt-6">
     <button
       on:click={viewLastReport}
-      class="inline-flex items-center gap-2 px-4 py-2 rounded-full border-0 transition-all duration-200 hover:shadow-md hover:scale-105 text-gray-600 bg-[#3a3a3a]/20" 
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-full border-0 transition-all duration-200 hover:shadow-md hover:scale-101 text-white bg-blue-500 hover:bg-blue-500" 
     >
     <!-- {getScoreColor(reportData.overallScore || 0)} -->
       <!-- <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">

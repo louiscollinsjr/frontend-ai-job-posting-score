@@ -337,13 +337,13 @@
                 {#if isLoading}
                   Optimizing...
                 {:else}
-                  Improve Again
+                  Export Report
                 {/if}
               </Button>
               
             </div>
           
-            <div class="p-1 pb-0">
+            <div class="p-6 pb-0">
               {#each optimizationData?.appliedImprovements || [] as improvement, index}
                 <ImprovementCard 
                   {improvement}

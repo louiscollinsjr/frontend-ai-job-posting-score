@@ -5,15 +5,15 @@
   import Logo from './Logo.svelte';
 
   let history: GuestReportSummary[] = [];
-  let loading = true;
+  let loading = false;
 
-  onMount(() => {
-    loadHistory();
-  });
-
-  function loadHistory() {
+  onMount(async () => {
     loading = true;
-    console.log('[GuestDashboard] Loading history...');
+    
+    // Clean up invalid guest reports first
+    GuestReportsAPI.clearInvalidHistory();
+    
+    // Load current guest reports
     history = GuestReportsAPI.getHistory();
     console.log('[GuestDashboard] Loaded history:', history);
     
@@ -22,7 +22,7 @@
     console.log('[GuestDashboard] Current report:', currentReport);
     
     loading = false;
-  }
+  });
 
   function viewReport(reportId: string) {
     console.log('[GuestDashboard] Viewing report:', reportId);

@@ -723,42 +723,49 @@
                         </a>
                       </Table.Cell>
                       <Table.Cell class="text-center w-20">
-                        <a href={`/results?report=${report.id}`} class="inline-block cursor-pointer">
-                          {#if reportOptimizations.has(report.id)}
-                            <!-- Show score range for reports with optimizations -->
-                            {@const optimization = reportOptimizations.get(report.id)}
-                            <div class="flex flex-row gap-1">
-                              <!-- Lowest score -->
-                              <div class="inline-flex items-center px-2.5 py-1 rounded-sm text-[9px] 
+                        {#if reportOptimizations.has(report.id)}
+                          <!-- Show score range for reports with optimizations -->
+                          {@const optimization = reportOptimizations.get(report.id)}
+                          <div class="flex flex-row gap-1">
+                            <!-- Original score (lowest) - links to original view -->
+                            <a 
+                              href={`/results?report=${report.id}`} 
+                              class="inline-flex items-center px-2.5 py-1 rounded-sm text-[9px] cursor-pointer hover:opacity-80 transition-opacity
                                 {optimization.lowestScore >= 85 ? 'bg-green-500 text-white' : 
                                 optimization.lowestScore >= 60 ? 'bg-yellow-300 text-black' : 
                                 optimization.lowestScore >= 40 ? 'bg-red-400 text-white' :
                                 'bg-red-600 text-white'}"
-                              >
-                                {optimization.lowestScore}
-                              </div>
-                              <!-- Highest score -->
-                              <div class="inline-flex items-center px-2.5 py-1 rounded-sm text-[9px] 
+                              on:click={(e) => e.stopPropagation()}
+                            >
+                              {optimization.lowestScore}
+                            </a>
+                            <!-- Optimized score (highest) - links to optimized view -->
+                            <a 
+                              href={`/results?report=${report.id}&view=optimized`} 
+                              class="inline-flex items-center px-2.5 py-1 rounded-sm text-[9px] cursor-pointer hover:opacity-80 transition-opacity
                                 {optimization.highestScore >= 85 ? 'bg-green-500 text-white' : 
                                 optimization.highestScore >= 60 ? 'bg-yellow-300 text-black' : 
                                 optimization.highestScore >= 40 ? 'bg-red-400 text-white' :
                                 'bg-red-600 text-white'}"
-                              >
-                                {optimization.highestScore}
-                              </div>
-                            </div>
-                          {:else}
-                            <!-- Show single score for reports without optimizations -->
-                            <div class="inline-flex items-center px-2.5 py-1 rounded-sm text-[10px] 
+                              on:click={(e) => e.stopPropagation()}
+                            >
+                              {optimization.highestScore}
+                            </a>
+                          </div>
+                        {:else}
+                          <!-- Show single score for reports without optimizations -->
+                          <a 
+                            href={`/results?report=${report.id}`} 
+                            class="inline-flex items-center px-2.5 py-1 rounded-sm text-[10px] cursor-pointer hover:opacity-80 transition-opacity
                               {getScore(report) >= 85 ? 'bg-green-500 text-white' : 
                               getScore(report) >= 60 ? 'bg-yellow-300 text-black' : 
                               getScore(report) >= 40 ? 'bg-red-400 text-white' :
                               'bg-red-600 text-white'}"
-                            >
-                              {getScore(report)}
-                            </div>
-                          {/if}
-                        </a>
+                            on:click={(e) => e.stopPropagation()}
+                          >
+                            {getScore(report)}
+                          </a>
+                        {/if}
                       </Table.Cell>
                       <Table.Cell class="text-right w-10">
                         <div 

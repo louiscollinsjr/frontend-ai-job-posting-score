@@ -4,6 +4,15 @@
 
   $: rewriteData = $resultsPageStore.rewriteData;
   $: currentReport = $resultsPageStore.currentReport;
+  
+  // Debug logging
+  $: if (import.meta.env.DEV) {
+    console.log('[OptimizationView] Store state:', {
+      hasRewriteData: !!rewriteData,
+      hasCurrentReport: !!currentReport,
+      requestedView: $resultsPageStore.requestedView
+    });
+  }
 
   function handleBackToResults() {
     resultsPageStore.setRewriteData(null);

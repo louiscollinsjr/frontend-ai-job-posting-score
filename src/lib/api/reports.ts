@@ -10,19 +10,31 @@ export class ReportsAPI {
       throw new Error('Invalid report ID provided');
     }
 
+    if (import.meta.env.DEV) {
+      console.log('[ReportsAPI] Attempting to load report:', reportId);
+    }
+
     // Load base report
-    const { data: report, error: reportError } = await supabase
+    const { data: reports, error: reportError } = await supabase
       .from('reports')
       .select('*')
       .eq('id', reportId)
-    if (reportError || !report) {
+      .single();
+      
+    if (reportError || !reports) {
+      console.error('Error loading report from reports table:', reportError);
+      console.error('Report ID that failed:', reportId);
+      
+      // Check if this might be a guest report
+      if (import.meta.env.DEV) {
+        console.warn('Report not found in reports table. This might be a guest report that only exists in localStorage.');
+      }
+      
       throw new Error(`Report not found: ${reportError?.message || 'Unknown error'}`);
     }
 
     // Load optimization data (handle gracefully)
     let latestOptimization = null;
-    console.log('[ReportsAPI] Querying optimizations for report_id:', reportId);
-    
     try {
       const { data, error } = await supabase
         .from('optimizations')
@@ -31,33 +43,34 @@ export class ReportsAPI {
         .order('version_number', { ascending: false })
         .limit(1);
 
-      console.log('[ReportsAPI] Optimization query result - data:', data, 'error:', error);
-
       if (!error && data && data.length > 0) {
         latestOptimization = data[0];
-        console.log('[ReportsAPI] Found optimization data:', latestOptimization);
-      } else if (error) {
-        console.warn('[ReportsAPI] Optimization query error:', error);
-      } else {
-        console.log('[ReportsAPI] No optimization data found for report:', reportId);
+        if (import.meta.env.DEV) {
+          console.log('[ReportsAPI] Found optimization data:', latestOptimization);
+        }
+      } else if (import.meta.env.DEV && error) {
+        console.warn('Could not query optimizations table:', error.message);
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err);
-      console.warn('[ReportsAPI] Exception querying optimizations:', msg);
+      if (import.meta.env.DEV) {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.warn('optimizations table may not exist or have RLS issues:', msg);
+      }
     }
 
-    // Enhance report with optimization data
+    // Enhance report with optimization data if available
     const enhancedReport: Report = {
-      ...report,
+      ...reports,
       hasRewrite: !!latestOptimization,  // Only true if optimization exists in database
-      latestImprovedText: latestOptimization?.optimized_text || report.improved_text,
+      latestImprovedText: latestOptimization?.optimized_text || reports.improved_text,
       rewriteVersion: latestOptimization?.version_number || 0,  // 0 if no optimizations
-      lastRewriteDate: latestOptimization?.created_at || report.savedat,
+      lastRewriteDate: latestOptimization?.created_at || reports.savedat,
       optimizationData: latestOptimization || null
     };
 
-    console.log('[ReportsAPI] Final hasRewrite value:', enhancedReport.hasRewrite);
-    console.log('[ReportsAPI] Final rewriteVersion:', enhancedReport.rewriteVersion);
+    if (import.meta.env.DEV && latestOptimization) {
+      console.log('[ReportsAPI] Found optimization for report:', enhancedReport.id);
+    }
     
     if (import.meta.env.DEV) {
       console.log('Successfully loaded report:', enhancedReport.id);
@@ -118,6 +131,17 @@ export class GuestReportsAPI {
   static save(report: any): boolean {
     if (!browser) {
       console.warn('[GuestReportsAPI] Not in browser environment');
+      return false;
+    }
+    
+    // Validate report has minimum required data
+    if (!report || typeof report !== 'object') {
+      console.warn('[GuestReportsAPI] Invalid report data - not an object:', report);
+      return false;
+    }
+    
+    if (!report.job_title && !report.job_body) {
+      console.warn('[GuestReportsAPI] Invalid report data - missing job_title and job_body:', report);
       return false;
     }
     
@@ -190,6 +214,27 @@ export class GuestReportsAPI {
       }
     } catch (e) {
       console.warn('Failed to clear guest report:', e);
+    }
+  }
+
+  static clearInvalidHistory(): void {
+    if (!browser) return;
+    
+    try {
+      const history = this.getFullHistory();
+      const validHistory = history.filter(report => 
+        report && 
+        report.data && 
+        (report.data.job_title || report.data.job_body) &&
+        report.job_title // Summary should have job_title too
+      );
+      
+      if (validHistory.length !== history.length) {
+        console.log(`[GuestReportsAPI] Cleaning invalid reports: ${history.length} -> ${validHistory.length}`);
+        localStorage.setItem(this.HISTORY_KEY, JSON.stringify(validHistory));
+      }
+    } catch (e) {
+      console.warn('[GuestReportsAPI] Failed to clean invalid history:', e);
     }
   }
 

@@ -25,6 +25,9 @@ interface ResultsPageState {
   showSaveDialog: boolean;
   showSuccessMessage: boolean;
   
+  // View mode
+  requestedView: 'original' | 'optimized' | null;
+  
   // Timeouts
   dialogTimeout: ReturnType<typeof setTimeout> | null;
   successTimeout: ReturnType<typeof setTimeout> | null;
@@ -41,6 +44,7 @@ const initialState: ResultsPageState = {
   pendingReportId: null,
   showSaveDialog: false,
   showSuccessMessage: false,
+  requestedView: null,
   dialogTimeout: null,
   successTimeout: null,
   fromGuestLogin: false,
@@ -105,6 +109,9 @@ function createResultsPageStore() {
     setFromGuestLogin: (fromGuest: boolean) =>
       update(state => ({ ...state, fromGuestLogin: fromGuest })),
     
+    setRequestedView: (view: 'original' | 'optimized' | null) =>
+      update(state => ({ ...state, requestedView: view })),
+    
     reset: () => set(initialState)
   };
 }
@@ -125,9 +132,29 @@ export const hasReport = derived(
 export const currentView = derived(
   resultsPageStore,
   $store => {
-    if ($store.rewriteData) return 'optimization';
-    if ($store.isLoadingReport) return 'loading';
-    if ($store.currentReport) return 'results';
-    return 'empty';
+    const view = (() => {
+      if ($store.isLoadingReport) return 'loading';
+      if (!$store.currentReport) return 'empty';
+      
+      // Handle view mode based on URL parameter and data availability
+      if ($store.requestedView === 'optimized' && $store.currentReport.hasRewrite && $store.rewriteData) {
+        return 'optimization';
+      }
+      
+      // Default to results view (original score)
+      return 'results';
+    })();
+    
+    if (import.meta.env.DEV) {
+      console.log('[currentView] Derived view:', view, {
+        isLoading: $store.isLoadingReport,
+        hasReport: !!$store.currentReport,
+        requestedView: $store.requestedView,
+        hasRewrite: $store.currentReport?.hasRewrite,
+        hasRewriteData: !!$store.rewriteData
+      });
+    }
+    
+    return view;
   }
 );

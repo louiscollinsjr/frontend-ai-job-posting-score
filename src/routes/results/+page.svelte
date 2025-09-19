@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { get } from 'svelte/store';
   import { browser } from '$app/environment';
   import { page } from '$app/stores';
   import { user } from '$lib/stores/auth';
@@ -72,8 +73,13 @@
     // Handle URL parameters and route changes
     const unsubscribePage = page.subscribe(async ($page) => {
       const reportId = $page.url.searchParams.get('report');
+      const viewMode = $page.url.searchParams.get('view'); // 'optimized' or null (default)
       const guestFlag = $page.url.searchParams.get('guest');
       const legacyId = $page.url.searchParams.get('id');
+      
+      if (import.meta.env.DEV) {
+        console.log('[Results] URL parameters:', { reportId, viewMode, guestFlag });
+      }
 
       // Handle legacy guest links like /results?id=...&guest=1
       if (!isLoggedIn && guestFlag === '1') {
@@ -84,7 +90,17 @@
         return; // Do not attempt DB loads for guest links
       }
 
-      if (reportId && isLoggedIn) {
+      if (reportId) {
+        // Set view mode based on URL parameter BEFORE loading report
+        if (viewMode === 'optimized') {
+          console.log('[Results] Setting requested view to optimized');
+          resultsPageStore.setRequestedView('optimized');
+        } else {
+          console.log('[Results] Setting requested view to original');
+          resultsPageStore.setRequestedView('original');
+        }
+        
+        // Load report by ID regardless of login status
         queueLoadReportById(reportId);
       } else if ($hasReport && !isLoggedIn) {
         GuestManager.schedulePrompt();
@@ -129,10 +145,10 @@
       const report = await ReportsAPI.loadById(id);
       resultsPageStore.setCurrentReport(report);
       
-      // Set optimization data if available
+      // Set optimization data if available and requested
       if (report?.optimizationData) {
         const opt = report.optimizationData;
-        resultsPageStore.setRewriteData({
+        const rewriteData = {
           original_text: opt.original_text_snapshot || '',
           improvedText: opt.optimized_text || '',
           score: opt.optimized_score || 0,
@@ -151,7 +167,15 @@
               : JSON.parse(opt.unaddressed_items || '[]'),
             workingWell: []
           }
-        });
+        };
+        
+        // Always store optimization data when available
+        // The view component will decide whether to show it based on requestedView
+        if (import.meta.env.DEV) {
+          console.log('[Results] Setting optimization data for report:', id);
+          console.log('[Results] RequestedView:', get(resultsPageStore).requestedView);
+        }
+        resultsPageStore.setRewriteData(rewriteData);
       }
     } catch (error) {
       console.error('Failed to load report:', error);

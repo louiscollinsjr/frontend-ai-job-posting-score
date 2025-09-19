@@ -25,6 +25,7 @@
 	import SearchAnimation from '$lib/components/SearchAnimation.svelte';
 	import ScrollIndicator from '$lib/components/ScrollIndicator.svelte';
 	import GuestReportBadge from '$lib/components/GuestReportBadge.svelte';
+	import { GuestReportsAPI } from '$lib/api/reports';
 
 	// Supports weights 400-900 
 
@@ -40,6 +41,7 @@
 	
 	// Authentication status for guest badge
 	let isLoggedIn = false;
+	let hasGuestReports = false;
 
 	// Subscribe to the store on mount (client-only)
 
@@ -97,6 +99,30 @@
 		const unsubscribeUser = user.subscribe((currentUser) => {
 			isLoggedIn = !!(currentUser?.id);
 		});
+
+		// Check for guest reports
+		if (browser) {
+			try {
+				const currentReport = GuestReportsAPI.load();
+				const history = GuestReportsAPI.getHistory();
+				
+				// Validate current report has meaningful data
+				const validCurrentReport = currentReport && 
+					(currentReport.job_title || currentReport.job_body);
+				
+				hasGuestReports = !!(validCurrentReport || history.length > 0);
+				
+				if (import.meta.env.DEV) {
+					console.log('[HomePage] Current report exists:', !!currentReport);
+					console.log('[HomePage] Current report valid:', !!validCurrentReport);
+					console.log('[HomePage] History count:', history.length);
+					console.log('[HomePage] hasGuestReports:', hasGuestReports);
+				}
+			} catch (error) {
+				console.warn('Error checking guest reports:', error);
+				hasGuestReports = false;
+			}
+		}
 
 		// Check for URL messages
 		const unsubscribePage = page.subscribe(($page) => {
@@ -197,6 +223,10 @@
 			<div class="container mx-auto pt-8 sm:pt-16">
 				<div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-start mx-auto">
 					<div class="px-4 lg:px-16 pb-10 sm:pb-24 rounded-3xl min-h-0 sm:min-h-[680px] mx-auto pt-6 sm:pt-20 w-full">
+						<!-- Guest Report Badge - Shows last cached report for non-authenticated users -->
+						{#if !isLoggedIn && hasGuestReports}
+							<GuestReportBadge />
+						{/if}
 						<h1 class="sm:pt-16 pt-4 text-3xl sm:text-7xl font-normal w-[100%] pb-6 sm:pb-12 leading-tight tracking-tight mx-auto text-center font-aeonik">
 							What's your
 							<span style="min-width: 140px;">
@@ -218,9 +248,9 @@
 				</div>
 				
 				<!-- Guest Report Badge - Shows last cached report for non-authenticated users -->
-				{#if !isLoggedIn}
+				<!-- {#if !isLoggedIn && hasGuestReports}
 					<GuestReportBadge />
-				{/if}
+				{/if} -->
 			</div>
 			
 		</section>
