@@ -75,8 +75,8 @@
     {:else}
       Export Report
     {/if}
-    <span class="transition-transform {isOpen ? 'rotate-180' : ''}">▼</span>
-    {#if isOpen}<span class="ml-1 text-green-400">●</span>{/if}
+    <!-- <span class="transition-transform {isOpen ? 'rotate-180' : ''}">▼</span>
+    {#if isOpen}<span class="ml-1 text-green-400">●</span>{/if} -->
   </button>
 
   {#if isOpen && !disabled && !isExporting}

@@ -313,13 +313,13 @@
         
         <!-- Left Column: Optimized Job Post -->
         <div class="space-y-6 bg-white">
-          <div class="bg-white rounded-lg border-3 border-black shadow-sm ">
-            <div class="px-6 py-4 ">
+          <div class="bg-white rounded-lg border-3 border-black shadow-sm h-[calc(80vh-12rem)] flex flex-col">
+            <div class="px-6 py-4 flex-shrink-0">
               <h2 class="text-lg font-semibold text-gray-900">Optimized Job Posting</h2>
               <p class="text-sm text-gray-600 mt-1">Enhanced version with improvements applied</p>
               <div class="border-t my-4"></div>
             </div>
-            <div class="p-6 pt-0">
+            <div class="p-6 pt-0 flex-1 overflow-y-auto">
               <div class="prose prose-sm max-w-none">
                 <div class="text-gray-800 leading-relaxed">
                   {@html processMarkdown(optimizationData?.optimizedText || '')}

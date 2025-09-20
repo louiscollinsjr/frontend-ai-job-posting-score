@@ -100,8 +100,18 @@
           resultsPageStore.setRequestedView('original');
         }
         
-        // Load report by ID regardless of login status
-        queueLoadReportById(reportId);
+        // Check if we need to reload optimization data
+        const currentStore = get(resultsPageStore);
+        const currentReportId = currentStore.currentReport?.id || currentStore.currentReport?.report_id;
+        
+        if (reportId === currentReportId && viewMode === 'optimized' && !currentStore.rewriteData) {
+          console.log('[DEBUG] Need to reload optimization data for existing report');
+          // We have the same report but need optimization data
+          await loadReportById(reportId);
+        } else {
+          // Load report by ID regardless of login status
+          queueLoadReportById(reportId);
+        }
       } else if ($hasReport && !isLoggedIn) {
         GuestManager.schedulePrompt();
       }
@@ -139,14 +149,14 @@
 
 
   async function loadReportById(id: string) {
-    lastReportId = id;
     resultsPageStore.setLoadingReport(true);
     try {
       const report = await ReportsAPI.loadById(id);
       resultsPageStore.setCurrentReport(report);
       
-      // Set optimization data if available and requested
-      if (report?.optimizationData) {
+      // Check if report has optimization data
+      if (report && report.optimizationData) {
+        console.log('[DEBUG] Found report.optimizationData:', report.optimizationData);
         const opt = report.optimizationData;
         const rewriteData = {
           original_text: opt.original_text_snapshot || '',
@@ -168,6 +178,8 @@
             workingWell: []
           }
         };
+        
+        console.log('[DEBUG] Created rewriteData:', rewriteData);
         
         // Always store optimization data when available
         // The view component will decide whether to show it based on requestedView

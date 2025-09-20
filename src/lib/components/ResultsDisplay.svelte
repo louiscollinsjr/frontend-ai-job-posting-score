@@ -258,13 +258,21 @@
                   </svg>
                   Improved v{results.rewriteVersion || 1}
                 </div>
-                <button
-                  class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/90 h-8 gap-1.5 px-3"
-                  on:click={() => goto(`/results?report=${results.id}&view=optimized`)}
-                  disabled={rewriteLoading || loading}
+                <a
+                  href="/results?report={results.id}&view=optimized"
+                  class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/90 h-8 gap-1.5 px-3 no-underline"
+                  on:click={(e) => {
+                    if (rewriteLoading || loading) {
+                      e.preventDefault();
+                      return false;
+                    }
+                    console.log('[DEBUG] View Latest Improvement clicked, navigating to:', `/results?report=${results.id}&view=optimized`);
+                  }}
+                  class:opacity-50={rewriteLoading || loading}
+                  class:pointer-events-none={rewriteLoading || loading}
                 >
                   {rewriteLoading ? 'Viewing...' : 'View Latest Improvement'}
-                </button>
+                </a>
               </div>
             {:else}
               <button

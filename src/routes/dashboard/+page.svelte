@@ -25,6 +25,7 @@
   let userEmail = '';
   let isAuthenticated = false;
   let authChecked = false;
+  let initialLoad = true; // Track if this is the first load
   
   let selectedReports = [];
   let activeDropdown = null;
@@ -38,8 +39,10 @@
   const API_BASE_URL = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
 
   // Reactive statement to refetch data when page URL changes
-  $: if ($page.url.searchParams.get('page') && authChecked && isAuthenticated) {
+  $: if ($page.url.searchParams.get('page') && authChecked && isAuthenticated && !initialLoad) {
+    console.log('[DEBUG] Page parameter changed, refetching data');
     (async () => {
+      loading = true; // Show loading during page navigation
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.access_token) {
         await fetchReports(session.access_token);
@@ -48,8 +51,28 @@
     })();
   }
 
+  // Also refetch when navigating to dashboard from another route
+  $: if ($page.route.id === '/dashboard' && authChecked && isAuthenticated) {
+    console.log('[DEBUG] Dashboard route accessed, current reports:', reports.length, 'initialLoad:', initialLoad);
+    if (!initialLoad && reports.length === 0) {
+      console.log('[DEBUG] No reports found, refetching data');
+      (async () => {
+        loading = true;
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.access_token) {
+          await fetchReports(session.access_token);
+          await fetchOptimizationData();
+        }
+      })();
+    }
+  }
+
   onMount(async () => {
+    console.log('[DEBUG] Dashboard onMount called');
     document.addEventListener('click', handleClickOutside);
+    
+    // Set loading state immediately to prevent empty state flash
+    loading = true;
     
     // Check authentication and fetch data
     await checkAuthAndFetchData();
@@ -57,12 +80,14 @@
     // Re-fetch when auth state changes (e.g., right after magic link sign-in)
     try {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+        console.log('[DEBUG] Auth state change:', event);
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
           try {
             isAuthenticated = !!session;
             userEmail = session?.user?.email || userEmail;
             currentUserId = session?.user?.id || currentUserId;
             if (session?.access_token) {
+              loading = true; // Show loading when refetching
               await fetchReports(session.access_token);
               await fetchOptimizationData();
               setupRealtime();
@@ -91,11 +116,16 @@
 
   async function checkAuthAndFetchData() {
     try {
+      console.log('[DEBUG] checkAuthAndFetchData called');
+      
       // Check if user is authenticated via Supabase
       const { data: { session } } = await supabase.auth.getSession();
+      console.log('[DEBUG] Session check:', !!session?.access_token);
       
       if (!session?.access_token) {
         // Not authenticated, redirect to login
+        console.log('[DEBUG] No session, redirecting to login');
+        loading = false;
         goto('/login');
         return;
       }
@@ -104,6 +134,8 @@
       userEmail = session.user?.email || 'User';
       // Resolve current user id for scoping and realtime
       currentUserId = session.user?.id ?? currentUserId;
+      console.log('[DEBUG] User authenticated:', userEmail, 'ID:', currentUserId);
+      
       // Start realtime listener only after we have the user ID
       if (currentUserId) {
         setupRealtime();
@@ -123,10 +155,16 @@
       authChecked = true;
       
       // Fetch reports data
+      console.log('[DEBUG] Starting fetchReports');
       await fetchReports(session.access_token);
+      
       // Fetch optimization data for reports
+      console.log('[DEBUG] Starting fetchOptimizationData');
       await fetchOptimizationData();
-      // Realtime setup is already handled above once user ID is known
+      
+      // Mark initial load as complete
+      initialLoad = false;
+      console.log('[DEBUG] Initial data load complete');
       // If initial load yields no items (API eventual consistency), retry once shortly after
       try {
         setTimeout(async () => {
@@ -152,12 +190,17 @@
 
   async function fetchReports(accessToken) {
     try {
+      console.log('[DEBUG] fetchReports called with token:', !!accessToken);
       loading = true;
+      reportError = null; // Clear any previous errors
+      
       // Get current page from URL parameters, fallback to data.page
       const currentPageParam = $page.url.searchParams.get('page');
       const pageNum = Number(currentPageParam || data.page) || 1;
       const pageSize = Number(data.limit) || 20;
       const apiUrl = `${API_BASE_URL}/api/v1/reports?page=${pageNum}&limit=${pageSize}`;
+      
+      console.log('[DEBUG] Fetching from API:', apiUrl);
       
       const response = await fetch(apiUrl, {
         headers: {
@@ -165,6 +208,8 @@
           'Content-Type': 'application/json'
         }
       });
+
+      console.log('[DEBUG] API response status:', response.status, response.statusText);
 
       if (!response.ok) {
         if (response.status === 401) {
@@ -222,6 +267,8 @@
       }
 
       const responseData = await response.json();
+      console.log('[DEBUG] API response data:', responseData);
+      console.log('[DEBUG] API response received, reports count:', Array.isArray(responseData) ? responseData.length : 'unknown');
 
       // Normalize various possible API response shapes
       let items = [];
@@ -256,38 +303,45 @@
         totalPages = responseData.totalPages ?? responseData.pageCount ?? responseData.pages ?? 1;
         currentPage = responseData.currentPage ?? responseData.page ?? currentPage;
       }
-
       reports = Array.isArray(items) ? items : [];
       pagination = {
         currentPage,
         totalPages: totalPages || 1,
         totalReports: totalReports || (Array.isArray(items) ? items.length : 0)
       };
+      reportError = null;
+      
+      console.log('[DEBUG] Reports successfully loaded:', reports.length, 'items');
+    } catch (error) {
+      console.error('[DEBUG] Error fetching reports:', error);
+      console.error('[DEBUG] Error details:', error.message, error.stack);
+      
+      // Try Supabase fallback if API completely fails
+      console.log('[DEBUG] API failed, attempting Supabase fallback');
+      try {
+        // Get current page info
+        const currentPageParam = $page.url.searchParams.get('page');
+        const pageNum = Number(currentPageParam || data.page) || 1;
+        const pageSize = Number(data.limit) || 20;
+        const from = (pageNum - 1) * pageSize;
+        const to = from + pageSize - 1;
 
-      // If API returns OK but no items (shape mismatch or server-side filter), gracefully fall back to Supabase
-      if (reports.length === 0) {
-        try {
-        //  const currentPageParam = $page.url.searchParams.get('page');
-          const pageNum = Number(currentPageParam || data.page) || 1;
-          const pageSize = Number(data.limit) || 20;
-          const from = (pageNum - 1) * pageSize;
-          const to = from + pageSize - 1;
+        // Get user info if needed
+        if (!currentUserId) {
+          const { data: userData } = await supabase.auth.getUser();
+          currentUserId = userData?.user?.id;
+        }
 
-          if (!currentUserId) {
-            const { data: userData } = await supabase.auth.getUser();
-            currentUserId = userData?.user?.id;
-          }
-
-          if (!currentUserId) {
-            console.warn('No user ID available; skipping Supabase fallback.');
-            return;
-          }
-
+        if (currentUserId) {
+          console.log('[DEBUG] Attempting Supabase direct query for user:', currentUserId);
+          
+          // Get total count
           const { count } = await supabase
             .from('reports')
             .select('*', { count: 'exact', head: true })
             .eq('userid', currentUserId);
 
+          // Get paginated items for current user
           const { data: sbData, error: sbError } = await supabase
             .from('reports')
             .select('*')
@@ -295,28 +349,29 @@
             .order('savedat', { ascending: false })
             .range(from, to);
 
-          if (!sbError) {
+          console.log('[DEBUG] Supabase fallback result:', { count, dataLength: sbData?.length, error: sbError });
+
+          if (sbError) {
+            console.error('[DEBUG] Supabase fallback failed:', sbError);
+            reportError = 'Failed to load reports. Please try again later.';
+          } else {
             reports = sbData || [];
             pagination = {
               currentPage: pageNum,
               totalPages: count ? Math.max(1, Math.ceil(count / pageSize)) : 1,
               totalReports: count || (sbData ? sbData.length : 0)
             };
+            reportError = null;
+            console.log('[DEBUG] Supabase fallback successful, reports loaded:', reports.length);
           }
-        } catch (fallbackErr) {
-          console.warn('Supabase fallback (on empty API) failed:', fallbackErr);
+        } else {
+          console.error('[DEBUG] No user ID available for Supabase fallback');
+          reportError = 'Authentication error. Please refresh the page.';
         }
+      } catch (fallbackError) {
+        console.error('[DEBUG] Supabase fallback also failed:', fallbackError);
+        reportError = 'Failed to load reports. Please try again.';
       }
-
-      reportError = null;
-      // Fetch optimization data after successfully loading reports
-      if (reports.length > 0) {
-        await fetchOptimizationData();
-      }
-    } catch (error) {
-      console.error('Error fetching reports:', error);
-      // Do not hard fail the page; show a friendly error
-      reportError = 'Failed to load reports. Please try again.';
     } finally {
       loading = false;
     }
@@ -678,7 +733,7 @@
                 {/each}
               </div>
             </div>
-          {:else if reports.length === 0}
+          {:else if reports.length === 0 && !loading && authChecked}
             <div class="p-12 text-center min-h-[300px] flex flex-col justify-center items-center">
               <p class="text-gray-500 mb-4">No reports found. Start by getting your first JobPostScore.</p>
               <Button.Root on:click={() => { window.location.href = '/'; }} variant="default" size="sm" class="bg-black hover:bg-gray-800 text-white">

@@ -111,7 +111,7 @@
         <Alert.Description>{error}</Alert.Description>
         <div class="mt-4">
           <Button.Root variant="outline" on:click={goBack}>
-            Back to Dashboard
+            ←  Back to Dashboard
           </Button.Root>
         </div>
       </Alert.Root>
