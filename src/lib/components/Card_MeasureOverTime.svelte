@@ -3,62 +3,50 @@
     import Logo from '$lib/components/Logo.svelte';
     import ScorePill from '$lib/components/ScorePill.svelte';
     import { onMount } from 'svelte';
+    import { fly } from 'svelte/transition';
     
     export let background = '';
     
     let cardElement;
-    let isVisible = false;
+    let visible = false;
+    let hasAnimated = false; // Prevent re-triggering
     
     onMount(() => {
         console.log('Card_MeasureOverTime mounted');
         
-        // Add a small delay to ensure the element is properly mounted
-        setTimeout(() => {
-            const observer = new IntersectionObserver(
-                (entries) => {
-                    entries.forEach((entry) => {
-                        console.log('Intersection observer triggered:', entry.isIntersecting, 'isVisible:', isVisible);
-                        if (entry.isIntersecting && !isVisible) {
-                            console.log('Setting isVisible to true');
-                            isVisible = true;
-                            // Disconnect observer after first trigger to prevent re-triggering
-                            observer.disconnect();
-                        }
-                    });
-                },
-                { 
-                    threshold: 0.1, // Lower threshold - trigger when 10% is visible
-                    rootMargin: '0px 0px -100px 0px' // Only trigger when element is 100px into viewport
-                }
-            );
-            
-            if (cardElement) {
-                console.log('Observing card element');
-                observer.observe(cardElement);
-                
-                // Check if element is already visible
-                const rect = cardElement.getBoundingClientRect();
-                const isAlreadyVisible = rect.top < window.innerHeight && rect.bottom > 0;
-                console.log('Element already visible?', isAlreadyVisible, 'rect:', rect);
-                
-                // If not already visible, we're good. If it is visible, trigger immediately
-                if (isAlreadyVisible && !isVisible) {
-                    console.log('Element already visible, triggering animation');
-                    isVisible = true;
-                    observer.disconnect();
-                }
-            } else {
-                console.log('Card element not found');
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    console.log('Intersection observer triggered:', entry.isIntersecting, 'visible:', visible, 'hasAnimated:', hasAnimated);
+                    if (entry.isIntersecting && !hasAnimated) {
+                        console.log('Card came into view - triggering animation');
+                        visible = true;
+                        hasAnimated = true;
+                    } else if (!entry.isIntersecting && hasAnimated) {
+                        console.log('Card left view - resetting state');
+                        visible = false;
+                        hasAnimated = false;
+                    }
+                });
+            },
+            { 
+                threshold: 0.2, // Trigger when 20% of the element is visible
+                rootMargin: '0px'
             }
-            
-            return () => {
-                observer.disconnect();
-            };
-        }, 100);
+        );
+        
+        if (cardElement) {
+            observer.observe(cardElement);
+            console.log('Started observing card element');
+        }
+        
+        return () => {
+            observer.disconnect();
+        };
     });
 </script>
 
- <div 
+<div 
   bind:this={cardElement}
   class="w-full h-full rounded-2xl p-6 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 overflow-hidden relative"
   style="{background ? `background-image: url('${background}'); background-position: center; background-size: cover;` : 'background: linear-gradient(to bottom right, #c3cde1, #dde3ee)'}">
@@ -91,18 +79,20 @@
             <Logo variant="white" imgClass="h-3 w-auto sm:h-4" />
           </div>
         </div> -->
-        <!-- {#if isVisible}
-            <p style="color: green;">Card is visible - animation should trigger</p>
+        {#if visible}
+          <div in:fly={{ y: 50, duration: 500 }} class="w-full max-w-xs">
+            <p class="text-green-500 text-sm mb-4 text-center">Animation triggered!</p>
+            <ScorePill 
+              title="JobPostScore" 
+              startScore={42} 
+              endScore={98} 
+              duration={2000}
+              isVisible={visible}
+            />
+          </div>
         {:else}
-            <p style="color: red;">Card is not visible yet</p>
-        {/if} -->
-        <ScorePill 
-		title="JobPostScore" 
-		startScore={42} 
-		endScore={98} 
-		duration={8500}
-		{isVisible}
-	/>
+          <p class="text-red-500 text-sm">Waiting for card to come into view...</p>
+        {/if}
   <!-- <div class="mt-4 bg-gray-200 p-4 rounded-lg">
     <p class="font-semibold text-gray-400 text-xl mt-3">JobPostScore 40</p>
     <p>Monitor your JobPostScore as you make changes, track improvements, and see how AI discoverability and candidate applications increase.</p>

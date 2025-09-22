@@ -41,15 +41,25 @@
 	// This is a reactive statement. It re-runs whenever the 'score' value changes.
 	$: scoreClasses = getScoreColorClasses($score);
 
+	let hasStartedAnimation = false;
+	
 	// Start the animation when the component becomes visible
-	$: if (isVisible) {
-		console.log('ScorePill: isVisible is true, starting animation from', startScore, 'to', endScore);
-		// Using a timeout to ensure the animation starts after the initial render
+	$: if (isVisible && !hasStartedAnimation) {
+		console.log('ScorePill: Starting animation from', startScore, 'to', endScore);
+		hasStartedAnimation = true;
+		
+		// Reset to start score first (instantly)
+		score.set(startScore, { duration: 0 });
+		
+		// Then animate to end score with a small delay
 		setTimeout(() => {
-			score.set(endScore);
-		}, 300);
-	} else {
-		console.log('ScorePill: isVisible is false');
+			console.log('ScorePill: Now animating to', endScore, 'over', duration, 'ms');
+			score.set(endScore, { duration: duration });
+		}, 500); // Delay to let the fly animation finish
+	} else if (!isVisible) {
+		console.log('ScorePill: Not visible, resetting to start score');
+		hasStartedAnimation = false;
+		score.set(startScore, { duration: 0 });
 	}
 </script>
 
