@@ -91,11 +91,11 @@
             <Logo variant="white" imgClass="h-3 w-auto sm:h-4" />
           </div>
         </div> -->
-        {#if isVisible}
+        <!-- {#if isVisible}
             <p style="color: green;">Card is visible - animation should trigger</p>
         {:else}
             <p style="color: red;">Card is not visible yet</p>
-        {/if}
+        {/if} -->
         <ScorePill 
 		title="JobPostScore" 
 		startScore={42} 
