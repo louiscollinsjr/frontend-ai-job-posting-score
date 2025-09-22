@@ -7,6 +7,7 @@
     import Card_Blank from '$lib/components/Card_Blank.svelte';
     import Card_NoGuessWork from '$lib/components/Card_NoGuessWork.svelte';
     import Card_BeFound from '$lib/components/Card_BeFound.svelte';
+    import Card_MeasureOverTime from '$lib/components/Card_MeasureOverTime.svelte';
   
     const features = [
       {
@@ -34,7 +35,7 @@
         images: ['https://picsum.photos/id/40/600/400']
       },
       {
-        component: Card_Blank,
+        component: Card_MeasureOverTime,
         title: 'Measure your impact over time.',
         text: `Monitor your JobPostScore as you make changes, track improvements, and see how AI discoverability and candidate applications increase.`,
         images: ['https://picsum.photos/id/50/600/400', 'https://picsum.photos/id/60/600/400']
