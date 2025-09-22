@@ -22,7 +22,7 @@
       <div class="flex flex-col h-full">
       <div class="flex flex-grow flex-col justify-center items-center pt-0">
         <!-- Input Area -->
-        <div class="w-full" style="aspect-ratio: 1.22/1; max-height: 280px;">
+        <div class="w-full" style="aspect-ratio: 1.22/1; max-height: 280px; opacity: 0.8">
           <ImageSlider>
           <!-- The "Before" state (with issues) -->
           <div slot="before">

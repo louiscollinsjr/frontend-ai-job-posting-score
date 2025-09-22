@@ -84,9 +84,13 @@
                     </span>
                   </div>
                   <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium text-gray-900 truncate">{testimonial.name}</p>
-                    <p class="text-xs text-gray-600 truncate">{testimonial.role}</p>
-                    <p class="text-xs text-gray-500 truncate">{testimonial.company}</p>
+                    <p class="text-sm font-medium text-gray-900 truncate">
+                      {testimonial.name.split(' ').length > 1 
+                        ? testimonial.name.split(' ')[0][0] + '. ' + testimonial.name.split(' ').slice(-1)[0]
+                        : testimonial.name}
+                    </p>
+                    <!-- <p class="text-xs text-gray-600 truncate">{testimonial.role}</p>
+                    <p class="text-xs text-gray-500 truncate">{testimonial.company}</p> -->
                   </div>
                 </div>
               </CardFooter>
