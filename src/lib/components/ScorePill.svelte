@@ -12,12 +12,17 @@
 	export let endScore = 92;
 	/** @type {number} The duration of the animation in milliseconds */
 	export let duration = 2000;
+	/** @type {boolean} Whether the component is visible and should animate */
+	export let isVisible = false;
 
 	// A "tweened" store provides smooth animation between numbers
 	const score = tweened(startScore, {
 		duration: duration,
 		easing: cubicOut
 	});
+	
+	// Initialize the score to startScore
+	score.set(startScore, { duration: 0 });
 
 	// Reactive variable to hold the dynamic CSS classes
 	let scoreClasses = '';
@@ -36,13 +41,16 @@
 	// This is a reactive statement. It re-runs whenever the 'score' value changes.
 	$: scoreClasses = getScoreColorClasses($score);
 
-	// Start the animation when the component is mounted to the page
-	onMount(() => {
+	// Start the animation when the component becomes visible
+	$: if (isVisible) {
+		console.log('ScorePill: isVisible is true, starting animation from', startScore, 'to', endScore);
 		// Using a timeout to ensure the animation starts after the initial render
 		setTimeout(() => {
 			score.set(endScore);
 		}, 300);
-	});
+	} else {
+		console.log('ScorePill: isVisible is false');
+	}
 </script>
 
 <!-- The main component card with a glassy, blurred background effect -->

@@ -7,6 +7,9 @@
 	import { quintOut } from 'svelte/easing';
 
 	export let background = '';
+	
+	let cardElement;
+	let isVisible = false;
 
 	// --- Props for reusability ---
 	export let userPrompt =
@@ -56,7 +59,27 @@
 	}
 
 	onMount(() => {
-		runAnimation();
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting && !isVisible) {
+						isVisible = true;
+						runAnimation();
+						// Disconnect observer after first trigger to prevent re-triggering
+						observer.disconnect();
+					}
+				});
+			},
+			{ threshold: 0.3 } // Trigger when 30% of the element is visible
+		);
+		
+		if (cardElement) {
+			observer.observe(cardElement);
+		}
+		
+		return () => {
+			observer.disconnect();
+		};
 	});
 </script>
 
@@ -120,6 +143,7 @@
 </style>
 
 <div 
+  bind:this={cardElement}
   class="w-full h-full rounded-2xl p-6 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 overflow-hidden relative"
   style="{background ? `background-image: url('${background}'); background-position: center; background-size: cover;` : 'background: linear-gradient(to bottom right, #c3cde1, #dde3ee)'}">
     <!-- Mock Browser Window -->
