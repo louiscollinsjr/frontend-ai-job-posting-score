@@ -81,7 +81,7 @@
         </div> -->
         {#if visible}
           <div in:fly={{ y: 50, duration: 500 }} class="w-full max-w-xs">
-            <p class="text-green-500 text-sm mb-4 text-center">Animation triggered!</p>
+            <!-- <p class="text-green-500 text-sm mb-4 text-center">Animation triggered!</p> -->
             <ScorePill 
               title="JobPostScore" 
               startScore={42} 
