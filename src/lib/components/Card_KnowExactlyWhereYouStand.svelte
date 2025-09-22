@@ -5,6 +5,8 @@
     import { fade, slide } from 'svelte/transition';
     import { quadInOut } from 'svelte/easing';
 
+    export let background = '';
+
     // --- Component Data ---
     // This data would typically be passed in as props.
     const jobScore = 85;
@@ -54,9 +56,10 @@
     }
   </script>
   
-  <div class="w-full h-full rounded-2xl bg-gray-50/50 p-4 sm:p-6 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 bg-gradient-to-br from-[#c3cde1] to-[#dde3ee">
+  <div class="w-full h-full rounded-2xl p-4 sm:p-6 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 overflow-hidden relative"
+       style="{background ? `background-image: url('${background}'); background-position: center; background-size: cover;` : 'background: linear-gradient(to bottom right, #c3cde1, #dde3ee)'}">
     <!-- Inner white container -->
-    <div class="flex h-full flex-col overflow-hidden rounded-xl bg-white p-5 text-center">
+    <div class="flex h-full flex-col overflow-hidden rounded-xl bg-white/60 p-5 text-center">
       
       <!-- Score Gauge -->
       <div class="relative mx-auto h-36 w-36">
@@ -86,6 +89,7 @@
             cy="60"
             stroke-dasharray="{circumference} {circumference}"
             style="stroke-dashoffset: {offset};"
+            opacity="0.8"
           />
         </svg>
         <!-- Score Text -->

@@ -54,7 +54,7 @@
 </script>
 
 <!-- The main container establishes the relative positioning context -->
-<div bind:this={container} class="relative w-full aspect-video select-none overflow-hidden rounded-xl shadow-none border-0 border-gray-200">
+<div bind:this={container} class="relative w-full h-full select-none overflow-hidden rounded-xl shadow-none border-0 border-gray-200">
 	<!-- The "After" image/content is the base layer -->
 	<div class="absolute inset-0">
 		<slot name="after" />

@@ -14,31 +14,36 @@
         component: Card_EveryWordMatters,
         title: 'Every word matters.',
         text: `Copy and paste or attach your job listing into JobPostScore. We review it completely then evaluates for clarity, structure, and discoverability.`,
-        images: ['https://picsum.photos/id/10/600/400', 'https://picsum.photos/id/11/600/400']
+        images: ['https://picsum.photos/id/10/600/400', 'https://picsum.photos/id/11/600/400'],
+        background: '/card_backgrounds/bg6.png'
       },
       {
         component: Card_KnowExactlyWhereYouStand,
         title: 'Know exactly where you stand.',
         text: `JobPostScore evaluates your listing against proven best practices and shows your optimization level, so you immediately know which areas need improvement.`,
-        images: ['https://picsum.photos/id/20/600/400']
+        images: ['https://picsum.photos/id/20/600/400'],
+        background: '/card_backgrounds/bg7.png'
       },
       {
         component: Card_NoGuessWork,
         title: 'No guesswork, just action.',
-        text: `JobPostScore highlights what’s limiting your reach and gives specific recommendations to improve every factor that drives AI visibility and candidate applications.`,
-        images: ['https://picsum.photos/id/30/600/400']
+        text: `JobPostScore highlights what's limiting your reach and gives specific recommendations to improve every factor that drives AI visibility and candidate applications.`,
+        images: ['https://picsum.photos/id/30/600/400'],
+        background: '/card_backgrounds/bg8.png'
       },
       {
         component: Card_BeFound,
         title: 'Be found where candidates search.',
         text: `Your job is optimized for AI-driven platforms like ChatGPT, Gemini, and other AI job-matching tools, ensuring more qualified candidates see it.`,
-        images: ['https://picsum.photos/id/40/600/400']
+        images: ['https://picsum.photos/id/40/600/400'],
+        background: '/card_backgrounds/bg4.webp'
       },
       {
         component: Card_MeasureOverTime,
         title: 'Measure your impact over time.',
         text: `Monitor your JobPostScore as you make changes, track improvements, and see how AI discoverability and candidate applications increase.`,
-        images: ['https://picsum.photos/id/50/600/400', 'https://picsum.photos/id/60/600/400']
+        images: ['https://picsum.photos/id/50/600/400', 'https://picsum.photos/id/60/600/400'],
+        background: '/card_backgrounds/bg5.webp'
       },
     ];
   </script>
@@ -62,7 +67,13 @@
             <div class="flex flex-col w-full max-w-[400px]">
               <!-- Card Component -->
               <div class="h-[400px]"> <!-- Set a fixed height for all cards -->
-                <svelte:component this={feature.component} />
+                <svelte:component 
+                  this={feature.component} 
+                  title={feature.title} 
+                  text={feature.text} 
+                  images={feature.images} 
+                  background={feature.background} 
+                />
               </div>
   
               <!-- Description Text -->

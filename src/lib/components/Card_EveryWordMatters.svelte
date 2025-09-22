@@ -1,81 +1,92 @@
 <!-- src/lib/components/Card_EveryWordMatters.svelte -->
-<script>
-	import { onMount } from 'svelte';
-	import Logo from '$lib/components/Logo.svelte';
+<script lang="ts">
+  import { onMount } from 'svelte';
+  import { fade } from 'svelte/transition';
+  import { cubicOut } from 'svelte/easing';
+  import { flip } from 'svelte/animate';
+  import Logo from '$lib/components/Logo.svelte';
 
-	// --- Animation Configuration ---
-	const TYPE_SPEED = 25; // Speed of typing in milliseconds per character
-	const PAUSE_DURATION = 4000; // How long to wait after typing is complete
-	const FADE_DURATION = 300; // Duration of the fade transition between texts
+  export let title = '';
+  export let text = '';
+  export let images = [];
+  export let active = false;
+  export let index = 0;
+  export let background = '';
 
-	// --- Data for the animation cycle ---
-	const content = [
-		{
-			title: 'Account Director, Digital Natives',
-			body: 'Our Sales team has a unique mission to help customers understand the deep impact that highly capable AI models can bring to their business and users. This role is a mixture of technical understanding, vision, partnership, and value-driven strategy.'
-		},
-		{
-			title: 'You might thrive in this role if you:',
-			body: 'Are customer-centric. You are motivated to deeply understand your customer’s priorities and help them achieve their vision for using our models to improve their products and services. You build strong relationships with executives and professionals across functions and serve as a trusted advisor.'
-		}
-	];
+  // Animation content
+  const content = [
+    {
+      title: 'Our Sales team has a unique mission',
+      body: 'Our Sales team has a unique mission to help customers understand the deep impact that highly capable AI models can bring to their business and users. This role is a mixture of technical understanding, vision, partnership, and value-driven strategy.'
+    },
+    {
+      title: 'You might thrive in this role if you:',
+      body: 'Are customer-centric. You are motivated to deeply understand your customer\'s priorities and help them achieve their vision for using our models to improve their products and services.'
+    }
+  ];
 
-	// --- State Variables ---
-	let currentContentIndex = 0;
-	let displayedTitle = '';
-	let displayedBody = '';
-	let isTyping = false;
-	let isFading = false;
+  // Animation constants
+  const TYPE_SPEED = 5; // milliseconds per character
+  const PAUSE_DURATION = 3000; // 3 seconds
+  const FADE_DURATION = 500; // 0.5 seconds
 
-	// Helper function for delays
-	const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+  // --- State Variables ---
+  let currentContentIndex = 0;
+  let displayedTitle = '';
+  let displayedBody = '';
+  let isTyping = false;
+  let isFading = false;
 
-	// The main animation loop
-	async function runAnimationCycle() {
-		// Initial setup without fade
-		displayedTitle = content[0].title;
-		await delay(500);
+  // Helper function for delays
+  const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
-		// Infinite loop
-		while (true) {
-			const item = content[currentContentIndex];
+  // The main animation loop
+  async function runAnimationCycle() {
+    // Initial setup without fade
+    displayedTitle = content[0].title;
+    await delay(500);
 
-			// Start typing the body
-			isTyping = true;
-			for (let i = 0; i <= item.body.length; i++) {
-				displayedBody = item.body.substring(0, i);
-				await delay(TYPE_SPEED);
-			}
-			isTyping = false;
+    // Infinite loop
+    while (true) {
+      const item = content[currentContentIndex];
 
-			// Pause so the user can read the full text
-			await delay(PAUSE_DURATION);
+      // Start typing the body
+      isTyping = true;
+      for (let i = 0; i <= item.body.length; i++) {
+        displayedBody = item.body.substring(0, i);
+        await delay(TYPE_SPEED);
+      }
+      isTyping = false;
 
-			// Fade out the text
-			isFading = true;
-			await delay(FADE_DURATION);
+      // Pause so the user can read the full text
+      await delay(PAUSE_DURATION);
 
-			// Move to the next item in the content array
-			currentContentIndex = (currentContentIndex + 1) % content.length;
-			const nextItem = content[currentContentIndex];
+      // Fade out the text
+      isFading = true;
+      await delay(FADE_DURATION);
 
-			// Reset for the next cycle
-			displayedBody = '';
-			displayedTitle = nextItem.title;
+      // Move to the next item in the content array
+      currentContentIndex = (currentContentIndex + 1) % content.length;
+      const nextItem = content[currentContentIndex];
 
-			// Fade in with the new title
-			isFading = false;
-			await delay(FADE_DURATION + 200); // Wait for fade in plus a small buffer
-		}
-	}
+      // Reset for the next cycle
+      displayedBody = '';
+      displayedTitle = nextItem.title;
 
-	onMount(() => {
-		runAnimationCycle();
-	});
+      // Fade in with the new title
+      isFading = false;
+      await delay(FADE_DURATION + 200); // Wait for fade in plus a small buffer
+    }
+  }
+
+  onMount(() => {
+    runAnimationCycle();
+  });
 </script>
 
 <div
-	class="w-full h-full rounded-2xl p-6 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 bg-gradient-to-br from-[#c3cde1] to-[#dde3ee]"
+  class="w-full h-full rounded-2xl p-6 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 overflow-hidden relative"
+  style="{background ? `background-image: url('${background}'); background-position: center; background-size: cover;` : 'background: linear-gradient(to bottom right, #c3cde1, #dde3ee)'}"
 >
 	<!-- Mock Browser Window -->
 	<div class="flex h-full flex-col overflow-hidden rounded-xl bg-white/60 shadow-inner">

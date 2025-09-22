@@ -1,10 +1,12 @@
-<!-- src/lib/components/Card_EveryWordMatters.svelte -->
+<!-- src/lib/components/Card_BeFound.svelte -->
 <script>
     import Logo from '$lib/components/Logo.svelte';
     import LayeredCard from '$lib/components/LayeredCard.svelte';
     import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
+
+	export let background = '';
 
 	// --- Props for reusability ---
 	export let userPrompt =
@@ -117,7 +119,9 @@
 	}
 </style>
 
- <div class="w-full h-full rounded-2xl p-6 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 bg-gradient-to-br from-[#c3cde1] to-[#dde3ee]">
+<div 
+  class="w-full h-full rounded-2xl p-6 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 overflow-hidden relative"
+  style="{background ? `background-image: url('${background}'); background-position: center; background-size: cover;` : 'background: linear-gradient(to bottom right, #c3cde1, #dde3ee)'}">
     <!-- Mock Browser Window -->
     <div class="flex h-full flex-col overflow-hidden rounded-xl bg-white/10">
       <!-- Main Content Area -->
