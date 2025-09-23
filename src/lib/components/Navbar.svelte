@@ -12,9 +12,50 @@
   let isLoggedIn = false;
   let userEmail = '';
   
+  // Navbar scroll behavior variables
+  let navbarVisible = true;
+  let lastScrollY = 0;
+  let ticking = false;
+  
   onMount(() => {
     // Initialize the user store
     user.init();
+    
+    // Set up scroll listener for navbar auto-hide
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(updateNavbar);
+        ticking = true;
+      }
+    };
+    
+    const updateNavbar = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Show navbar when at top of page (within 10px)
+      if (currentScrollY <= 10) {
+        navbarVisible = true;
+      }
+      // Hide navbar when scrolling down, show when scrolling up
+      else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scrolling down and past 100px - hide navbar
+        navbarVisible = false;
+      } else if (currentScrollY < lastScrollY) {
+        // Scrolling up - show navbar
+        navbarVisible = true;
+      }
+      
+      lastScrollY = currentScrollY;
+      ticking = false;
+    };
+    
+    // Add scroll event listener
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Cleanup function
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   });
   
   // Subscribe to user changes
@@ -37,9 +78,21 @@
       display: none !important;
     }
   }
+  
+  .navbar {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .navbar-hidden {
+    transform: translateY(-100%);
+  }
+  
+  .navbar-visible {
+    transform: translateY(0);
+  }
 </style>
 
-<nav class="w-full fixed top-0 left-0 z-50 backdrop-blur-sm">
+<nav class="navbar w-full fixed top-0 left-0 z-50 backdrop-blur-sm {navbarVisible ? 'navbar-visible' : 'navbar-hidden'}">
   <div class="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between h-16">
       <!-- Logo and sidebar trigger -->
