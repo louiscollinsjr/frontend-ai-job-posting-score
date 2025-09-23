@@ -83,11 +83,11 @@
                 <Sidebar.MenuButton class="border-none">
                   {#snippet child({ props })}
                     {#if item.disabled}
-                      <span class="text-xs font-medium cursor-not-allowed opacity-50">
+                      <span class="text-base font-medium cursor-not-allowed opacity-50">
                         {item.title}
                       </span>
                     {:else}
-                      <a href={item.url} {...props} class="text-xs font-medium">
+                      <a href={item.url} {...props} class="text-base font-medium">
                         <span>{item.title}</span>
                       </a>
                     {/if}
@@ -105,12 +105,12 @@
     <!-- Footer with site purpose and links -->
     <div class="mt-20 px-6 pb-20">
       <!-- Site purpose description -->
-      <p class="text-[11px] font-light text-gray-400 mb-6">
+      <p class="text-[14px] font-light text-gray-400 mb-6">
         Optimize your job postings for AI discovery. JobPostScore scores your listings, uncovers what limits reach, and gives clear steps to attract more qualified candidates who use AI to search for jobs. 
       </p>
 
-      <div class="text-left text-xs text-white font-aeonik tracking-wide my-8 mx-0">
-        <span class="inline-flex items-center rounded-full bg-gray-700 border-gray-500 uppercase tracking-widest px-3 py-[4px] mx-0 text-[10px]">Beta</span>
+      <div class="text-left text-white font-aeonik tracking-wide my-8 mx-0">
+        <span class="inline-flex items-center rounded-full bg-gray-700 border-gray-500 uppercase tracking-widest px-3 py-[4px] mx-0 text-[14px]">Beta</span>
       </div>
 
       <!-- Social links -->
@@ -124,9 +124,9 @@
       </div>
        -->
       <!-- Legal links -->
-      <div class="text-[10px] text-gray-400">
-        <a href="/terms" class="block mb-2 hover:underline">Terms and conditions</a>
-        <a href="/privacy" class="block mb-10 hover:underline">Privacy Policy</a>
+      <div class="text-[14px] text-gray-400">
+        <a href="/terms" target="_blank" class="block mb-2 hover:underline">Terms and conditions</a>
+        <a href="/privacy" target="_blank" class="block mb-10 hover:underline">Privacy Policy</a>
       </div>
     </div>
     </Sidebar.Footer>

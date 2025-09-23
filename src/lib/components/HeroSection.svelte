@@ -17,7 +17,7 @@
 	}
 </script>
 
-<div class="relative w-full min-h-[75vh] sm:min-h-[85vh] pb-8 sm:pb-24">
+<div class="relative w-full min-h-[75vh] sm:min-h-[85vh] max-h-[900px] pb-8 sm:pb-24">
 	<!-- Hero Section with Audit Form -->
 	<section class="mb-4 sm:mb-8 bg-[radial-gradient(ellipse_at_center,_#f8f8f8_0%,_transparent_70%)] p-2 min-h-[70vh] sm:min-h-[85vh] relative">
 		<div class="container mx-auto pt-8 sm:pt-16">

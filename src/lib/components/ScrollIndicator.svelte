@@ -1,12 +1,8 @@
 <script>
   import { onMount } from 'svelte';
-  import { fade } from 'svelte/transition';
-  import lottie from 'lottie-web';
 
   let scrollY = 0;
   let opacity = 1;
-  let container;
-  let animation;
 
   onMount(() => {
     const updateScroll = () => {
@@ -35,18 +31,6 @@
       }
     };
 
-    // Initialize Lottie animation
-    if (container) {
-      // Use JSON file instead of .lottie file
-      animation = lottie.loadAnimation({
-        container: container,
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
-        path: '/lotties/mouse-scroll.json'
-      });
-    }
-
     window.addEventListener('scroll', updateScroll);
     window.addEventListener('resize', updateScroll);
     updateScroll(); // Initial call
@@ -54,18 +38,50 @@
     return () => {
       window.removeEventListener('scroll', updateScroll);
       window.removeEventListener('resize', updateScroll);
-      if (animation) {
-        animation.destroy();
-      }
     };
   });
 </script>
 
+<style>
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-8px);
+    }
+    60% {
+      transform: translateY(-4px);
+    }
+  }
+  
+  .bounce-arrow {
+    animation: bounce 2s infinite;
+  }
+</style>
+
 <div 
-  class="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-40 pointer-events-none transition-opacity duration-300"
+  class="absolute bottom-4 right-4 z-40 pointer-events-none transition-opacity duration-300"
   style="opacity: {opacity}"
 >
-  <!-- Increased size to w-16 h-16 for a larger animation -->
-  <div bind:this={container} class="w-16 h-16"></div>
+  <!-- Bouncing down arrow -->
+  <div class="bounce-arrow">
+    <svg 
+      width="32" 
+      height="32" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+      class="text-gray-600"
+    >
+      <path 
+        d="M12 4L12 20M12 20L6 14M12 20L18 14" 
+        stroke="currentColor" 
+        stroke-width="2" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+      />
+    </svg>
+  </div>
 </div>
 
