@@ -149,14 +149,14 @@
     <!-- Mock Browser Window -->
     <div class="flex h-full flex-col overflow-hidden rounded-xl bg-white/10">
       <!-- Main Content Area -->
-      <div class="flex flex-col gap-4 h-full p-4 bg-white/60 rounded-lg border-none border-gray-200/80">
+      <div class="flex flex-col gap-4 h-full p-4 bg-white/3 rounded-lg border-none border-gray-200/80">
         <!-- User Prompt Section -->
         {#if showPrompt}
             <div
                 class="user-prompt bg-gray-100 p-4 rounded-lg self-end max-w-[85%]"
                 transition:fly={{ y: 20, duration: 400, opacity: 0, easing: quintOut }}
             >
-                <p class="text-sm text-gray-800">
+                <p class="text-base text-gray-800">
                     {typedText}
                     {#if isTyping}
                         <span class="cursor" />
@@ -182,14 +182,14 @@
                 class="ai-response self-start w-full"
                 transition:fly={{ y: 20, duration: 400, opacity: 0, easing: quintOut }}
             >
-                <div class="border border-gray-200/50 rounded-lg p-4 py-8 bg-white/60">
+                <div class="border border-gray-200/50 rounded-lg p-4 py-4 bg-white/60">
                     <div class="flex items-center gap-2 mb-2">
-                        <span class="text-sm font-bold bg-[#00c951] text-white px-4 py-2 rounded-2xl my-1">
+                        <span class="text-base font-bold bg-blue-500 text-white px-4 py-3 rounded-full my-1">
                           <Logo variant="white" imgClass="h-5 w-auto sm:h-5" />
                         </span>
                     </div>
                     <h4 class="font-semibold text-gray-900">{aiResponseTitle}</h4>
-                    <p class="mt-1 text-sm text-gray-600">{aiResponseBody}</p>
+                    <p class="mt-1 text-base text-gray-600">{aiResponseBody}</p>
                 </div>
             </div>
         {/if}
