@@ -56,10 +56,10 @@
     }
   </script>
   
-  <div class="w-full h-full rounded-2xl p-4 sm:p-6 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 overflow-hidden relative"
+  <div class="w-auto sm:w-full h-[450px] rounded-2xl sm:p-6 p-2 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 overflow-hidden relative mx-2 sm:mx-0"
        style="{background ? `background-image: url('${background}'); background-position: center; background-size: cover;` : 'background: linear-gradient(to bottom right, #c3cde1, #dde3ee)'}">
     <!-- Inner white container -->
-    <div class="flex h-full flex-col overflow-hidden rounded-xl bg-white/60 p-5 text-center">
+    <div class="flex h-full flex-col overflow-hidden rounded-2xl bg-white/60 p-5 text-center">
       
       <!-- Score Gauge -->
       <div class="relative mx-auto h-36 w-36">
@@ -94,8 +94,8 @@
         </svg>
         <!-- Score Text -->
         <div class="absolute inset-0 flex flex-col items-center justify-center">
-          <span class="text-4xl font-bold text-gray-900">{jobScore}</span>
-          <span class="text-sm text-gray-500">(0-100)</span>
+          <span class="text-5xl font-bold text-gray-900">{jobScore}</span>
+          <!-- <span class="text-sm text-gray-500">(0-100)</span> -->
         </div>
       </div>
   
@@ -105,16 +105,16 @@
       </div>
   
       <!-- Divider -->
-      <hr class="my-6" />
+      <hr class="my-3 opacity-55" />
   
       <!-- Breakdown Section -->
       <div class="flex-grow text-left overflow-hidden">
-        <h4 class="mb-4 text-xs font-bold uppercase tracking-widest text-gray-500">
+        <h4 class="sm:hidden mb-3 text-xs font-bold uppercase tracking-widest text-gray-500">
           Breakdown by Category
         </h4>
         <div class="relative h-[200px] overflow-hidden">
           <div 
-            class="space-y-4 transition-transform duration-1000 ease-in-out"
+            class="space-y-3 transition-transform duration-1000 ease-in-out"
             style="transform: translateY(-${currentIndex * (100 / visibleItems)}%);"
           >
             {#each breakdownCategories as category, i}

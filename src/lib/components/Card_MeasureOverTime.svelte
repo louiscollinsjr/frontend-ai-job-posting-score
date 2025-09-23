@@ -12,7 +12,7 @@
     let hasAnimated = false; // Prevent re-triggering
     
     onMount(() => {
-        console.log('Card_MeasureOverTime mounted');
+        // console.log('Card_MeasureOverTime mounted');
         
         const observer = new IntersectionObserver(
             (entries) => {
@@ -48,7 +48,7 @@
 
 <div 
   bind:this={cardElement}
-  class="w-full h-full rounded-2xl p-6 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 overflow-hidden relative"
+  class="w-auto sm:w-full h-[450px] rounded-2xl sm:p-6 p-2 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 overflow-hidden relative mx-2 sm:mx-0"
   style="{background ? `background-image: url('${background}'); background-position: center; background-size: cover;` : 'background: linear-gradient(to bottom right, #c3cde1, #dde3ee)'}">
     <!-- Mock Browser Window -->
     <div class="flex h-full flex-col overflow-hidden justify-center items-center rounded-xl bg-white/60 shadow-inner p-5">
@@ -61,42 +61,20 @@
   
       <!-- Main Content Area -->
       
-      <div class="flex flex-grow flex-col justify-center items-center bg-white/10"> 
-        <!-- Input Area -->
-        <!-- <div class="flex-grow rounded-lg border border-gray-200 bg-gray-50/60 p-4 text-sm text-gray-700">
-          <p class="font-semibold text-gray-900 text-xs mt-3">Account Director, Digital Natives</p>
-          <p class="mt-2 text-gray-600 text-xs">
-            Our Sales team has a unique mission to help customers understand the deep impact that highly capable AI models can bring to their business and users. This role is a mixture of technical understanding, vision, partnership, and value-driven strategy.
-           
-            <span class="cursor"></span>
-          </p>
-        </div> -->
-  
-        <!-- Action Button -->
-        <!-- <div class="mt-4 flex justify-center">
-          <div class="glow-button flex w-full max-w-[80%] items-center justify-center gap-2 rounded-full bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm relative overflow-hidden">
-            <span>Get</span>
-            <Logo variant="white" imgClass="h-3 w-auto sm:h-4" />
-          </div>
-        </div> -->
+      <div class="flex flex-grow flex-col justify-center items-center bg-white/0"> 
         {#if visible}
           <div in:fly={{ y: 50, duration: 500 }} class="w-full max-w-xs">
-            <!-- <p class="text-green-500 text-sm mb-4 text-center">Animation triggered!</p> -->
             <ScorePill 
               title="JobPostScore" 
               startScore={42} 
               endScore={98} 
-              duration={2000}
+              duration={12000}
               isVisible={visible}
             />
           </div>
         {:else}
-          <p class="text-red-500 text-sm">Waiting for card to come into view...</p>
+          <!-- <p class="text-red-500 text-sm">Waiting for card to come into view...</p> -->
         {/if}
-  <!-- <div class="mt-4 bg-gray-200 p-4 rounded-lg">
-    <p class="font-semibold text-gray-400 text-xl mt-3">JobPostScore 40</p>
-    <p>Monitor your JobPostScore as you make changes, track improvements, and see how AI discoverability and candidate applications increase.</p>
-  </div> -->
       </div>
     </div>
   </div>

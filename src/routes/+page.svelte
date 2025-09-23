@@ -1,44 +1,35 @@
-<script>  
-	import ChatAuditForm from '$lib/components/ChatAuditForm.svelte';
-	import FeatureCard from '$lib/components/FeatureCard.svelte';
-	import ResultsDisplay from '$lib/components/ResultsDisplay.svelte';
+<script>
 	import WhatWeDo from '$lib/components/WhatWeDo.svelte';
-	import HowWeDo from '$lib/components/HowWeDo.svelte';
-	import LearnMoreAboutUs from '$lib/components/LearnMoreAboutUs.svelte';
-	import NewsletterSignup from '$lib/components/NewsletterSignup.svelte';
-	import JobPostOptimization from '$lib/components/JobPostOptimization.svelte';
 	import CallToAction from '$lib/components/CallToAction.svelte';
-	import ScrollTellingHowItWorks from '$lib/components/ScrollTellingHowItWorks.svelte';
 	import { auditStore } from '$lib/stores/audit.js';
 	import { user } from '$lib/stores/auth';
 	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
 	import AuditForm from '$lib/components/AuditForm.svelte';
-	import EnterpriseTalentTeams from '$lib/components/EnterpriseTalentTeams.svelte';
-	import TrustQuoteCombo from '$lib/components/TrustQuoteCombo.svelte';
 	import BetaBadge from '$lib/components/BetaBadge.svelte';
 	import TestimonialCarousel from '$lib/components/TestimonialCarousel.svelte';
-	import HowItWorks from '$lib/components/HowItWorks.svelte';
 	import RefinedGrid from '$lib/components/RefinedGrid.svelte';
 	import Logo from '$lib/components/Logo.svelte';
-	import SearchAnimation from '$lib/components/SearchAnimation.svelte';
 	import ScrollIndicator from '$lib/components/ScrollIndicator.svelte';
 	import GuestReportBadge from '$lib/components/GuestReportBadge.svelte';
 	import { GuestReportsAPI } from '$lib/api/reports';
+	import MessageNotification from '$lib/components/MessageNotification.svelte';
+	import HeroSection from '$lib/components/HeroSection.svelte';
+	import HomePageSections from '$lib/components/HomePageSections.svelte';
+	import Section from '$lib/components/Section.svelte';
 
-	// Supports weights 400-900 
+	// Supports weights 400-900
 
 	// Store subscription
 	let isLoading = false;
 	let results = null;
 	let showResults = false;
-	
+
 	// Message handling
 	let showMessage = false;
 	let messageText = '';
 	let messageType = 'info';
-	
+
 	// Authentication status for guest badge
 	let isLoggedIn = false;
 	let hasGuestReports = false;
@@ -97,7 +88,7 @@
 
 		// Subscribe to user authentication state
 		const unsubscribeUser = user.subscribe((currentUser) => {
-			isLoggedIn = !!(currentUser?.id);
+			isLoggedIn = !!currentUser?.id;
 		});
 
 		// Check for guest reports
@@ -105,13 +96,13 @@
 			try {
 				const currentReport = GuestReportsAPI.load();
 				const history = GuestReportsAPI.getHistory();
-				
+
 				// Validate current report has meaningful data
-				const validCurrentReport = currentReport && 
-					(currentReport.job_title || currentReport.job_body);
-				
+				const validCurrentReport =
+					currentReport && (currentReport.job_title || currentReport.job_body);
+
 				hasGuestReports = !!(validCurrentReport || history.length > 0);
-				
+
 				if (import.meta.env.DEV) {
 					console.log('[HomePage] Current report exists:', !!currentReport);
 					console.log('[HomePage] Current report valid:', !!validCurrentReport);
@@ -130,9 +121,10 @@
 				const msg = $page.url.searchParams.get('msg');
 				if (msg === 'no-reports') {
 					showMessage = true;
-					messageText = "You don't have any cached reports yet. Analyze a job posting to get started!";
+					messageText =
+						"You don't have any cached reports yet. Analyze a job posting to get started!";
 					messageType = 'info';
-					
+
 					// Auto-dismiss after 5 seconds
 					setTimeout(() => {
 						showMessage = false;
@@ -147,168 +139,91 @@
 			unsubscribePage();
 		};
 	});
-
-	// Feature card data
-	const featureCards = [
-		{
-			title: 'Inclusivity Analysis',
-			description:
-				'Detect and eliminate biased language to create job descriptions that appeal to a diverse talent pool.',
-			icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>'
-		},
-		{
-			title: 'Clarity Assessment',
-			description:
-				'Improve readability and ensure your job requirements are clearly defined for better candidate understanding.',
-			icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>'
-		},
-		{
-			title: 'Effectiveness Score',
-			description:
-				'Get actionable insights to optimize your job postings for better candidate attraction and higher quality applicants.',
-			icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>'
-		}
-	];
 </script>
 
 <svelte:head>
-	<title>JobPostScore | Job Posting Audit Platform</title>
+	<title>JobPostScore | Optimize Your Job Postings for Better Hiring</title>
 	<meta
 		name="description"
-		content="Transform your job postings into talent magnets with JobPostScore's job posting audit platform"
-	/>
+		content="Boost recruitment success with JobPostScore. Audit, score, and optimize your job postings to attract top talent, improve diversity, and streamline hiring." />
 	<meta
 		name="keywords"
-		content="job posting, job description, HR tools, recruitment, diversity, inclusion, hiring"
-	/>
+		content="job posting audit, job description optimization, recruitment tools, HR software, hiring insights, diversity and inclusion, talent acquisition" />
+
+	<!-- Open Graph -->
+	<meta property="og:title" content="JobPostScore | Optimize Your Job Postings for Better Hiring" />
+	<meta
+		property="og:description"
+		content="Audit and improve your job postings to attract top candidates and foster diverse, inclusive hiring with JobPostScore." />
+	<meta property="og:type" content="website" />
+
+	<!-- Twitter -->
+	<meta name="twitter:card" content="summary_large_image" />
 </svelte:head>
 
-<div id="hero" class="bg-transparent relative mx-auto pb-10 sm:pb-64 pt-6">
-  	<!-- Background elements -->
-  	<!-- <div class="absolute inset-0 bg-[url('/bkg2.png')] bg-no-repeat bg-contain sm:bg-cover bg-center blur-lg opacity-90 z-0"></div>
-  	<div class="absolute inset-0 bg-gradient-to-b from-[#f8f8f8]/0 via-[#f8f8f8]/0 to-[#f8f8f8]/0 2xl:from-[#f8f8f8]/0 2xl:via-[#f8f8f8]/0 2xl:to-[#f8f8f8]/0 z-0"></div>
-  	 -->
-
+<div id="hero" class="bg-transparent relative mx-0 sm:mx-auto pb-10 sm:pb-64 pt-6">
 	<!-- Message Notification -->
-	{#if showMessage}
-		<div class="fixed top-4 right-4 z-50 max-w-md">
-			<div class="bg-blue-50 border border-blue-200 rounded-lg shadow-lg p-4 flex items-start space-x-3">
-				<div class="flex-shrink-0">
-					<svg class="w-6 h-6 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-						<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-					</svg>
-				</div>
-				<div class="flex-1">
-					<p class="text-sm text-blue-800 font-medium">{messageText}</p>
-				</div>
-				<div class="flex-shrink-0">
-					<button
-						type="button"
-						class="bg-blue-50 rounded-md inline-flex text-blue-400 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-						on:click={dismissMessage}
-					>
-						<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-							<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-						</svg>
-					</button>
-				</div>
-			</div>
-		</div>
-	{/if}
-
-	<div class="relative w-full min-h-[75vh] sm:min-h-[85vh] pb-8 sm:pb-24">
-		
-		<!-- Hero Section with Audit Form -->
-		<section class="mb-4 sm:mb-8 bg-[radial-gradient(ellipse_at_center,_#f8f8f8_0%,_transparent_70%)] p-2 min-h-[70vh] sm:min-h-[85vh] relative">
-			<div class="container mx-auto pt-8 sm:pt-16">
-				<div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-start mx-auto">
-					<div class="px-4 lg:px-16 pb-10 sm:pb-24 rounded-3xl min-h-0 sm:min-h-[680px] mx-auto pt-6 sm:pt-20 w-full">
-						<!-- Guest Report Badge - Shows last cached report for non-authenticated users -->
-						{#if !isLoggedIn && hasGuestReports}
-							<GuestReportBadge />
-						{/if}
-						<h1 class="sm:pt-16 pt-4 text-3xl sm:text-7xl font-normal w-[100%] pb-6 sm:pb-12 leading-tight tracking-tight mx-auto text-center font-aeonik">
-							What's your
-							<span style="min-width: 140px;">
-								<span class="single-sweep" data-text="JobPostScore">JobPost<b>Score</b>?</span>
-							</span>
-						</h1>
-						<p
-							class="text-base sm:text-xl text-gray-400 text-center mb-8 max-w-3xl mx-auto font-normal font-aeonik"
-						>
-						Your JobPostScore reveals how visible your job is across AI-powered platforms, where more and more applicants now begin their job search. It’s the fastest way to see if your job is discoverable — or disappearing in search results.
-						<!-- <span class="hidden sm:inline"
-								>Audit your post, improve your visibility, and start attracting the right
-								candidates—before your competitors do.</span
-							> -->
-						</p>
-						<!-- <ChatAuditForm on:audit={handleAudit} /> -->
-						<AuditForm on:audit={handleAudit} />
-					</div>
-				</div>
-				
-				<!-- Guest Report Badge - Shows last cached report for non-authenticated users -->
-				<!-- {#if !isLoggedIn && hasGuestReports}
-					<GuestReportBadge />
-				{/if} -->
-			</div>
-			
-		</section>
-		<ScrollIndicator />
-	</div>
-	<!-- Job Post Optimization Section -->
-
+	<MessageNotification {showMessage} {messageText} {messageType} on:dismiss={dismissMessage} />
 	
+	<!-- Hero Section -->
+	<HeroSection {isLoggedIn} {hasGuestReports} on:audit={handleAudit} />
 
-<div class="container mx-auto z-10 sm:my-24 my-16 sm:mt-32"><BetaBadge /></div>
-<div class="container max-w-8xl mx-auto"> <WhatWeDo /> </div>
+	<!-- Beta Badge Section -->
+	<Section>
+		<BetaBadge />
+	</Section>
 
-<div class="pb-2 my-24">
-	<CallToAction
-		header='Instantly Scored. Visibility Tested.'
-		ctaText=""
-		ctaButtonText="Your job post, refined for maximum visibility."
-		ctaBackground="bg-[#ffffff]"
-		scrollTo="#hero"
-	/>
-</div>
+	<!-- What We Do Section -->
+	<Section containerClass="z-10">
+		<WhatWeDo />
+	</Section>
 
-<div class="container max-w-8xl mx-auto"> <RefinedGrid /> </div>
+	<!-- Call To Action Section -->
+	<Section containerClass="-my-14">
+		<CallToAction
+			header="Instantly Scored. Visibility Tested."
+			ctaText=""
+			ctaButtonText="Optimize Job Post Now"
+			ctaBackground="bg-[#ffffff]"
+			scrollTo="#hero" />
+	</Section>
 
+	<!-- Refined Grid Section -->
+	<Section containerClass="">
+		<RefinedGrid />
+	</Section>
 
-<div class="container mx-auto sm:mt-48 mt-0">
-	<CallToAction
-	header="Measure performance, uncover gaps, and boost visibility instantly."
-	ctaText="Discover how your job posts are really performing — and what to do to boost visibility and results."
-	ctaBackground="bg-[#ffffff]"
-	scrollTo="#hero"
->
-	<svelte:fragment slot="button">
-		<Logo variant="white" class="h-4 w-auto mr-2" />
-	</svelte:fragment>
-</CallToAction>
-</div>
+	<div class="container mx-auto sm:mt-48 mt-0">
+		<CallToAction
+			header="Measure performance, uncover gaps, and boost visibility instantly."
+			ctaText="Discover how your job posts are really performing — and what to do to boost visibility and results."
+			ctaBackground="bg-[#ffffff]"
+			scrollTo="#hero">
+			<svelte:fragment slot="button">
+				<Logo variant="white" class="h-4 w-auto mr-2" />
+			</svelte:fragment>
+		</CallToAction>
+	</div>
 
-<!-- <div class="container mx-auto z-10"></div> -->
- 
-<div class="mx-auto sm:mt-64 my-32">
-	<TestimonialCarousel />
-</div>		
+	<!-- <div class="container mx-auto z-10"></div> -->
 
-<div class="container mx-auto mt-64">
-	<CallToAction
-		header="Ready to transform your job postings?"
-		ctaText="Get started with JobPostScore today and start attracting the right candidates."
-		ctaButtonText="Get Started"
-		ctaBackground="bg-[#f8f8f8]"
-		scrollTo="#hero"
-		/>
+	<div class="mx-auto sm:mt-64 my-32">
+		<TestimonialCarousel />
+	</div>
+
+	<div class="container mx-auto mt-64">
+		<CallToAction
+			header="Ready to transform your job postings?"
+			ctaText="Get started with JobPostScore today and start attracting the right candidates."
+			ctaButtonText="Get Started"
+			ctaBackground="bg-[#f8f8f8]"
+			scrollTo="#hero" />
 	</div>
 </div>
 
 <div class="container mx-auto text-center my-2 mb-12 text-xs text-gray-400">
-    <BetaBadge />
-	</div>
+	<BetaBadge />
+</div>
 
 <style lang="scss">
 	.single-sweep {

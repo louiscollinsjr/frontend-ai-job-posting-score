@@ -13,10 +13,10 @@
 
 	// --- Props for reusability ---
 	export let userPrompt =
-		'Find me a remote Senior Frontend role at a mission-driven company with a strong focus on work-life balance.';
-	export let aiResponseTitle = 'Senior Frontend Engineer (React) - Remote';
+		'Role: Remote Senior Frontend Engineer (React)\n\nLocation: Dallas, TX';
+	export let aiResponseTitle = 'Senior Frontend Engineer (React) - Remote Dallas, TX';
 	export let aiResponseBody =
-		"At FinFlow, we're on a mission to make personal finance accessible... Our fully remote culture and focus on sustainable productivity make us a top choice for talent.";
+		"At Acme Company, we're on a mission to make personal finance accessible... Our fully remote culture and focus on sustainable productivity make us a top choice for talent.";
 
 	// --- Animation State ---
 	let showPrompt = false;
@@ -144,7 +144,7 @@
 
 <div 
   bind:this={cardElement}
-  class="w-full h-full rounded-2xl p-6 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 overflow-hidden relative"
+  class="w-auto sm:w-full h-[450px] rounded-2xl sm:p-6 p-2 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 overflow-hidden relative mx-2 sm:mx-0"
   style="{background ? `background-image: url('${background}'); background-position: center; background-size: cover;` : 'background: linear-gradient(to bottom right, #c3cde1, #dde3ee)'}">
     <!-- Mock Browser Window -->
     <div class="flex h-full flex-col overflow-hidden rounded-xl bg-white/10">
@@ -182,14 +182,14 @@
                 class="ai-response self-start w-full"
                 transition:fly={{ y: 20, duration: 400, opacity: 0, easing: quintOut }}
             >
-                <div class="border border-gray-200 rounded-lg p-4 bg-white">
+                <div class="border border-gray-200/50 rounded-lg p-4 py-8 bg-white/60">
                     <div class="flex items-center gap-2 mb-2">
-                        <span class="text-xs font-bold bg-[#00c951] text-white px-4 py-2 rounded-2xl">
-                          <Logo variant="white" imgClass="h-3 w-auto sm:h-3" />
+                        <span class="text-xs font-bold bg-[#00c951] text-white px-4 py-2 rounded-2xl my-3">
+                          <Logo variant="white" imgClass="h-5 w-auto sm:h-5" />
                         </span>
                     </div>
                     <h4 class="font-semibold text-gray-900">{aiResponseTitle}</h4>
-                    <p class="mt-1 text-xs text-gray-600 truncate">{aiResponseBody}</p>
+                    <p class="mt-1 text-xs text-gray-600">{aiResponseBody}</p>
                 </div>
             </div>
         {/if}

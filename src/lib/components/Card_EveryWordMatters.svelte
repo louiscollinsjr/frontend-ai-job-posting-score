@@ -1,115 +1,114 @@
 <!-- src/lib/components/Card_EveryWordMatters.svelte -->
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { fade } from 'svelte/transition';
-  import { cubicOut } from 'svelte/easing';
-  import { flip } from 'svelte/animate';
-  import Logo from '$lib/components/Logo.svelte';
+	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
+	import { cubicOut } from 'svelte/easing';
+	import { flip } from 'svelte/animate';
+	import Logo from '$lib/components/Logo.svelte';
 
-  export let title = '';
-  export let text = '';
-  export let images = [];
-  export let active = false;
-  export let index = 0;
-  export let background = '';
+	export let title = '';
+	export let text = '';
+	export let active = false;
+	export let index = 0;
+	export let background = '';
 
-  // Animation content
-  const content = [
-    {
-      title: 'Our Sales team has a unique mission',
-      body: 'Our Sales team has a unique mission to help customers understand the deep impact that highly capable AI models can bring to their business and users. This role is a mixture of technical understanding, vision, partnership, and value-driven strategy.'
-    },
-    {
-      title: 'You might thrive in this role if you:',
-      body: 'Are customer-centric. You are motivated to deeply understand your customer\'s priorities and help them achieve their vision for using our models to improve their products and services.'
-    }
-  ];
+	// Animation content
+	const content = [
+		{
+			title: 'Our Sales team has a unique mission',
+			body: 'Our Sales team has a unique mission to help customers understand the deep impact that highly capable AI models can bring to their business and users. This role is a mixture of technical understanding, vision, partnership, and value-driven strategy.'
+		},
+		{
+			title: 'You might thrive in this role if you:',
+			body: "Are customer-centric. You are motivated to deeply understand your customer's priorities and help them achieve their vision for using our models to improve their products and services."
+		}
+	];
 
-  // Animation constants
-  const TYPE_SPEED = 5; // milliseconds per character
-  const PAUSE_DURATION = 3000; // 3 seconds
-  const FADE_DURATION = 500; // 0.5 seconds
+	// Animation constants
+	const TYPE_SPEED = 5; // milliseconds per character
+	const PAUSE_DURATION = 3000; // 3 seconds
+	const FADE_DURATION = 500; // 0.5 seconds
 
-  // --- State Variables ---
-  let currentContentIndex = 0;
-  let displayedTitle = '';
-  let displayedBody = '';
-  let isTyping = false;
-  let isFading = false;
+	// --- State Variables ---
+	let currentContentIndex = 0;
+	let displayedTitle = '';
+	let displayedBody = '';
+	let isTyping = false;
+	let isFading = false;
 
-  // Helper function for delays
-  const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+	// Helper function for delays
+	const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
-  // The main animation loop
-  async function runAnimationCycle() {
-    // Initial setup without fade
-    displayedTitle = content[0].title;
-    await delay(500);
+	// The main animation loop
+	async function runAnimationCycle() {
+		// Initial setup without fade
+		displayedTitle = content[0].title;
+		await delay(500);
 
-    // Infinite loop
-    while (true) {
-      const item = content[currentContentIndex];
+		// Infinite loop
+		while (true) {
+			const item = content[currentContentIndex];
 
-      // Start typing the body
-      isTyping = true;
-      for (let i = 0; i <= item.body.length; i++) {
-        displayedBody = item.body.substring(0, i);
-        await delay(TYPE_SPEED);
-      }
-      isTyping = false;
+			// Start typing the body
+			isTyping = true;
+			for (let i = 0; i <= item.body.length; i++) {
+				displayedBody = item.body.substring(0, i);
+				await delay(TYPE_SPEED);
+			}
+			isTyping = false;
 
-      // Pause so the user can read the full text
-      await delay(PAUSE_DURATION);
+			// Pause so the user can read the full text
+			await delay(PAUSE_DURATION);
 
-      // Fade out the text
-      isFading = true;
-      await delay(FADE_DURATION);
+			// Fade out the text
+			isFading = true;
+			await delay(FADE_DURATION);
 
-      // Move to the next item in the content array
-      currentContentIndex = (currentContentIndex + 1) % content.length;
-      const nextItem = content[currentContentIndex];
+			// Move to the next item in the content array
+			currentContentIndex = (currentContentIndex + 1) % content.length;
+			const nextItem = content[currentContentIndex];
 
-      // Reset for the next cycle
-      displayedBody = '';
-      displayedTitle = nextItem.title;
+			// Reset for the next cycle
+			displayedBody = '';
+			displayedTitle = nextItem.title;
 
-      // Fade in with the new title
-      isFading = false;
-      await delay(FADE_DURATION + 200); // Wait for fade in plus a small buffer
-    }
-  }
+			// Fade in with the new title
+			isFading = false;
+			await delay(FADE_DURATION + 200); // Wait for fade in plus a small buffer
+		}
+	}
 
-  onMount(() => {
-    runAnimationCycle();
-  });
+	onMount(() => {
+		runAnimationCycle();
+	});
 </script>
 
 <div
-  class="w-full h-full rounded-2xl p-6 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 overflow-hidden relative"
-  style="{background ? `background-image: url('${background}'); background-position: center; background-size: cover;` : 'background: linear-gradient(to bottom right, #c3cde1, #dde3ee)'}"
->
+	class="w-auto sm:w-full h-[450px] rounded-2xl sm:p-6 p-2 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 overflow-hidden relative mx-2 sm:mx-0"
+	style={background
+		? `background-image: url('${background}'); background-position: center; background-size: cover;`
+		: 'background: linear-gradient(to bottom right, #c3cde1, #dde3ee)'}>
 	<!-- Mock Browser Window -->
-	<div class="flex h-full flex-col overflow-hidden rounded-xl bg-white/60 shadow-inner">
+	<div
+		class="flex h-[400px] sm:h-full flex-col overflow-hidden rounded-xl bg-white/60 shadow-inner">
 		<!-- Browser Chrome (header) -->
 		<div
-			class="flex flex-shrink-0 items-center gap-2 border-none border-gray-200 bg-white/30 px-4 py-2.5"
-		>
-			<div class="h-3 w-3 rounded-full bg-red-400" />
-			<div class="h-3 w-3 rounded-full bg-yellow-400" />
-			<div class="h-3 w-3 rounded-full bg-green-400" />
+			class="flex flex-shrink-0 items-center gap-2 border-none border-gray-200 bg-white/30 px-4 py-2.5">
+			<div class="h-3 w-3 rounded-full bg-red-400"></div>
+			<div class="h-3 w-3 rounded-full bg-yellow-400"></div>
+			<div class="h-3 w-3 rounded-full bg-green-400"></div>
 		</div>
 
 		<!-- Main Content Area -->
-		<div class="flex flex-grow flex-col justify-between bg-white/30 p-5">
+		<div class="flex flex-grow flex-col justify-between bg-white/30 sm:p-5 px-2 py-5">
 			<!-- Animated Input Area -->
 			<div
 				class="text-content-area flex-grow rounded-lg border border-gray-200 bg-gray-50/60 p-4 text-sm text-gray-700"
-				class:faded={isFading}
-			>
+				class:faded={isFading}>
 				{#if displayedTitle}
-					<p class="font-semibold text-gray-900 text-xs mb-3">{displayedTitle}</p>
+					<p class="font-semibold text-gray-900 text-sm mb-3">{displayedTitle}</p>
 				{/if}
-				<p class="text-gray-600 text-xs leading-relaxed">
+				<p class="text-gray-600 text-sm leading-relaxed">
 					{displayedBody}
 					<!-- Blinking Cursor only shows while typing -->
 					{#if isTyping}
@@ -117,15 +116,13 @@
 					{/if}
 				</p>
 			</div>
-      
 
 			<!-- Action Button -->
 			<div class="mt-4 flex justify-center">
 				<div
-					class="glow-button flex w-full max-w-[80%] items-center justify-center gap-2 rounded-full bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm relative overflow-hidden"
-				>
+					class="glow-button flex w-full max-w-[80%] items-center justify-center gap-2 rounded-full bg-black px-3 py-2 text-lg font-normal text-white relative overflow-hidden font-aeonik">
 					<span>Get</span>
-					<Logo variant="white" imgClass="h-3 w-auto sm:h-4" />
+					<Logo variant="white" imgClass="h-5 w-auto sm:h-5" />
 				</div>
 			</div>
 		</div>
