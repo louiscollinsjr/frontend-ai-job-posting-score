@@ -201,7 +201,7 @@
 			ctaBackground="bg-[#f8f8f8]"
 			scrollTo="#hero">
 			<svelte:fragment slot="button">
-				<Logo variant="white" imgClass="sm:h-8 h-6 w-auto mr-0" />
+				<Logo variant="white" imgClass="sm:h-6 h-5 w-auto mr-0" />
 			</svelte:fragment>
 		</CallToAction>
 	</Section>
