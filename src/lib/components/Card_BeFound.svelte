@@ -149,7 +149,7 @@
     <!-- Mock Browser Window -->
     <div class="flex h-full flex-col overflow-hidden rounded-xl bg-white/10">
       <!-- Main Content Area -->
-      <div class="flex flex-col gap-4 h-full p-6 bg-white/60 rounded-lg border border-gray-200/80">
+      <div class="flex flex-col gap-4 h-full p-4 bg-white/60 rounded-lg border-none border-gray-200/80">
         <!-- User Prompt Section -->
         {#if showPrompt}
             <div
