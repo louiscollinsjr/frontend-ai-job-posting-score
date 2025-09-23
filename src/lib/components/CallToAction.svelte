@@ -5,6 +5,9 @@
   export let ctaButtonText = "Get Started";
   export let ctaBackground = "bg-white";
   export let scrollTo = "";
+
+  import SubmitButton from "./SubmitButton.svelte";
+  
 </script>
 
 <div class={`cta-container py-16 px-6 sm:px-8 md:px-12 lg:px-16 ${ctaBackground} rounded-sm my-16`}>

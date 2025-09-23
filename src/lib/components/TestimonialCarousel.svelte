@@ -45,9 +45,9 @@
   let primarySpeed = 40; // Slower, more professional pace
 </script>
 
-<div class="flex flex-col items-center w-full mx-auto mt-24 mb-32 overflow-hidden">
-  <h2 class="relative z-10 mx-auto sm:text-5xl text-3xl font-aeonik mb-24">
-    Trusted by Talent Acquisition 
+<div class="flex flex-col items-center w-full mx-auto mb-32 overflow-hidden">
+  <h2 class="relative z-10 mx-auto text-center sm:text-5xl text-3xl font-aeonik mb-24 p-4">
+    Trusted by <br>Talent Acquisition 
     <span class="inline-flex pb-1 chroma-text chroma-text-animate">Teams</span>
   </h2>
   

@@ -193,17 +193,18 @@
 		<RefinedGrid />
 	</Section>
 
-	<div class="container mx-auto sm:mt-48 mt-0">
+	<!-- Call To Action Section -->
+	<Section containerClass="">
 		<CallToAction
 			header="Measure performance, uncover gaps, and boost visibility instantly."
 			ctaText="Discover how your job posts are really performing — and what to do to boost visibility and results."
-			ctaBackground="bg-[#ffffff]"
+			ctaBackground="bg-[#f8f8f8]"
 			scrollTo="#hero">
 			<svelte:fragment slot="button">
-				<Logo variant="white" class="h-4 w-auto mr-2" />
+				<Logo variant="white" imgClass="sm:h-8 h-6 w-auto mr-0" />
 			</svelte:fragment>
 		</CallToAction>
-	</div>
+	</Section>
 
 	<!-- <div class="container mx-auto z-10"></div> -->
 
@@ -211,14 +212,14 @@
 		<TestimonialCarousel />
 	</div>
 
-	<div class="container mx-auto mt-64">
+	<Section containerClass="container mx-auto mt-64">
 		<CallToAction
 			header="Ready to transform your job postings?"
 			ctaText="Get started with JobPostScore today and start attracting the right candidates."
 			ctaButtonText="Get Started"
 			ctaBackground="bg-[#f8f8f8]"
 			scrollTo="#hero" />
-	</div>
+	</Section>
 </div>
 
 <div class="container mx-auto text-center my-2 mb-12 text-xs text-gray-400">

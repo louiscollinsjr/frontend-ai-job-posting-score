@@ -184,12 +184,12 @@
             >
                 <div class="border border-gray-200/50 rounded-lg p-4 py-8 bg-white/60">
                     <div class="flex items-center gap-2 mb-2">
-                        <span class="text-xs font-bold bg-[#00c951] text-white px-4 py-2 rounded-2xl my-3">
+                        <span class="text-sm font-bold bg-[#00c951] text-white px-4 py-2 rounded-2xl my-1">
                           <Logo variant="white" imgClass="h-5 w-auto sm:h-5" />
                         </span>
                     </div>
                     <h4 class="font-semibold text-gray-900">{aiResponseTitle}</h4>
-                    <p class="mt-1 text-xs text-gray-600">{aiResponseBody}</p>
+                    <p class="mt-1 text-sm text-gray-600">{aiResponseBody}</p>
                 </div>
             </div>
         {/if}
