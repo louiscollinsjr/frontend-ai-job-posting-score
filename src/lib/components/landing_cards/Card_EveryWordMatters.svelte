@@ -84,7 +84,7 @@
 </script>
 
 <div
-	class="w-auto sm:w-full h-[450px] rounded-2xl sm:p-6 p-2 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 overflow-hidden relative mx-2 sm:mx-0"
+	class="w-auto sm:w-full h-[450px] rounded-2xl sm:p-6 p-2 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 overflow-hidden relative mx-2 sm:mx-0 bg-[#c3cde1]"
 	style={background
 		? `background-image: url('${background}'); background-position: center; background-size: cover;`
 		: 'background: linear-gradient(to bottom right, #c3cde1, #dde3ee)'}>

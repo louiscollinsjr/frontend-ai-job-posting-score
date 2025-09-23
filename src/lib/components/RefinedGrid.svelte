@@ -1,44 +1,40 @@
 <script>
-    import CardA_Meeting from '$lib/components/CardA_Meeting.svelte';
-    import CardB_Code from '$lib/components/CardB_Code.svelte';
-    import CardC_Video from '$lib/components/CardC_Video.svelte';
-    import Card_EveryWordMatters from '$lib/components/Card_EveryWordMatters.svelte';
-    import Card_KnowExactlyWhereYouStand from '$lib/components/Card_KnowExactlyWhereYouStand.svelte';
-    import Card_Blank from '$lib/components/Card_Blank.svelte';
-    import Card_NoGuessWork from '$lib/components/Card_NoGuessWork.svelte';
-    import Card_BeFound from '$lib/components/Card_BeFound.svelte';
-    import Card_MeasureOverTime from '$lib/components/Card_MeasureOverTime.svelte';
+    import Card_EveryWordMatters from '$lib/components/landing_cards/Card_EveryWordMatters.svelte';
+    import Card_KnowExactlyWhereYouStand from '$lib/components/landing_cards/Card_KnowExactlyWhereYouStand.svelte';
+    import Card_NoGuessWork from '$lib/components/landing_cards/Card_NoGuessWork.svelte';
+    import Card_BeFound from '$lib/components/landing_cards/Card_BeFound.svelte';
+    import Card_MeasureOverTime from '$lib/components/landing_cards/Card_MeasureOverTime.svelte';
   
     const features = [
       {
         component: Card_EveryWordMatters,
         title: 'Every Word Counts',
         text: `Paste your job post into JobPostScore. Instantly see how clear, structured, and discoverable it really is.`,
-        background: '/card_backgrounds/bg6.png'
+        //background: '/card_backgrounds/bg6.png'
       },
       {
         component: Card_KnowExactlyWhereYouStand,
         title: 'Know Your Score',
         text: `Get a score based on proven best practices — and know exactly which parts of your job post need work.`,
-        background: '/card_backgrounds/bg7.png'
+       // background: '/card_backgrounds/bg7.png'
       },
       {
         component: Card_NoGuessWork,
         title: 'Fix What Matters',
         text: `See what’s holding your post back — and get clear steps to boost reach, visibility, and applications.`,
-        background: '/card_backgrounds/bg8.png'
+        //background: '/card_backgrounds/bg8.png'
       },
       {
         component: Card_BeFound,
         title: 'Be Discovered',
         text: `Optimize your job post for AI-driven platforms like ChatGPT and Gemini — so more qualified candidates find you.`,
-        background: '/card_backgrounds/bg4.webp'
+       //background: '/card_backgrounds/bg4.webp'
       },
       {
         component: Card_MeasureOverTime,
         title: 'Track Your Wins',
         text: `Measure improvements over time and watch your visibility grow.`,
-        background: '/card_backgrounds/bg5.webp'
+        //background: '/card_backgrounds/bg5.webp'
       },
     ];
   </script>

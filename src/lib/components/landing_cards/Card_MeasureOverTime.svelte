@@ -73,7 +73,7 @@
   class="w-auto sm:w-full h-[450px] rounded-2xl sm:p-6 p-2 shadow-[0_0_20px_RGBA(0,0,0,0.05)] border border-gray-200/50 overflow-hidden relative mx-2 sm:mx-0"
   style="{background ? `background-image: url('${background}'); background-position: center; background-size: cover;` : 'background: linear-gradient(to bottom right, #c3cde1, #dde3ee)'}">
     <!-- Mock Browser Window -->
-    <div class="flex h-full flex-col overflow-hidden justify-center items-center rounded-xl bg-teal-700/30 shadow-inner p-5">
+    <div class="flex h-full flex-col overflow-hidden justify-center items-center rounded-xl bg-gray-700/10 shadow-inner p-5">
   
       <!-- Main Content Area -->
       
