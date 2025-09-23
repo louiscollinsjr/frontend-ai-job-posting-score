@@ -27,15 +27,16 @@
 					{#if !isLoggedIn && hasGuestReports}
 						<GuestReportBadge />
 					{/if}
-					<h1 class="sm:pt-16 pt-4 text-3xl sm:text-7xl font-normal w-[100%] pb-6 sm:pb-12 leading-tight tracking-tight mx-auto text-center font-aeonik">
+					<h1 class="sm:pt-16 pt-4 text-4xl sm:text-7xl font-normal w-[100%] pb-4 sm:pb-8 leading-tight tracking-tight mx-auto text-center font-aeonik">
 						What's your
 						<span style="min-width: 140px;">
 							<span class="single-sweep" data-text="JobPostScore">JobPost<b>Score</b>?</span>
 						</span>
 					</h1>
-					<p class="text-base sm:text-xl text-gray-400 text-center mb-8 max-w-3xl mx-auto font-normal font-aeonik">
-						<span class="block">Your JobPostScore reveals how visible your job is across AI-powered platforms, where more and more applicants now begin their job search.</span> <span class="hidden sm:block">It's the fastest way to see if your job is discoverable — or disappearing in search results.</span>
+					<p class="hidden sm:block sm:text-xl text-gray-400 text-center mb-8 max-w-3xl mx-auto font-normal font-aeonik">
+						Your JobPostScore reveals how visible your job is across AI-powered platforms, where more and more applicants now begin their job search. It's the fastest way to see if your job is discoverable — or disappearing in search results.
 					</p>
+					<p class="block sm:hidden w-[95%] text-lg sm:text-base text-gray-400 text-center mb-2 max-w-3xl mx-auto font-normal font-aeonik">See how visible your job is on AI-powered platforms where candidates start their search.</p>
 					<AuditForm on:audit={handleAudit} />
 				</div>
 			</div>

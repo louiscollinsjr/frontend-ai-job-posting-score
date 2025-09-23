@@ -8,7 +8,7 @@
   export let glow: boolean = true;
 
   // Base classes for the button, includes 'relative' for the glow effect
-  const baseClass = 'relative mx-auto cta-button w-full text-lg sm:text-2xl text-center flex items-center justify-center gap-2 bg-black hover:bg-gray-700 transition-colors duration-300 text-white py-2 px-8 rounded-full font-aeonik tracking-wider font-normal';
+  const baseClass = 'relative mx-auto cta-button w-full text-lg sm:text-2xl text-center flex items-center justify-center gap-2 bg-black hover:bg-gray-700 transition-colors duration-300 text-white py-2 px-8 rounded-full font-aeonik tracking-wider font-normal mt-12';
 
   // If className is provided, use it completely. Otherwise, use baseClass.
   $: finalClass = className || baseClass;
@@ -23,7 +23,7 @@
   {#if glow}
     <span
       aria-hidden="true"
-      class="glow pointer-events-none absolute -inset-3 -z-10 rounded-full opacity-90"
+      class="glow pointer-events-none absolute -inset-0.5 -z-10 rounded-full"
     ></span>
   {/if}
 
@@ -41,27 +41,24 @@
 </button>
 
 <style>
-  /* Rotating conic-gradient ring */
-  @keyframes spinGradient {
-    to { transform: rotate(360deg); }
+  /* Subtle color shift animation */
+  @keyframes colorShift {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
   }
   .glow {
     border-radius: 9999px;
-    background: conic-gradient(
-      from 0deg,
-      #ff00f7 0%,
-      #fa3d1d 33%,
-      #0358f7 66%,
-      #ff00f7 100%
+    background: linear-gradient(
+      to left,
+      #fa3d1d 0%,
+      #ffb005 25%,
+      #0358f7 50%,
+      #c679c4 100%
     );
-    filter: blur(16px);
-    /* Smooth continuous rotation */
-    animation: spinGradient 3s linear infinite;
-    /* iOS/GPU stability hints */
-    will-change: transform;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    transform: translateZ(0);
+    background-size: 150% 150%;
+    filter: blur(1px);
+    /* Smooth color transition */
+    animation: colorShift 3s infinite ease-in-out alternate;
   }
   @media (prefers-reduced-motion: reduce) {
     .glow {

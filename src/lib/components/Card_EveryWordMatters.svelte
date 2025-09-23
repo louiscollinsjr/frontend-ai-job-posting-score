@@ -26,7 +26,7 @@
 
 	// Animation constants
 	const TYPE_SPEED = 5; // milliseconds per character
-	const PAUSE_DURATION = 3000; // 3 seconds
+	const PAUSE_DURATION = 8000; // 3 seconds
 	const FADE_DURATION = 500; // 0.5 seconds
 
 	// --- State Variables ---
@@ -43,7 +43,7 @@
 	async function runAnimationCycle() {
 		// Initial setup without fade
 		displayedTitle = content[0].title;
-		await delay(500);
+		await delay(FADE_DURATION + 500);
 
 		// Infinite loop
 		while (true) {
