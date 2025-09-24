@@ -125,7 +125,7 @@
                 </div>
               </div>
             </div>
-            <div class="mt-8 text-sm text-gray-200 text-center"><Logo variant="black" alt="JobPostScore" imgClass="h-10 w-auto" />Visibility score</div>
+            <div class="mt-8 text-sm text-gray-600 text-center"><Logo variant="black" alt="JobPostScore" imgClass="h-10 w-auto" />Visibility score</div>
           </div>
         {:else}
           <!-- placeholder when not visible -->
