@@ -12,6 +12,7 @@
   export let results = null;
   export let categoryLabels = [];
   export let rewriteLoading = false;
+  export let fromOptimizedSelection = false;
 
   const dispatch = createEventDispatcher();
   export let downloadReport = () => {};
@@ -190,6 +191,29 @@
               categories={resolvedCategories}
               categoryLabels={effectiveCategoryLabels}
             />
+
+            {#if fromOptimizedSelection && results?.hasRewrite}
+              <div class="flex items-start gap-3 p-4 rounded-md border border-dashed border-gray-300 bg-gray-50">
+                <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-black text-white text-sm font-semibold">1</span>
+                <div class="text-xs text-gray-700 leading-tight space-y-2">
+                  <div>
+                    <p class="font-semibold text-gray-900">You're viewing the original scorecard first.</p>
+                    <p class="mt-1">This keeps the category breakdown aligned with the initial score before optimization.</p>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="inline-flex items-center gap-1 rounded-full bg-gray-200 px-2.5 py-1 text-[11px] font-medium text-gray-800">
+                      <span class="opacity-70">Original score</span>
+                      <span>{results?.optimizationData?.original_score ?? processedResults?.overallScore ?? 0}</span>
+                    </span>
+                    <span class="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-1 text-[11px] font-semibold text-green-700">
+                      <span class="opacity-70">Optimized score</span>
+                      <span>{results?.optimizationData?.optimized_score ?? results?.total_score ?? 0}</span>
+                    </span>
+                  </div>
+                  <p class="text-gray-600">When you're ready, scroll down and choose <strong>View Latest Improvement</strong> to open the optimized report.</p>
+                </div>
+              </div>
+            {/if}
 
             <!-- Suggestions Panel -->
             <div

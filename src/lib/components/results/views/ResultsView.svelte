@@ -18,6 +18,7 @@
   $: currentReport = $resultsPageStore.currentReport;
   $: showDialog = $resultsPageStore.showSaveDialog;
   $: isOptimizing = $resultsPageStore.isOptimizing;
+  $: fromOptimizedSelection = $resultsPageStore.fromOptimizedSelection;
 
   // Guest toast state
   let showGuestToast = false;
@@ -206,6 +207,7 @@
     {isLoggedIn}
     rewriteLoading={isOptimizing}
     loading={false}
+    fromOptimizedSelection={fromOptimizedSelection}
     on:save={handleSave}
     on:optimize={handleOptimize}
     {downloadReport}

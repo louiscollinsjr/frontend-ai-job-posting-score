@@ -484,8 +484,17 @@
   }
 
   // Report action functions
+  function openScorecard(reportId, { fromOptimized = false } = {}) {
+    if (!reportId) return;
+    const params = new URLSearchParams({ report: reportId });
+    if (fromOptimized) {
+      params.set('from', 'optimized');
+    }
+    goto(`/results?${params.toString()}`);
+  }
+
   function viewReport(reportId) {
-    goto(`/results?report=${reportId}`);
+    openScorecard(reportId);
   }
 
   async function optimizeReport(reportId) {
@@ -790,19 +799,27 @@
                                 optimization.lowestScore >= 60 ? 'bg-yellow-300 text-black' : 
                                 optimization.lowestScore >= 40 ? 'bg-red-400 text-white' :
                                 'bg-red-600 text-white'}"
-                              on:click={(e) => e.stopPropagation()}
+                              on:click={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                openScorecard(report.id);
+                              }}
                             >
                               {optimization.lowestScore}
                             </a>
                             <!-- Optimized score (highest) - links to optimized view -->
                             <a 
-                              href={`/results?report=${report.id}&view=optimized`} 
+                              href={`/results?report=${report.id}&from=optimized`} 
                               class="inline-flex items-center px-2.5 py-1 rounded-sm text-[9px] cursor-pointer hover:opacity-80 transition-opacity
                                 {optimization.highestScore >= 85 ? 'bg-green-500 text-white' : 
                                 optimization.highestScore >= 60 ? 'bg-yellow-300 text-black' : 
                                 optimization.highestScore >= 40 ? 'bg-red-400 text-white' :
                                 'bg-red-600 text-white'}"
-                              on:click={(e) => e.stopPropagation()}
+                              on:click={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                openScorecard(report.id, { fromOptimized: true });
+                              }}
                             >
                               {optimization.highestScore}
                             </a>
@@ -816,7 +833,11 @@
                               getScore(report) >= 60 ? 'bg-yellow-300 text-black' : 
                               getScore(report) >= 40 ? 'bg-red-400 text-white' :
                               'bg-red-600 text-white'}"
-                            on:click={(e) => e.stopPropagation()}
+                            on:click={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              openScorecard(report.id);
+                            }}
                           >
                             {getScore(report)}
                           </a>
@@ -861,7 +882,7 @@
                             >
                               <button 
                                 class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
-                                on:click={() => { goto(`/results/${report.id}`); activeDropdown = null; }}
+                                on:click={() => { openScorecard(report.id); activeDropdown = null; }}
                               >
                                 <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                                 View Post
@@ -869,7 +890,7 @@
                               {#if reportOptimizations.has(report.id)}
                               <button 
                                 class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
-                                on:click={() => { goto(`/results?report=${report.id}&view=optimized`); activeDropdown = null; }}
+                                on:click={() => { openScorecard(report.id, { fromOptimized: true }); activeDropdown = null; }}
                               >
                                 <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                 View Optimized Post

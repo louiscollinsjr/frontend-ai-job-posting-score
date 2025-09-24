@@ -74,11 +74,12 @@
     const unsubscribePage = page.subscribe(async ($page) => {
       const reportId = $page.url.searchParams.get('report');
       const viewMode = $page.url.searchParams.get('view'); // 'optimized' or null (default)
+      const fromParam = $page.url.searchParams.get('from');
       const guestFlag = $page.url.searchParams.get('guest');
       const legacyId = $page.url.searchParams.get('id');
       
       if (import.meta.env.DEV) {
-        console.log('[Results] URL parameters:', { reportId, viewMode, guestFlag });
+        console.log('[Results] URL parameters:', { reportId, viewMode, guestFlag, fromParam });
       }
 
       // Handle legacy guest links like /results?id=...&guest=1
@@ -90,16 +91,25 @@
         return; // Do not attempt DB loads for guest links
       }
 
+      const arrivedFromOptimized = fromParam === 'optimized';
+      resultsPageStore.setFromOptimizedSelection(arrivedFromOptimized);
+
       if (reportId) {
         // Set view mode based on URL parameter BEFORE loading report
         if (viewMode === 'optimized') {
           console.log('[Results] Setting requested view to optimized');
           resultsPageStore.setRequestedView('optimized');
+          resultsPageStore.setFromOptimizedSelection(false);
         } else {
           console.log('[Results] Setting requested view to original');
           resultsPageStore.setRequestedView('original');
         }
-        
+
+        if (arrivedFromOptimized && viewMode !== 'optimized') {
+          console.log('[Results] Arrived from optimized dashboard selection, staying on scorecard');
+          resultsPageStore.setRequestedView('original');
+        }
+
         // Check if we need to reload optimization data
         const currentStore = get(resultsPageStore);
         const currentReportId = currentStore.currentReport?.id || currentStore.currentReport?.report_id;
@@ -112,8 +122,13 @@
           // Load report by ID regardless of login status
           queueLoadReportById(reportId);
         }
-      } else if ($hasReport && !isLoggedIn) {
-        GuestManager.schedulePrompt();
+      } else {
+        if (!arrivedFromOptimized) {
+          resultsPageStore.setFromOptimizedSelection(false);
+        }
+        if ($hasReport && !isLoggedIn) {
+          GuestManager.schedulePrompt();
+        }
       }
     });
 

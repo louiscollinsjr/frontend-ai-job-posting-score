@@ -24,9 +24,10 @@ interface ResultsPageState {
   // UI states
   showSaveDialog: boolean;
   showSuccessMessage: boolean;
-  
+
   // View mode
   requestedView: 'original' | 'optimized' | null;
+  fromOptimizedSelection: boolean;
   
   // Timeouts
   dialogTimeout: ReturnType<typeof setTimeout> | null;
@@ -45,6 +46,7 @@ const initialState: ResultsPageState = {
   showSaveDialog: false,
   showSuccessMessage: false,
   requestedView: null,
+  fromOptimizedSelection: false,
   dialogTimeout: null,
   successTimeout: null,
   fromGuestLogin: false,
@@ -112,12 +114,14 @@ function createResultsPageStore() {
     setRequestedView: (view: 'original' | 'optimized' | null) =>
       update(state => ({ ...state, requestedView: view })),
     
+    setFromOptimizedSelection: (value: boolean) =>
+      update(state => ({ ...state, fromOptimizedSelection: value })),
+    
     reset: () => set(initialState)
   };
 }
 
 export const resultsPageStore = createResultsPageStore();
-
 // Derived stores for common patterns
 export const isLoading = derived(
   resultsPageStore,
