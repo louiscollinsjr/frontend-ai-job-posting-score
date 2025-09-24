@@ -156,7 +156,7 @@
                 class="user-prompt bg-gray-100 p-4 rounded-lg self-end max-w-[85%]"
                 transition:fly={{ y: 20, duration: 400, opacity: 0, easing: quintOut }}
             >
-                <p class="text-base text-gray-800">
+                <p class="text-sm text-gray-800">
                     {typedText}
                     {#if isTyping}
                         <span class="cursor" />
@@ -188,8 +188,8 @@
                           <Logo variant="white" imgClass="h-5 w-auto sm:h-5" />
                         </span>
                     </div>
-                    <h4 class="font-semibold text-gray-900">{aiResponseTitle}</h4>
-                    <p class="mt-1 text-base text-gray-600">{aiResponseBody}</p>
+                    <h4 class="font-semibold text-gray-900 text-sm">{aiResponseTitle}</h4>
+                    <p class="mt-1 text-sm text-gray-600">{aiResponseBody}</p>
                 </div>
             </div>
         {/if}

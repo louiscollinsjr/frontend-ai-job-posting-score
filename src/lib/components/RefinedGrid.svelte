@@ -9,32 +9,32 @@
       {
         component: Card_EveryWordMatters,
         title: 'Every Word Counts',
-        text: `Paste your job post into JobPostScore. Instantly see how clear, structured, and discoverable it really is.`,
-        //background: '/card_backgrounds/bg6.png'
+        text: `Copy and paste or attach your job listing into JobPostScore. We review it completely then evaluates for clarity, structure, and discoverability.`,
+        background: '/card_backgrounds/bg6.png'
       },
       {
         component: Card_KnowExactlyWhereYouStand,
-        title: 'Know Your Score',
-        text: `Get a score based on proven best practices — and know exactly which parts of your job post need work.`,
-       // background: '/card_backgrounds/bg7.png'
+        title: 'Know Exactly Where You Stand',
+        text: `JobPostScore evaluates your listing against proven best practices and shows your optimization level, so you immediately know which areas need improvement.`,
+        background: '/card_backgrounds/bg7.png'
       },
       {
         component: Card_NoGuessWork,
-        title: 'Fix What Matters',
-        text: `See what’s holding your post back — and get clear steps to boost reach, visibility, and applications.`,
-        //background: '/card_backgrounds/bg8.png'
+        title: 'No Guesswork, Just Action',
+        text: `JobPostScore highlights what’s limiting your reach and gives specific recommendations to improve every factor that drives AI visibility and candidate applications.`,
+        background: '/card_backgrounds/bg8.png'
       },
       {
         component: Card_BeFound,
-        title: 'Be Discovered',
-        text: `Optimize your job post for AI-driven platforms like ChatGPT and Gemini — so more qualified candidates find you.`,
-       //background: '/card_backgrounds/bg4.webp'
+        title: 'Be Found Where Candidates Search',
+        text: `Your job is optimized for AI-driven platforms like ChatGPT, Gemini, and other AI job-matching tools, ensuring more qualified candidates see it.`,
+        background: '/card_backgrounds/bg4.webp'
       },
       {
         component: Card_MeasureOverTime,
-        title: 'Track Your Wins',
-        text: `Measure improvements over time and watch your visibility grow.`,
-        //background: '/card_backgrounds/bg5.webp'
+        title: 'Measure Your Impact Over Time',
+        text: `Monitor your JobPostScore as you make changes, track improvements, and see how AI discoverability and candidate applications increase.`,
+        background: '/card_backgrounds/bg5.webp'
       },
     ];
   </script>
@@ -70,9 +70,8 @@
               <!-- Description Text -->
               <div class="mx-4 mt-4 text-left lg:text-left font-aeonik">
                 <div class="p-2">
-                  <p class="text-xl sm:text-2xl text-gray-700 tracking-wide mb-1">{feature.title}</p>
-                  <span class="text-base sm:text-lg text-gray-500 leading-tight font-normal font-aeonik">
-                    {feature.text}
+                  <span class="text-base sm:text-sm text-gray-700 leading-tight font-normal tracking-normal">
+                    <span class="font-bold">{feature.title}</span> {feature.text}
                   </span>
                 </div>
               </div>

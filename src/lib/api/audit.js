@@ -38,7 +38,7 @@ export async function auditJobUrl(url) {
     const response = await fetchWithTimeout(`${API_BASE_URL}/api/audit-job-post`, {
       method: 'POST',
       headers,
-      body: JSON.stringify({ url })
+      body: JSON.stringify({ url, useV2Pipeline: true })
     });
     // Handle anti-bot response from backend
     if (response.status === 403) {
@@ -80,7 +80,7 @@ export async function auditJobText(text) {
     const response = await fetchWithTimeout(`${API_BASE_URL}/api/audit-job-post`, {
       method: 'POST',
       headers,
-      body: JSON.stringify({ text })
+      body: JSON.stringify({ text, useV2Pipeline: true })
     });
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
