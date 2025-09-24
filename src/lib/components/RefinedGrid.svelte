@@ -70,7 +70,7 @@
               <!-- Description Text -->
               <div class="mx-4 mt-4 text-left lg:text-left font-aeonik">
                 <div class="p-2">
-                  <span class="text-base sm:text-sm text-gray-700 leading-tight font-normal tracking-normal">
+                  <span class="text-base sm:text-base text-gray-700 leading-tight font-normal tracking-normal">
                     <span class="font-bold">{feature.title}</span> {feature.text}
                   </span>
                 </div>
