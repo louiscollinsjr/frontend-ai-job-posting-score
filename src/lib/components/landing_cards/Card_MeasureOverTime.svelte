@@ -46,9 +46,9 @@
     });
     
     // Circular score indicator config
-    const startScore = 0;
-    const endScore = 85;
-    const duration = 15000;
+    const startScore = 40;
+    const endScore = 96;
+    const duration = 8000;
     
     const strokeWidth = 20;
     // Start angle for the gauge (degrees). 90° = bottom, -90° = top, 0° = right
@@ -59,6 +59,14 @@
     
     $: currentScore = Math.round(startScore + $progress * (endScore - startScore));
     $: offset = circumference - (currentScore / 100) * circumference;
+    $: scoreBackgroundClass =
+        currentScore >= 85
+            ? 'bg-green-300/50'
+            : currentScore >= 60
+            ? 'bg-yellow-400/20'
+            : currentScore > 0
+            ? 'bg-red-300/50'
+            : 'bg-gray-200/10';
     
     // Animate when card becomes visible
     $: if (visible) {
@@ -83,13 +91,13 @@
             <div class="relative h-56 w-56">
               <svg class="h-full w-full" viewBox="0 0 200 200">
                 <!-- Background Track -->
-                <circle class="stroke-gray-200" stroke-width="16" fill="transparent" r={radius} cx="100" cy="100" transform={`rotate(${startAngleDeg} 100 100)`} />
+                <circle class="hidden stroke-gray-200" stroke-width="16" fill="transparent" r={radius} cx="100" cy="100" transform={`rotate(${startAngleDeg} 100 100)`} />
                 <!-- Foreground Indicator -->
                 <circle
-                  class="transition-all duration-700 ease-out"
+                  class="hidden transition-all duration-700 ease-out"
                   class:stroke-green-500={currentScore >= 85}
                   class:stroke-yellow-400={currentScore >= 60 && currentScore < 85}
-                  class:stroke-red-500={currentScore > 0 && currentScore < 59}
+                  class:stroke-red-500={currentScore > 0 && currentScore < 60}
                   class:stroke-gray-200={currentScore === 0}
                   stroke-width={strokeWidth}
                   stroke-linecap="round"
@@ -104,7 +112,17 @@
                 />
               </svg>
               <div class="absolute inset-0 flex flex-col items-center justify-center">
-                <span class="text-5xl text-bold md:text-5xl font-extrabold shadow-2xl text-gray-600">{currentScore}</span>
+                <div class={`rounded-xl backdrop-blur-sm transition-colors duration-500 ${scoreBackgroundClass} w-42 h-42 flex items-center justify-center` }>
+                  <span
+                    class="text-5xl text-bold md:text-8xl font-bold"
+                    class:text-green-700={currentScore >= 85}
+                    class:text-yellow-500={currentScore >= 60 && currentScore < 85}
+                    class:text-red-700={currentScore > 0 && currentScore < 60}
+                    class:text-gray-200={currentScore === 0}
+                  >
+                    {currentScore}
+                  </span>
+                </div>
               </div>
             </div>
             <div class="mt-8 text-sm text-gray-200 text-center"><Logo variant="black" alt="JobPostScore" imgClass="h-10 w-auto" />Visibility score</div>
