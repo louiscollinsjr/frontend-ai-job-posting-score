@@ -21,7 +21,6 @@
   export let categoryLabels = [];
   export let rewriteLoading = false;
 
-  const showPrintPreview = import.meta.env.DEV;
 
   const circleRadius = 42;
 
@@ -385,7 +384,7 @@
     </div>
     
     <!-- Print Layout -->
-    <div class="print:block" class:hidden={!showPrintPreview} id="print-content">
+    <div class="hidden print:block" id="print-content">
       {#if processedResults}
         {#if isLoggedIn}
           <UserPrintLayout
