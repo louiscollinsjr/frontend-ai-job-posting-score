@@ -11,6 +11,74 @@ const initialState = {
   jobDescription: ''
 };
 
+// Generate fallback results in the correct 7-category format
+function generateFallbackResults(type, data) {
+  // Random score between 60-90
+  const getRandomScore = (max) => Math.floor(Math.random() * (max * 0.6) + (max * 0.3));
+  
+  // Generate category data
+  const clarityScore = getRandomScore(20);
+  const promptAlignmentScore = getRandomScore(20);
+  const structuredDataScore = getRandomScore(15);
+  const recencyScore = getRandomScore(10);
+  const keywordTargetingScore = getRandomScore(15);
+  const compensationScore = getRandomScore(10);
+  const pageContextScore = getRandomScore(10);
+  
+  const total_score = clarityScore + promptAlignmentScore + structuredDataScore +
+    recencyScore + keywordTargetingScore + compensationScore + pageContextScore;
+  
+  return {
+    total_score,
+    categories: {
+      clarity: {
+        score: clarityScore,
+        maxScore: 20,
+        suggestions: ['Make the job title more specific', 'Reduce buzzwords and corporate jargon']
+      },
+      promptAlignment: {
+        score: promptAlignmentScore,
+        maxScore: 20,
+        suggestions: ['Align job description with common search terms']
+      },
+      structuredData: {
+        score: structuredDataScore,
+        maxScore: 15,
+        suggestions: ['Add Schema.org JobPosting markup']
+      },
+      recency: {
+        score: recencyScore,
+        maxScore: 10,
+        suggestions: ['Include a recent date in the posting']
+      },
+      keywordTargeting: {
+        score: keywordTargetingScore,
+        maxScore: 15,
+        suggestions: ['Add more relevant industry keywords']
+      },
+      compensation: {
+        score: compensationScore,
+        maxScore: 10,
+        suggestions: ['Add salary range information']
+      },
+      pageContext: {
+        score: pageContextScore,
+        maxScore: 10,
+        suggestions: ['Improve page layout to highlight key information']
+      }
+    },
+    red_flags: ['compensation'],
+    recommendations: [
+      'Include specific salary range information',
+      'Add more industry-specific keywords',
+      'Remove unnecessary corporate jargon'
+    ],
+    job_title: type === 'url' ? 'Marketing Director at ACME Corp' : 'Job Posting Analysis',
+    job_body: data.substring(0, 100) + (data.length > 100 ? '...' : ''),
+    feedback: `This job posting scored ${total_score}/100. Several improvements can be made for better visibility.`
+  };
+}
+
 // Create the writable store
 const createAuditStore = () => {
   const { subscribe, set, update } = writable(initialState);
@@ -77,74 +145,6 @@ const createAuditStore = () => {
           error: error.message || 'Failed to analyze job posting'
         }));
       }
-    },
-    
-    // Generate fallback results in the correct 7-category format
-    generateFallbackResults: function(type, data) {
-      // Random score between 60-90
-      const getRandomScore = (max) => Math.floor(Math.random() * (max * 0.6) + (max * 0.3));
-      
-      // Generate category data
-      const clarityScore = getRandomScore(20);
-      const promptAlignmentScore = getRandomScore(20);
-      const structuredDataScore = getRandomScore(15);
-      const recencyScore = getRandomScore(10);
-      const keywordTargetingScore = getRandomScore(15);
-      const compensationScore = getRandomScore(10);
-      const pageContextScore = getRandomScore(10);
-      
-      const total_score = clarityScore + promptAlignmentScore + structuredDataScore +
-        recencyScore + keywordTargetingScore + compensationScore + pageContextScore;
-      
-      return {
-        total_score,
-        categories: {
-          clarity: {
-            score: clarityScore,
-            maxScore: 20,
-            suggestions: ['Make the job title more specific', 'Reduce buzzwords and corporate jargon']
-          },
-          promptAlignment: {
-            score: promptAlignmentScore,
-            maxScore: 20,
-            suggestions: ['Align job description with common search terms']
-          },
-          structuredData: {
-            score: structuredDataScore,
-            maxScore: 15,
-            suggestions: ['Add Schema.org JobPosting markup']
-          },
-          recency: {
-            score: recencyScore,
-            maxScore: 10,
-            suggestions: ['Include a recent date in the posting']
-          },
-          keywordTargeting: {
-            score: keywordTargetingScore,
-            maxScore: 15,
-            suggestions: ['Add more relevant industry keywords']
-          },
-          compensation: {
-            score: compensationScore,
-            maxScore: 10,
-            suggestions: ['Add salary range information']
-          },
-          pageContext: {
-            score: pageContextScore,
-            maxScore: 10,
-            suggestions: ['Improve page layout to highlight key information']
-          }
-        },
-        red_flags: ['compensation'],
-        recommendations: [
-          'Include specific salary range information',
-          'Add more industry-specific keywords',
-          'Remove unnecessary corporate jargon'
-        ],
-        job_title: type === 'url' ? 'Marketing Director at ACME Corp' : 'Job Posting Analysis',
-        job_body: data.substring(0, 100) + (data.length > 100 ? '...' : ''),
-        feedback: `This job posting scored ${total_score}/100. Several improvements can be made for better visibility.`
-      };
     },
     
     // Toggle results visibility

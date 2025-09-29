@@ -5,6 +5,7 @@
   import { user } from '$lib/stores/auth.js';
   import type { Report, SupabaseReport } from '$lib/types/report';
   import { formatReportForDB } from '$lib/utils/reportMapper';
+  import { GuestReportsAPI } from '$lib/api/reports';
   
   let error = null;
   let processingReport = false;
@@ -19,65 +20,56 @@
   // Function to associate guest report with user account
   async function associateGuestReport(userId) {
     try {
-      // Check if there's a guest report in localStorage
-      console.log('[localStorage-auth] Checking for guest_audit_report in associateGuestReport');
-      const guestReport = localStorage.getItem('guest_audit_report');
-      const guestReportTsStr = localStorage.getItem('guest_audit_report_ts');
-      const now = Date.now();
-      const MAX_AGE_MS = 30 * 60 * 1000; // 30 minutes freshness window
-      let isFresh = true;
-      if (guestReportTsStr) {
-        const ts = parseInt(guestReportTsStr, 10);
-        if (!Number.isNaN(ts)) {
-          isFresh = now - ts <= MAX_AGE_MS;
-        }
-      }
-      console.log('[localStorage-auth] Guest report found?', !!guestReport, guestReport ? `Size: ${guestReport.length} bytes` : '');
-      if (guestReport && !isFresh) {
-        console.log('[localStorage-auth] Guest report is stale; clearing and skipping redirect');
-        localStorage.removeItem('guest_audit_report');
-        localStorage.removeItem('guest_audit_report_ts');
+      // Check if there's a guest report using GuestReportsAPI
+      console.log('[Auth Callback] Checking for guest reports in localStorage');
+      
+      const guestReport = GuestReportsAPI.load();
+      
+      if (!guestReport) {
+        console.log('[Auth Callback] No guest report found');
         return false;
       }
       
-      if (guestReport) {
-        processingReport = true;
-        const reportData = JSON.parse(guestReport);
-        
-        // Format the report to match the database schema (shared utility)
-        const formattedReport = formatReportForDB(reportData, userId);
-        console.log('Saving formatted guest report to Supabase (snake_case columns):', formattedReport);
-        
-        // Save report to Supabase 'reports' table
-        if (typeof window !== 'undefined') {
-          const { data, error: dbError } = await supabase
-            .from('reports')
-            .insert([formattedReport])
-            .select('id');
-          if (dbError) {
-            console.error('Error saving report to database:', dbError);
-            console.error('Supabase error code:', dbError.code);
-            console.error('Supabase error message:', dbError.message);
-            console.error('Supabase error details:', dbError.details);
-          } else {
-            console.log('Guest report saved to database for user:', userId, data);
-            // Return the newly created report ID so the caller can redirect directly
-            const insertedId = Array.isArray(data) && data.length > 0 ? data[0]?.id : null;
-            if (insertedId) {
-              return insertedId;
-            }
-          }
+      console.log('[Auth Callback] Found guest report, migrating to authenticated account');
+      processingReport = true;
+      
+      // Format the report to match the database schema
+      const formattedReport = formatReportForDB(guestReport, userId);
+      console.log('[Auth Callback] Saving formatted guest report to Supabase:', formattedReport);
+      
+      // Save report to Supabase 'reports' table
+      if (typeof window !== 'undefined') {
+        const { data, error: dbError } = await supabase
+          .from('reports')
+          .insert([formattedReport])
+          .select('id');
+          
+        if (dbError) {
+          console.error('[Auth Callback] Error saving report to database:', dbError);
+          console.error('[Auth Callback] Supabase error code:', dbError.code);
+          console.error('[Auth Callback] Supabase error message:', dbError.message);
+          console.error('[Auth Callback] Supabase error details:', dbError.details);
+          return false;
         } else {
-          console.log('Not running in browser, skipping DB save.');
+          console.log('[Auth Callback] Guest report saved to database for user:', userId, data);
+          
+          // Clear guest cache after successful migration
+          GuestReportsAPI.clearAll();
+          console.log('[Auth Callback] Cleared guest cache after successful migration');
+          
+          // Return the newly created report ID for redirect
+          const insertedId = Array.isArray(data) && data.length > 0 ? data[0]?.id : null;
+          if (insertedId) {
+            return insertedId;
+          }
+          return true;
         }
-        
-        // Do NOT clear the guest report here; let the results page remove it after display
-        // Return true to indicate we had a guest report even if insert failed
-        return true;
+      } else {
+        console.log('[Auth Callback] Not running in browser, skipping DB save.');
+        return false;
       }
-      return false;
     } catch (err) {
-      console.error('Error associating guest report:', err);
+      console.error('[Auth Callback] Error associating guest report:', err);
       return false;
     } finally {
       processingReport = false;

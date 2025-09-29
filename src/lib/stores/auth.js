@@ -1,6 +1,8 @@
  import { writable } from 'svelte/store';
  import { browser } from '$app/environment';
  import { supabase } from '$lib/supabaseClient';
+ import { GuestReportsAPI } from '$lib/api/reports';
+ import { formatReportForDB } from '$lib/utils/reportMapper';
 
  // Using shared Supabase client from $lib/supabaseClient
 
@@ -39,6 +41,44 @@ function createUserStore() {
         set(null);
       }
       return { error };
+    },
+    // Migrate guest reports to authenticated user account
+    migrateGuestReports: async (userId) => {
+      if (!browser || !userId) return { success: false, reportId: null };
+      
+      try {
+        console.log('[Auth Store] Checking for guest reports to migrate');
+        const guestReport = GuestReportsAPI.load();
+        
+        if (!guestReport) {
+          console.log('[Auth Store] No guest reports to migrate');
+          return { success: false, reportId: null };
+        }
+        
+        console.log('[Auth Store] Migrating guest report to user:', userId);
+        const formattedReport = formatReportForDB(guestReport, userId);
+        
+        const { data, error } = await supabase
+          .from('reports')
+          .insert([formattedReport])
+          .select('id');
+        
+        if (error) {
+          console.error('[Auth Store] Failed to migrate guest report:', error);
+          return { success: false, reportId: null, error };
+        }
+        
+        const reportId = data?.[0]?.id || null;
+        console.log('[Auth Store] Successfully migrated guest report:', reportId);
+        
+        // Clear guest cache after successful migration
+        GuestReportsAPI.clearAll();
+        
+        return { success: true, reportId };
+      } catch (err) {
+        console.error('[Auth Store] Error during guest report migration:', err);
+        return { success: false, reportId: null, error: err };
+      }
     }
   };
 }

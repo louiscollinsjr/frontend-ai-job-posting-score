@@ -26,6 +26,8 @@
 	import { auditJobUrl, auditJobText } from '$lib/api/audit.js';
 	import { goto } from '$app/navigation';
 	import { auditStore } from '$lib/stores/audit.js';
+	import { GuestReportsAPI } from '$lib/api/reports';
+	import { user } from '$lib/stores/auth';
 	import CircleAlertIcon from '@lucide/svelte/icons/circle-alert';
 	import * as Alert from '$lib/components/ui/alert/index.js';
 
@@ -41,6 +43,12 @@
 	let isUrlValid = true;
 	let error = '';
 	let urlInputEl: HTMLInputElement | null = null;
+	let isLoggedIn = false;
+
+	// Subscribe to auth state
+	user.subscribe((val) => {
+		isLoggedIn = !!val;
+	});
 
 	// Form validation state
 	let isDescriptionValid = true;
@@ -137,6 +145,14 @@
 				showResults: true,
 				error: null
 			}));
+
+			// Save to guest cache if not logged in
+			if (!isLoggedIn) {
+				const saved = GuestReportsAPI.save(results);
+				if (import.meta.env.DEV) {
+					console.log('[AuditForm] Guest report saved to localStorage:', saved);
+				}
+			}
 
 			// Navigate to results page
 			goto('/results');

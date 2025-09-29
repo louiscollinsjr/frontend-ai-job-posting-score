@@ -359,7 +359,7 @@
           badgeClassGetter={getScoreBadgeClasses}
           heading="Executive score comparison"
           description="Compare the original score with the JobPostScore optimized results."
-          improvementLabel="Change"
+          improvementLabel="Improvement"
           linkHref={null}
           linkLabel={null}
           useGoto={false}
@@ -435,6 +435,9 @@
             </div>
           {/if}
           
+          <div>
+            <!-- Category Breakdown -->
+          </div>
         </div>
       </div>
     </div>

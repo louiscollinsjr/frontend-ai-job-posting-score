@@ -5,6 +5,7 @@
 	import { user } from '$lib/stores/auth';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
+	import { page } from '$app/stores';
 	import AuditForm from '$lib/components/AuditForm.svelte';
 	import BetaBadge from '$lib/components/BetaBadge.svelte';
 	import TestimonialCarousel from '$lib/components/TestimonialCarousel.svelte';
