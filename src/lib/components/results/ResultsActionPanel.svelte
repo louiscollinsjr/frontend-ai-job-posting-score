@@ -21,14 +21,14 @@
       Download Scorecard
     </button>
     <button
-      class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md border-none bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-50"
+      class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md border-none bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800"
       on:click={onDownloadJsonLd}
     >
       Download JSON-LD Data
     </button>
     {#if hasRewrite}
       <button
-        class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md border-none bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-100 disabled:opacity-60 disabled:cursor-not-allowed"
+        class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md border-none bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 disabled:opacity-60 disabled:cursor-not-allowed"
         on:click={onViewOptimized}
         disabled={rewriteLoading || loading}
       >
@@ -40,7 +40,7 @@
         on:click={onOptimize}
         disabled={rewriteLoading || loading}
       >
-        {rewriteLoading ? 'Improving…' : 'Improve This Posting'}
+        {rewriteLoading ? 'Optimizing…' : 'Optimize This Posting'}
       </button>
     {/if}
   </div>
