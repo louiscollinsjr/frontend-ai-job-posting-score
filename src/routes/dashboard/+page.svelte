@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';  
@@ -12,6 +12,12 @@
   import Dropdown from '$lib/components/ui/dropdown';
   import { env } from '$env/dynamic/public';
   import { optimizeJob } from '$lib/api/audit.js';
+  import Breadcrumbs from '$lib/components/navigation/Breadcrumbs.svelte';
+
+  type BreadcrumbItem = {
+    label: string;
+    href?: string;
+  };
   
   // Data comes from server (page info) and client-side fetching
   export let data;
@@ -37,6 +43,7 @@
   let authSubscription = null;
 
   const API_BASE_URL = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
+  const dashboardBreadcrumbs: BreadcrumbItem[] = [{ label: 'Dashboard' }];
 
   // Reactive statement to refetch data when page URL changes
   $: if ($page.url.searchParams.get('page') && authChecked && isAuthenticated && !initialLoad) {
@@ -680,6 +687,7 @@
 <div class="flex min-h-screen w-full relative z-10">
   <!-- Main Content -->
   <div class="flex-1 p-8 w-full pt-32 max-w-7xl relative z-10">
+    <Breadcrumbs items={dashboardBreadcrumbs} />
     <!-- Dashboard Header -->
     <div class="flex justify-between items-center mb-10 w-full">
       <div>

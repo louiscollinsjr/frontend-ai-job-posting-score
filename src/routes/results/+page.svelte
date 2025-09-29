@@ -9,12 +9,57 @@
   import { ReportsAPI, GuestReportsAPI } from '$lib/api/reports';
   import { GuestManager } from '$lib/services/guestManager';
   
-  // View components
   import LoadingView from '$lib/components/results/views/LoadingView.svelte';
   import EmptyStateView from '$lib/components/results/views/EmptyStateView.svelte';
   import ResultsView from '$lib/components/results/views/ResultsView.svelte';
   import OptimizationView from '$lib/components/results/views/OptimizationView.svelte';
   import SuccessToast from '$lib/components/results/SuccessToast.svelte';
+  import Breadcrumbs from '$lib/components/navigation/Breadcrumbs.svelte';
+  import type { BreadcrumbItem } from '$lib/components/navigation/Breadcrumbs.svelte';
+
+  
+  // Guest toast state
+  let showGuestToast = false;
+  let currentReportId: string | null = null;
+
+  // Store-derived state
+  let currentReport = null;
+  let showDialog = false;
+  let isOptimizing = false;
+  let fromOptimizedSelection = false;
+
+  $: currentReport = $resultsPageStore.currentReport;
+  $: showDialog = $resultsPageStore.showSaveDialog;
+  $: isOptimizing = $resultsPageStore.isOptimizing;
+  $: fromOptimizedSelection = $resultsPageStore.fromOptimizedSelection;
+
+  // Breadcrumb navigation structure
+  $: reportIdentifier =
+    currentReport?.job_title ??
+    currentReport?.title ??
+    currentReport?.jobTitle ??
+    currentReport?.job_name ??
+    'Scorecard';
+
+  $: reportLinkId = currentReport?.id ?? currentReport?.report_id ?? null;
+
+  $: breadcrumbs = (() => {
+    const items: BreadcrumbItem[] = [{ label: 'Dashboard', href: '/dashboard' }];
+    const label = reportIdentifier?.trim() ? reportIdentifier : 'Scorecard';
+
+    if ($currentView === 'optimization') {
+      if (reportLinkId) {
+        items.push({ label, href: `/results?report=${reportLinkId}` });
+      } else {
+        items.push({ label });
+      }
+      items.push({ label: 'Optimized Summary' });
+    } else {
+      items.push({ label });
+    }
+
+    return items;
+  })();
 
   let isLoggedIn = false;
   let lastReportId: string | null = null;
@@ -217,6 +262,9 @@
   <SuccessToast />
   
   <div class="pt-16 relative z-10 print:pt-0"> <!-- Add padding to account for the fixed navbar -->
+    <div class="px-6 sm:px-10 max-w-7xl mx-auto w-full print:hidden">
+      <Breadcrumbs items={breadcrumbs} />
+    </div>
     {#if $currentView === 'loading'}
       <LoadingView />
     {:else if $currentView === 'optimization'}

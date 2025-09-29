@@ -109,11 +109,11 @@
       <Alert.Root class="max-w-md">
         <Alert.Title>Error</Alert.Title>
         <Alert.Description>{error}</Alert.Description>
-        <div class="mt-4">
+        <!-- <div class="mt-4">
           <Button.Root variant="outline" on:click={goBack}>
             ←  Back to Dashboard
           </Button.Root>
-        </div>
+        </div> -->
       </Alert.Root>
     </div>
   {:else}

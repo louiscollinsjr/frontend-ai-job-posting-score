@@ -4,6 +4,7 @@
   import { env } from '$env/dynamic/public';
   import * as Button from '$lib/components/ui/button';
   import * as Alert from '$lib/components/ui/alert';
+  import Breadcrumbs from '$lib/components/navigation/Breadcrumbs.svelte';
 
   let reportId = null;
   let jsonLdData = null;
@@ -66,7 +67,11 @@
   <title>JSON-LD Schema - JobPostScore</title>
 </svelte:head>
 
-<div class="container mx-auto px-4 py-8 pt-32 max-w-4xl">
+<div class="container mx-auto px-4 py-8 pt-32 max-w-7xl">
+  <Breadcrumbs items={[
+    { label: 'Dashboard', href: '/dashboard' },
+    { label: 'JSON-LD' }
+  ]} />
   <div class="mb-8">
     <h1 class="text-3xl font-bold text-gray-900 mb-2">JSON-LD Schema</h1>
     <p class="text-gray-600">Structured data for your job posting</p>
@@ -116,9 +121,9 @@
     </div>
   {/if}
   
-  <div class="mt-8">
-    <Button.Root on:click={() => window.history.back()} variant="outline">
+  <!-- <div class="mt-8 flex justify-end">
+    <a href="/dashboard" class="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300">
       ← Back to Dashboard
-    </Button.Root>
-  </div>
+    </a>
+  </div> -->
 </div>

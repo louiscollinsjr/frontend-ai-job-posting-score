@@ -31,13 +31,13 @@
 </script>
 
 {#if rewriteData}
-  <button 
+  <!-- <button 
     class="back-button mt-24 px-4 py-2 bg-black hover:bg-gray-700 text-white text-xs rounded-md transition-colors duration-200 flex items-center gap-2" 
     on:click={handleBackToResults}
     on:keydown={(e) => e.key === 'Enter' && handleBackToResults()}
   >
     ← See Original <Logo variant="white" imgClass="h-4 w-auto sm:h-4" />
-  </button>
+  </button> -->
 
   <JobOptimizationExecutive 
     originalText={rewriteData.original_text || currentReport?.original_report?.text || ''}

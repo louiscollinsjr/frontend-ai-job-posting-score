@@ -8,6 +8,7 @@
   import ScoreDisplay from './ScoreDisplay.svelte';
   import ExportButton from './ExportButton.svelte';
   import type { ExportData } from '$lib/utils/exportUtils';
+	import OptimizedScoreNotice from './results/OptimizedScoreNotice.svelte';
   // import BetaBadge from '$lib/components/BetaBadge.svelte';
   
   // Types
@@ -233,14 +234,27 @@
     if (!text) return '';
     return marked(text);
   }
-  
+
   $: totalImprovementPoints = optimizationData?.appliedImprovements?.reduce((sum: number, imp: AppliedImprovement) => sum + (imp.impactPoints || 0), 0) || 0;
+
+  // Local helper functions for score badge styling
+  function clampScore(value: number | null | undefined): number {
+    if (value === null || value === undefined || Number.isNaN(value)) return 0;
+    return Math.min(Math.max(value, 0), 100);
+  }
+
+  function getScoreBadgeClasses(score: number | null): string {
+    const val = clampScore(score);
+    if (val >= 85) return 'bg-emerald-100 text-emerald-900';
+    if (val >= 60) return 'bg-amber-100 text-amber-600';
+    if (val >= 45) return 'bg-orange-100 text-orange-700';
+    return 'bg-rose-100 text-rose-900';
+  }
   
   // Export data computed property
   $: exportData = optimizationData ? {
     optimizedText: optimizationData.optimizedText,
     originalScore: optimizationData.originalScore,
-    optimizedScore: optimizationData.optimizedScore,
     scoreImprovement: optimizationData.scoreImprovement,
     appliedImprovements: optimizationData.appliedImprovements,
     workingWell: optimizationData.workingWell,
@@ -331,13 +345,25 @@
         
         <!-- Right Column: Improvements & Analysis -->
         <div class="space-y-6">
-          {#if optimizationData}
+          <!-- {#if optimizationData}
           <ScoreDisplay 
             currentScore={optimizationData.originalScore}
             optimizedScore={optimizationData.optimizedScore}
             improvement={optimizationData.scoreImprovement}
           />
-        {/if}
+        {/if} -->
+        <OptimizedScoreNotice 
+          reportId={reportId ?? null}
+          originalScore={optimizationData?.originalScore ?? null}
+          optimizedScore={optimizationData?.optimizedScore ?? null}
+          badgeClassGetter={getScoreBadgeClasses}
+          heading="Executive score comparison"
+          description="Compare the original score with the JobPostScore optimized results."
+          improvementLabel="Change"
+          linkHref={null}
+          linkLabel={null}
+          useGoto={false}
+        />
           <!-- What's Working Well (Original) -->
         {#if optimizationData && optimizationData.workingWell?.length > 0}
           <div class="bg-white rounded-lg border shadow-sm">
