@@ -85,21 +85,56 @@
     if (isOptimizationData(data)) return data;
 
     const raw = data as RawOptimizationData;
+    
+    console.log('[JobOptimizationExecutive] Raw data:', {
+      change_log: raw.change_log,
+      change_log_type: typeof raw.change_log,
+      unaddressed_items: raw.unaddressed_items,
+      unaddressed_items_type: typeof raw.unaddressed_items
+    });
+    
     // Parse arrays from possible JSON strings
-    const appliedImprovements: AppliedImprovement[] = Array.isArray(raw.change_log)
-      ? (raw.change_log as AppliedImprovement[])
+    let changeLogArray = Array.isArray(raw.change_log)
+      ? raw.change_log
       : JSON.parse((raw.change_log as string | undefined) || '[]');
-
-    const potentialImprovements: PotentialImprovement[] = Array.isArray(raw.unaddressed_items)
-      ? (raw.unaddressed_items as PotentialImprovement[])
+    
+    let unaddressedArray = Array.isArray(raw.unaddressed_items)
+      ? raw.unaddressed_items
       : JSON.parse((raw.unaddressed_items as string | undefined) || '[]');
+    
+    console.log('[JobOptimizationExecutive] Parsed arrays:', {
+      changeLogArray,
+      unaddressedArray
+    });
+    
+    // Convert string arrays to proper improvement objects
+    const appliedImprovements: AppliedImprovement[] = changeLogArray.map((item: any, index: number) => {
+      if (typeof item === 'string') {
+        return {
+          category: `Improvement ${index + 1}`,
+          description: item,
+          applied: true
+        };
+      }
+      return item as AppliedImprovement;
+    }).filter((item: AppliedImprovement) => item.description && item.description.trim().length > 0);
+
+    const potentialImprovements: PotentialImprovement[] = unaddressedArray.map((item: any, index: number) => {
+      if (typeof item === 'string') {
+        return {
+          category: `Future Enhancement ${index + 1}`,
+          description: item
+        };
+      }
+      return item as PotentialImprovement;
+    }).filter((item: PotentialImprovement) => item.description && item.description.trim().length > 0);
 
     const originalScore = typeof raw.original_score === 'number' ? raw.original_score : score || 0;
     const optimizedScore = typeof raw.optimized_score === 'number' ? raw.optimized_score : originalScore + 10;
     const origText = (raw.original_text_snapshot as string | undefined) ?? originalText ?? '';
     const optText = (raw.optimized_text as string | undefined) ?? improvedText ?? '';
 
-    return {
+    const result = {
       originalText: origText,
       optimizedText: optText,
       originalScore,
@@ -109,6 +144,14 @@
       appliedImprovements,
       potentialImprovements
     };
+    
+    console.log('[JobOptimizationExecutive] Transformed data:', {
+      appliedImprovements: result.appliedImprovements.length,
+      potentialImprovements: result.potentialImprovements.length,
+      sample: result.appliedImprovements[0]
+    });
+    
+    return result;
   }
 
   // Reactively handle changes to initialData
