@@ -30,9 +30,9 @@
           </span> -->
           <!-- <span class="text-xs text-green-600 font-medium">{improvement.scoreContribution}</span> -->
         <!-- </div> -->
-        <li class="text-xs text-gray-600">{improvement.summary || improvement.description}</li>
+        <li class="text-sm text-gray-600">{improvement.summary || improvement.description}</li>
         {#if improvement.reasoning}
-          <p class="text-xs text-gray-500 mt-1 italic">{improvement.reasoning}</p>
+          <p class="text-sm text-gray-500 mt-1 italic">{improvement.reasoning}</p>
         {/if}
       </div>
       

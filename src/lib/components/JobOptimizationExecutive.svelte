@@ -41,22 +41,26 @@
   // Shape we might receive directly from DB/API before mapping
   export type RawOptimizationData = {
     change_log?: string | AppliedImprovement[];
-    unaddressed_items?: string | PotentialImprovement[];
     workingWell?: string[];
     original_text_snapshot?: string;
     optimized_text?: string;
     original_score?: number;
     optimized_score?: number;
-  } & Record<string, unknown>;
-
-  function isOptimizationData(value: unknown): value is OptimizationData {
-    const v = value as any;
+  } & Record<string, unknown>; // Type guard to check if data is already in OptimizationData format
+  function isOptimizationData(data: any): data is OptimizationData {
+    // Check if appliedImprovements contains objects (not strings)
+    const hasValidImprovements = data?.appliedImprovements?.[0] && 
+      typeof data.appliedImprovements[0] === 'object' &&
+      'description' in data.appliedImprovements[0];
+    
     return (
-      v &&
-      typeof v === 'object' &&
-      'appliedImprovements' in v &&
-      Array.isArray(v.appliedImprovements) &&
-      'optimizedText' in v
+      data &&
+      typeof data === 'object' &&
+      'appliedImprovements' in data &&
+      'potentialImprovements' in data &&
+      Array.isArray(data.appliedImprovements) &&
+      Array.isArray(data.potentialImprovements) &&
+      hasValidImprovements // Must have proper object structure
     );
   }
   
@@ -81,10 +85,10 @@
   function transformInitialData(data: OptimizationData | RawOptimizationData | null): OptimizationData | null {
     if (!data) return null;
 
-    // Already in the desired shape
+    // Already in the desired shape (has proper object structure)
     if (isOptimizationData(data)) return data;
 
-    const raw = data as RawOptimizationData;
+    const raw = data as any; // Use any to handle both formats
     
     console.log('[JobOptimizationExecutive] Raw data:', {
       change_log: raw.change_log,
@@ -93,14 +97,20 @@
       unaddressed_items_type: typeof raw.unaddressed_items
     });
     
-    // Parse arrays from possible JSON strings
-    let changeLogArray = Array.isArray(raw.change_log)
-      ? raw.change_log
-      : JSON.parse((raw.change_log as string | undefined) || '[]');
+    // Parse arrays from possible JSON strings or use appliedImprovements/potentialImprovements if they exist
+    let changeLogArray = raw.appliedImprovements || raw.change_log;
+    if (typeof changeLogArray === 'string') {
+      changeLogArray = JSON.parse(changeLogArray || '[]');
+    } else if (!Array.isArray(changeLogArray)) {
+      changeLogArray = [];
+    }
     
-    let unaddressedArray = Array.isArray(raw.unaddressed_items)
-      ? raw.unaddressed_items
-      : JSON.parse((raw.unaddressed_items as string | undefined) || '[]');
+    let unaddressedArray = raw.potentialImprovements || raw.unaddressed_items;
+    if (typeof unaddressedArray === 'string') {
+      unaddressedArray = JSON.parse(unaddressedArray || '[]');
+    } else if (!Array.isArray(unaddressedArray)) {
+      unaddressedArray = [];
+    }
     
     console.log('[JobOptimizationExecutive] Parsed arrays:', {
       changeLogArray,
@@ -157,8 +167,15 @@
   // Reactively handle changes to initialData
   $: if (initialData) {
     console.log('[DEBUG] JobOptimizationExecutive reactive update - initialData:', initialData);
+    console.log('[DEBUG] initialData type check:', {
+      hasAppliedImprovements: 'appliedImprovements' in initialData,
+      isArray: Array.isArray((initialData as any).appliedImprovements),
+      firstItem: (initialData as any).appliedImprovements?.[0],
+      firstItemType: typeof (initialData as any).appliedImprovements?.[0]
+    });
     const transformedData = transformInitialData(initialData);
-    console.log('[DEBUG] appliedImprovements array:', transformedData?.appliedImprovements);
+    console.log('[DEBUG] AFTER transformation - appliedImprovements:', transformedData?.appliedImprovements);
+    console.log('[DEBUG] First transformed item:', transformedData?.appliedImprovements?.[0]);
     optimizationData = transformedData;
   }
 
@@ -468,8 +485,8 @@
                 {#each optimizationData.potentialImprovements as potential}
                   <div class="flex items-start justify-between">
                     <div class="flex-1">
-                      <h4 class="text-sm font-medium text-gray-700">{potential.category}</h4>
-                      <p class="text-sm text-gray-600 mt-1">{potential.description}</p>
+                      <!-- <h4 class="text-sm font-medium text-gray-700">{potential.category}</h4> -->
+                      <li class="text-sm text-gray-600 mt-1">{potential.description}</li>
                     </div>
                     <!-- <span class="text-xs text-gray-500 ml-4">+{potential.potentialPoints} pts</span> -->
                   </div>
