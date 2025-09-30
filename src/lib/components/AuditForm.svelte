@@ -30,6 +30,9 @@
 	import { user } from '$lib/stores/auth';
 	import CircleAlertIcon from '@lucide/svelte/icons/circle-alert';
 	import * as Alert from '$lib/components/ui/alert/index.js';
+	import { AnalysisProgressManager, getStepsForInputType } from '$lib/utils/analysisSteps';
+	import type { AnalysisStep } from '$lib/utils/analysisSteps';
+	import { MESSAGE_MODE } from '$lib/config/messaging';
 
 	// Create a dispatcher to send events to parent components
 	const dispatch = createEventDispatcher();
@@ -44,6 +47,10 @@
 	let error = '';
 	let urlInputEl: HTMLInputElement | null = null;
 	let isLoggedIn = false;
+	
+	// Progress tracking
+	let currentStep = '';
+	let progressManager: AnalysisProgressManager | null = null;
 
 	// Subscribe to auth state
 	user.subscribe((val) => {
@@ -119,6 +126,16 @@
 
 		// Set loading state
 		isLoading = true;
+		
+		// Initialize progress manager with configured message mode
+		const steps = getStepsForInputType(inputType === 'url' ? 'url' : 'text', MESSAGE_MODE);
+		progressManager = new AnalysisProgressManager(
+			steps,
+			(step: AnalysisStep, index: number, total: number) => {
+				currentStep = step.label;
+			}
+		);
+		progressManager.start();
 
 		// Send data to API
 		try {
@@ -128,6 +145,11 @@
 				results = await auditJobUrl(jobUrl);
 			} else {
 				results = await auditJobText(jobDescription);
+			}
+
+			// Complete progress
+			if (progressManager) {
+				progressManager.complete();
 			}
 
 			// Send event to parent with form data and results
@@ -159,8 +181,14 @@
 		} catch (e) {
 			error = 'An error occurred while analyzing the job posting. Please try again.';
 			console.error('Audit submission error:', e);
+			
+			// Stop progress on error
+			if (progressManager) {
+				progressManager.complete();
+			}
 		} finally {
 			isLoading = false;
+			currentStep = '';
 		}
 	}
 </script>
@@ -297,7 +325,7 @@
 			<div
 				class="sm:hidden form-submit mt-8 sticky bottom-4 relative max-w-md mx-auto"
 				style="padding-bottom: env(safe-area-inset-bottom)">
-				<SubmitButton type="submit" {isLoading}>
+				<SubmitButton type="submit" {isLoading} {currentStep} showSteps={true}>
 					Get
 					<Logo variant="white" imgClass="h-5 w-auto sm:h-6 ml-2" />
 				</SubmitButton>
@@ -388,7 +416,7 @@
 					<div
 						class="form-submit mt-8 sm:mt-24 sticky bottom-4 relative max-w-md mx-auto"
 						style="padding-bottom: env(safe-area-inset-bottom)">
-						<SubmitButton type="submit" {isLoading}>
+						<SubmitButton type="submit" {isLoading} {currentStep} showSteps={true}>
 							<span class="hidden sm:inline">Get </span>
 							<Logo variant="white" imgClass="h-5 w-auto sm:h-6 ml-2" />
 						</SubmitButton>

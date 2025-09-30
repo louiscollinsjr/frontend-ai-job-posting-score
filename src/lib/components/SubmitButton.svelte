@@ -6,12 +6,17 @@
   export let className: string = '';
   export let onClick: (() => void) | undefined = undefined;
   export let glow: boolean = true;
+  export let currentStep: string = '';
+  export let showSteps: boolean = false;
 
   // Base classes for the button, includes 'relative' for the glow effect
   const baseClass = 'relative mx-auto cta-button w-full text-lg sm:text-2xl text-center flex items-center justify-center gap-2 bg-black hover:bg-gray-700 transition-colors duration-300 text-white py-2 px-8 rounded-full font-aeonik tracking-wider font-normal mt-12';
 
   // If className is provided, use it completely. Otherwise, use baseClass.
   $: finalClass = className || baseClass;
+  
+  // Display text based on current step
+  $: displayText = showSteps && currentStep ? currentStep : loadingLabel;
 </script>
 
 <button
@@ -27,13 +32,18 @@
     ></span>
   {/if}
 
-  <span class="relative z-10 flex items-center justify-center">
+  <span class="relative z-10 flex flex-col items-center justify-center">
     {#if isLoading}
-      <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg>
-      {loadingLabel}
+      <div class="flex items-center justify-center gap-3">
+        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span class="text-base sm:text-lg">{displayText}</span>
+      </div>
+      {#if showSteps && currentStep}
+        <span class="text-xs sm:text-sm text-white/70 mt-2 animate-pulse">This may take 30-60 seconds...</span>
+      {/if}
     {:else}
       <slot />
     {/if}
