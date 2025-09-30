@@ -13,7 +13,6 @@
   import { env } from '$env/dynamic/public';
   import { optimizeJob } from '$lib/api/audit.js';
   import Breadcrumbs from '$lib/components/navigation/Breadcrumbs.svelte';
-  import { dashboardCache } from '$lib/stores/dashboardCache';
 
   type BreadcrumbItem = {
     label: string;
@@ -27,12 +26,12 @@
   let reports = [];
   let pagination = { currentPage: data.page, totalPages: 1, totalReports: 0 };
   let reportsWithRewrites = [];
-  let reportOptimizations = new Map();
+  let reportOptimizations = new Map(); // Map of reportId -> { originalScore, optimizedScore }
   let reportError = null;
   let userEmail = '';
   let isAuthenticated = false;
   let authChecked = false;
-  let initialLoad = true;
+  let initialLoad = true; // Track if this is the first load
   
   let selectedReports = [];
   let activeDropdown = null;
@@ -46,31 +45,15 @@
   const API_BASE_URL = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
   const dashboardBreadcrumbs: BreadcrumbItem[] = [{ label: 'Dashboard' }];
 
-  // Reactive statement to load data when page URL changes (using cache)
+  // Reactive statement to refetch data when page URL changes
   $: if ($page.url.searchParams.get('page') && authChecked && isAuthenticated && !initialLoad) {
-    console.log('[Cache] Page parameter changed, loading from cache');
+    console.log('[DEBUG] Page parameter changed, refetching data');
     (async () => {
+      loading = true; // Show loading during page navigation
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.access_token) {
-        const pageNum = Number($page.url.searchParams.get('page') || '1');
-        const pageData = await dashboardCache.loadPage(pageNum, session.access_token);
-        
-        if (pageData) {
-          reports = pageData.reports;
-          pagination = pageData.pagination;
-          
-          // Load optimizations if not already loaded
-          if (!pageData.optimizations) {
-            dashboardCache.loadOptimizations(pageNum, supabase).then(() => {
-              const updated = dashboardCache.getCurrentPageData();
-              if (updated?.optimizations) {
-                reportOptimizations = updated.optimizations;
-              }
-            });
-          } else {
-            reportOptimizations = pageData.optimizations;
-          }
-        }
+        await fetchReports(session.access_token);
+        await fetchOptimizationData();
       }
     })();
   }
@@ -79,16 +62,13 @@
   $: if ($page.route.id === '/dashboard' && authChecked && isAuthenticated) {
     console.log('[DEBUG] Dashboard route accessed, current reports:', reports.length, 'initialLoad:', initialLoad);
     if (!initialLoad && reports.length === 0) {
-      console.log('[Cache] No reports found, reloading from cache');
+      console.log('[DEBUG] No reports found, refetching data');
       (async () => {
+        loading = true;
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.access_token) {
-          const pageNum = Number($page.url.searchParams.get('page') || '1');
-          const pageData = await dashboardCache.loadPage(pageNum, session.access_token);
-          if (pageData) {
-            reports = pageData.reports;
-            pagination = pageData.pagination;
-          }
+          await fetchReports(session.access_token);
+          await fetchOptimizationData();
         }
       })();
     }
@@ -98,10 +78,13 @@
     console.log('[DEBUG] Dashboard onMount called');
     document.addEventListener('click', handleClickOutside);
     
+    // Set loading state immediately to prevent empty state flash
     loading = true;
+    
+    // Check authentication and fetch data
     await checkAuthAndFetchData();
     
-    // Re-fetch when auth state changes
+    // Re-fetch when auth state changes (e.g., right after magic link sign-in)
     try {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
         console.log('[DEBUG] Auth state change:', event);
@@ -111,13 +94,9 @@
             userEmail = session?.user?.email || userEmail;
             currentUserId = session?.user?.id || currentUserId;
             if (session?.access_token) {
-              loading = true;
-              const pageNum = Number($page.url.searchParams.get('page') || '1');
-              const pageData = await dashboardCache.loadPage(pageNum, session.access_token, true);
-              if (pageData) {
-                reports = pageData.reports;
-                pagination = pageData.pagination;
-              }
+              loading = true; // Show loading when refetching
+              await fetchReports(session.access_token);
+              await fetchOptimizationData();
               setupRealtime();
             }
           } catch (e) {
@@ -146,10 +125,12 @@
     try {
       console.log('[DEBUG] checkAuthAndFetchData called');
       
+      // Check if user is authenticated via Supabase
       const { data: { session } } = await supabase.auth.getSession();
       console.log('[DEBUG] Session check:', !!session?.access_token);
       
       if (!session?.access_token) {
+        // Not authenticated, redirect to login
         console.log('[DEBUG] No session, redirecting to login');
         loading = false;
         goto('/login');
@@ -158,35 +139,55 @@
       
       isAuthenticated = true;
       userEmail = session.user?.email || 'User';
-      currentUserId = session.user?.id;
+      // Resolve current user id for scoping and realtime
+      currentUserId = session.user?.id ?? currentUserId;
       console.log('[DEBUG] User authenticated:', userEmail, 'ID:', currentUserId);
-      authChecked = true;
       
+      // Start realtime listener only after we have the user ID
       if (currentUserId) {
         setupRealtime();
-      }
-      
-      // Load page from cache (or fetch if not cached)
-      const pageNum = Number($page.url.searchParams.get('page') || '1');
-      console.log('[Cache] Loading page from cache:', pageNum);
-      const pageData = await dashboardCache.loadPage(pageNum, session.access_token);
-      
-      if (pageData) {
-        reports = pageData.reports;
-        pagination = pageData.pagination;
-        
-        // Load optimizations in parallel (non-blocking)
-        dashboardCache.loadOptimizations(pageNum, supabase).then(() => {
-          const updated = dashboardCache.getCurrentPageData();
-          if (updated?.optimizations) {
-            reportOptimizations = updated.optimizations;
+      } else {
+        try {
+          const { data: userData } = await supabase.auth.getUser();
+          currentUserId = userData?.user?.id;
+          if (currentUserId) {
+            setupRealtime();
+          } else {
+            console.warn('No user ID in session or getUser(); skipping realtime setup');
           }
-        });
+        } catch (e) {
+          console.warn('Failed to resolve user ID from supabase.getUser()', e);
+        }
       }
+      authChecked = true;
       
+      // Fetch reports data
+      console.log('[DEBUG] Starting fetchReports');
+      await fetchReports(session.access_token);
+      
+      // Fetch optimization data for reports
+      console.log('[DEBUG] Starting fetchOptimizationData');
+      await fetchOptimizationData();
+      
+      // Mark initial load as complete
       initialLoad = false;
-      loading = false;
       console.log('[DEBUG] Initial data load complete');
+      // If initial load yields no items (API eventual consistency), retry once shortly after
+      try {
+        setTimeout(async () => {
+          try {
+            if (Array.isArray(reports) && reports.length === 0) {
+              const { data: { session: s } } = await supabase.auth.getSession();
+              if (s?.access_token) {
+                await fetchReports(s.access_token);
+                await fetchOptimizationData();
+              }
+            }
+          } catch (retryErr) {
+            console.warn('Delayed re-fetch failed:', retryErr);
+          }
+        }, 1200);
+      } catch {}
       
     } catch (error) {
       console.error('Auth check failed:', error);
@@ -194,46 +195,246 @@
     }
   }
 
-  function setupRealtime() {
-    if (realtimeSubscribed || !currentUserId) return;
-    
+  async function fetchReports(accessToken) {
     try {
-      reportsChannel = supabase
-        .channel(`reports:${currentUserId}`)
-        .on(
-          'postgres_changes',
-          {
-            event: 'INSERT',
-            schema: 'public',
-            table: 'reports',
-            filter: `userid=eq.${currentUserId}`
-          },
-          async (payload) => {
-            console.log('[Realtime] New report detected:', payload.new);
-            
-            // Invalidate current page cache
-            const pageNum = Number($page.url.searchParams.get('page') || '1');
-            dashboardCache.invalidatePage(pageNum);
-            
-            // Reload current page
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session?.access_token) {
-              const pageData = await dashboardCache.loadPage(pageNum, session.access_token, true);
-              if (pageData) {
-                reports = pageData.reports;
-                pagination = pageData.pagination;
-              }
-            }
-            
-            toast.success('New report available!');
-          }
-        )
-        .subscribe();
+      console.log('[DEBUG] fetchReports called with token:', !!accessToken);
+      loading = true;
+      reportError = null; // Clear any previous errors
       
-      realtimeSubscribed = true;
-      console.log('[Realtime] Subscribed to reports channel');
+      // Get current page from URL parameters, fallback to data.page
+      const currentPageParam = $page.url.searchParams.get('page');
+      const pageNum = Number(currentPageParam || data.page) || 1;
+      const pageSize = Number(data.limit) || 20;
+      const apiUrl = `${API_BASE_URL}/api/v1/reports?page=${pageNum}&limit=${pageSize}`;
+      
+      console.log('[DEBUG] Fetching from API:', apiUrl);
+      
+      const response = await fetch(apiUrl, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log('[DEBUG] API response status:', response.status, response.statusText);
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          goto('/login');
+          return;
+        }
+        if (response.status === 404) {
+          console.warn('Reports API not found (404). Falling back to Supabase.');
+          // Fallback to Supabase direct query
+          // const currentPageParam = $page.url.searchParams.get('page');
+          const pageNum = Number(currentPageParam || data.page) || 1;
+          const pageSize = Number(data.limit) || 20;
+          const from = (pageNum - 1) * pageSize;
+          const to = from + pageSize - 1;
+
+          // Determine current user for scoping
+          if (!currentUserId) {
+            const { data: userData } = await supabase.auth.getUser();
+            currentUserId = userData?.user?.id;
+          }
+          if (!currentUserId) {
+            console.warn('No user ID available; skipping Supabase fallback.');
+            return;
+          }
+          // Get total count
+          const { count } = await supabase
+            .from('reports')
+            .select('*', { count: 'exact', head: true })
+            .eq('userid', currentUserId);
+
+          // Get paginated items for current user
+          const { data: sbData, error: sbError } = await supabase
+            .from('reports')
+            .select('*')
+            .eq('userid', currentUserId)
+            .order('savedat', { ascending: false })
+            .range(from, to);
+
+          if (sbError) {
+            console.error('Supabase fallback failed:', sbError);
+            reportError = 'Failed to load reports. Please try again later.';
+          } else {
+            reports = sbData || [];
+            pagination = {
+              currentPage: pageNum,
+              totalPages: count ? Math.max(1, Math.ceil(count / pageSize)) : 1,
+              totalReports: count || (sbData ? sbData.length : 0)
+            };
+            reportError = null;
+          }
+
+          return; // Exit after fallback
+        }
+        throw new Error(`Failed to fetch reports: ${response.statusText}`);
+      }
+
+      const responseData = await response.json();
+      console.log('[DEBUG] API response data:', responseData);
+      console.log('[DEBUG] API response received, reports count:', Array.isArray(responseData) ? responseData.length : 'unknown');
+
+      // Normalize various possible API response shapes
+      let items = [];
+      let totalReports = 0;
+      let totalPages = 1;
+      // const currentPageParam = $page.url.searchParams.get('page');
+      let currentPage = Number(currentPageParam || data.page) || 1;
+
+      if (Array.isArray(responseData)) {
+        // Array-only response - apply client-side pagination if API doesn't handle it
+        const pageSize = Number(data.limit) || 20;
+        const pageNum = Number(currentPageParam || data.page) || 1;
+        const startIndex = (pageNum - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        
+        // If API returned all data, paginate client-side
+        if (responseData.length > pageSize) {
+          items = responseData.slice(startIndex, endIndex);
+          totalReports = responseData.length;
+          totalPages = Math.max(1, Math.ceil(responseData.length / pageSize));
+        } else {
+          // API already paginated
+          items = responseData;
+          // We can't know total from a single page, so estimate or use response length
+          totalReports = responseData.length;
+          totalPages = Math.max(1, Math.ceil(responseData.length / pageSize));
+        }
+      } else if (responseData && typeof responseData === 'object') {
+        // Common keys seen across versions
+        items = responseData.reports ?? responseData.data ?? responseData.items ?? responseData.results ?? [];
+        totalReports = responseData.totalReports ?? responseData.total ?? responseData.totalCount ?? (Array.isArray(items) ? items.length : 0);
+        totalPages = responseData.totalPages ?? responseData.pageCount ?? responseData.pages ?? 1;
+        currentPage = responseData.currentPage ?? responseData.page ?? currentPage;
+      }
+      reports = Array.isArray(items) ? items : [];
+      pagination = {
+        currentPage,
+        totalPages: totalPages || 1,
+        totalReports: totalReports || (Array.isArray(items) ? items.length : 0)
+      };
+      reportError = null;
+      
+      console.log('[DEBUG] Reports successfully loaded:', reports.length, 'items');
     } catch (error) {
-      console.error('[Realtime] Subscription failed:', error);
+      console.error('[DEBUG] Error fetching reports:', error);
+      console.error('[DEBUG] Error details:', error.message, error.stack);
+      
+      // Try Supabase fallback if API completely fails
+      console.log('[DEBUG] API failed, attempting Supabase fallback');
+      try {
+        // Get current page info
+        const currentPageParam = $page.url.searchParams.get('page');
+        const pageNum = Number(currentPageParam || data.page) || 1;
+        const pageSize = Number(data.limit) || 20;
+        const from = (pageNum - 1) * pageSize;
+        const to = from + pageSize - 1;
+
+        // Get user info if needed
+        if (!currentUserId) {
+          const { data: userData } = await supabase.auth.getUser();
+          currentUserId = userData?.user?.id;
+        }
+
+        if (currentUserId) {
+          console.log('[DEBUG] Attempting Supabase direct query for user:', currentUserId);
+          
+          // Get total count
+          const { count } = await supabase
+            .from('reports')
+            .select('*', { count: 'exact', head: true })
+            .eq('userid', currentUserId);
+
+          // Get paginated items for current user
+          const { data: sbData, error: sbError } = await supabase
+            .from('reports')
+            .select('*')
+            .eq('userid', currentUserId)
+            .order('savedat', { ascending: false })
+            .range(from, to);
+
+          console.log('[DEBUG] Supabase fallback result:', { count, dataLength: sbData?.length, error: sbError });
+
+          if (sbError) {
+            console.error('[DEBUG] Supabase fallback failed:', sbError);
+            reportError = 'Failed to load reports. Please try again later.';
+          } else {
+            reports = sbData || [];
+            pagination = {
+              currentPage: pageNum,
+              totalPages: count ? Math.max(1, Math.ceil(count / pageSize)) : 1,
+              totalReports: count || (sbData ? sbData.length : 0)
+            };
+            reportError = null;
+            console.log('[DEBUG] Supabase fallback successful, reports loaded:', reports.length);
+          }
+        } else {
+          console.error('[DEBUG] No user ID available for Supabase fallback');
+          reportError = 'Authentication error. Please refresh the page.';
+        }
+      } catch (fallbackError) {
+        console.error('[DEBUG] Supabase fallback also failed:', fallbackError);
+        reportError = 'Failed to load reports. Please try again.';
+      }
+    } finally {
+      loading = false;
+    }
+  }
+
+  // Fetch optimization data for all reports to show score ranges
+  async function fetchOptimizationData() {
+    if (!reports || reports.length === 0) return;
+
+    try {
+      // Get all report IDs
+      const reportIds = reports.map(report => report.id);
+      
+      // Fetch optimization data for all reports in one query
+      const { data: optimizationData, error } = await supabase
+        .from('optimizations')
+        .select('report_id, original_score, optimized_score')
+        .in('report_id', reportIds)
+        .order('version_number', { ascending: false });
+
+      if (error) {
+        console.warn('Could not fetch optimization data:', error.message);
+        return;
+      }
+
+      // Build a map of report optimizations
+      const optimizationsMap = new Map();
+      if (optimizationData) {
+        // Group by report_id and find min/max scores
+        const groupedOptimizations = optimizationData.reduce((acc, opt) => {
+          const reportId = opt.report_id;
+          if (!acc[reportId]) {
+            acc[reportId] = [];
+          }
+          acc[reportId].push(opt);
+          return acc;
+        }, {});
+
+        // For each report, find lowest and highest scores
+        Object.entries(groupedOptimizations).forEach(([reportId, opts]) => {
+          const scores = opts.flatMap(opt => [opt.original_score, opt.optimized_score]).filter(score => typeof score === 'number');
+          
+          if (scores.length > 0) {
+            optimizationsMap.set(reportId, {
+              lowestScore: Math.min(...scores),
+              highestScore: Math.max(...scores),
+              hasOptimizations: true
+            });
+          }
+        });
+      }
+
+      reportOptimizations = optimizationsMap;
+      console.log('Loaded optimization data for', optimizationsMap.size, 'reports');
+    } catch (error) {
+      console.error('Error fetching optimization data:', error);
     }
   }
 
@@ -241,6 +442,7 @@
   function calculateOverallScore(report) {
     if (report.overallScore) return report.overallScore;
     
+    // If no overall score, calculate from categories if available
     if (report.categories && Array.isArray(report.categories)) {
       const scores = report.categories.map(cat => cat.score || 0);
       if (scores.length > 0) {
@@ -248,10 +450,10 @@
       }
     }
     
-    return 0;
+    return 0; // Default score if no data available
   }
   
-  // Normalization helpers
+  // Normalization helpers so we can handle multiple API shapes consistently
   function getTitle(r) {
     return r.title || r.job_title || r.jobTitle || r.jobtitle || 'Untitled';
   }
@@ -267,15 +469,20 @@
     }
   }
   function getScore(r) {
+    // Prefer DB field when present
     const dbScore = r.totalscore ?? r.total_score;
     if (typeof dbScore === 'number') return dbScore;
+    // API shapes
     const apiScore = r.overallScore ?? r.score;
     if (typeof apiScore === 'number') return apiScore;
+    // Sometimes original payload is stored in jsonb
     const origScore = r.originalreport?.total_score ?? r.originalreport?.overallScore ?? r.original_report?.total_score ?? r.original_report?.overallScore;
     if (typeof origScore === 'number') return origScore;
+    // Fallback: compute from categories
     return calculateOverallScore(r) ?? 0;
   }
 
+  // Helper to get a sortable date value from a report-like item
   function dateValue(item) {
     const dateStr = item?.savedat || item?.created_at || item?.createdAt;
     if (!dateStr) return 0;
@@ -326,10 +533,7 @@
       if (error) throw error;
 
       toast.success('Report deleted successfully');
-      
-      // Invalidate cache and reload
-      const pageNum = Number($page.url.searchParams.get('page') || '1');
-      dashboardCache.invalidatePage(pageNum);
+      // Refresh the page to update the reports list
       window.location.reload();
     } catch (error) {
       console.error('Error deleting report:', error);
@@ -377,10 +581,7 @@
 
       toast.success(`${selectedReports.length} reports archived`);
       selectedReports = [];
-      
-      // Invalidate cache and reload
-      const pageNum = Number($page.url.searchParams.get('page') || '1');
-      dashboardCache.invalidatePage(pageNum);
+      // Refresh the page to update the reports list
       window.location.reload();
     } catch (error) {
       console.error('Error archiving reports:', error);
@@ -418,6 +619,44 @@
     }
   }
 
+  // Realtime updates from Supabase for immediate UI refresh
+  function setupRealtime() {
+    try {
+      if (!currentUserId) return;
+      if (realtimeSubscribed) {
+        console.log('Realtime already subscribed, skipping');
+        return; // prevent duplicate subscriptions
+      }
+      
+      // Clean up any existing channel first
+      if (reportsChannel) {
+        try { 
+          supabase.removeChannel(reportsChannel);
+          console.log('Removed existing channel');
+        } catch {}
+        reportsChannel = null;
+        realtimeSubscribed = false;
+      }
+      
+      console.log('Setting up new realtime subscription');
+      reportsChannel = supabase
+        .channel(`reports_changes_${currentUserId}_${Date.now()}`) // unique channel name
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'reports', filter: `userid=eq.${currentUserId}` },
+          (payload) => {
+            handleReportChange(payload);
+          }
+        )
+        .subscribe();
+      realtimeSubscribed = true;
+      console.log('Realtime subscription setup complete');
+    } catch (e) {
+      console.warn('Failed to setup realtime:', e);
+      realtimeSubscribed = false;
+    }
+  }
+
   function handleReportChange(payload) {
     try {
       const evt = payload.eventType;
@@ -425,6 +664,7 @@
       const oldRow = payload.old || {};
       if (evt === 'INSERT') {
         if (newRow.userid !== currentUserId) return;
+        // Prepend and sort by savedat/created_at desc
         reports = [newRow, ...reports].sort((a, b) => dateValue(b) - dateValue(a));
         pagination = { ...pagination, totalReports: (pagination.totalReports || 0) + 1 };
       } else if (evt === 'UPDATE') {
@@ -441,6 +681,7 @@
     }
   }
 </script>
+
 <svelte:window on:click={handleClickOutside} />
 
 <div class="flex min-h-screen w-full relative z-10">
@@ -529,7 +770,7 @@
                     </Table.Head>
                     <Table.Head class="w-auto">Job Title</Table.Head>
                     <Table.Head class="w-28 whitespace-nowrap">Date</Table.Head>
-                    <Table.Head class="w-32 text-center">Score</Table.Head>
+                    <Table.Head class="w-20 text-center">Score</Table.Head>
                     <Table.Head class="w-10 text-right">Actions</Table.Head>
                   </Table.Row>
                 </Table.Header>
@@ -553,17 +794,17 @@
                           {getDate(report)}
                         </a>
                       </Table.Cell>
-                      <Table.Cell class="text-center w-32 py-4">
+                      <Table.Cell class="text-center w-20">
                         {#if reportOptimizations.has(report.id)}
                           <!-- Show score range for reports with optimizations -->
                           {@const optimization = reportOptimizations.get(report.id)}
-                          {@const improvement = optimization.highestScore - optimization.lowestScore}
-                          <div class="flex flex-row gap-1 items-center justify-center">
-                            <!-- Original score (lowest) - always show in red/yellow to indicate "before" -->
+                          <div class="flex flex-row gap-1">
+                            <!-- Original score (lowest) - links to original view -->
                             <a 
                               href={`/results?report=${report.id}`} 
                               class="inline-flex items-center px-2.5 py-1 rounded-sm text-[9px] cursor-pointer hover:opacity-80 transition-opacity
-                                {optimization.lowestScore >= 60 ? 'bg-yellow-400 text-black' : 
+                                {optimization.lowestScore >= 85 ? 'bg-green-500 text-white' : 
+                                optimization.lowestScore >= 60 ? 'bg-yellow-300 text-black' : 
                                 optimization.lowestScore >= 40 ? 'bg-red-400 text-white' :
                                 'bg-red-600 text-white'}"
                               on:click={(e) => {
@@ -571,31 +812,22 @@
                                 e.preventDefault();
                                 openScorecard(report.id);
                               }}
-                              title="Original score: {optimization.lowestScore}"
                             >
                               {optimization.lowestScore}
                             </a>
-                            <!-- Arrow indicator for improvement -->
-                            {#if improvement > 0}
-                              <svg class="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                              </svg>
-                            {/if}
-                            <!-- Optimized score (highest) - show in green/yellow to indicate "after" improvement -->
+                            <!-- Optimized score (highest) - links to optimized view -->
                             <a 
                               href={`/results?report=${report.id}&from=optimized`} 
                               class="inline-flex items-center px-2.5 py-1 rounded-sm text-[9px] cursor-pointer hover:opacity-80 transition-opacity
-                                {optimization.highestScore >= 85 ? 'bg-green-600 text-white' : 
-                                optimization.highestScore >= 70 ? 'bg-green-500 text-white' : 
+                                {optimization.highestScore >= 85 ? 'bg-green-500 text-white' : 
                                 optimization.highestScore >= 60 ? 'bg-yellow-300 text-black' : 
-                                optimization.highestScore >= 50 ? 'bg-yellow-400 text-black' :
-                                'bg-orange-400 text-white'}"
+                                optimization.highestScore >= 40 ? 'bg-red-400 text-white' :
+                                'bg-red-600 text-white'}"
                               on:click={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();
                                 openScorecard(report.id, { fromOptimized: true });
                               }}
-                              title="Optimized score: {optimization.highestScore} (+{improvement})"
                             >
                               {optimization.highestScore}
                             </a>
