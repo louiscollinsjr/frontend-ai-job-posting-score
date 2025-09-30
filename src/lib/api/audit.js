@@ -39,7 +39,7 @@ export async function auditJobUrl(url) {
       method: 'POST',
       headers,
       body: JSON.stringify({ url, useV2Pipeline: true })
-    }, 90000); // 90 second timeout for V2 pipeline with LLM calls
+    }, 150000); // 150 second timeout for V2 pipeline (accounts for cold start + browser + LLM)
     // Handle anti-bot response from backend
     if (response.status === 403) {
       let payload;
@@ -81,7 +81,7 @@ export async function auditJobText(text) {
       method: 'POST',
       headers,
       body: JSON.stringify({ text, useV2Pipeline: true })
-    }, 90000); // 90 second timeout for V2 pipeline with LLM calls
+    }, 150000); // 150 second timeout for V2 pipeline (accounts for cold start + LLM)
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
     }

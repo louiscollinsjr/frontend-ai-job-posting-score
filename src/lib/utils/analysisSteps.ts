@@ -20,42 +20,44 @@ interface StepDefinition {
 }
 
 // Step definitions with both professional and playful labels
+// Timings based on optimized backend performance
+// Cold start: ~60-70s, Warm: ~40-50s
 const URL_STEP_DEFINITIONS: StepDefinition[] = [
   { 
     id: 'launching', 
     professionalLabel: 'Preparing analysis...', 
     playfulLabel: 'Warming up the engines...', 
-    estimatedDuration: 3000 
+    estimatedDuration: 8000 // Browser pool (warm) or launch (cold)
   },
   { 
     id: 'navigating', 
     professionalLabel: 'Reviewing job details...', 
     playfulLabel: 'Fetching your job post...', 
-    estimatedDuration: 5000 
+    estimatedDuration: 18000 // Optimized navigation (10s networkidle)
   },
   { 
     id: 'extracting', 
     professionalLabel: 'Evaluating content...', 
     playfulLabel: 'Gathering the details...', 
-    estimatedDuration: 4000 
+    estimatedDuration: 3000 // Content extraction + 1s GH detection
   },
   { 
     id: 'analyzing', 
     professionalLabel: 'Assessing structure...', 
     playfulLabel: 'Giving it a close read...', 
-    estimatedDuration: 8000 
+    estimatedDuration: 18000 // Parallel LLM analysis (gpt-4o-mini for extractions)
   },
   { 
     id: 'scoring', 
     professionalLabel: 'Generating insights...', 
     playfulLabel: 'Crunching the numbers...', 
-    estimatedDuration: 10000 
+    estimatedDuration: 18000 // Parallel LLM scoring
   },
   { 
     id: 'finalizing', 
     professionalLabel: 'Finalizing report...', 
     playfulLabel: 'Polishing your report...', 
-    estimatedDuration: 3000 
+    estimatedDuration: 3000 // Database save
   }
 ];
 
@@ -64,25 +66,25 @@ const TEXT_STEP_DEFINITIONS: StepDefinition[] = [
     id: 'processing', 
     professionalLabel: 'Preparing text...', 
     playfulLabel: 'Dusting off the text...', 
-    estimatedDuration: 2000 
+    estimatedDuration: 3000 // Text processing
   },
   { 
     id: 'analyzing', 
     professionalLabel: 'Assessing structure...', 
     playfulLabel: 'Reading between the lines...', 
-    estimatedDuration: 8000 
+    estimatedDuration: 18000 // Parallel LLM analysis (optimized with gpt-4o-mini)
   },
   { 
     id: 'scoring', 
     professionalLabel: 'Generating insights...', 
     playfulLabel: 'Running the score machine...', 
-    estimatedDuration: 10000 
+    estimatedDuration: 18000 // Parallel LLM scoring
   },
   { 
     id: 'finalizing', 
     professionalLabel: 'Finalizing report...', 
     playfulLabel: 'Wrapping it up with a bow...', 
-    estimatedDuration: 3000 
+    estimatedDuration: 3000 // Database save
   }
 ];
 

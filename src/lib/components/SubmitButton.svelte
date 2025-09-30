@@ -32,7 +32,7 @@
     ></span>
   {/if}
 
-  <span class="relative z-10 flex flex-col items-center justify-center">
+  <span class="relative z-10 flex flex-col items-center justify-center w-full">
     {#if isLoading}
       <div class="flex items-center justify-center gap-3">
         <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -42,10 +42,12 @@
         <span class="text-base sm:text-lg">{displayText}</span>
       </div>
       {#if showSteps && currentStep}
-        <span class="text-xs sm:text-sm text-white/70 mt-2 animate-pulse">This may take 30-60 seconds...</span>
+        <span class="text-xs sm:text-sm text-white/70 mt-2 animate-pulse">This usually takes 40-70 seconds...</span>
       {/if}
     {:else}
-      <slot />
+      <span class="flex items-center justify-center gap-2">
+        <slot />
+      </span>
     {/if}
   </span>
 </button>

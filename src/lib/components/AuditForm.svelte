@@ -417,7 +417,7 @@
 						class="form-submit mt-8 sm:mt-24 sticky bottom-4 relative max-w-md mx-auto"
 						style="padding-bottom: env(safe-area-inset-bottom)">
 						<SubmitButton type="submit" {isLoading} {currentStep} showSteps={true}>
-							<span class="hidden sm:inline">Get </span>
+							<span class="hidden sm:inline">Get</span>
 							<Logo variant="white" imgClass="h-5 w-auto sm:h-6 ml-2" />
 						</SubmitButton>
 					</div>
