@@ -195,7 +195,7 @@
 	<!-- Refined Grid Section -->
 	<Section containerClass="">
 		<RefinedGrid />
-		<RefinedGridV2 />
+		<!-- <RefinedGridV2 /> -->
 	</Section>
 
 	<!-- Call To Action Section -->
