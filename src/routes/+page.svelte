@@ -18,6 +18,7 @@
 	import HeroSection from '$lib/components/HeroSection.svelte';
 	import HomePageSections from '$lib/components/HomePageSections.svelte';
 	import Section from '$lib/components/Section.svelte';
+	import RefinedGridV2 from '$lib/components/RefinedGridV2.svelte';
 
 	// Supports weights 400-900
 
@@ -34,6 +35,7 @@
 	// Authentication status for guest badge
 	let isLoggedIn = false;
 	let hasGuestReports = false;
+	let authChecked = false;
 
 	// Subscribe to the store on mount (client-only)
 
@@ -90,6 +92,7 @@
 		// Subscribe to user authentication state
 		const unsubscribeUser = user.subscribe((currentUser) => {
 			isLoggedIn = !!currentUser?.id;
+			authChecked = true;
 		});
 
 		// Check for guest reports
@@ -167,7 +170,7 @@
 	<MessageNotification {showMessage} {messageText} {messageType} on:dismiss={dismissMessage} />
 	
 	<!-- Hero Section -->
-	<HeroSection {isLoggedIn} {hasGuestReports} on:audit={handleAudit} />
+	<HeroSection {isLoggedIn} {hasGuestReports} {authChecked} on:audit={handleAudit} />
 
 	<!-- Beta Badge Section -->
 	<Section>
@@ -191,7 +194,7 @@
 
 	<!-- Refined Grid Section -->
 	<Section containerClass="">
-		<RefinedGrid />
+		<RefinedGridV2 />
 	</Section>
 
 	<!-- Call To Action Section -->

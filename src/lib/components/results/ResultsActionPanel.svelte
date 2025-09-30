@@ -40,7 +40,7 @@
         on:click={onOptimize}
         disabled={rewriteLoading || loading}
       >
-        {rewriteLoading ? 'Optimizing…' : 'Optimize This Posting'}
+        {rewriteLoading ? 'Optimizing…' : 'Optimize JobPost'}
       </button>
     {/if}
   </div>

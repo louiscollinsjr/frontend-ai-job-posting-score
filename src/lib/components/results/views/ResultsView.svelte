@@ -124,12 +124,23 @@
         }
       });
 
-      // Update current report with new score
+      // Update current report with optimization data and set hasRewrite flag
       resultsPageStore.setCurrentReport({
         ...currentReport,
-        total_score: result.new_score,
-        improved_text: result.rewritten_text
+        hasRewrite: true, // ✅ Set flag to enable optimized view
+        improved_text: result.rewritten_text,
+        latestImprovedText: result.rewritten_text,
+        rewriteVersion: result.version_number || 1,
+        optimizationData: {
+          original_score: currentReport.total_score,
+          optimized_score: result.new_score,
+          change_log: result.change_log,
+          unaddressed_items: result.unaddressed_items
+        }
       });
+
+      // Switch to optimized view
+      resultsPageStore.setRequestedView('optimized');
 
       toast.success('Job posting optimized successfully!');
     } catch (error: unknown) {
