@@ -39,8 +39,11 @@
     }
   ];
 
+  const SLIDE_TRANSITION_MS = 1500;
+  const SLIDE_PAUSE_MS = 6000; // time to pause on each slide after the transition completes
+
   let currentIndex = 0;
-  let autoplayInterval;
+  let autoplayTimer;
 
   function goToSlide(index) {
     currentIndex = index;
@@ -58,27 +61,28 @@
   }
 
   function resetAutoplay() {
-    if (autoplayInterval) {
-      clearInterval(autoplayInterval);
+    if (autoplayTimer) {
+      clearTimeout(autoplayTimer);
     }
-    autoplayInterval = setInterval(() => {
+
+    autoplayTimer = setTimeout(() => {
       currentIndex = (currentIndex + 1) % features.length;
-    }, 5000);
+      resetAutoplay();
+    }, SLIDE_TRANSITION_MS + SLIDE_PAUSE_MS);
   }
 
   onMount(() => {
     resetAutoplay();
     return () => {
-      if (autoplayInterval) {
-        clearInterval(autoplayInterval);
+      if (autoplayTimer) {
+        clearTimeout(autoplayTimer);
       }
     };
   });
 </script>
 
-<section class="relative p-0 bg-gradient-to-br from-[#f8f8f8] via-[#f8f8f8] to-[#0358f7]/50 rounded-2xl mb-8 overflow-hidden font-aeonik">
+<section class="relative p-0 bg-gradient-to-br from-[#f8f8f8dc]/10 via-[#ffe417]/10 to-[#0358f7]/10 rounded-2xl mb-8 overflow-hidden font-aeonik">
   <div class="w-full relative sm:px-8 sm:py-20">
-    <!-- Header Text -->
     <div class="text-left">
       <p class="text-3xl md:text-5xl text-black sm:font-normal font-aeonik my-0 max-w-3xl px-8 pt-10">
         Job Postings, reimagined for the AI search era.
@@ -135,7 +139,7 @@
 
       <!-- Carousel Slide -->
       <div class="w-full max-w-7xl relative overflow-hidden">
-        <div class="flex transition-transform duration-700 ease-in-out" style="transform: translateX(-{currentIndex * 100}%)">
+        <div class="flex transition-transform duration-[700ms] ease-in-out" style="transform: translateX(-{currentIndex * 100}%)">
           {#each features as feature}
             <div class="w-full flex-shrink-0 px-4">
               <!-- Feature Card -->
@@ -167,9 +171,11 @@
                 </div>
 
                 <!-- Feature Description -->
-                <p class="text-base sm:text-lg text-gray-600 leading-relaxed font-aeonik max-w-2xl mx-auto text-center">
-                  {feature.text}
-                </p>
+                <div class="min-h-[7rem] flex items-center justify-center">
+                  <p class="text-base sm:text-lg text-gray-600 leading-relaxed font-aeonik max-w-2xl mx-auto text-center">
+                    {feature.text}
+                  </p>
+                </div>
               </div>
             </div>
           {/each}

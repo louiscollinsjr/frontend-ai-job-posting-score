@@ -19,6 +19,7 @@
 	import HomePageSections from '$lib/components/HomePageSections.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import RefinedGridV2 from '$lib/components/RefinedGridV2.svelte';
+	import LearnMore from '$lib/components/LearnMore.svelte';
 
 	// Supports weights 400-900
 
@@ -26,6 +27,7 @@
 	let isLoading = false;
 	let results = null;
 	let showResults = false;
+	
 
 	// Message handling
 	let showMessage = false;
@@ -36,6 +38,7 @@
 	let isLoggedIn = false;
 	let hasGuestReports = false;
 	let authChecked = false;
+	let showLearnMore = true;
 
 	// Subscribe to the store on mount (client-only)
 
@@ -168,7 +171,7 @@
 <div id="hero" class="bg-transparent relative mx-0 sm:mx-auto pb-10 sm:pb-64 pt-6">
 	<!-- Message Notification -->
 	<MessageNotification {showMessage} {messageText} {messageType} on:dismiss={dismissMessage} />
-	
+
 	<!-- Hero Section -->
 	<HeroSection {isLoggedIn} {hasGuestReports} {authChecked} on:audit={handleAudit} />
 
@@ -176,11 +179,42 @@
 	<Section>
 		<BetaBadge />
 	</Section>
+	{#if showLearnMore}
+		<Section containerClass="container mx-auto mt-24">
+			<LearnMore
+				eyebrow=""
+				title=""
+				description=""
+				ctaLabel="Learn More"
+				destination="/learn-more"
+				heightClass="min-h-[760px]"
+				backgroundClass="bg-gradient-to-bl from-blue-700 via-blue-600 to-blue-500"
+				overlayClass="bg-gradient-to-bl from-[#f8f8f8dc]/0 via-[#ffe417]/10 to-[#0358f7]/0"
+				backgroundVideo="/videos/new.mp4"
+				backgroundPlaybackRate={0.5}
+				on:close={() => (showLearnMore = false)}>
+				<svelte:fragment slot="header">
+					<div class="flex flex-col items-center gap-4 text-center font-aeonik">
+						<div class="flex items-center gap-3 text-white">
+							<span class="text-4xl tracking-[0.05em] text-white/100"></span>
+							<Logo variant="white" imgClass="h-8 w-auto" />
+						</div>
+						<!-- <p class="text-xs uppercase tracking-[0.28em] text-white/70">What We Stand For</p> -->
+						<h2 class="text-2xl font-aeonik tracking-wide sm:text-5xl">We help teams create job postings built for the AI-driven hiring era.</h2>
+						<p class="text-lg text-white/100 sm:text-2xl mt-3">
+							Make every job post discoverable, clear, and compliant.
+						</p>
+					</div>
+				</svelte:fragment>
+			</LearnMore>
+		</Section>
+	{/if}
+	
 
 	<!-- What We Do Section -->
-	<Section containerClass="z-10">
+	<!-- <Section containerClass="z-10">
 		<WhatWeDo />
-	</Section>
+	</Section> -->
 
 	<!-- Call To Action Section -->
 	<Section containerClass="-my-14">
@@ -194,8 +228,8 @@
 
 	<!-- Refined Grid Section -->
 	<Section containerClass="">
-		<RefinedGrid />
-		<!-- <RefinedGridV2 /> -->
+		<!-- <RefinedGrid /> -->
+		<RefinedGridV2 />
 	</Section>
 
 	<!-- Call To Action Section -->
