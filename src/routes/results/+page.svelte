@@ -44,7 +44,7 @@
   $: reportLinkId = currentReport?.id ?? currentReport?.report_id ?? null;
 
   $: breadcrumbs = (() => {
-    const items: BreadcrumbItem[] = [{ label: 'Dashboard', href: '/dashboard' }];
+    const items: BreadcrumbItem[] = [{ label: 'My JobPostScore', href: '/dashboard' }];
     const label = reportIdentifier?.trim() ? reportIdentifier : 'Scorecard';
 
     if ($currentView === 'optimization') {

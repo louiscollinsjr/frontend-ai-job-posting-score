@@ -20,6 +20,7 @@
 	import Section from '$lib/components/Section.svelte';
 	import RefinedGridV2 from '$lib/components/RefinedGridV2.svelte';
 	import LearnMore from '$lib/components/LearnMore.svelte';
+	import HowMyJobPostScore from '$lib/components/HowMyJobPostScore.svelte';
 
 	// Supports weights 400-900
 
@@ -244,6 +245,8 @@
 			</svelte:fragment>
 		</CallToAction>
 	</Section>
+
+	<div class="container mx-auto z-10"><HowMyJobPostScore /></div>
 
 	<!-- <div class="container mx-auto z-10"></div> -->
 

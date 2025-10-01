@@ -9,6 +9,9 @@
 	export let hasGuestReports = false;
 	export let authChecked = false;
 
+	// Derive a stable flag to prevent blinking
+	$: shouldShowBadge = authChecked && !isLoggedIn && hasGuestReports;
+
 	// Create dispatcher for events
 	const dispatch = createEventDispatcher();
 
@@ -25,7 +28,7 @@
 			<div class="grid grid-cols-1 lg:grid-cols-1 gap-8 items-start mx-auto">
 				<div class="px-4 lg:px-16 pb-10 sm:pb-24 rounded-3xl min-h-0 sm:min-h-[680px] mx-auto pt-6 sm:pt-20 w-full">
 					<!-- Guest Report Badge - Shows last cached report for non-authenticated users -->
-					{#if authChecked && !isLoggedIn && hasGuestReports}
+					{#if shouldShowBadge}
 						<GuestReportBadge />
 					{/if}
 					<h1 class="sm:pt-16 pt-4 text-4xl sm:text-7xl font-normal w-[100%] pb-4 sm:pb-8 leading-tight tracking-tight mx-auto text-center font-aeonik">
