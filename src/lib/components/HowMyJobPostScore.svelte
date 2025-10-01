@@ -44,7 +44,7 @@
       <div class="flex-1 min-w-80 max-w-lg flex flex-col text-left rounded-2xl">
         <div class="p-0 flex flex-col flex-grow">
           <div class="flex items-center gap-2 mb-4">
-          <div class="relative p-3 rounded-3xl bg-gray-200">
+          <div class="relative p-3 rounded-3xl bg-gradient-to-br from-red-50 via-yellow-100 to-blue-100">
             <img src={section.image} alt={section.alt} class="w-full object-contain rounded-2xl" />
             <div class="absolute bottom-6 right-6 bg-black/50 rounded-lg p-2 shadow-sm text-white/50">
               {#if section.icon === 'pen'}
