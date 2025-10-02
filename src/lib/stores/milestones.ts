@@ -36,8 +36,15 @@ async function fetchMilestones(sessionId: string, since: number) {
     url.searchParams.set('since', String(since));
   }
 
-  const response = await fetch(url.toString(), { credentials: 'include' });
+  const response = await fetch(url.toString(), { 
+    credentials: 'omit', // Don't send credentials for CORS simplicity
+    mode: 'cors'
+  });
   if (!response.ok) {
+    // Silently return empty for 404/502/503 (backend cold start or session expired)
+    if (response.status === 404 || response.status === 502 || response.status === 503) {
+      return { milestones: [], nextSince: since };
+    }
     throw new Error(`Failed to fetch milestones: ${response.status}`);
   }
   return response.json() as Promise<{ milestones: MilestoneEvent[]; nextSince: number }>;
