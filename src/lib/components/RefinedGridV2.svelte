@@ -95,19 +95,19 @@
     <!-- Carousel Container -->
     <div class="mt-0 flex flex-col items-center w-full px-4 pb-12">
       <!-- Navigation Arrows and Dots -->
-      <div class="flex items-center gap-4 mb-24">
-        <!-- Previous Button -->
+      <!-- <div class="flex items-center gap-4 mb-12">
+        
         <button
           on:click={prevSlide}
-          class="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition-colors duration-200"
+          class="w-8 h-8 rounded-full bg-gray-200/40 hover:bg-gray-300 flex items-center justify-center transition-colors duration-200"
           aria-label="Previous slide"
         >
-          <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-3 h-3 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
 
-        <!-- Dot Navigation -->
+        
         <div class="flex gap-2">
           {#each features as _, index}
             <button
@@ -118,24 +118,19 @@
           {/each}
         </div>
 
-        <!-- Next Button -->
+      
         <button
           on:click={nextSlide}
-          class="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition-colors duration-200"
+          class="w-8 h-8 rounded-full bg-gray-200/40 hover:bg-gray-300 flex items-center justify-center transition-colors duration-200"
           aria-label="Next slide"
         >
-          <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-3 h-3 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
         </button>
-      </div>
+      </div> -->
 
-      <!-- Current Feature Title -->
-      <div class="text-center mb-6">
-        <h3 class="text-3xl sm:text-4xl font-normal text-gray-900 font-aeonik">
-          {features[currentIndex].title}
-        </h3>
-      </div>
+     
 
       <!-- Carousel Slide -->
       <div class="w-full max-w-7xl relative overflow-hidden">
@@ -169,6 +164,13 @@
                     {/if}
                   </div>
                 </div>
+
+                 <!-- Current Feature Title -->
+      <div class="text-center mb-0 mt-20">
+        <h3 class="text-3xl sm:text-4xl font-normal text-gray-900 font-aeonik">
+          {features[currentIndex].title}
+        </h3>
+      </div>
 
                 <!-- Feature Description -->
                 <div class="min-h-[7rem] flex items-center justify-center">
