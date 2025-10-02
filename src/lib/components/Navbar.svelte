@@ -128,7 +128,7 @@
         {#if !hideLoginButton}
           {#if isLoggedIn}
             <div class="flex items-center gap-4">
-              <a href="/dashboard" class="text-sm font-medium text-gray-700 hover:text-gray-900">My JobPostScore</a>
+              <a href="/dashboard" class="text-sm font-medium text-gray-700 hover:text-gray-900">Dashboard</a>
               <button 
                 on:click={handleLogout} 
                 class="text-sm font-medium text-gray-600 hover:text-gray-900 inline-flex items-center gap-1"
