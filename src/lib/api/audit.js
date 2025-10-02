@@ -31,7 +31,7 @@ async function fetchWithTimeout(resource, options = /** @type {RequestInit} */ (
  * @param {string} url - The URL of the job posting to analyze 
  * @returns {Promise<object>} - The audit results
  */
-export async function auditJobUrl(url, sessionId = null) {
+export async function auditJobUrl(url) {
   try {
     /** @type {Record<string, string>} */
     const headers = { 'Content-Type': 'application/json' };
@@ -44,7 +44,7 @@ export async function auditJobUrl(url, sessionId = null) {
     const response = await fetchWithTimeout(`${API_BASE_URL}/api/audit-job-post`, {
       method: 'POST',
       headers,
-      body: JSON.stringify({ url, useV2Pipeline: true, sessionId })
+      body: JSON.stringify({ url, useV2Pipeline: true })
     }, 150000); // 150 second timeout for V2 pipeline (accounts for cold start + browser + LLM)
     // Handle anti-bot response from backend
     if (response.status === 403) {
@@ -76,7 +76,7 @@ export async function auditJobUrl(url, sessionId = null) {
  * @param {string} text - The job description text to analyze
  * @returns {Promise<object>} - The audit results
  */
-export async function auditJobText(text, sessionId = null) {
+export async function auditJobText(text) {
   try {
     /** @type {Record<string, string>} */
     const headers = { 'Content-Type': 'application/json' };
@@ -89,7 +89,7 @@ export async function auditJobText(text, sessionId = null) {
     const response = await fetchWithTimeout(`${API_BASE_URL}/api/audit-job-post`, {
       method: 'POST',
       headers,
-      body: JSON.stringify({ text, useV2Pipeline: true, sessionId })
+      body: JSON.stringify({ text, useV2Pipeline: true })
     }, 150000); // 150 second timeout for V2 pipeline (accounts for cold start + LLM)
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
