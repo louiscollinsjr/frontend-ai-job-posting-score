@@ -31,23 +31,29 @@ const DEFAULT_THROTTLE = 600;
 const API_BASE_URL = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
 
 async function fetchMilestones(sessionId: string, since: number) {
-  const url = new URL(`${API_BASE_URL}/api/milestones/${sessionId}`);
-  if (since) {
-    url.searchParams.set('since', String(since));
-  }
-
-  const response = await fetch(url.toString(), { 
-    credentials: 'omit', // Don't send credentials for CORS simplicity
-    mode: 'cors'
-  });
-  if (!response.ok) {
-    // Silently return empty for 404/502/503 (backend cold start or session expired)
-    if (response.status === 404 || response.status === 502 || response.status === 503) {
-      return { milestones: [], nextSince: since };
+  try {
+    const url = new URL(`${API_BASE_URL}/api/milestones/${sessionId}`);
+    if (since) {
+      url.searchParams.set('since', String(since));
     }
-    throw new Error(`Failed to fetch milestones: ${response.status}`);
+
+    const response = await fetch(url.toString(), { 
+      credentials: 'omit', // Don't send credentials for CORS simplicity
+      mode: 'cors'
+    });
+    
+    if (!response.ok) {
+      // Silently return empty for 404/502/503 (backend cold start or session expired)
+      if (response.status === 404 || response.status === 502 || response.status === 503) {
+        return { milestones: [], nextSince: since };
+      }
+      throw new Error(`Failed to fetch milestones: ${response.status}`);
+    }
+    return response.json() as Promise<{ milestones: MilestoneEvent[]; nextSince: number }>;
+  } catch (error) {
+    // Network errors (CORS, timeout, etc.) - return empty and let polling retry
+    return { milestones: [], nextSince: since };
   }
-  return response.json() as Promise<{ milestones: MilestoneEvent[]; nextSince: number }>;
 }
 
 export function createMilestoneStream(sessionId: string | null, options: MilestoneStreamOptions = {}) {
@@ -88,7 +94,11 @@ export function createMilestoneStream(sessionId: string | null, options: Milesto
           emitBuffered();
         }
       } catch (error) {
-        console.error('[Milestones] Poll error', error);
+        // Silently ignore network errors during polling (backend cold start, CORS issues, etc.)
+        // The main audit request will wake the backend, milestones will flow once it's warm
+        if (import.meta.env.DEV) {
+          console.warn('[Milestones] Poll failed (backend may be cold-starting):', error);
+        }
       }
     };
 
