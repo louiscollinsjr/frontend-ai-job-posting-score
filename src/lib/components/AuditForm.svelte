@@ -33,6 +33,9 @@
 	import { AnalysisProgressManager, getStepsForInputType } from '$lib/utils/analysisSteps';
 	import type { AnalysisStep } from '$lib/utils/analysisSteps';
 	import { MESSAGE_MODE } from '$lib/config/messaging';
+	import { createMilestoneStream } from '$lib/stores/milestones';
+	import MilestoneProgress from '$lib/components/MilestoneProgress.svelte';
+	import { onDestroy } from 'svelte';
 
 	// Create a dispatcher to send events to parent components
 	const dispatch = createEventDispatcher();
@@ -51,6 +54,15 @@
 	// Progress tracking
 	let currentStep = '';
 	let progressManager: AnalysisProgressManager | null = null;
+	let currentSessionId: string | null = null;
+	let milestoneStream: ReturnType<typeof createMilestoneStream> | null = null;
+	let milestones: any[] = [];
+
+	onDestroy(() => {
+		if (milestoneStream) {
+			milestoneStream = null;
+		}
+	});
 
 	// Subscribe to auth state
 	user.subscribe((val) => {
@@ -141,10 +153,17 @@
 		try {
 			let results;
 
+			// Generate session ID for milestone tracking
+			currentSessionId = crypto.randomUUID();
+			milestoneStream = createMilestoneStream(currentSessionId, { intervalMs: 1000, throttleMs: 500 });
+			milestoneStream.subscribe((events) => {
+				milestones = events;
+			});
+
 			if (inputType === 'url') {
-				results = await auditJobUrl(jobUrl);
+				results = await auditJobUrl(jobUrl, currentSessionId);
 			} else {
-				results = await auditJobText(jobDescription);
+				results = await auditJobText(jobDescription, currentSessionId);
 			}
 
 			// Complete progress
@@ -189,11 +208,20 @@
 		} finally {
 			isLoading = false;
 			currentStep = '';
+			currentSessionId = null;
+			milestones = [];
 		}
 	}
 </script>
 
 <section class="audit-form-container rounded-xl p-2 mb-0 md:p-8 mx-auto font-aeonik">
+	<!-- Milestone Progress Display -->
+	{#if isLoading && milestones.length > 0}
+		<div class="mb-6">
+			<MilestoneProgress {milestones} />
+		</div>
+	{/if}
+
 	<div class="mb-8">
 		<!-- Modern Switch-Style Toggle -->
 		<div class="mb-6">

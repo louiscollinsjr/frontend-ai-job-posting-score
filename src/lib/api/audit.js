@@ -10,7 +10,12 @@ import { env } from '$env/dynamic/public';
 const API_BASE_URL = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
 
 // Helper: fetch with timeout + abort to avoid hanging requests
-async function fetchWithTimeout(resource, options = {}, timeoutMs = 30000) {
+/**
+ * @param {RequestInfo | URL} resource
+ * @param {RequestInit} [options]
+ * @param {number} [timeoutMs=30000]
+ */
+async function fetchWithTimeout(resource, options = /** @type {RequestInit} */ ({}), timeoutMs = 30000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -26,8 +31,9 @@ async function fetchWithTimeout(resource, options = {}, timeoutMs = 30000) {
  * @param {string} url - The URL of the job posting to analyze 
  * @returns {Promise<object>} - The audit results
  */
-export async function auditJobUrl(url) {
+export async function auditJobUrl(url, sessionId = null) {
   try {
+    /** @type {Record<string, string>} */
     const headers = { 'Content-Type': 'application/json' };
     // Add auth token if available
     const session = await supabase.auth.getSession();
@@ -38,7 +44,7 @@ export async function auditJobUrl(url) {
     const response = await fetchWithTimeout(`${API_BASE_URL}/api/audit-job-post`, {
       method: 'POST',
       headers,
-      body: JSON.stringify({ url, useV2Pipeline: true })
+      body: JSON.stringify({ url, useV2Pipeline: true, sessionId })
     }, 150000); // 150 second timeout for V2 pipeline (accounts for cold start + browser + LLM)
     // Handle anti-bot response from backend
     if (response.status === 403) {
@@ -57,9 +63,11 @@ export async function auditJobUrl(url) {
     }
     return await response.json();
   } catch (error) {
-    console.error('Error auditing job URL:', error);
-    const aborted = error?.name === 'AbortError';
-    throw new Error(aborted ? 'Request timed out. Please try again.' : (error?.message || 'Failed to analyze job posting URL. Please try again.'));
+    const err = /** @type {unknown} */ (error);
+    console.error('Error auditing job URL:', err);
+    const aborted = err instanceof DOMException && err.name === 'AbortError';
+    const message = err instanceof Error ? err.message : 'Failed to analyze job posting URL. Please try again.';
+    throw new Error(aborted ? 'Request timed out. Please try again.' : message);
   }
 }
 
@@ -68,8 +76,9 @@ export async function auditJobUrl(url) {
  * @param {string} text - The job description text to analyze
  * @returns {Promise<object>} - The audit results
  */
-export async function auditJobText(text) {
+export async function auditJobText(text, sessionId = null) {
   try {
+    /** @type {Record<string, string>} */
     const headers = { 'Content-Type': 'application/json' };
     // Add auth token if available
     const session = await supabase.auth.getSession();
@@ -80,15 +89,16 @@ export async function auditJobText(text) {
     const response = await fetchWithTimeout(`${API_BASE_URL}/api/audit-job-post`, {
       method: 'POST',
       headers,
-      body: JSON.stringify({ text, useV2Pipeline: true })
+      body: JSON.stringify({ text, useV2Pipeline: true, sessionId })
     }, 150000); // 150 second timeout for V2 pipeline (accounts for cold start + LLM)
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
     }
     return await response.json();
   } catch (error) {
-    console.error('Error auditing job text:', error);
-    const aborted = error?.name === 'AbortError';
+    const err = /** @type {unknown} */ (error);
+    console.error('Error auditing job text:', err);
+    const aborted = err instanceof DOMException && err.name === 'AbortError';
     throw new Error(aborted ? 'Request timed out. Please try again.' : 'Failed to analyze job description. Please try again.');
   }
 }
@@ -115,8 +125,9 @@ export async function auditJobFile(file) {
     
     return await response.json();
   } catch (error) {
-    console.error('Error auditing job file:', error);
-    const aborted = error?.name === 'AbortError';
+    const err = /** @type {unknown} */ (error);
+    console.error('Error auditing job file:', err);
+    const aborted = err instanceof DOMException && err.name === 'AbortError';
     throw new Error(aborted ? 'Request timed out. Please try again.' : 'Failed to analyze job posting file. Please try again.');
   }
 }
@@ -172,29 +183,33 @@ function generateMockResults(type, data) {
 
 /**
  * Export audit results as text or PDF
- * @param {object} results - The audit results to export
+ * @param {any} results - The audit results to export
  * @param {string} format - The export format ('text' or 'pdf')
  */
 export async function exportResults(results, format) {
   if (format === 'text') {
     // Generate text version
     let exportText = `# JobPostScore Job Posting Audit\n`;
-    exportText += `Date: ${new Date(results.timestamp).toLocaleString()}\n\n`;
-    exportText += `## Overall Score: ${results.overallScore}%\n\n`;
+    exportText += `Date: ${results?.timestamp ? new Date(results.timestamp).toLocaleString() : new Date().toLocaleString()}\n\n`;
+    exportText += `## Overall Score: ${typeof results?.overallScore === 'number' ? results.overallScore : 'N/A'}%\n\n`;
     exportText += `### Category Scores\n`;
-    exportText += `- Inclusivity: ${results.inclusivityScore}% - ${results.inclusivityNotes}\n`;
-    exportText += `- Clarity: ${results.clarityScore}% - ${results.clarityNotes}\n`;
-    exportText += `- Effectiveness: ${results.effectivenessScore}% - ${results.effectivenessNotes}\n\n`;
+    exportText += `- Inclusivity: ${results?.inclusivityScore ?? 'N/A'}% - ${results?.inclusivityNotes ?? 'N/A'}\n`;
+    exportText += `- Clarity: ${results?.clarityScore ?? 'N/A'}% - ${results?.clarityNotes ?? 'N/A'}\n`;
+    exportText += `- Effectiveness: ${results?.effectivenessScore ?? 'N/A'}% - ${results?.effectivenessNotes ?? 'N/A'}\n\n`;
     
     exportText += `### Recommendations\n`;
-    results.recommendations.forEach((rec, index) => {
-      exportText += `${index + 1}. ${rec}\n`;
-    });
+    if (Array.isArray(results?.recommendations)) {
+      results.recommendations.forEach((rec, index) => {
+        exportText += `${index + 1}. ${rec}\n`;
+      });
+    }
     
     exportText += `\n### Highlighted Issues\n`;
-    results.highlights.forEach((highlight, index) => {
-      exportText += `${index + 1}. "${highlight.text}" - ${highlight.suggestion}\n`;
-    });
+    if (Array.isArray(results?.highlights)) {
+      results.highlights.forEach((highlight, index) => {
+        exportText += `${index + 1}. "${highlight.text}" - ${highlight.suggestion}\n`;
+      });
+    }
     
     // In a full implementation, this would trigger a download
     // For now, just log to console
@@ -270,9 +285,11 @@ export async function analyzeJob(inputType, inputData) {
     
     return await response.json();
   } catch (error) {
-    console.error('Error analyzing job:', error);
-    const aborted = error?.name === 'AbortError';
-    throw new Error(aborted ? 'Request timed out. Please try again.' : `Failed to analyze job posting. ${error.message}`);
+    const err = /** @type {unknown} */ (error);
+    console.error('Error analyzing job:', err);
+    const aborted = err instanceof DOMException && err.name === 'AbortError';
+    const message = err instanceof Error ? err.message : 'Failed to analyze job posting. Please try again.';
+    throw new Error(aborted ? 'Request timed out. Please try again.' : `Failed to analyze job posting. ${message}`);
   }
 }
 
@@ -283,6 +300,7 @@ export async function analyzeJob(inputType, inputData) {
  */
 export async function optimizeJob(reportId) {
   try {
+    /** @type {Record<string, string>} */
     const headers = { 'Content-Type': 'application/json' };
     const session = await supabase.auth.getSession();
     if (session?.data?.session?.access_token) {
@@ -303,16 +321,18 @@ export async function optimizeJob(reportId) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error optimizing job:', error);
-    const aborted = error?.name === 'AbortError';
-    throw new Error(aborted ? 'Request timed out. Please try again.' : `Failed to optimize job posting. ${error.message}`);
+    const err = /** @type {unknown} */ (error);
+    console.error('Error optimizing job:', err);
+    const aborted = err instanceof DOMException && err.name === 'AbortError';
+    const message = err instanceof Error ? err.message : 'Failed to optimize job posting. Please try again.';
+    throw new Error(aborted ? 'Request timed out. Please try again.' : `Failed to optimize job posting. ${message}`);
   }
 }
 
 /**
  * Download job posting as a text file
- * @param {object} job - Job object containing text and metadata
- * @param {string} fileType - Type of file to download (txt, json, jsonld)
+ * @param {Record<string, any>} job - Job object containing text and metadata
+ * @param {string} [fileType='txt'] - Type of file to download (txt, json, jsonld)
  */
 export function downloadJobPosting(job, fileType = 'txt') {
   try {
@@ -320,19 +340,19 @@ export function downloadJobPosting(job, fileType = 'txt') {
     
     switch (fileType) {
       case 'jsonld':
-        content = JSON.stringify(job.json_ld, null, 2);
-        filename = `job-posting-jsonld-${job.id}.json`;
+        content = JSON.stringify(job?.json_ld ?? {}, null, 2);
+        filename = `job-posting-jsonld-${job?.id ?? 'unknown'}.json`;
         mimeType = 'application/ld+json';
         break;
       case 'json':
-        content = JSON.stringify(job, null, 2);
-        filename = `job-posting-data-${job.id}.json`;
+        content = JSON.stringify(job ?? {}, null, 2);
+        filename = `job-posting-data-${job?.id ?? 'unknown'}.json`;
         mimeType = 'application/json';
         break;
       case 'txt':
       default:
-        content = job.improvedText || job.original_text;
-        filename = `job-posting-${job.id}.txt`;
+        content = job?.improvedText || job?.original_text || '';
+        filename = job?.id ? `job-posting-${job.id}.txt` : 'job-posting.txt';
         mimeType = 'text/plain';
         break;
     }
@@ -348,7 +368,9 @@ export function downloadJobPosting(job, fileType = 'txt') {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   } catch (error) {
-    console.error('Error downloading job posting:', error);
-    throw new Error(`Failed to download job posting. ${error.message}`);
+    const err = /** @type {unknown} */ (error);
+    console.error('Error downloading job posting:', err);
+    const message = err instanceof Error ? err.message : 'Unknown error.';
+    throw new Error(`Failed to download job posting. ${message}`);
   }
 }

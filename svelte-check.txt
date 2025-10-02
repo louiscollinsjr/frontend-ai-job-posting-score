@@ -1,0 +1,3871 @@
+
+====================================
+Loading svelte-check in workspace: /Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score
+Getting Svelte diagnostics...
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:13:33
+Error: Parameter 'resource' implicitly has an 'any' type. 
+// Helper: fetch with timeout + abort to avoid hanging requests
+async function fetchWithTimeout(resource, options = {}, timeoutMs = 30000) {
+  const controller = new AbortController();
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:35:7
+Error: Element implicitly has an 'any' type because expression of type '"Authorization"' can't be used to index type '{ 'Content-Type': string; }'.
+  Property 'Authorization' does not exist on type '{ 'Content-Type': string; }'. 
+    if (session?.data?.session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.data.session.access_token}`;
+    }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:61:28
+Error: Property 'name' does not exist on type '{}'. 
+    console.error('Error auditing job URL:', error);
+    const aborted = error?.name === 'AbortError';
+    throw new Error(aborted ? 'Request timed out. Please try again.' : (error?.message || 'Failed to analyze job posting URL. Please try again.'));
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:62:80
+Error: Property 'message' does not exist on type '{}'. 
+    const aborted = error?.name === 'AbortError';
+    throw new Error(aborted ? 'Request timed out. Please try again.' : (error?.message || 'Failed to analyze job posting URL. Please try again.'));
+  }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:77:7
+Error: Element implicitly has an 'any' type because expression of type '"Authorization"' can't be used to index type '{ 'Content-Type': string; }'.
+  Property 'Authorization' does not exist on type '{ 'Content-Type': string; }'. 
+    if (session?.data?.session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.data.session.access_token}`;
+    }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:91:28
+Error: Property 'name' does not exist on type '{}'. 
+    console.error('Error auditing job text:', error);
+    const aborted = error?.name === 'AbortError';
+    throw new Error(aborted ? 'Request timed out. Please try again.' : 'Failed to analyze job description. Please try again.');
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:119:28
+Error: Property 'name' does not exist on type '{}'. 
+    console.error('Error auditing job file:', error);
+    const aborted = error?.name === 'AbortError';
+    throw new Error(aborted ? 'Request timed out. Please try again.' : 'Failed to analyze job posting file. Please try again.');
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:182:45
+Error: Property 'timestamp' does not exist on type 'object'. 
+    let exportText = `# JobPostScore Job Posting Audit\n`;
+    exportText += `Date: ${new Date(results.timestamp).toLocaleString()}\n\n`;
+    exportText += `## Overall Score: ${results.overallScore}%\n\n`;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:183:48
+Error: Property 'overallScore' does not exist on type 'object'. 
+    exportText += `Date: ${new Date(results.timestamp).toLocaleString()}\n\n`;
+    exportText += `## Overall Score: ${results.overallScore}%\n\n`;
+    exportText += `### Category Scores\n`;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:185:45
+Error: Property 'inclusivityScore' does not exist on type 'object'. 
+    exportText += `### Category Scores\n`;
+    exportText += `- Inclusivity: ${results.inclusivityScore}% - ${results.inclusivityNotes}\n`;
+    exportText += `- Clarity: ${results.clarityScore}% - ${results.clarityNotes}\n`;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:185:76
+Error: Property 'inclusivityNotes' does not exist on type 'object'. 
+    exportText += `### Category Scores\n`;
+    exportText += `- Inclusivity: ${results.inclusivityScore}% - ${results.inclusivityNotes}\n`;
+    exportText += `- Clarity: ${results.clarityScore}% - ${results.clarityNotes}\n`;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:186:41
+Error: Property 'clarityScore' does not exist on type 'object'. 
+    exportText += `- Inclusivity: ${results.inclusivityScore}% - ${results.inclusivityNotes}\n`;
+    exportText += `- Clarity: ${results.clarityScore}% - ${results.clarityNotes}\n`;
+    exportText += `- Effectiveness: ${results.effectivenessScore}% - ${results.effectivenessNotes}\n\n`;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:186:68
+Error: Property 'clarityNotes' does not exist on type 'object'. 
+    exportText += `- Inclusivity: ${results.inclusivityScore}% - ${results.inclusivityNotes}\n`;
+    exportText += `- Clarity: ${results.clarityScore}% - ${results.clarityNotes}\n`;
+    exportText += `- Effectiveness: ${results.effectivenessScore}% - ${results.effectivenessNotes}\n\n`;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:187:47
+Error: Property 'effectivenessScore' does not exist on type 'object'. 
+    exportText += `- Clarity: ${results.clarityScore}% - ${results.clarityNotes}\n`;
+    exportText += `- Effectiveness: ${results.effectivenessScore}% - ${results.effectivenessNotes}\n\n`;
+    
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:187:80
+Error: Property 'effectivenessNotes' does not exist on type 'object'. 
+    exportText += `- Clarity: ${results.clarityScore}% - ${results.clarityNotes}\n`;
+    exportText += `- Effectiveness: ${results.effectivenessScore}% - ${results.effectivenessNotes}\n\n`;
+    
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:190:13
+Error: Property 'recommendations' does not exist on type 'object'. 
+    exportText += `### Recommendations\n`;
+    results.recommendations.forEach((rec, index) => {
+      exportText += `${index + 1}. ${rec}\n`;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:190:38
+Error: Parameter 'rec' implicitly has an 'any' type. 
+    exportText += `### Recommendations\n`;
+    results.recommendations.forEach((rec, index) => {
+      exportText += `${index + 1}. ${rec}\n`;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:190:43
+Error: Parameter 'index' implicitly has an 'any' type. 
+    exportText += `### Recommendations\n`;
+    results.recommendations.forEach((rec, index) => {
+      exportText += `${index + 1}. ${rec}\n`;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:195:13
+Error: Property 'highlights' does not exist on type 'object'. 
+    exportText += `\n### Highlighted Issues\n`;
+    results.highlights.forEach((highlight, index) => {
+      exportText += `${index + 1}. "${highlight.text}" - ${highlight.suggestion}\n`;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:195:33
+Error: Parameter 'highlight' implicitly has an 'any' type. 
+    exportText += `\n### Highlighted Issues\n`;
+    results.highlights.forEach((highlight, index) => {
+      exportText += `${index + 1}. "${highlight.text}" - ${highlight.suggestion}\n`;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:195:44
+Error: Parameter 'index' implicitly has an 'any' type. 
+    exportText += `\n### Highlighted Issues\n`;
+    results.highlights.forEach((highlight, index) => {
+      exportText += `${index + 1}. "${highlight.text}" - ${highlight.suggestion}\n`;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:258:7
+Error: Element implicitly has an 'any' type because expression of type '"Authorization"' can't be used to index type '{ 'Content-Type': string; }'.
+  Property 'Authorization' does not exist on type '{ 'Content-Type': string; }'. 
+    if (session?.data?.session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.data.session.access_token}`;
+    }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:274:28
+Error: Property 'name' does not exist on type '{}'. 
+    console.error('Error analyzing job:', error);
+    const aborted = error?.name === 'AbortError';
+    throw new Error(aborted ? 'Request timed out. Please try again.' : `Failed to analyze job posting. ${error.message}`);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:275:106
+Error: 'error' is of type 'unknown'. 
+    const aborted = error?.name === 'AbortError';
+    throw new Error(aborted ? 'Request timed out. Please try again.' : `Failed to analyze job posting. ${error.message}`);
+  }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:289:7
+Error: Element implicitly has an 'any' type because expression of type '"Authorization"' can't be used to index type '{ 'Content-Type': string; }'.
+  Property 'Authorization' does not exist on type '{ 'Content-Type': string; }'. 
+    if (session?.data?.session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.data.session.access_token}`;
+    }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:307:28
+Error: Property 'name' does not exist on type '{}'. 
+    console.error('Error optimizing job:', error);
+    const aborted = error?.name === 'AbortError';
+    throw new Error(aborted ? 'Request timed out. Please try again.' : `Failed to optimize job posting. ${error.message}`);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:308:107
+Error: 'error' is of type 'unknown'. 
+    const aborted = error?.name === 'AbortError';
+    throw new Error(aborted ? 'Request timed out. Please try again.' : `Failed to optimize job posting. ${error.message}`);
+  }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:323:38
+Error: Property 'json_ld' does not exist on type 'object'. 
+      case 'jsonld':
+        content = JSON.stringify(job.json_ld, null, 2);
+        filename = `job-posting-jsonld-${job.id}.json`;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:324:46
+Error: Property 'id' does not exist on type 'object'. 
+        content = JSON.stringify(job.json_ld, null, 2);
+        filename = `job-posting-jsonld-${job.id}.json`;
+        mimeType = 'application/ld+json';
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:329:44
+Error: Property 'id' does not exist on type 'object'. 
+        content = JSON.stringify(job, null, 2);
+        filename = `job-posting-data-${job.id}.json`;
+        mimeType = 'application/json';
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:334:23
+Error: Property 'improvedText' does not exist on type 'object'. 
+      default:
+        content = job.improvedText || job.original_text;
+        filename = `job-posting-${job.id}.txt`;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:334:43
+Error: Property 'original_text' does not exist on type 'object'. 
+      default:
+        content = job.improvedText || job.original_text;
+        filename = `job-posting-${job.id}.txt`;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:335:39
+Error: Property 'id' does not exist on type 'object'. 
+        content = job.improvedText || job.original_text;
+        filename = `job-posting-${job.id}.txt`;
+        mimeType = 'text/plain';
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/api/audit.js:352:56
+Error: 'error' is of type 'unknown'. 
+    console.error('Error downloading job posting:', error);
+    throw new Error(`Failed to download job posting. ${error.message}`);
+  }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/diffService.js:11:16
+Error: Generic type 'Array<T>' requires 1 type argument(s). 
+   * @param {string} improvedText - The improved text
+   * @returns {Array} Array of diff objects with type and value
+   */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/diffService.js:29:23
+Error: Parameter 'original' implicitly has an 'any' type. 
+   */
+  static _computeDiff(original, improved) {
+    const m = original.length;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/diffService.js:29:33
+Error: Parameter 'improved' implicitly has an 'any' type. 
+   */
+  static _computeDiff(original, improved) {
+    const m = original.length;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/diffService.js:72:34
+Error: Parameter 'diff' implicitly has an 'any' type. 
+   */
+  static _mergeContinuousChanges(diff) {
+    if (!diff.length) return diff;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/diffService.js:95:14
+Error: Generic type 'Array<T>' requires 1 type argument(s). 
+   * Apply a specific change to the text
+   * @param {Array} diff - The current diff array
+   * @param {number} changeIndex - Index of the change to apply
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/diffService.js:131:22
+Error: Parameter 'diff' implicitly has an 'any' type. 
+   */
+  static _diffToText(diff) {
+    return diff
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/diffService.js:133:15
+Error: Parameter 'item' implicitly has an 'any' type. 
+    return diff
+      .filter(item => item.type !== 'deletion')
+      .map(item => item.value)
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/diffService.js:134:12
+Error: Parameter 'item' implicitly has an 'any' type. 
+      .filter(item => item.type !== 'deletion')
+      .map(item => item.value)
+      .join('');
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/diffService.js:140:14
+Error: Generic type 'Array<T>' requires 1 type argument(s). 
+   * Get statistics about the diff
+   * @param {Array} diff - The diff array
+   * @returns {Object} Statistics about additions, deletions, and unchanged text
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:56:9
+Error: Element implicitly has an 'any' type because expression of type '"Authorization"' can't be used to index type '{ 'Content-Type': string; }'.
+  Property 'Authorization' does not exist on type '{ 'Content-Type': string; }'. 
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:83:29
+Error: Parameter 'data' implicitly has an 'any' type. 
+   */
+  _transformBackendResponse(data) {
+    const categories = {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:127:23
+Error: Parameter 'text' implicitly has an 'any' type. 
+   */
+  _clientSideAnalysis(text) {
+    const readability = this._analyzeReadability(text);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:171:23
+Error: Parameter 'text' implicitly has an 'any' type. 
+   */
+  _analyzeReadability(text) {
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:172:51
+Error: Parameter 's' implicitly has an 'any' type. 
+  _analyzeReadability(text) {
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    const words = text.trim().split(/\s+/);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:174:28
+Error: Property '_countSyllables' does not exist on type 'JobPostAnalyzer'. Did you mean to access the static member 'JobPostAnalyzer._countSyllables' instead? 
+    const words = text.trim().split(/\s+/);
+    const syllables = this._countSyllables(text);
+    
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:214:23
+Error: Parameter 'text' implicitly has an 'any' type. 
+   */
+  _analyzeInclusivity(text) {
+    const lowerText = text.toLowerCase();
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:217:11
+Error: Variable 'issuesFound' implicitly has type 'any[]' in some locations where its type cannot be determined. 
+    let score = 90;
+    const issuesFound = [];
+    const recommendations = [];
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:218:11
+Error: Variable 'recommendations' implicitly has type 'any[]' in some locations where its type cannot be determined. 
+    const issuesFound = [];
+    const recommendations = [];
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:269:7
+Error: Variable 'issuesFound' implicitly has an 'any[]' type. 
+      score: Math.max(0, score),
+      issuesFound,
+      recommendations: recommendations.length ? recommendations : ['Good inclusive language usage']
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:270:49
+Error: Variable 'recommendations' implicitly has an 'any[]' type. 
+      issuesFound,
+      recommendations: recommendations.length ? recommendations : ['Good inclusive language usage']
+    };
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:278:15
+Error: Parameter 'text' implicitly has an 'any' type. 
+   */
+  _analyzeSEO(text) {
+    const words = text.toLowerCase().split(/\s+/);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:282:11
+Error: Variable 'keywords' implicitly has type 'any[]' in some locations where its type cannot be determined. 
+    const feedback = [];
+    const keywords = [];
+    const missingKeywords = [];
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:283:11
+Error: Variable 'missingKeywords' implicitly has type 'any[]' in some locations where its type cannot be determined. 
+    const keywords = [];
+    const missingKeywords = [];
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:315:17
+Error: Variable 'keywords' implicitly has an 'any[]' type. 
+      score: Math.min(100, Math.max(0, score)),
+      keywords: keywords.slice(0, 8), // Top 8 found keywords
+      missingKeywords: missingKeywords.slice(0, 5), // Top 5 missing
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:316:24
+Error: Variable 'missingKeywords' implicitly has an 'any[]' type. 
+      keywords: keywords.slice(0, 8), // Top 8 found keywords
+      missingKeywords: missingKeywords.slice(0, 5), // Top 5 missing
+      feedback: feedback.length ? feedback : ['Good SEO optimization']
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:325:21
+Error: Parameter 'text' implicitly has an 'any' type. 
+   */
+  _analyzeStructure(text) {
+    let score = 80;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:361:26
+Error: Parameter 'text' implicitly has an 'any' type. 
+   */
+  static _countSyllables(text) {
+    const words = text.toLowerCase().split(/\s+/);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:365:19
+Error: Parameter 'word' implicitly has an 'any' type. 
+
+    words.forEach(word => {
+      // Remove punctuation
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:417:41
+Error: Property 'overallScore' does not exist on type 'Object'. 
+    return {
+      overallScoreChange: afterAnalysis.overallScore - beforeAnalysis.overallScore,
+      readabilityChange: afterAnalysis.readability.score - beforeAnalysis.readability.score,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:417:71
+Error: Property 'overallScore' does not exist on type 'Object'. 
+    return {
+      overallScoreChange: afterAnalysis.overallScore - beforeAnalysis.overallScore,
+      readabilityChange: afterAnalysis.readability.score - beforeAnalysis.readability.score,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:418:40
+Error: Property 'readability' does not exist on type 'Object'. 
+      overallScoreChange: afterAnalysis.overallScore - beforeAnalysis.overallScore,
+      readabilityChange: afterAnalysis.readability.score - beforeAnalysis.readability.score,
+      inclusivityChange: afterAnalysis.inclusivity.score - beforeAnalysis.inclusivity.score,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:418:75
+Error: Property 'readability' does not exist on type 'Object'. 
+      overallScoreChange: afterAnalysis.overallScore - beforeAnalysis.overallScore,
+      readabilityChange: afterAnalysis.readability.score - beforeAnalysis.readability.score,
+      inclusivityChange: afterAnalysis.inclusivity.score - beforeAnalysis.inclusivity.score,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:419:40
+Error: Property 'inclusivity' does not exist on type 'Object'. 
+      readabilityChange: afterAnalysis.readability.score - beforeAnalysis.readability.score,
+      inclusivityChange: afterAnalysis.inclusivity.score - beforeAnalysis.inclusivity.score,
+      seoChange: afterAnalysis.seo.score - beforeAnalysis.seo.score,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:419:75
+Error: Property 'inclusivity' does not exist on type 'Object'. 
+      readabilityChange: afterAnalysis.readability.score - beforeAnalysis.readability.score,
+      inclusivityChange: afterAnalysis.inclusivity.score - beforeAnalysis.inclusivity.score,
+      seoChange: afterAnalysis.seo.score - beforeAnalysis.seo.score,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:420:32
+Error: Property 'seo' does not exist on type 'Object'. 
+      inclusivityChange: afterAnalysis.inclusivity.score - beforeAnalysis.inclusivity.score,
+      seoChange: afterAnalysis.seo.score - beforeAnalysis.seo.score,
+      structureChange: afterAnalysis.structure.score - beforeAnalysis.structure.score,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:420:59
+Error: Property 'seo' does not exist on type 'Object'. 
+      inclusivityChange: afterAnalysis.inclusivity.score - beforeAnalysis.inclusivity.score,
+      seoChange: afterAnalysis.seo.score - beforeAnalysis.seo.score,
+      structureChange: afterAnalysis.structure.score - beforeAnalysis.structure.score,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:421:38
+Error: Property 'structure' does not exist on type 'Object'. 
+      seoChange: afterAnalysis.seo.score - beforeAnalysis.seo.score,
+      structureChange: afterAnalysis.structure.score - beforeAnalysis.structure.score,
+      wordCountChange: afterAnalysis.wordCount - beforeAnalysis.wordCount
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:421:71
+Error: Property 'structure' does not exist on type 'Object'. 
+      seoChange: afterAnalysis.seo.score - beforeAnalysis.seo.score,
+      structureChange: afterAnalysis.structure.score - beforeAnalysis.structure.score,
+      wordCountChange: afterAnalysis.wordCount - beforeAnalysis.wordCount
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:422:38
+Error: Property 'wordCount' does not exist on type 'Object'. 
+      structureChange: afterAnalysis.structure.score - beforeAnalysis.structure.score,
+      wordCountChange: afterAnalysis.wordCount - beforeAnalysis.wordCount
+    };
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/services/jobAnalyzer.js:422:65
+Error: Property 'wordCount' does not exist on type 'Object'. 
+      structureChange: afterAnalysis.structure.score - beforeAnalysis.structure.score,
+      wordCountChange: afterAnalysis.wordCount - beforeAnalysis.wordCount
+    };
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/audit.js:15:34
+Error: Parameter 'type' implicitly has an 'any' type. 
+// Generate fallback results in the correct 7-category format
+function generateFallbackResults(type, data) {
+  // Random score between 60-90
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/audit.js:15:40
+Error: Parameter 'data' implicitly has an 'any' type. 
+// Generate fallback results in the correct 7-category format
+function generateFallbackResults(type, data) {
+  // Random score between 60-90
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/audit.js:17:27
+Error: Parameter 'max' implicitly has an 'any' type. 
+  // Random score between 60-90
+  const getRandomScore = (max) => Math.floor(Math.random() * (max * 0.6) + (max * 0.3));
+  
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/audit.js:91:18
+Error: Parameter 'isLoading' implicitly has an 'any' type. 
+    // Set loading state
+    setLoading: (isLoading) => update(state => ({ ...state, isLoading })),
+    
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/audit.js:94:20
+Error: Parameter 'inputType' implicitly has an 'any' type. 
+    // Set input type (URL or text)
+    setInputType: (inputType) => update(state => ({ ...state, inputType })),
+    
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/audit.js:97:17
+Error: Parameter 'jobUrl' implicitly has an 'any' type. 
+    // Update job URL
+    setJobUrl: (jobUrl) => update(state => ({ ...state, jobUrl })),
+    
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/audit.js:100:25
+Error: Parameter 'jobDescription' implicitly has an 'any' type. 
+    // Update job description
+    setJobDescription: (jobDescription) => update(state => ({ ...state, jobDescription })),
+    
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/audit.js:103:33
+Error: Parameter 'type' implicitly has an 'any' type. 
+    // Submit audit for processing
+    submitAudit: async function(type, data) {
+      // Set loading state
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/audit.js:103:39
+Error: Parameter 'data' implicitly has an 'any' type. 
+    // Submit audit for processing
+    submitAudit: async function(type, data) {
+      // Set loading state
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/audit.js:135:11
+Error: Type 'object' is not assignable to type 'null'. 
+          ...state,
+          results,
+          isLoading: false,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/audit.js:145:18
+Error: 'error' is of type 'unknown'. 
+          isLoading: false,
+          error: error.message || 'Failed to analyze job posting'
+        }));
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/audit.js:151:21
+Error: Parameter 'showResults' implicitly has an 'any' type. 
+    // Toggle results visibility
+    toggleResults: (showResults) => update(state => ({ ...state, showResults })),
+    
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/auth.js:25:13
+Error: Argument of type 'User | null' is not assignable to parameter of type 'null'.
+  Type 'User' is not assignable to type 'null'. 
+        const { data: { user } } = await supabase.auth.getUser();
+        set(user);
+      }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/auth.js:31:15
+Error: Argument of type 'User' is not assignable to parameter of type 'null'. 
+        if (event === 'SIGNED_IN' && session) {
+          set(session.user);
+        } else if (event === 'SIGNED_OUT') {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/auth.js:46:33
+Error: Parameter 'userId' implicitly has an 'any' type. 
+    // Migrate guest reports to authenticated user account
+    migrateGuestReports: async (userId) => {
+      if (!browser || !userId) return { success: false, reportId: null };
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/reports.js:17:18
+Error: Parameter 'reports' implicitly has an 'any' type. 
+    subscribe,
+    setReports: (reports) => {
+      update(state => ({
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/reports.js:21:9
+Error: Type 'number' is not assignable to type 'null'. 
+        reports,
+        lastFetched: Date.now()
+      }));
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/reports.js:32:18
+Error: Parameter 'loading' implicitly has an 'any' type. 
+    },
+    setLoading: (loading) => {
+      update(state => ({ ...state, loading }));
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/reports.js:35:16
+Error: Parameter 'error' implicitly has an 'any' type. 
+    },
+    setError: (error) => {
+      update(state => ({ ...state, error }));
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/utils/click-outside.js:10:36
+Error: Type '{}' is missing the following properties from type '{ enabled: boolean; callback: Function; }': enabled, callback 
+ */
+export function clickOutside(node, { enabled = true, callback = () => {} } = {}) {
+  const handleClick = (event) => {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/utils/click-outside.js:11:24
+Error: Parameter 'event' implicitly has an 'any' type. 
+export function clickOutside(node, { enabled = true, callback = () => {} } = {}) {
+  const handleClick = (event) => {
+    if (!node.contains(event.target) && enabled) {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/utils/click-outside.js:20:5
+Error: Object literal may only specify known properties, and 'update' does not exist in type '{ destroy: () => any; }'. 
+  return {
+    update(params) {
+      enabled = params.enabled;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/utils/click-outside.js:20:12
+Error: Parameter 'params' implicitly has an 'any' type. 
+  return {
+    update(params) {
+      enabled = params.enabled;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/accordion/accordion.svelte:11:2
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+	// DOM event typings
+	export interface $$Events {
+		click: MouseEvent;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/accordion/accordion-content.svelte:13:2
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+	// DOM event typings
+	export interface $$Events {
+		click: MouseEvent;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/accordion/accordion-item.svelte:12:2
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+	// DOM event typings
+	export interface $$Events {
+		click: MouseEvent;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/button/button.svelte:56:3
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+  // Declare supported events so consumers can use on:click without TS errors
+  export interface $$Events {
+    click: MouseEvent;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/card/card.svelte:33:2
+Warn: Using `on:click` to listen to the click event is deprecated. Use the event attribute `onclick` instead
+https://svelte.dev/e/event_directive_deprecated (svelte)
+	{...restProps}
+	on:click={onClick}
+>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/card/card.svelte:19:3
+Error: Property 'onClick' does not exist on type 'HTMLAttributes<HTMLDivElement> & { ref?: HTMLElement | null | undefined; }'. (ts)
+		class: className,
+		onClick,
+		children,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/checkbox/checkbox.svelte:16:2
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+	// DOM event typings
+	export interface $$Events {
+		click: MouseEvent;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/fade-image/fade-image.svelte:20:28
+Error: Parameter 'direction' implicitly has an 'any' type. (js)
+<script context="module">
+  function getMaskGradient(direction, intensity) {
+    // No fade if intensity is 'none'
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/fade-image/fade-image.svelte:20:39
+Error: Parameter 'intensity' implicitly has an 'any' type. (js)
+<script context="module">
+  function getMaskGradient(direction, intensity) {
+    // No fade if intensity is 'none'
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/fade-image/fade-image.svelte:46:19
+Error: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ light: string[]; medium: string[]; strong: string[]; }'. (js)
+    // Get the appropriate gradient stops for the selected intensity
+    const stops = gradientStops[intensity] || gradientStops.medium;
+    
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/fade-image/fade-image.svelte:56:12
+Error: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ bottom: string; top: string; left: string; right: string; }'. (js)
+    
+    return gradientMap[direction] || gradientMap.bottom;
+  }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/table/table.svelte:13:2
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+	// DOM event typings
+	export interface $$Events {
+		click: MouseEvent;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/table/table-body.svelte:13:2
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+	// DOM event typings
+	export interface $$Events {
+		click: MouseEvent;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/table/table-caption.svelte:13:2
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+	// DOM event typings
+	export interface $$Events {
+		click: MouseEvent;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/table/table-cell.svelte:13:2
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+	// DOM event typings
+	export interface $$Events {
+		click: MouseEvent;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/table/table-footer.svelte:13:2
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+	// DOM event typings
+	export interface $$Events {
+		click: MouseEvent;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/table/table-head.svelte:13:2
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+	// DOM event typings
+	export interface $$Events {
+		click: MouseEvent;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/table/table-header.svelte:13:2
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+	// DOM event typings
+	export interface $$Events {
+		click: MouseEvent;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/table/table-row.svelte:13:2
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+	// DOM event typings
+	export interface $$Events {
+		click: MouseEvent;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/config/messaging.ts:60:9
+Error: Variable 'enterpriseDomains' implicitly has type 'any[]' in some locations where its type cannot be determined. 
+function isEnterpriseDomain(domain: string): boolean {
+  const enterpriseDomains = [
+    // Add enterprise customer domains here
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/config/messaging.ts:66:10
+Error: Variable 'enterpriseDomains' implicitly has an 'any[]' type. 
+  
+  return enterpriseDomains.some(d => domain.endsWith(d));
+}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/dashboardCache.ts:261:61
+Error: Parameter 'acc' implicitly has an 'any' type. 
+          // Group all optimizations by report_id
+          const groupedByReport = optimizationsData.reduce((acc, opt) => {
+            if (!acc[opt.report_id]) {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/dashboardCache.ts:261:66
+Error: Parameter 'opt' implicitly has an 'any' type. 
+          // Group all optimizations by report_id
+          const groupedByReport = optimizationsData.reduce((acc, opt) => {
+            if (!acc[opt.report_id]) {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/dashboardCache.ts:271:28
+Error: 'opts' is of type 'unknown'. 
+          Object.entries(groupedByReport).forEach(([reportId, opts]) => {
+            const scores = opts.flatMap(opt => [
+              opt.original_score, 
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/dashboardCache.ts:271:41
+Error: Parameter 'opt' implicitly has an 'any' type. 
+          Object.entries(groupedByReport).forEach(([reportId, opts]) => {
+            const scores = opts.flatMap(opt => [
+              opt.original_score, 
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/stores/dashboardCache.ts:274:23
+Error: Parameter 'score' implicitly has an 'any' type. 
+              opt.optimized_score
+            ]).filter(score => typeof score === 'number');
+            
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ScoreGauge.svelte:34:25
+Error: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ sm: string; md: string; lg: string; }'.
+  No index signature with a parameter of type 'string' was found on type '{ sm: string; md: string; lg: string; }'. (js)
+<div class="flex flex-col items-center gap-2">
+  <div class="relative {sizeClasses[size]}">
+    <!-- SVG Circle Progress -->
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ScoreGauge.svelte:63:31
+Error: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ sm: string; md: string; lg: string; }'.
+  No index signature with a parameter of type 'string' was found on type '{ sm: string; md: string; lg: string; }'. (js)
+    <div class="absolute inset-0 flex flex-col items-center justify-center">
+      <span class="font-bold {textSizeClasses[size]}" style="color: {scoreColor}">
+        {Math.round(score)}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ScoreGauge.svelte:73:45
+Error: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ sm: string; md: string; lg: string; }'.
+  No index signature with a parameter of type 'string' was found on type '{ sm: string; md: string; lg: string; }'. (js)
+  {#if showLabel}
+    <span class="font-medium text-gray-700 {labelSizeClasses[size]}">{label}</span>
+  {/if}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/RecommendationItem.svelte:6:14
+Warn: Component has unused export property 'type'. If it is for external reference only, please consider using `export const type`
+https://svelte.dev/e/export_let_unused (svelte)
+  export let suggestion = '';
+  export let type = 'general'; // 'readability', 'inclusivity', 'seo', 'structure'
+  
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/RecommendationItem.svelte:29:15
+Error: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ low: { bg: string; border: string; icon: string; color: string; }; medium: { bg: string; border: string; icon: string; color: string; }; high: { bg: string; border: string; icon: string; color: string; }; }'.
+  No index signature with a parameter of type 'string' was found on type '{ low: { bg: string; border: string; icon: string; color: string; }; medium: { bg: string; border: string; icon: string; color: string; }; high: { bg: string; border: string; icon: string; color: string; }; }'. (js)
+  
+  $: config = severityConfig[severity] || severityConfig.medium;
+</script>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AnalysisSidebar.svelte:79:3
+Warn: Buttons and links should either contain text or have an `aria-label` or `aria-labelledby` attribute
+https://svelte.dev/e/a11y_consider_explicit_label (svelte)
+  <!-- Toggle Button -->
+  <button 
+    class="absolute -left-6 top-1/2 transform -translate-y-1/2 bg-white border border-gray-200 rounded-l-lg p-2 shadow-md hover:bg-gray-50 transition-colors"
+    on:click={toggleSidebar}
+  >
+    <svg 
+      class="w-4 h-4 transition-transform duration-300 {isCollapsed ? 'rotate-180' : ''}" 
+      fill="none" 
+      stroke="currentColor" 
+      viewBox="0 0 24 24"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
+  
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AnalysisSidebar.svelte:10:7
+Error: Variable 'analysis' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+  
+  let analysis = null;
+  let isAnalyzing = false;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AnalysisSidebar.svelte:14:7
+Error: Variable 'analysisTimeout' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+  // Reactive analysis with debouncing
+  let analysisTimeout;
+  $: if (realTimeAnalysis && text) {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AnalysisSidebar.svelte:16:18
+Error: Variable 'analysisTimeout' implicitly has an 'any' type. (js)
+  $: if (realTimeAnalysis && text) {
+    clearTimeout(analysisTimeout);
+    analysisTimeout = setTimeout(() => {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AnalysisSidebar.svelte:25:34
+Error: Parameter 'textToAnalyze' implicitly has an 'any' type. (js)
+
+  async function performAnalysis(textToAnalyze) {
+    if (!textToAnalyze || textToAnalyze.length === 0) return;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AnalysisSidebar.svelte:44:30
+Error: Parameter 'change' implicitly has an 'any' type. (js)
+  
+  function formatScoreChange(change) {
+    if (change > 0) return `+${change}`;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AnalysisSidebar.svelte:49:27
+Error: Variable 'analysis' implicitly has an 'any' type. (js)
+  
+  $: allRecommendations = analysis ? [
+    ...analysis.readability.feedback.map(f => ({ 
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AnalysisSidebar.svelte:50:42
+Error: Parameter 'f' implicitly has an 'any' type. (js)
+  $: allRecommendations = analysis ? [
+    ...analysis.readability.feedback.map(f => ({ 
+      category: 'Readability', 
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AnalysisSidebar.svelte:56:49
+Error: Parameter 'f' implicitly has an 'any' type. (js)
+    })),
+    ...analysis.inclusivity.recommendations.map(f => ({ 
+      category: 'Inclusivity', 
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AnalysisSidebar.svelte:62:34
+Error: Parameter 'f' implicitly has an 'any' type. (js)
+    })),
+    ...analysis.seo.feedback.map(f => ({ 
+      category: 'SEO', 
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AnalysisSidebar.svelte:68:40
+Error: Parameter 'f' implicitly has an 'any' type. (js)
+    })),
+    ...analysis.structure.feedback.map(f => ({ 
+      category: 'Structure', 
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AnalysisSidebar.svelte:107:19
+Error: Variable 'analysis' implicitly has an 'any' type. (js)
+          </div>
+        {:else if analysis}
+          <!-- Overall Score -->
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AnalysisSidebar.svelte:241:12
+Error: Variable 'analysis' implicitly has an 'any' type. (js)
+      </div>
+      {#if analysis}
+        <div class="mt-4">
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AuditForm.svelte:437:2
+Warn: Unused CSS selector ".cta-button"
+https://svelte.dev/e/css_unused_selector (svelte)
+<style>
+	.cta-button {
+		box-shadow:
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AuditForm.svelte:444:2
+Warn: Unused CSS selector ".cta-button:hover"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+	.cta-button:hover {
+		transform: translateY(-2px);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AuditForm.svelte:17:20
+Error: Parameter 'fn' implicitly has an 'any' type. (ts)
+	// Lightweight debounce helper
+	function debounce(fn, delay = 200) {
+		let t;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AuditForm.svelte:18:7
+Error: Variable 't' implicitly has type 'any' in some locations where its type cannot be determined. (ts)
+	function debounce(fn, delay = 200) {
+		let t;
+		return (...args) => {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AuditForm.svelte:19:11
+Error: Rest parameter 'args' implicitly has an 'any[]' type. (ts)
+		let t;
+		return (...args) => {
+			clearTimeout(t);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AuditForm.svelte:20:17
+Error: Variable 't' implicitly has an 'any' type. (ts)
+		return (...args) => {
+			clearTimeout(t);
+			t = setTimeout(() => fn(...args), delay);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AuditForm.svelte:44:6
+Error: Variable 'selectedFile' implicitly has type 'any' in some locations where its type cannot be determined. (ts)
+	let jobDescription = '';
+	let selectedFile = null;
+	let isLoading = false;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AuditForm.svelte:62:41
+Error: Parameter 'value' implicitly has an 'any' type. (ts)
+	let isDescriptionValid = true;
+	const validateUrlDebounced = debounce((value) => {
+		isUrlValid = validateUrl(value);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AuditForm.svelte:68:24
+Error: Parameter 'type' implicitly has an 'any' type. (ts)
+	// Toggle between URL and text/file input
+	function setInputType(type) {
+		inputType = type;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AuditForm.svelte:74:23
+Error: Parameter 'url' implicitly has an 'any' type. (ts)
+	// Validate URL format
+	function validateUrl(url) {
+		const str = (url || '').trim();
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AuditForm.svelte:86:31
+Error: Parameter 'text' implicitly has an 'any' type. (ts)
+	// Validate text input
+	function validateDescription(text) {
+		return text.trim().length > 50; // Minimum 50 characters
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AuditForm.svelte:91:34
+Error: Parameter 'event' implicitly has an 'any' type. (ts)
+	// Handle file upload
+	async function handleFileUpload(event) {
+		const file = event.target.files[0];
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AuditForm.svelte:165:5
+Error: Type 'object' is not assignable to type 'null'. (ts)
+				...state,
+				results,
+				isLoading: false,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AuditForm.svelte:311:10
+Error: Variable 'selectedFile' implicitly has an 'any' type. (ts)
+							<span class="text-sm font-medium text-gray-700">
+								{selectedFile ? selectedFile.name : 'Upload a file'}
+							</span>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/AuditForm.svelte:398:12
+Error: Variable 'selectedFile' implicitly has an 'any' type. (ts)
+									<span class="text-sm font-medium text-gray-700">
+										{selectedFile ? selectedFile.name : 'Upload a file or paste text above'}
+									</span>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ChatAuditForm.svelte:22:7
+Error: Variable 'file' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+  let error = null;
+  let file = null;
+  
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ChatAuditForm.svelte:25:18
+Error: Parameter 'text' implicitly has an 'any' type. (js)
+  // Detect if input is URL
+  function isUrl(text) {
+    try {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ChatAuditForm.svelte:35:29
+Error: Parameter 'e' implicitly has an 'any' type. (js)
+  // Handle file upload
+  function handleFileUpload(e) {
+    const files = e.detail.files;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ChatAuditForm.svelte:57:25
+Error: Variable 'file' implicitly has an 'any' type. (js)
+  async function submitAnalysis() {
+    if (!inputValue && !file) return;
+    
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ChatAuditForm.svelte:65:11
+Error: Variable 'file' implicitly has an 'any' type. (js)
+      
+      if (file) {
+        // Handle file upload
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ChatAuditForm.svelte:79:9
+Error: Type 'object' is not assignable to type 'null'. (js)
+        ...state,
+        results,
+        isLoading: false,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ChatAuditForm.svelte:88:15
+Error: 'err' is of type 'unknown'. (js)
+    } catch (err) {
+      error = err.message || 'Analysis failed. Please try again.';
+      messages = [...messages, {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ChatAuditForm.svelte:92:9
+Error: Type '{ text: string; sender: string; timestamp: Date; } | { text: any; sender: string; isError: boolean; timestamp: Date; }' is not assignable to type '{ text: string; sender: string; timestamp: Date; }'.
+  Object literal may only specify known properties, and 'isError' does not exist in type '{ text: string; sender: string; timestamp: Date; }'. (js)
+        sender: 'system',
+        isError: true,
+        timestamp: new Date()
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ChatAuditForm.svelte:92:9
+Error: Object literal may only specify known properties, and 'isError' does not exist in type '{ text: string; sender: string; timestamp: Date; }'. (js)
+        sender: 'system',
+        isError: true,
+        timestamp: new Date()
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ChatAuditForm.svelte:119:64
+Error: Property 'isError' does not exist on type '{ text: string; sender: string; timestamp: Date; }'. (js)
+    {#each messages as message}
+      <div class={`message ${message.sender}-message ${message.isError ? 'error' : ''}`}>
+        <div class="message-content">
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ChatAuditForm.svelte:155:47
+Error: Variable 'file' implicitly has an 'any' type. (js)
+      on:click={handleSubmit}
+      disabled={isLoading || (!inputValue && !file)}
+      class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-5 py-3 rounded-full font-medium transition-colors disabled:opacity-50"
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/CircularProgress.svelte:14:14
+Warn: Component has unused export property 'backgroundScale'. If it is for external reference only, please consider using `export const backgroundScale`
+https://svelte.dev/e/export_let_unused (svelte)
+  export let backgroundSrc = null; // optional background image
+  export let backgroundScale = 1.3; // Scale background larger than progress
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/CookieBanner.svelte:15:55
+Error: Property 'posthog' does not exist on type 'Window & typeof globalThis'. (js)
+        showBanner = false;
+        if (analyticsConsent === 'accepted' && window.posthog) {
+          window.posthog.opt_in_capturing();
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/CookieBanner.svelte:16:18
+Error: Property 'posthog' does not exist on type 'Window & typeof globalThis'. (js)
+        if (analyticsConsent === 'accepted' && window.posthog) {
+          window.posthog.opt_in_capturing();
+        }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/CookieBanner.svelte:25:16
+Error: Property 'posthog' does not exist on type 'Window & typeof globalThis'. (js)
+    localStorage.setItem('analytics-consent', 'accepted');
+    if (window.posthog) window.posthog.opt_in_capturing();
+    showBanner = false;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/CookieBanner.svelte:25:32
+Error: Property 'posthog' does not exist on type 'Window & typeof globalThis'. (js)
+    localStorage.setItem('analytics-consent', 'accepted');
+    if (window.posthog) window.posthog.opt_in_capturing();
+    showBanner = false;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/CookieBanner.svelte:32:16
+Error: Property 'posthog' does not exist on type 'Window & typeof globalThis'. (js)
+    localStorage.setItem('analytics-consent', 'declined');
+    if (window.posthog) window.posthog.opt_out_capturing();
+    showBanner = false;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/CookieBanner.svelte:32:32
+Error: Property 'posthog' does not exist on type 'Window & typeof globalThis'. (js)
+    localStorage.setItem('analytics-consent', 'declined');
+    if (window.posthog) window.posthog.opt_out_capturing();
+    showBanner = false;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/DiffRenderer.svelte:11:7
+Error: Variable 'diff' implicitly has type 'any[]' in some locations where its type cannot be determined. (js)
+  
+  let diff = [];
+  let currentText = '';
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/DiffRenderer.svelte:13:7
+Error: Variable 'hoveredIndex' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+  let currentText = '';
+  let hoveredIndex = null;
+  
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/DiffRenderer.svelte:22:25
+Error: Parameter 'index' implicitly has an 'any' type. (js)
+  // Handle accept/reject actions
+  function handleAction(index, action) {
+    const updatedText = DiffService.applyChange(diff, index, action);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/DiffRenderer.svelte:22:32
+Error: Parameter 'action' implicitly has an 'any' type. (js)
+  // Handle accept/reject actions
+  function handleAction(index, action) {
+    const updatedText = DiffService.applyChange(diff, index, action);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/DiffRenderer.svelte:23:49
+Error: Variable 'diff' implicitly has an 'any[]' type. (js)
+  function handleAction(index, action) {
+    const updatedText = DiffService.applyChange(diff, index, action);
+    currentText = updatedText;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/DiffRenderer.svelte:35:25
+Error: Parameter 'index' implicitly has an 'any' type. (js)
+  
+  function onMouseEnter(index) {
+    if (editable) hoveredIndex = index;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/DiffRenderer.svelte:46:12
+Error: Variable 'diff' implicitly has an 'any[]' type. (js)
+  <div class="diff-content text-sm leading-relaxed">
+    {#each diff as item, index}
+      {#if item.type === 'equal'}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/DiffRenderer.svelte:60:16
+Error: Variable 'hoveredIndex' implicitly has an 'any' type. (js)
+          
+          {#if hoveredIndex === index && editable}
+            <div class="diff-controls absolute -top-8 left-0 z-10 bg-white border border-gray-300 rounded shadow-lg flex gap-1 p-1">
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/DiffRenderer.svelte:90:16
+Error: Variable 'hoveredIndex' implicitly has an 'any' type. (js)
+          
+          {#if hoveredIndex === index && editable}
+            <div class="diff-controls absolute -top-8 left-0 z-10 bg-white border border-gray-300 rounded shadow-lg flex gap-1 p-1">
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/HeroSection.svelte:19:23
+Error: Parameter 'event' implicitly has an 'any' type. (js)
+	// Handle audit form submission
+	function handleAudit(event) {
+		dispatch('audit', event);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_EveryWordMatters.svelte:115:7
+Warn: Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag (svelte)
+					{#if isTyping}
+						<span class="cursor" />
+					{/if}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_EveryWordMatters.svelte:9:13
+Warn: Component has unused export property 'title'. If it is for external reference only, please consider using `export const title`
+https://svelte.dev/e/export_let_unused (svelte)
+
+	export let title = '';
+	export let text = '';
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_EveryWordMatters.svelte:10:13
+Warn: Component has unused export property 'text'. If it is for external reference only, please consider using `export const text`
+https://svelte.dev/e/export_let_unused (svelte)
+	export let title = '';
+	export let text = '';
+	export let active = false;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_EveryWordMatters.svelte:11:13
+Warn: Component has unused export property 'active'. If it is for external reference only, please consider using `export const active`
+https://svelte.dev/e/export_let_unused (svelte)
+	export let text = '';
+	export let active = false;
+	export let index = 0;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_EveryWordMatters.svelte:12:13
+Warn: Component has unused export property 'index'. If it is for external reference only, please consider using `export const index`
+https://svelte.dev/e/export_let_unused (svelte)
+	export let active = false;
+	export let index = 0;
+	export let background = '';
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_EveryWordMatters.svelte:40:17
+Error: Parameter 'ms' implicitly has an 'any' type. (ts)
+	// Helper function for delays
+	const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_KnowExactlyWhereYouStand.svelte:29:6
+Error: Variable 'interval' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+	const pauseDuration = 3000; // ms between animations
+	let interval;
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_KnowExactlyWhereYouStand.svelte:41:30
+Error: Variable 'interval' implicitly has an 'any' type. (js)
+		startAutoScroll();
+		return () => clearInterval(interval);
+	});
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_KnowExactlyWhereYouStand.svelte:50:23
+Error: Parameter 'score' implicitly has an 'any' type. (js)
+	// Helper function to determine progress bar color based on score
+	function getBarColor(score) {
+		if (score >= 80) return 'bg-green-500'; // Excellent
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_KnowExactlyWhereYouStand.svelte:84:29
+Error: This comparison appears to be unintentional because the types '85' and '0' have no overlap. (js)
+					class:stroke-red-500={jobScore > 0 && jobScore < 30}
+					class:stroke-gray-200={jobScore === 0}
+					stroke-width="12"
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ImageSlider.svelte:70:3
+Warn: `<div>` with a mousedown handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions (svelte)
+	<div class="absolute inset-y-0 z-10 w-0.5 bg-black/50 cursor-ew-resize" style={handleStyle}>
+		<div
+			class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-6 w-6 bg-black/100 rounded-full shadow-none backdrop-blur-sm flex items-center justify-center"
+			on:mousedown={startDragging}
+			on:touchstart={startDragging}
+		>
+			<!-- Arrows Icon -->
+			<svg class="w-4 h-4 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M8 7l4-4m0 0l4 4m-4-4v18m0 0l-4-4m4 4l4-4"
+					transform="rotate(90 12 12)"
+				/>
+			</svg>
+		</div>
+	</div>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ImageSlider.svelte:7:6
+Error: Variable 'container' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+	let isDragging = false;
+	let container; // This will be bound to the main container div
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ImageSlider.svelte:13:22
+Error: Parameter 'e' implicitly has an 'any' type. (js)
+
+	const handleMove = (e) => {
+		if (!isDragging || !container) return;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ImageSlider.svelte:14:23
+Error: Variable 'container' implicitly has an 'any' type. (js)
+	const handleMove = (e) => {
+		if (!isDragging || !container) return;
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_BeFound.svelte:162:25
+Warn: Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag (svelte)
+                    {#if isTyping}
+                        <span class="cursor" />
+                    {/if}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_BeFound.svelte:172:21
+Warn: Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag (svelte)
+                <div class="flex items-center gap-1.5 bg-gray-100 px-3 py-2 rounded-full">
+                    <span class="dot" />
+                    <span class="dot animate-delay-150" />
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_BeFound.svelte:173:21
+Warn: Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag (svelte)
+                    <span class="dot" />
+                    <span class="dot animate-delay-150" />
+                    <span class="dot animate-delay-300" />
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_BeFound.svelte:174:21
+Warn: Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag (svelte)
+                    <span class="dot animate-delay-150" />
+                    <span class="dot animate-delay-300" />
+                </div>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_BeFound.svelte:98:3
+Warn: Unused CSS selector ".animate-pulse-border"
+https://svelte.dev/e/css_unused_selector (svelte)
+  
+  .animate-pulse-border {
+    animation: pulse-border 3s ease-in-out infinite;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_BeFound.svelte:11:6
+Error: Variable 'cardElement' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+	
+	let cardElement;
+	let isVisible = false;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_BeFound.svelte:30:17
+Error: Parameter 'ms' implicitly has an 'any' type. (js)
+
+	const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_BeFound.svelte:76:7
+Error: Variable 'cardElement' implicitly has an 'any' type. (js)
+		
+		if (cardElement) {
+			observer.observe(cardElement);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_MeasureOverTime.svelte:10:9
+Error: Variable 'cardElement' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+    
+    let cardElement;
+    let visible = false;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/landing_cards/Card_MeasureOverTime.svelte:38:13
+Error: Variable 'cardElement' implicitly has an 'any' type. (js)
+        
+        if (cardElement) {
+            observer.observe(cardElement);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/RefinedGrid.svelte:65:19
+Error: Object literal may only specify known properties, and '"images"' does not exist in type '{ title?: string | undefined; text?: string | undefined; active?: boolean | undefined; index?: number | undefined; background?: string | undefined; } & { background?: string | undefined; } & { ...; }'. (js)
+                  text={feature.text} 
+                  images={feature.images} 
+                  background={feature.background} 
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/RefinedGrid.svelte:65:35
+Error: Property 'images' does not exist on type '{ component: __sveltets_2_IsomorphicComponent<{ title?: string | undefined; text?: string | undefined; active?: boolean | undefined; index?: number | undefined; background?: string | undefined; }, { [evt: string]: CustomEvent<any>; }, {}, {}, string>; title: string; text: string; background: string; } | { ...; } | {...'.
+  Property 'images' does not exist on type '{ component: __sveltets_2_IsomorphicComponent<{ title?: string | undefined; text?: string | undefined; active?: boolean | undefined; index?: number | undefined; background?: string | undefined; }, { [evt: string]: CustomEvent<any>; }, {}, {}, string>; title: string; text: string; background: string; }'. (js)
+                  text={feature.text} 
+                  images={feature.images} 
+                  background={feature.background} 
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/HomePageSections.svelte:33:26
+Error: Object literal may only specify known properties, and '"class"' does not exist in type '{ variant?: "black" | "white" | undefined; href?: string | null | undefined; alt?: string | undefined; containerClass?: string | undefined; imgClass?: string | undefined; style?: string | undefined; }'. (js)
+		<svelte:fragment slot="button">
+			<Logo variant="white" class="h-4 w-auto mr-2" />
+		</svelte:fragment>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/HowItWorks.svelte:40:9
+Error: Variable 'intervalId' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+    let currentImageIndices = sections.map(() => 0);
+    let intervalId;
+  
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/HowItWorks.svelte:55:11
+Error: Variable 'intervalId' implicitly has an 'any' type. (js)
+    onDestroy(() => {
+      if (intervalId) {
+        clearInterval(intervalId);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ImprovementCard.svelte:13:32
+Error: Property 'impact' does not exist on type '{}'. (js)
+  
+  $: impactColor = improvement.impact === 'High Impact' ? 'text-red-600 bg-red-50' : 
+                   improvement.impact === 'Medium Impact' ? 'text-yellow-600 bg-yellow-50' : 
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ImprovementCard.svelte:14:32
+Error: Property 'impact' does not exist on type '{}'. (js)
+  $: impactColor = improvement.impact === 'High Impact' ? 'text-red-600 bg-red-50' : 
+                   improvement.impact === 'Medium Impact' ? 'text-yellow-600 bg-yellow-50' : 
+                   'text-gray-600 bg-gray-50';
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ImprovementCard.svelte:17:31
+Error: Property 'impact' does not exist on type '{}'. (js)
+  
+  $: impactIcon = improvement.impact === 'High Impact' ? '🔴' : 
+                  improvement.impact === 'Medium Impact' ? '🟡' : '⚪';
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ImprovementCard.svelte:18:31
+Error: Property 'impact' does not exist on type '{}'. (js)
+  $: impactIcon = improvement.impact === 'High Impact' ? '🔴' : 
+                  improvement.impact === 'Medium Impact' ? '🟡' : '⚪';
+</script>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ImprovementCard.svelte:33:56
+Error: Property 'summary' does not exist on type '{}'. (js)
+        <!-- </div> -->
+        <li class="text-sm text-gray-600">{improvement.summary || improvement.description}</li>
+        {#if improvement.reasoning}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ImprovementCard.svelte:33:79
+Error: Property 'description' does not exist on type '{}'. (js)
+        <!-- </div> -->
+        <li class="text-sm text-gray-600">{improvement.summary || improvement.description}</li>
+        {#if improvement.reasoning}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ImprovementCard.svelte:34:26
+Error: Property 'reasoning' does not exist on type '{}'. (js)
+        <li class="text-sm text-gray-600">{improvement.summary || improvement.description}</li>
+        {#if improvement.reasoning}
+          <p class="text-sm text-gray-500 mt-1 italic">{improvement.reasoning}</p>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ImprovementCard.svelte:35:69
+Error: Property 'reasoning' does not exist on type '{}'. (js)
+        {#if improvement.reasoning}
+          <p class="text-sm text-gray-500 mt-1 italic">{improvement.reasoning}</p>
+        {/if}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/WorkingWellPanel.svelte:2:14
+Error: Variable 'items' implicitly has type 'any[]' in some locations where its type cannot be determined. (js)
+<script>
+  export let items = [];
+</script>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/WorkingWellPanel.svelte:14:12
+Error: Variable 'items' implicitly has an 'any[]' type. (js)
+  <div class="p-6 space-y-4">
+    {#each items as item}
+      <div class="flex items-start">
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/OptimizedScoreNotice.svelte:6:14
+Warn: Component has unused export property 'reportId'. If it is for external reference only, please consider using `export const reportId`
+https://svelte.dev/e/export_let_unused (svelte)
+
+  export let reportId: string | null = null;
+  export let originalScore: number | null = null;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobOptimizationExecutive.svelte:15:3
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+  // Types
+  export type AppliedImprovement = {
+    category: string;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobOptimizationExecutive.svelte:24:3
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+
+  export type PotentialImprovement = {
+    category: string;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobOptimizationExecutive.svelte:30:3
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+
+  export type OptimizationData = {
+    originalText: string;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobOptimizationExecutive.svelte:42:3
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+  // Shape we might receive directly from DB/API before mapping
+  export type RawOptimizationData = {
+    change_log?: string | AppliedImprovement[];
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobOptimizationExecutive.svelte:295:5
+Error: Type 'string | Promise<string>' is not assignable to type 'string'.
+  Type 'Promise<string>' is not assignable to type 'string'. (ts)
+    if (!text) return '';
+    return marked(text);
+  }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/PublishModal.svelte:52:9
+Warn: A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control (svelte)
+      <div class="space-y-2">
+        <label class="text-sm font-medium">Publishing Options</label>
+        {#each integrations as integration}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/PublishModal.svelte:10:14
+Error: Variable 'currentVersion' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+  export let jobTitle = '';
+  export let currentVersion = null;
+  export let isPublishing = false;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/PublishModal.svelte:22:16
+Error: Variable 'currentVersion' implicitly has an 'any' type. (js)
+      integration: selectedIntegration,
+      version: currentVersion
+    });
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/PublishModal.svelte:44:72
+Error: Property 'version_number' does not exist on type 'never'. (js)
+        <div class="bg-gray-50 p-3 rounded-lg text-sm">
+          <div class="font-medium">Publishing Version #{currentVersion.version_number}</div>
+          <div class="text-gray-600 text-xs">
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/PublishModal.svelte:46:46
+Error: Property 'created_at' does not exist on type 'never'. (js)
+          <div class="text-gray-600 text-xs">
+            Created {new Date(currentVersion.created_at).toLocaleDateString()}
+          </div>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/PublishModal.svelte:54:115
+Error: Property 'disabled' does not exist on type '{ value: string; label: string; description: string; }'. (js)
+        {#each integrations as integration}
+          <label class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 {integration.disabled ? 'opacity-50 cursor-not-allowed' : ''}">
+            <input 
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/PublishModal.svelte:59:37
+Error: Property 'disabled' does not exist on type '{ value: string; label: string; description: string; }'. (js)
+              value={integration.value}
+              disabled={integration.disabled}
+              class="mt-1"
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/PublishModal.svelte:65:32
+Error: Property 'disabled' does not exist on type '{ value: string; label: string; description: string; }'. (js)
+              <div class="text-xs text-gray-600">{integration.description}</div>
+              {#if integration.disabled}
+                <div class="text-xs text-blue-600 mt-1">Coming soon</div>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:22:7
+Error: Variable 'versions' implicitly has type 'any[]' in some locations where its type cannot be determined. (js)
+  
+  let versions = [];
+  let loadingVersions = false;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:24:7
+Error: Variable 'selectedVersion' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+  let loadingVersions = false;
+  let selectedVersion = null;
+  let isMarkdownEnabled = true; // Add a variable to control markdown rendering
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:27:7
+Error: Variable 'lastLoadedJobId' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+  let isSaving = false; // Add a variable to control save button state
+  let lastLoadedJobId = null; // Track jobId to fetch when it becomes available
+  let mounted = false; // SSR safety
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:30:7
+Error: Variable 'diffStats' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+  let currentEditorText = ''; // Current state of the editor text
+  let diffStats = null; // Statistics about the current diff
+  let showDiffView = true; // Toggle between diff and markdown view
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:42:40
+Error: Variable 'lastLoadedJobId' implicitly has an 'any' type. (js)
+  // Reactively fetch versions when jobId is set/changes
+  $: if (mounted && jobId && jobId !== lastLoadedJobId) {
+    lastLoadedJobId = jobId;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:78:28
+Error: Parameter 'text' implicitly has an 'any' type. (js)
+
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:127:38
+Error: 'error' is of type 'unknown'. (js)
+      console.error('Error saving version:', error);
+      alert(`Error saving version: ${error.message}`);
+    } finally {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:142:26
+Error: Parameter 'event' implicitly has an 'any' type. (js)
+  
+  function handlePublish(event) {
+    isPublishing = true;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:161:38
+Error: Variable 'selectedVersion' implicitly has an 'any' type. (js)
+  // Compute the markdown HTML for improved text
+  $: improvedMarkdown = marked.parse(selectedVersion ? selectedVersion.improved_text || '' : improvedText || '');
+  
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:165:25
+Error: Variable 'selectedVersion' implicitly has an 'any' type. (js)
+  $: if (improvedText) {
+    currentEditorText = selectedVersion ? selectedVersion.improved_text || improvedText : improvedText;
+  }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:169:30
+Error: Parameter 'event' implicitly has an 'any' type. (js)
+  // Handle text changes from diff editor
+  function handleTextChanged(event) {
+    currentEditorText = event.detail.text;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:187:24
+Error: Type '{ children: () => any; value: any; }' is not assignable to type 'SelectRootPropsWithoutHTML | undefined'.
+  Type '{ children: () => any; value: any; }' is not assignable to type '{ disabled?: boolean | undefined; required?: boolean | undefined; name?: string | undefined; open?: boolean | undefined; onOpenChange?: OnChangeFn<boolean> | undefined; ... 5 more ...; autocomplete?: FullAutoFill | ... 1 more ... | undefined; } & { ...; } & SelectMultipleRootPropsWithoutHTML'.
+    Property 'type' is missing in type '{ children: () => any; value: any; }' but required in type 'SelectMultipleRootPropsWithoutHTML'. (js)
+          <div class="w-48">
+            <Select.Root bind:value={selectedVersion}>
+              <Select.Trigger>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:187:38
+Error: Variable 'selectedVersion' implicitly has an 'any' type. (js)
+          <div class="w-48">
+            <Select.Root bind:value={selectedVersion}>
+              <Select.Trigger>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:190:24
+Error: Variable 'selectedVersion' implicitly has an 'any' type. (js)
+                <span class="text-sm">
+                  {#if selectedVersion}
+                    Version #{selectedVersion.version_number}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:200:26
+Error: Variable 'versions' implicitly has an 'any[]' type. (js)
+                <div class="select-viewport-container p-2">
+                  {#each versions as version (version.id)}
+                    <Select.Item value={version}>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:229:14
+Error: Variable 'diffStats' implicitly has an 'any' type. (js)
+        <!-- Diff Stats -->
+        {#if diffStats && showDiffView}
+          <div class="text-xs text-gray-600 flex gap-4">
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:292:27
+Error: Variable 'selectedVersion' implicitly has an 'any' type. (js)
+            originalText={original_text}
+            improvedText={selectedVersion ? selectedVersion.improved_text || improvedText : improvedText}
+            editable={true}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:318:33
+Error: Variable 'selectedVersion' implicitly has an 'any' type. (js)
+  bind:open={showPublishModal}
+  jobTitle={`Job Post Version ${selectedVersion?.version_number || 'Current'}`}
+  currentVersion={selectedVersion}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewrite.svelte:319:19
+Error: Variable 'selectedVersion' implicitly has an 'any' type. (js)
+  jobTitle={`Job Post Version ${selectedVersion?.version_number || 'Current'}`}
+  currentVersion={selectedVersion}
+  isPublishing={isPublishing}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewriteExecutive.svelte:6:14
+Warn: Component has unused export property 'original_text'. If it is for external reference only, please consider using `export const original_text`
+https://svelte.dev/e/export_let_unused (svelte)
+  
+  export let original_text = '';
+  export let improvedText = '';
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewriteExecutive.svelte:7:14
+Warn: Component has unused export property 'improvedText'. If it is for external reference only, please consider using `export const improvedText`
+https://svelte.dev/e/export_let_unused (svelte)
+  export let original_text = '';
+  export let improvedText = '';
+  export let score = 0;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewriteExecutive.svelte:9:14
+Warn: Component has unused export property 'jobId'. If it is for external reference only, please consider using `export const jobId`
+https://svelte.dev/e/export_let_unused (svelte)
+  export let score = 0;
+  export let jobId = '';
+  
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/JobRewriteExecutive.svelte:57:27
+Error: Parameter 'category' implicitly has an 'any' type. (js)
+  
+  function handleFixIssue(category) {
+    // In real implementation, this would apply the specific fix
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/LearnMore.svelte:18:7
+Error: Variable 'videoElement' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+
+  let videoElement;
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/LearnMore.svelte:20:10
+Error: Variable 'videoElement' implicitly has an 'any' type. (js)
+
+  $: if (videoElement) {
+    videoElement.playbackRate = backgroundPlaybackRate;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/MessageNotification.svelte:7:13
+Warn: Component has unused export property 'messageType'. If it is for external reference only, please consider using `export const messageType`
+https://svelte.dev/e/export_let_unused (svelte)
+	export let messageText = '';
+	export let messageType = 'info';
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/Navbar.svelte:64:23
+Error: Property 'email' does not exist on type 'never'. (js)
+    isLoggedIn = true;
+    userEmail = $user.email;
+  } else {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/RefinedGridV2.svelte:113:13
+Warn: Self-closing HTML tags for non-void elements are ambiguous — use `<button ...></button>` rather than `<button ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag (svelte)
+          {#each features as _, index}
+            <button
+              on:click={() => goToSlide(index)}
+              class="w-2 h-2 rounded-full transition-all duration-300 {currentIndex === index ? 'bg-gray-900 w-6' : 'bg-gray-300 hover:bg-gray-400'}"
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          {/each}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/RefinedGridV2.svelte:151:23
+Warn: Self-closing HTML tags for non-void elements are ambiguous — use `<video ...></video>` rather than `<video ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag (svelte)
+                    {#if feature.mediaType === 'video'}
+                      <video
+                        src={feature.media}
+                        alt={`Preview for ${feature.title}`}
+                        class="w-full max-w-[980px] rounded-lg shadow-xl"
+                        style="max-height: 550px; height: auto; display: block;"
+                        autoplay
+                        muted
+                        loop
+                        playsinline
+                      />
+                    {:else}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/RefinedGridV2.svelte:46:7
+Error: Variable 'autoplayTimer' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+  let currentIndex = 0;
+  let autoplayTimer;
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/RefinedGridV2.svelte:48:22
+Error: Parameter 'index' implicitly has an 'any' type. (js)
+
+  function goToSlide(index) {
+    currentIndex = index;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/RefinedGridV2.svelte:64:9
+Error: Variable 'autoplayTimer' implicitly has an 'any' type. (js)
+  function resetAutoplay() {
+    if (autoplayTimer) {
+      clearTimeout(autoplayTimer);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/RefinedGridV2.svelte:77:11
+Error: Variable 'autoplayTimer' implicitly has an 'any' type. (js)
+    return () => {
+      if (autoplayTimer) {
+        clearTimeout(autoplayTimer);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/RefinedGridV2.svelte:153:25
+Error: Object literal may only specify known properties, and '"alt"' does not exist in type 'HTMLProps<"video", HTMLAttributes<any>>'. (js)
+                        src={feature.media}
+                        alt={`Preview for ${feature.title}`}
+                        class="w-full max-w-[980px] rounded-lg shadow-xl"
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/ExecutiveHeaderCard.svelte:10:14
+Warn: Component has unused export property 'statusLabel'. If it is for external reference only, please consider using `export const statusLabel`
+https://svelte.dev/e/export_let_unused (svelte)
+  export let circumference: number = 2 * Math.PI * 42;
+  export let statusLabel: string = '';
+</script>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/TopImprovementsPanel.svelte:2:2
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+<script lang="ts">
+	export interface ImprovementGroup {
+		key: string;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/CategoryBreakdownPanel.svelte:2:3
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+<script lang="ts">
+  export interface CategoryMetric {
+    key: string;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/ResultsActionPanel.svelte:12:14
+Warn: Component has unused export property 'onShowSaveDialog'. If it is for external reference only, please consider using `export const onShowSaveDialog`
+https://svelte.dev/e/export_let_unused (svelte)
+  export let onOptimize: () => void = () => {};
+  export let onShowSaveDialog: () => void = () => {};
+</script>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/GuestPrintLayout.svelte:9:26
+Error: Parameter 'score' implicitly has an 'any' type. (js)
+  // Get score color based on overall score
+  function getScoreColor(score) {
+    if (score >= 85) return '#10b981'; // green-500
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/PrintExecutiveHeader.svelte:6:14
+Warn: Component has unused export property 'statusLabel'. If it is for external reference only, please consider using `export const statusLabel`
+https://svelte.dev/e/export_let_unused (svelte)
+  export let overallScore: number = 0;
+  export let statusLabel: string = '';
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/PrintCategoryBreakdown.svelte:2:3
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+<script lang="ts">
+  export interface CategoryMetric {
+    key: string;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/PrintTopImprovements.svelte:16:3
+Warn: Unused CSS selector ".two-column-grid"
+https://svelte.dev/e/css_unused_selector (svelte)
+<style>
+  .two-column-grid {
+    display: grid;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/PrintTopImprovements.svelte:23:3
+Warn: Unused CSS selector ".column-divider"
+https://svelte.dev/e/css_unused_selector (svelte)
+  
+  .column-divider {
+    width: 1px;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/PrintTopImprovements.svelte:2:3
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+<script lang="ts">
+  export interface ImprovementGroup {
+    key: string;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/UserPrintLayout.svelte:12:14
+Warn: Component has unused export property 'optimizedScore'. If it is for external reference only, please consider using `export const optimizedScore`
+https://svelte.dev/e/export_let_unused (svelte)
+  export let hasOptimizedView;
+  export let optimizedScore;
+  export let results;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/UserPrintLayout.svelte:13:14
+Warn: Component has unused export property 'results'. If it is for external reference only, please consider using `export const results`
+https://svelte.dev/e/export_let_unused (svelte)
+  export let optimizedScore;
+  export let results;
+  export let getScoreBadgeClasses;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/UserPrintLayout.svelte:14:14
+Warn: Component has unused export property 'getScoreBadgeClasses'. If it is for external reference only, please consider using `export const getScoreBadgeClasses`
+https://svelte.dev/e/export_let_unused (svelte)
+  export let results;
+  export let getScoreBadgeClasses;
+  export let categoryMetrics;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/UserPrintLayout.svelte:31:8
+Error: Object literal may only specify known properties, and 'scoreOffset' does not exist in type '{ jobTitle?: string | null | undefined; reportId?: string | null | undefined; jobUrl?: string | null | undefined; overallScore?: number | undefined; statusLabel?: string | undefined; }'. (js)
+      {overallScore}
+      {scoreOffset}
+      {circumference}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:70:14
+Warn: Component has unused export property 'downloadJobData'. If it is for external reference only, please consider using `export const downloadJobData`
+https://svelte.dev/e/export_let_unused (svelte)
+  export let downloadReport = () => {};
+  export let downloadJobData = () => {};
+  
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".compact-guest-print"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".print-header"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".print-content"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".print-authenticated-layout"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".print-main-content"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".print-optimized-notice"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".print-category-breakdown"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".print-improvements"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".title-section"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".logo-title"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".subtitle"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".analysis-title"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".score-section"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".score-display"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".score-number"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".score-label"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".job-info"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".job-title"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".report-details"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".report-id"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".job-url"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".unlock-badge"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".cta-title"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".cta-description"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".cta-buttons"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".primary-button"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".secondary-button"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".cta-note"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".print-footer"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".compact-footer"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".print-footer .footer-left"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".print-footer .footer-right"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:436:8
+Warn: Unused CSS selector ".print-footer p"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style>
+  /* Component-scoped utilities for printing */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:21:14
+Error: Variable 'categoryLabels' implicitly has type 'any[]' in some locations where its type cannot be determined. (js)
+  export let results = null;
+  export let categoryLabels = [];
+  export let rewriteLoading = false;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:27:33
+Error: Parameter 'score' implicitly has an 'any' type. (js)
+
+  function getScoreBadgeClasses(score) {
+    const val = clampPercentage(score ?? 0);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:35:28
+Error: Parameter 'value' implicitly has an 'any' type. (js)
+
+  function clampPercentage(value) {
+    if (Number.isNaN(value) || value === null || value === undefined) return 0;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:40:37
+Error: Parameter 'percentage' implicitly has an 'any' type. (js)
+
+  function getCategoryStatusDetails(percentage) {
+    if (percentage >= 85) {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:53:31
+Error: Parameter 'percentage' implicitly has an 'any' type. (js)
+
+  function getStatusToneClass(percentage) {
+    if (percentage >= 85) return 'print:text-emerald-700 text-emerald-700';
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:60:29
+Error: Parameter 'delta' implicitly has an 'any' type. (js)
+
+  function formatScoreDelta(delta) {
+    if (delta === null || delta === undefined) return '';
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:77:35
+Error: Parameter 'event' implicitly has an 'any' type. (js)
+
+  function handleSaveReportSubmit(event) {
+    const { email, report } = event.detail;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:89:9
+Error: Spread types may only be created from object types. (js)
+    ? {
+        ...results,
+        // Use original score if optimization exists (to match category breakdown)
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:92:32
+Error: Property 'hasRewrite' does not exist on type 'never'. (js)
+        // Otherwise use total_score (no optimization, scores match)
+        overallScore: results?.hasRewrite && results?.optimizationData?.original_score
+          ? results.optimizationData.original_score
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:92:55
+Error: Property 'optimizationData' does not exist on type 'never'. (js)
+        // Otherwise use total_score (no optimization, scores match)
+        overallScore: results?.hasRewrite && results?.optimizationData?.original_score
+          ? results.optimizationData.original_score
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:93:21
+Error: Property 'optimizationData' does not exist on type 'never'. (js)
+        overallScore: results?.hasRewrite && results?.optimizationData?.original_score
+          ? results.optimizationData.original_score
+          : (results?.overallScore ?? results?.total_score ?? results?.totalScore ?? 0),
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:94:23
+Error: Property 'overallScore' does not exist on type 'never'. (js)
+          ? results.optimizationData.original_score
+          : (results?.overallScore ?? results?.total_score ?? results?.totalScore ?? 0),
+        // Ensure categories is an object
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:94:48
+Error: Property 'total_score' does not exist on type 'never'. (js)
+          ? results.optimizationData.original_score
+          : (results?.overallScore ?? results?.total_score ?? results?.totalScore ?? 0),
+        // Ensure categories is an object
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:94:72
+Error: Property 'totalScore' does not exist on type 'never'. (js)
+          ? results.optimizationData.original_score
+          : (results?.overallScore ?? results?.total_score ?? results?.totalScore ?? 0),
+        // Ensure categories is an object
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:96:30
+Error: Property 'categories' does not exist on type 'never'. (js)
+        // Ensure categories is an object
+        categories: results?.categories ?? {},
+      }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:102:57
+Error: Property 'id' does not exist on type 'never'. (js)
+  $: if (results && import.meta.env.DEV) {
+    console.log('[ResultsDisplay] Report ID:', results?.id);
+    console.log('[ResultsDisplay] hasRewrite:', results?.hasRewrite);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:103:58
+Error: Property 'hasRewrite' does not exist on type 'never'. (js)
+    console.log('[ResultsDisplay] Report ID:', results?.id);
+    console.log('[ResultsDisplay] hasRewrite:', results?.hasRewrite);
+    console.log('[ResultsDisplay] Has improved_text?', !!results?.improved_text);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:104:67
+Error: Property 'improved_text' does not exist on type 'never'. (js)
+    console.log('[ResultsDisplay] hasRewrite:', results?.hasRewrite);
+    console.log('[ResultsDisplay] Has improved_text?', !!results?.improved_text);
+    console.log('[ResultsDisplay] Has optimizationData?', !!results?.optimizationData);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:105:70
+Error: Property 'optimizationData' does not exist on type 'never'. (js)
+    console.log('[ResultsDisplay] Has improved_text?', !!results?.improved_text);
+    console.log('[ResultsDisplay] Has optimizationData?', !!results?.optimizationData);
+    console.log('[ResultsDisplay] rewriteVersion:', results?.rewriteVersion);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:106:62
+Error: Property 'rewriteVersion' does not exist on type 'never'. (js)
+    console.log('[ResultsDisplay] Has optimizationData?', !!results?.optimizationData);
+    console.log('[ResultsDisplay] rewriteVersion:', results?.rewriteVersion);
+    console.log('[ResultsDisplay] Score selection:', {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:108:28
+Error: Property 'hasRewrite' does not exist on type 'never'. (js)
+    console.log('[ResultsDisplay] Score selection:', {
+      hasRewrite: results?.hasRewrite,
+      originalScore: results?.optimizationData?.original_score,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:109:31
+Error: Property 'optimizationData' does not exist on type 'never'. (js)
+      hasRewrite: results?.hasRewrite,
+      originalScore: results?.optimizationData?.original_score,
+      totalScore: results?.total_score,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:110:28
+Error: Property 'total_score' does not exist on type 'never'. (js)
+      originalScore: results?.optimizationData?.original_score,
+      totalScore: results?.total_score,
+      selectedScore: results?.hasRewrite && results?.optimizationData?.original_score
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:111:31
+Error: Property 'hasRewrite' does not exist on type 'never'. (js)
+      totalScore: results?.total_score,
+      selectedScore: results?.hasRewrite && results?.optimizationData?.original_score
+        ? results.optimizationData.original_score
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:111:54
+Error: Property 'optimizationData' does not exist on type 'never'. (js)
+      totalScore: results?.total_score,
+      selectedScore: results?.hasRewrite && results?.optimizationData?.original_score
+        ? results.optimizationData.original_score
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:112:19
+Error: Property 'optimizationData' does not exist on type 'never'. (js)
+      selectedScore: results?.hasRewrite && results?.optimizationData?.original_score
+        ? results.optimizationData.original_score
+        : (results?.overallScore ?? results?.total_score ?? results?.totalScore ?? 0)
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:113:21
+Error: Property 'overallScore' does not exist on type 'never'. (js)
+        ? results.optimizationData.original_score
+        : (results?.overallScore ?? results?.total_score ?? results?.totalScore ?? 0)
+    });
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:113:46
+Error: Property 'total_score' does not exist on type 'never'. (js)
+        ? results.optimizationData.original_score
+        : (results?.overallScore ?? results?.total_score ?? results?.totalScore ?? 0)
+    });
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:113:70
+Error: Property 'totalScore' does not exist on type 'never'. (js)
+        ? results.optimizationData.original_score
+        : (results?.overallScore ?? results?.total_score ?? results?.totalScore ?? 0)
+    });
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:129:33
+Error: Variable 'categoryLabels' implicitly has an 'any[]' type. (js)
+  // Choose effective labels
+  $: effectiveCategoryLabels = (categoryLabels && categoryLabels.length)
+    ? categoryLabels
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:130:7
+Error: Variable 'categoryLabels' implicitly has an 'any[]' type. (js)
+  $: effectiveCategoryLabels = (categoryLabels && categoryLabels.length)
+    ? categoryLabels
+    : DEFAULT_CATEGORY_LABELS;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:134:24
+Error: Parameter 'str' implicitly has an 'any' type. (js)
+  // Helper to resolve keys from camelCase to snake_case in DB if necessary
+  const toSnakeCase = (str) => str.replace(/[A-Z]/g, (m) => '_' + m.toLowerCase());
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:134:55
+Error: Parameter 'm' implicitly has an 'any' type. (js)
+  // Helper to resolve keys from camelCase to snake_case in DB if necessary
+  const toSnakeCase = (str) => str.replace(/[A-Z]/g, (m) => '_' + m.toLowerCase());
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:137:30
+Error: Parameter 'val' implicitly has an 'any' type. (js)
+  // Normalize a category object to always have an array suggestions field
+  function normalizeCategory(val) {
+    if (!val || typeof val !== 'object') return null;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:159:7
+Error: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'. (js)
+      }
+      out[k] = normalizeCategory(raw);
+    }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:180:35
+Error: Property 'optimizationData' does not exist on type 'never'. (js)
+    if (!results) return null;
+    const optimization = results?.optimizationData ?? {};
+    const value = optimization?.optimized_score ?? optimization?.optimizedScore ?? results?.optimizedScore;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:181:93
+Error: Property 'optimizedScore' does not exist on type 'never'. (js)
+    const optimization = results?.optimizationData ?? {};
+    const value = optimization?.optimized_score ?? optimization?.optimizedScore ?? results?.optimizedScore;
+    if (value === null || value === undefined) return null;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:185:42
+Error: Property 'hasRewrite' does not exist on type 'never'. (js)
+  })();
+  $: hasOptimizedView = Boolean(results?.hasRewrite && optimizedScore !== null);
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:188:18
+Error: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'. (js)
+  $: categoryMetrics = effectiveCategoryLabels.map((cat) => {
+    const data = resolvedCategories?.[cat.key];
+    const rawScore = data?.score ?? 0;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:204:27
+Error: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'. (js)
+    .map((cat) => {
+      const suggestions = resolvedCategories?.[cat.key]?.suggestions ?? [];
+      const score = resolvedCategories?.[cat.key]?.score ?? 0;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:205:21
+Error: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'. (js)
+      const suggestions = resolvedCategories?.[cat.key]?.suggestions ?? [];
+      const score = resolvedCategories?.[cat.key]?.score ?? 0;
+      const max = cat.max || 100;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:224:30
+Error: Parameter 'text' implicitly has an 'any' type. (js)
+    .flatMap((group) =>
+      group.suggestions.map((text, index) => ({
+        category: group.label,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:224:36
+Error: Parameter 'index' implicitly has an 'any' type. (js)
+    .flatMap((group) =>
+      group.suggestions.map((text, index) => ({
+        category: group.label,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:243:38
+Error: 'optimizedScore' is possibly 'null'. (js)
+
+  $: scoreDelta = hasOptimizedView ? optimizedScore - overallScore : null;
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:275:51
+Error: No overload matches this call.
+  Overload 1 of 3, '(locales?: LocalesArgument, options?: DateTimeFormatOptions | undefined): string', gave the following error.
+    Argument of type '{ year: string; month: string; day: string; }' is not assignable to parameter of type 'DateTimeFormatOptions'.
+      Types of property 'year' are incompatible.
+        Type 'string' is not assignable to type '"numeric" | "2-digit" | undefined'.
+  Overload 2 of 3, '(locales?: string | string[] | undefined, options?: DateTimeFormatOptions | undefined): string', gave the following error.
+    Argument of type '{ year: string; month: string; day: string; }' is not assignable to parameter of type 'DateTimeFormatOptions'.
+      Types of property 'year' are incompatible.
+        Type 'string' is not assignable to type '"numeric" | "2-digit" | undefined'. (js)
+      if (!Number.isNaN(parsed.getTime())) {
+        return parsed.toLocaleDateString('en-US', DATE_FORMAT_OPTIONS);
+      }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:279:51
+Error: No overload matches this call.
+  Overload 1 of 3, '(locales?: LocalesArgument, options?: DateTimeFormatOptions | undefined): string', gave the following error.
+    Argument of type '{ year: string; month: string; day: string; }' is not assignable to parameter of type 'DateTimeFormatOptions'.
+      Types of property 'year' are incompatible.
+        Type 'string' is not assignable to type '"numeric" | "2-digit" | undefined'.
+  Overload 2 of 3, '(locales?: string | string[] | undefined, options?: DateTimeFormatOptions | undefined): string', gave the following error.
+    Argument of type '{ year: string; month: string; day: string; }' is not assignable to parameter of type 'DateTimeFormatOptions'.
+      Types of property 'year' are incompatible.
+        Type 'string' is not assignable to type '"numeric" | "2-digit" | undefined'. (js)
+
+    return new Date().toLocaleDateString('en-US', DATE_FORMAT_OPTIONS);
+  })();
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:282:68
+Error: No overload matches this call.
+  Overload 1 of 3, '(locales?: LocalesArgument, options?: DateTimeFormatOptions | undefined): string', gave the following error.
+    Argument of type '{ year: string; month: string; day: string; }' is not assignable to parameter of type 'DateTimeFormatOptions'.
+      Types of property 'year' are incompatible.
+        Type 'string' is not assignable to type '"numeric" | "2-digit" | undefined'.
+  Overload 2 of 3, '(locales?: string | string[] | undefined, options?: DateTimeFormatOptions | undefined): string', gave the following error.
+    Argument of type '{ year: string; month: string; day: string; }' is not assignable to parameter of type 'DateTimeFormatOptions'.
+      Types of property 'year' are incompatible.
+        Type 'string' is not assignable to type '"numeric" | "2-digit" | undefined'. (js)
+
+  $: formattedPrintedDate = new Date().toLocaleDateString('en-US', DATE_FORMAT_OPTIONS);
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:341:35
+Error: 'results' is possibly 'null'. (js)
+                      <OptimizedScoreNotice
+                        reportId={results.id}
+                        originalScore={overallScore}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:348:54
+Error: 'results' is possibly 'null'. (js)
+                        improvementLabel="Change"
+                        linkHref={`/results?report=${results.id}&view=optimized`}
+                        linkLabel="View optimized report"
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:355:44
+Error: Property 'hasRewrite' does not exist on type 'never'. (js)
+                      isLoggedIn={isLoggedIn}
+                      hasRewrite={results?.hasRewrite}
+                      rewriteLoading={rewriteLoading}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:359:71
+Error: 'results' is possibly 'null'. (js)
+                      onDownloadReport={downloadReport}
+                      onDownloadJsonLd={() => goto(`/json-ld?report=${results.id}`)}
+                      onViewOptimized={() => goto(`/results?report=${results.id}&view=optimized`)}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ResultsDisplay.svelte:360:70
+Error: 'results' is possibly 'null'. (js)
+                      onDownloadJsonLd={() => goto(`/json-ld?report=${results.id}`)}
+                      onViewOptimized={() => goto(`/results?report=${results.id}&view=optimized`)}
+                      onOptimize={() => dispatch('optimize')}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ScorePill.svelte:9:13
+Warn: Component has unused export property 'title'. If it is for external reference only, please consider using `export const title`
+https://svelte.dev/e/export_let_unused (svelte)
+	/** @type {string} The title to display, e.g., "JobPostScore" */
+	export let title = 'JobPostScore';
+	/** @type {number} The score to start the animation from */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ScorePill.svelte:32:32
+Error: Parameter 'value' implicitly has an 'any' type. (js)
+	// This function determines the color based on the score
+	function getScoreColorClasses(value) {
+		if (value < 60) {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ScoreVisualizer.svelte:6:14
+Error: Variable 'categoryLabels' implicitly has type 'any[]' in some locations where its type cannot be determined. (js)
+  export let categories = {}; // Categories with scores
+  export let categoryLabels = []; // Category metadata
+  import Logo from '$lib/components/Logo.svelte';
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ScoreVisualizer.svelte:15:31
+Error: Parameter 'score' implicitly has an 'any' type. (js)
+  // Function to calculate score percentage for bar width (clamped between 0-100%)
+  function getScorePercentage(score, max) {
+    const percentage = (score / max) * 100;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ScoreVisualizer.svelte:15:38
+Error: Parameter 'max' implicitly has an 'any' type. (js)
+  // Function to calculate score percentage for bar width (clamped between 0-100%)
+  function getScorePercentage(score, max) {
+    const percentage = (score / max) * 100;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ScoreVisualizer.svelte:21:29
+Error: Parameter 'percentage' implicitly has an 'any' type. (js)
+  // Function to get gradient class based on percentage - matches SVG gradient colors
+  function getGradientClass(percentage) {
+    if (percentage >= 75) {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ScoreVisualizer.svelte:111:14
+Error: Variable 'categoryLabels' implicitly has an 'any[]' type. (js)
+    <div class="space-y-6">
+      {#each categoryLabels as category}
+        {@const categoryScore = categories[category.key]?.score || 0}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ScoreVisualizer.svelte:112:33
+Error: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'. (js)
+      {#each categoryLabels as category}
+        {@const categoryScore = categories[category.key]?.score || 0}
+        {@const percentage = getScorePercentage(categoryScore, category.max)}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ScrollIndicatorFallback.svelte:8:7
+Error: Variable 'container' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+  let opacity = 1;
+  let container;
+  let animation;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ScrollIndicatorFallback.svelte:9:7
+Error: Variable 'animation' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+  let container;
+  let animation;
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ScrollIndicatorFallback.svelte:39:9
+Error: Variable 'container' implicitly has an 'any' type. (js)
+    // Initialize Lottie animation with a simple scroll animation
+    if (container) {
+      animation = lottie.loadAnimation({
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ScrollIndicatorFallback.svelte:207:11
+Error: Variable 'animation' implicitly has an 'any' type. (js)
+      window.removeEventListener('resize', updateScroll);
+      if (animation) {
+        animation.destroy();
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/SearchAnimation.svelte:166:6
+Warn: Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag (svelte)
+				{#if isTyping}
+					<span class="cursor" />
+				{/if}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/SearchAnimation.svelte:76:6
+Error: Variable 'displayedParts' implicitly has type 'any[]' in some locations where its type cannot be determined. (js)
+	let currentQueryIndex = 0;
+	let displayedParts = [];
+	let currentTypingText = '';
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/SearchAnimation.svelte:81:17
+Error: Parameter 'ms' implicitly has an 'any' type. (js)
+
+	const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/SearchAnimation.svelte:83:26
+Error: Parameter 'text' implicitly has an 'any' type. (js)
+
+	async function typeText(text) {
+		isTyping = true;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/SearchAnimation.svelte:91:25
+Error: Variable 'displayedParts' implicitly has an 'any[]' type. (js)
+		if (currentTypingText) {
+			displayedParts = [...displayedParts, { type: 'text', content: currentTypingText }];
+			currentTypingText = '';
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/SearchAnimation.svelte:109:27
+Error: Variable 'displayedParts' implicitly has an 'any[]' type. (js)
+				} else if (part.type === 'pill') {
+					displayedParts = [...displayedParts, part];
+					await delay(200); // Small pause after a pill appears
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/SearchAnimation.svelte:148:11
+Error: Variable 'displayedParts' implicitly has an 'any[]' type. (js)
+		<div class="content-wrapper">
+			{#each displayedParts as part, i (i)}
+				{#if part.type === 'text'}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/navigation/Breadcrumbs.svelte:2:3
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+<script lang="ts">
+  export interface BreadcrumbItem {
+    label: string;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/ExecutiveHeaderCard copy.svelte:10:14
+Warn: Component has unused export property 'statusLabel'. If it is for external reference only, please consider using `export const statusLabel`
+https://svelte.dev/e/export_let_unused (svelte)
+  export let circumference: number = 2 * Math.PI * 42;
+  export let statusLabel: string = '';
+</script>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/views/EmptyStateView.svelte:38:19
+Error: Type '{ job_title: string; job_body: string; timestamp: string; total_score: number; categories: { clarity: { score: number; maxScore: number; suggestions: string[]; }; promptAlignment: { score: number; maxScore: number; suggestions: string[]; }; ... 4 more ...; pageContext: { ...; }; }; red_flags: string[]; recommendatio...' is not assignable to type 'null | undefined'. (ts)
+  </div>
+  <ResultsDisplay results={defaultResults} />
+{:else}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/views/ResultsView.svelte:65:79
+Error: Property 'id' does not exist on type 'never'. (ts)
+        const currentUser = get(user);
+        const savedReport = await ReportsAPI.save(currentReport, currentUser?.id || null);
+        
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/views/ResultsView.svelte:118:30
+Error: Property 'rewritten_text' does not exist on type 'object'. (ts)
+        original_text: currentReport.job_body || '',
+        improvedText: result.rewritten_text,
+        score: result.new_score,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/views/ResultsView.svelte:119:23
+Error: Property 'new_score' does not exist on type 'object'. (ts)
+        improvedText: result.rewritten_text,
+        score: result.new_score,
+        id: reportId,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/views/ResultsView.svelte:122:30
+Error: Property 'change_log' does not exist on type 'object'. (ts)
+        optimizationData: {
+          change_log: result.change_log,
+          unaddressed_items: result.unaddressed_items
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/views/ResultsView.svelte:123:37
+Error: Property 'unaddressed_items' does not exist on type 'object'. (ts)
+          change_log: result.change_log,
+          unaddressed_items: result.unaddressed_items
+        }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/views/ResultsView.svelte:131:31
+Error: Property 'rewritten_text' does not exist on type 'object'. (ts)
+        hasRewrite: true, // ✅ Set flag to enable optimized view
+        improved_text: result.rewritten_text,
+        latestImprovedText: result.rewritten_text,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/views/ResultsView.svelte:132:36
+Error: Property 'rewritten_text' does not exist on type 'object'. (ts)
+        improved_text: result.rewritten_text,
+        latestImprovedText: result.rewritten_text,
+        rewriteVersion: result.version_number || 1,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/views/ResultsView.svelte:133:32
+Error: Property 'version_number' does not exist on type 'object'. (ts)
+        latestImprovedText: result.rewritten_text,
+        rewriteVersion: result.version_number || 1,
+        optimizationData: {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/views/ResultsView.svelte:134:9
+Error: Object literal may only specify known properties, and 'optimizationData' does not exist in type 'Report'. (ts)
+        rewriteVersion: result.version_number || 1,
+        optimizationData: {
+          original_score: currentReport.total_score,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/views/ResultsView.svelte:136:35
+Error: Property 'new_score' does not exist on type 'object'. (ts)
+          original_score: currentReport.total_score,
+          optimized_score: result.new_score,
+          change_log: result.change_log,
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/views/ResultsView.svelte:137:30
+Error: Property 'change_log' does not exist on type 'object'. (ts)
+          optimized_score: result.new_score,
+          change_log: result.change_log,
+          unaddressed_items: result.unaddressed_items
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/views/ResultsView.svelte:138:37
+Error: Property 'unaddressed_items' does not exist on type 'object'. (ts)
+          change_log: result.change_log,
+          unaddressed_items: result.unaddressed_items
+        }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/results/views/ResultsView.svelte:217:5
+Error: Type 'Report' is not assignable to type 'null | undefined'. (ts)
+  <ResultsDisplay 
+    results={currentReport}
+    {isLoggedIn}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/carousel-content.svelte:2:14
+Error: Unexpected keyword 'class'
+https://svelte.dev/e/js_parse_error
+
+If you expect this syntax to work, here are some suggestions: 
+If you use typescript with `svelte-preprocess`, did you add `lang="ts"` to your `script` tag? 
+Did you setup a `svelte.config.js`? 
+See https://github.com/sveltejs/language-tools/tree/master/docs#using-with-preprocessors for more info. (svelte)
+<script lang="ts">
+  export let class: string = ''
+</script>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/carousel-content.svelte:5:46
+Error: Unexpected token
+https://svelte.dev/e/js_parse_error (ts)
+
+<div class={`relative overflow-hidden ${class}`}>
+  <div class="flex">
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/carousel-item.svelte:2:14
+Error: Unexpected keyword 'class'
+https://svelte.dev/e/js_parse_error
+
+If you expect this syntax to work, here are some suggestions: 
+If you use typescript with `svelte-preprocess`, did you add `lang="ts"` to your `script` tag? 
+Did you setup a `svelte.config.js`? 
+See https://github.com/sveltejs/language-tools/tree/master/docs#using-with-preprocessors for more info. (svelte)
+<script lang="ts">
+  export let class: string = ''
+</script>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/carousel-item.svelte:5:56
+Error: Unexpected token
+https://svelte.dev/e/js_parse_error (ts)
+
+<div class={`min-w-0 shrink-0 grow-0 basis-full ${class}`}>
+  <slot />
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/carousel.svelte:5:14
+Error: Unexpected keyword 'class'
+https://svelte.dev/e/js_parse_error
+
+If you expect this syntax to work, here are some suggestions: 
+If you use typescript with `svelte-preprocess`, did you add `lang="ts"` to your `script` tag? 
+Did you setup a `svelte.config.js`? 
+See https://github.com/sveltejs/language-tools/tree/master/docs#using-with-preprocessors for more info. (svelte)
+  export let opts: any
+  export let class: string = ''
+  
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/lib/components/ui/carousel.svelte:11:27
+Error: Unexpected token
+https://svelte.dev/e/js_parse_error (ts)
+<div 
+  class={`relative ${class}`}
+  use:carouselActions
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/+page.svelte:271:20
+Warn: Unused CSS selector ".single-sweep"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style lang="scss">
+	.single-sweep {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/+page.svelte:271:20
+Warn: Unused CSS selector ".single-sweep"
+https://svelte.dev/e/css_unused_selector (svelte)
+
+<style lang="scss">
+	.single-sweep {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/+page.svelte:29:6
+Error: Variable 'results' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+	let isLoading = false;
+	let results = null;
+	let showResults = false;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/+page.svelte:47:23
+Error: Parameter 'event' implicitly has an 'any' type. (js)
+	// Handle audit form submission
+	function handleAudit(event) {
+		const { type, data, results } = event.detail;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/+page.svelte:70:30
+Error: Parameter 'event' implicitly has an 'any' type. (js)
+	// Handle export request
+	async function handleExport(event) {
+		const { format } = event.detail;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/+page.svelte:72:7
+Error: Variable 'results' implicitly has an 'any' type. (js)
+		const { format } = event.detail;
+		if (results) {
+			try {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/+page.svelte:98:32
+Error: Property 'id' does not exist on type 'never'. (js)
+		const unsubscribeUser = user.subscribe((currentUser) => {
+			isLoggedIn = !!currentUser?.id;
+			authChecked = true;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/page copy.svelte:197:20
+Warn: Unused CSS selector ".chroma-text"
+https://svelte.dev/e/css_unused_selector (svelte)
+</div>
+<style lang="scss">
+  /* Gradient text effect with color transition */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/page copy.svelte:197:20
+Warn: Unused CSS selector ".chroma-text"
+https://svelte.dev/e/css_unused_selector (svelte)
+</div>
+<style lang="scss">
+  /* Gradient text effect with color transition */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/page copy.svelte:197:20
+Warn: Unused CSS selector ".word-cycle"
+https://svelte.dev/e/css_unused_selector (svelte)
+</div>
+<style lang="scss">
+  /* Gradient text effect with color transition */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/page copy.svelte:197:20
+Warn: Unused CSS selector ".word-cycle > span"
+https://svelte.dev/e/css_unused_selector (svelte)
+</div>
+<style lang="scss">
+  /* Gradient text effect with color transition */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/page copy.svelte:197:20
+Warn: Unused CSS selector ".word-cycle > span:nth-child(1)"
+https://svelte.dev/e/css_unused_selector (svelte)
+</div>
+<style lang="scss">
+  /* Gradient text effect with color transition */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/page copy.svelte:197:20
+Warn: Unused CSS selector ".word-cycle > span:nth-child(2)"
+https://svelte.dev/e/css_unused_selector (svelte)
+</div>
+<style lang="scss">
+  /* Gradient text effect with color transition */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/page copy.svelte:197:20
+Warn: Unused CSS selector ".word-cycle > span:nth-child(3)"
+https://svelte.dev/e/css_unused_selector (svelte)
+</div>
+<style lang="scss">
+  /* Gradient text effect with color transition */
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/page copy.svelte:25:7
+Error: Variable 'results' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+  let isLoading = false;
+  let results = null;
+  let showResults = false;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/page copy.svelte:36:24
+Error: Parameter 'event' implicitly has an 'any' type. (js)
+  // Handle audit form submission
+  function handleAudit(event) {
+    const { type, data, results } = event.detail;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/page copy.svelte:59:31
+Error: Parameter 'event' implicitly has an 'any' type. (js)
+  // Handle export request
+  async function handleExport(event) {
+    const { format } = event.detail;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/page copy.svelte:61:9
+Error: Variable 'results' implicitly has an 'any' type. (js)
+    const { format } = event.detail;
+    if (results) {
+      try {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/auth/callback/+page.svelte:10:7
+Error: Variable 'error' implicitly has type 'any' in some locations where its type cannot be determined. (ts)
+  
+  let error = null;
+  let processingReport = false;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/auth/callback/+page.svelte:21:39
+Error: Parameter 'userId' implicitly has an 'any' type. (ts)
+  // Function to associate guest report with user account
+  async function associateGuestReport(userId) {
+    try {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/auth/callback/+page.svelte:79:11
+Error: Argument of type '() => Promise<() => void>' is not assignable to parameter of type '() => (() => any) | Promise<never>'.
+  Type 'Promise<() => void>' is not assignable to type '(() => any) | Promise<never>'.
+    Type 'Promise<() => void>' is not assignable to type 'Promise<never>'.
+      Type '() => void' is not assignable to type 'never'. (ts)
+  
+  onMount(async () => {
+    const unsubUser = user.subscribe((val) => {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/auth/callback/+page.svelte:165:12
+Error: Variable 'error' implicitly has an 'any' type. (ts)
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
+      {#if error}
+        <div class="text-red-600 mb-6">
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:654:29
+Warn: Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events (svelte)
+                          {#if activeDropdown === report.id}
+                            <div 
+                              class="fixed bg-white rounded-md shadow-lg border border-gray-200 py-1 z-[9999]"
+                              use:positionDropdown={report.id}
+                              on:click|stopPropagation
+                            >
+                              <button 
+                                class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
+                                on:click={() => { openScorecard(report.id); activeDropdown = null; }}
+                              >
+                                <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                View Post
+                              </button>
+                              {#if reportOptimizations.has(report.id)}
+                              <button 
+                                class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
+                                on:click={() => { openScorecard(report.id, { fromOptimized: true }); activeDropdown = null; }}
+                              >
+                                <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                View Optimized Post
+                              </button>
+                              {/if}
+                              <!-- {#if reportsWithRewrites && reportsWithRewrites.includes(report.id)}
+                                <button 
+                                  class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
+                                  on:click={() => { viewRewriteHistory(report.id); activeDropdown = null; }}
+                                >
+                                  <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                  Previous Rewrites
+                                </button>
+                              {/if} -->
+                              <button 
+                                class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
+                                on:click={() => { viewJsonLd(report.id); activeDropdown = null; }}
+                              >
+                                <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                View JSON-LD
+                              </button>
+                              <div class="my-1 h-px bg-gray-100"></div>
+                              <button 
+                                class="w-full text-left px-2 py-1.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 rounded-sm flex items-center"
+                                on:click={() => { deleteReport(report.id); activeDropdown = null; }}
+                              >
+                                <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                Delete
+                              </button>
+                            </div>
+                          {/if}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:654:29
+Warn: `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions (svelte)
+                          {#if activeDropdown === report.id}
+                            <div 
+                              class="fixed bg-white rounded-md shadow-lg border border-gray-200 py-1 z-[9999]"
+                              use:positionDropdown={report.id}
+                              on:click|stopPropagation
+                            >
+                              <button 
+                                class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
+                                on:click={() => { openScorecard(report.id); activeDropdown = null; }}
+                              >
+                                <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                View Post
+                              </button>
+                              {#if reportOptimizations.has(report.id)}
+                              <button 
+                                class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
+                                on:click={() => { openScorecard(report.id, { fromOptimized: true }); activeDropdown = null; }}
+                              >
+                                <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                View Optimized Post
+                              </button>
+                              {/if}
+                              <!-- {#if reportsWithRewrites && reportsWithRewrites.includes(report.id)}
+                                <button 
+                                  class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
+                                  on:click={() => { viewRewriteHistory(report.id); activeDropdown = null; }}
+                                >
+                                  <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                  Previous Rewrites
+                                </button>
+                              {/if} -->
+                              <button 
+                                class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
+                                on:click={() => { viewJsonLd(report.id); activeDropdown = null; }}
+                              >
+                                <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                View JSON-LD
+                              </button>
+                              <div class="my-1 h-px bg-gray-100"></div>
+                              <button 
+                                class="w-full text-left px-2 py-1.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 rounded-sm flex items-center"
+                                on:click={() => { deleteReport(report.id); activeDropdown = null; }}
+                              >
+                                <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                Delete
+                              </button>
+                            </div>
+                          {/if}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:27:7
+Error: Variable 'reports' implicitly has type 'any[]' in some locations where its type cannot be determined. (ts)
+  // Client-side data state
+  let reports = [];
+  let pagination = { currentPage: data.page, totalPages: 1, totalReports: 0 };
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:37:7
+Error: Variable 'selectedReports' implicitly has type 'any[]' in some locations where its type cannot be determined. (ts)
+  
+  let selectedReports = [];
+  let activeDropdown = null;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:38:7
+Error: Variable 'activeDropdown' implicitly has type 'any' in some locations where its type cannot be determined. (ts)
+  let selectedReports = [];
+  let activeDropdown = null;
+  let loading = false;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:41:7
+Error: Variable 'currentUserId' implicitly has type 'any' in some locations where its type cannot be determined. (ts)
+  let dropdownPosition = { top: 0, left: 0 };
+  let currentUserId = null;
+  let reportsChannel = null;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:42:7
+Error: Variable 'reportsChannel' implicitly has type 'any' in some locations where its type cannot be determined. (ts)
+  let currentUserId = null;
+  let reportsChannel = null;
+  let realtimeSubscribed = false;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:44:7
+Error: Variable 'authSubscription' implicitly has type 'any' in some locations where its type cannot be determined. (ts)
+  let realtimeSubscribed = false;
+  let authSubscription = null;
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:97:11
+Error: Argument of type '() => Promise<() => void>' is not assignable to parameter of type '() => (() => any) | Promise<never>'.
+  Type 'Promise<() => void>' is not assignable to type '(() => any) | Promise<never>'.
+    Type 'Promise<() => void>' is not assignable to type 'Promise<never>'.
+      Type '() => void' is not assignable to type 'never'. (ts)
+
+  onMount(async () => {
+    console.log('[DEBUG] Dashboard onMount called');
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:112:50
+Error: Variable 'currentUserId' implicitly has an 'any' type. (ts)
+            userEmail = session?.user?.email || userEmail;
+            currentUserId = session?.user?.id || currentUserId;
+            if (session?.access_token) {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:133:11
+Error: Variable 'reportsChannel' implicitly has an 'any' type. (ts)
+      document.removeEventListener('click', handleClickOutside);
+      if (reportsChannel) {
+        try { supabase.removeChannel(reportsChannel); } catch {}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:138:11
+Error: Variable 'authSubscription' implicitly has an 'any' type. (ts)
+      }
+      if (authSubscription) {
+        try { authSubscription.unsubscribe(); } catch {}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:198:32
+Error: Variable 'currentUserId' implicitly has an 'any' type. (ts)
+  function setupRealtime() {
+    if (realtimeSubscribed || !currentUserId) return;
+    
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:241:34
+Error: Parameter 'report' implicitly has an 'any' type. (ts)
+  // Helper function to calculate overall score from report data
+  function calculateOverallScore(report) {
+    if (report.overallScore) return report.overallScore;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:245:44
+Error: Parameter 'cat' implicitly has an 'any' type. (ts)
+    if (report.categories && Array.isArray(report.categories)) {
+      const scores = report.categories.map(cat => cat.score || 0);
+      if (scores.length > 0) {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:247:42
+Error: Parameter 'sum' implicitly has an 'any' type. (ts)
+      if (scores.length > 0) {
+        return Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
+      }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:247:47
+Error: Parameter 'score' implicitly has an 'any' type. (ts)
+      if (scores.length > 0) {
+        return Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
+      }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:255:21
+Error: Parameter 'r' implicitly has an 'any' type. (ts)
+  // Normalization helpers
+  function getTitle(r) {
+    return r.title || r.job_title || r.jobTitle || r.jobtitle || 'Untitled';
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:258:23
+Error: Parameter 'r' implicitly has an 'any' type. (ts)
+  }
+  function getCompany(r) {
+    return r.company || r.company_name || r.companyName || 'N/A';
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:261:20
+Error: Parameter 'r' implicitly has an 'any' type. (ts)
+  }
+  function getDate(r) {
+    const d = r.date || r.created_at || r.createdAt || r.savedat;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:269:21
+Error: Parameter 'r' implicitly has an 'any' type. (ts)
+  }
+  function getScore(r) {
+    const dbScore = r.totalscore ?? r.total_score;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:279:22
+Error: Parameter 'item' implicitly has an 'any' type. (ts)
+
+  function dateValue(item) {
+    const dateStr = item?.savedat || item?.created_at || item?.createdAt;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:287:26
+Error: Parameter 'reportId' implicitly has an 'any' type. (ts)
+  // Report action functions
+  function openScorecard(reportId, { fromOptimized = false } = {}) {
+    if (!reportId) return;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:296:23
+Error: Parameter 'reportId' implicitly has an 'any' type. (ts)
+
+  function viewReport(reportId) {
+    openScorecard(reportId);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:300:33
+Error: Parameter 'reportId' implicitly has an 'any' type. (ts)
+
+  async function optimizeReport(reportId) {
+    loading = true;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:308:43
+Error: 'error' is of type 'unknown'. (ts)
+      console.error('Error optimizing report:', error);
+      toast.error(`Optimization failed: ${error.message}`);
+    } finally {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:314:31
+Error: Parameter 'reportId' implicitly has an 'any' type. (ts)
+
+  async function deleteReport(reportId) {
+    if (!confirm('Are you sure you want to delete this report?')) {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:342:31
+Error: Parameter 'reportId' implicitly has an 'any' type. (ts)
+
+  function viewRewriteHistory(reportId) {
+    goto(`/rewrite-history?report=${reportId}`);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:346:23
+Error: Parameter 'reportId' implicitly has an 'any' type. (ts)
+
+  function viewJsonLd(reportId) {
+    goto(`/json-ld?report=${reportId}`);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:350:31
+Error: Parameter 'reportId' implicitly has an 'any' type. (ts)
+
+  function toggleSelectReport(reportId) {
+    if (selectedReports.includes(reportId)) {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:351:9
+Error: Variable 'selectedReports' implicitly has an 'any[]' type. (ts)
+  function toggleSelectReport(reportId) {
+    if (selectedReports.includes(reportId)) {
+      selectedReports = selectedReports.filter(id => id !== reportId);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:352:25
+Error: Variable 'selectedReports' implicitly has an 'any[]' type. (ts)
+    if (selectedReports.includes(reportId)) {
+      selectedReports = selectedReports.filter(id => id !== reportId);
+    } else {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:354:29
+Error: Variable 'selectedReports' implicitly has an 'any[]' type. (ts)
+    } else {
+      selectedReports = [...selectedReports, reportId];
+    }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:362:25
+Error: Variable 'reports' implicitly has an 'any[]' type. (ts)
+    } else {
+      selectedReports = reports.map(report => report.id);
+    }
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:374:19
+Error: Variable 'selectedReports' implicitly has an 'any[]' type. (ts)
+        .update({ archived: true })
+        .in('id', selectedReports);
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:393:31
+Error: Parameter 'event' implicitly has an 'any' type. (ts)
+
+  function handleClickOutside(event) {
+    if (activeDropdown && !event.target.closest('[data-dropdown-trigger]')) {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:394:9
+Error: Variable 'activeDropdown' implicitly has an 'any' type. (ts)
+  function handleClickOutside(event) {
+    if (activeDropdown && !event.target.closest('[data-dropdown-trigger]')) {
+      activeDropdown = null;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:399:27
+Error: Parameter 'reportId' implicitly has an 'any' type. (ts)
+
+  function toggleDropdown(reportId, event) {
+    event?.preventDefault();
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:399:37
+Error: Parameter 'event' implicitly has an 'any' type. (ts)
+
+  function toggleDropdown(reportId, event) {
+    event?.preventDefault();
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:403:9
+Error: Variable 'activeDropdown' implicitly has an 'any' type. (ts)
+    
+    if (activeDropdown === reportId) {
+      activeDropdown = null;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:410:29
+Error: Parameter 'node' implicitly has an 'any' type. (ts)
+
+  function positionDropdown(node, reportId) {
+    if (activeDropdown === reportId) {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:410:35
+Error: Parameter 'reportId' implicitly has an 'any' type. (ts)
+
+  function positionDropdown(node, reportId) {
+    if (activeDropdown === reportId) {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:411:9
+Error: Variable 'activeDropdown' implicitly has an 'any' type. (ts)
+  function positionDropdown(node, reportId) {
+    if (activeDropdown === reportId) {
+      const trigger = document.querySelector(`[data-dropdown-trigger="${reportId}"]`);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:421:31
+Error: Parameter 'payload' implicitly has an 'any' type. (ts)
+
+  function handleReportChange(payload) {
+    try {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:427:31
+Error: Variable 'currentUserId' implicitly has an 'any' type. (ts)
+      if (evt === 'INSERT') {
+        if (newRow.userid !== currentUserId) return;
+        reports = [newRow, ...reports].sort((a, b) => dateValue(b) - dateValue(a));
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:428:31
+Error: Variable 'reports' implicitly has an 'any[]' type. (ts)
+        if (newRow.userid !== currentUserId) return;
+        reports = [newRow, ...reports].sort((a, b) => dateValue(b) - dateValue(a));
+        pagination = { ...pagination, totalReports: (pagination.totalReports || 0) + 1 };
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:431:19
+Error: Variable 'reports' implicitly has an 'any[]' type. (ts)
+      } else if (evt === 'UPDATE') {
+        reports = reports.map((r) => (r.id === newRow.id ? { ...r, ...newRow } : r));
+      } else if (evt === 'DELETE') {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:434:19
+Error: Variable 'reports' implicitly has an 'any[]' type. (ts)
+        const before = reports.length;
+        reports = reports.filter((r) => r.id !== (oldRow.id || oldRow.reportid));
+        if (reports.length < before) {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:538:26
+Error: Variable 'reports' implicitly has an 'any[]' type. (ts)
+                <Table.Body class="text-xs">
+                  {#each reports as report}
+                    <Table.Row class="hover:bg-gray-50">
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:542:36
+Error: Variable 'selectedReports' implicitly has an 'any[]' type. (ts)
+                        <Checkbox.Root 
+                          checked={selectedReports.includes(report.id)}
+                          on:click={(e) => { e.stopPropagation(); toggleSelectReport(report.id); }}
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/dashboard/+page.svelte:653:32
+Error: Variable 'activeDropdown' implicitly has an 'any' type. (ts)
+                          
+                          {#if activeDropdown === report.id}
+                            <div 
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/guest-reports/+page.svelte:15:28
+Error: Property 'id' does not exist on type 'never'. (ts)
+    const unsubscribe = user.subscribe((val) => {
+      isLoggedIn = !!(val?.id);
+      
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/json-ld/+page.svelte:9:7
+Error: Variable 'reportId' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+
+  let reportId = null;
+  let jsonLdData = null;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/json-ld/+page.svelte:10:7
+Error: Variable 'jsonLdData' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+  let reportId = null;
+  let jsonLdData = null;
+  let loading = true;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/json-ld/+page.svelte:12:7
+Error: Variable 'error' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+  let loading = true;
+  let error = null;
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/json-ld/+page.svelte:28:78
+Error: Variable 'reportId' implicitly has an 'any' type. (js)
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/generate-jsonld/${reportId}`);
+      if (!response.ok) {
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/json-ld/+page.svelte:34:15
+Error: 'err' is of type 'unknown'. (js)
+    } catch (err) {
+      error = err.message;
+      console.error('Error fetching JSON-LD:', err);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/json-ld/+page.svelte:42:10
+Error: Variable 'jsonLdData' implicitly has an 'any' type. (js)
+  function downloadJsonLd() {
+    if (!jsonLdData) return;
+    
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/json-ld/+page.svelte:49:33
+Error: Variable 'reportId' implicitly has an 'any' type. (js)
+    a.href = url;
+    a.download = `job-posting-${reportId}.json`;
+    document.body.appendChild(a);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/json-ld/+page.svelte:57:10
+Error: Variable 'jsonLdData' implicitly has an 'any' type. (js)
+  function copyToClipboard() {
+    if (!jsonLdData) return;
+    
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/json-ld/+page.svelte:84:13
+Error: Variable 'error' implicitly has an 'any' type. (js)
+    </div>
+  {:else if error}
+    <Alert.Root class="mb-6">
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/json-ld/+page.svelte:90:13
+Error: Variable 'jsonLdData' implicitly has an 'any' type. (js)
+    </Alert.Root>
+  {:else if jsonLdData}
+    <div class="bg-white rounded-lg shadow-sm border p-6">
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/pricing/+page.svelte:75:18
+Error: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ monthly: number; annual: number; }'.
+  No index signature with a parameter of type 'string' was found on type '{ monthly: number; annual: number; }'. (ts)
+  $: selectedPlan = plans.find(p => p.id === selectedPlanId);
+  $: basePrice = selectedPlan?.price[billingCycle] ?? 0;
+  $: usersPrice = additionalUsers * 10;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/pricing/+page.svelte:82:23
+Error: Parameter 'plan' implicitly has an 'any' type. (ts)
+
+  function selectPlan(plan) {
+    selectedPlanId = plan.id;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/pricing/+page.svelte:172:54
+Error: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ monthly: number; annual: number; }'.
+  No index signature with a parameter of type 'string' was found on type '{ monthly: number; annual: number; }'. (ts)
+                <div class="flex items-baseline gap-2">
+                  <span class="text-2xl font-bold">${plan.price[billingCycle]}</span>
+                  <span class="text-muted-foreground">/{billingCycle === 'monthly' ? 'month' : 'year'}</span>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/pricing/+page.svelte:257:41
+Error: 'selectedPlan' is possibly 'undefined'. (ts)
+          <div class="flex justify-between items-center mb-2">
+            <div class="font-semibold">{selectedPlan.name} Plan ({billingCycle === 'monthly' ? 'Monthly' : 'Annual'})</div>
+            <div class="font-bold text-lg">${basePrice}</div>
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/pricing/+page.svelte:354:50
+Error: Object literal may only specify known properties, and '"collapsible"' does not exist in type 'Omit<AccordionRootSinglePropsWithoutHTML, "children" | "child"> & { child?: Snippet<[{ props: Record<string, unknown>; }]> | undefined; children?: Snippet<...> | undefined; style?: any; ref?: HTMLElement | ... 1 more ... | undefined; } & Without<...>'. (ts)
+    <h2 class="text-2xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
+    <Accordion.Root class="w-full" type="single" collapsible>
+      <Accordion.Item value="item-1">
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/results/+page.svelte:18:17
+Error: Module '"$lib/components/navigation/Breadcrumbs.svelte"' has no exported member 'BreadcrumbItem'. Did you mean to use 'import BreadcrumbItem from "$lib/components/navigation/Breadcrumbs.svelte"' instead? (ts)
+  import Breadcrumbs from '$lib/components/navigation/Breadcrumbs.svelte';
+  import type { BreadcrumbItem } from '$lib/components/navigation/Breadcrumbs.svelte';
+
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/results/+page.svelte:39:20
+Error: Property 'title' does not exist on type 'Report'. (ts)
+    currentReport?.job_title ??
+    currentReport?.title ??
+    currentReport?.jobTitle ??
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/results/+page.svelte:40:20
+Error: Property 'jobTitle' does not exist on type 'Report'. Did you mean 'job_title'? (ts)
+    currentReport?.title ??
+    currentReport?.jobTitle ??
+    currentReport?.job_name ??
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/results/+page.svelte:41:20
+Error: Property 'job_name' does not exist on type 'Report'. (ts)
+    currentReport?.jobTitle ??
+    currentReport?.job_name ??
+    'Scorecard';
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/results/+page.svelte:91:28
+Error: Property 'id' does not exist on type 'never'. (ts)
+    const unsubscribeUser = user.subscribe((val) => {
+      isLoggedIn = !!(val?.id);
+    });
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/results/+page.svelte:218:28
+Error: Property 'optimizationData' does not exist on type 'Report'. (ts)
+      // Check if report has optimization data
+      if (report && report.optimizationData) {
+        console.log('[DEBUG] Found report.optimizationData:', report.optimizationData);
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/results/+page.svelte:219:70
+Error: Property 'optimizationData' does not exist on type 'Report'. (ts)
+      if (report && report.optimizationData) {
+        console.log('[DEBUG] Found report.optimizationData:', report.optimizationData);
+        const opt = report.optimizationData;
+
+
+/Users/louiscollins/development.nosync/ai-job-posting-audit/frontend-ai-job-posting-score/src/routes/results/+page.svelte:220:28
+Error: Property 'optimizationData' does not exist on type 'Report'. (ts)
+        console.log('[DEBUG] Found report.optimizationData:', report.optimizationData);
+        const opt = report.optimizationData;
+        const rewriteData = {
+
+
+====================================
+svelte-check found 428 errors and 81 warnings in 81 files
