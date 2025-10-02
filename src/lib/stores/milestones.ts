@@ -1,5 +1,6 @@
 import { browser } from '$app/environment';
 import { readable } from 'svelte/store';
+import { env } from '$env/dynamic/public';
 
 export interface MilestoneEvent {
   type: string;
@@ -26,8 +27,11 @@ interface PollState {
 const DEFAULT_INTERVAL = 1500;
 const DEFAULT_THROTTLE = 600;
 
+// API base URL (same as audit.js)
+const API_BASE_URL = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
+
 async function fetchMilestones(sessionId: string, since: number) {
-  const url = new URL(`${window.location.origin}/api/milestones/${sessionId}`);
+  const url = new URL(`${API_BASE_URL}/api/milestones/${sessionId}`);
   if (since) {
     url.searchParams.set('since', String(since));
   }
