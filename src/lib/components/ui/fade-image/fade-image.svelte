@@ -51,7 +51,7 @@
   <img 
     {src} 
     {alt}
-    class="w-full h-full object-cover"
+    class="w-full h-full object-cover rounded-2xl"
     style="mask-image: {getMaskGradient(fadeDirection, fadeIntensity)}; 
            -webkit-mask-image: {getMaskGradient(fadeDirection, fadeIntensity)};"
   />

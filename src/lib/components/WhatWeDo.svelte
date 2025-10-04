@@ -44,14 +44,14 @@
       </div>
       
       <!-- Right column with image flush to edge -->
-      <div class="w-full hidden xl:block xl:w-[45%] relative">
-        <!-- <FadeImage 
-          src="/jobPostScoreBrowser-3.png"
+      <div class="w-full hidden xl:block xl:w-[45%] relative rounded-2xl">
+        <FadeImage 
+          src="/Generated Image September 18, 2025 - 12_24PM.png"
           alt="JobPostScore Group" 
           fadeDirection="bottom"
           fadeIntensity="none"
-          className="absolute top-0 right-0 object-contain"
-        /> -->
+          className=" px-6 rounded-2xl"
+        /> 
       </div>
     </div>
     

@@ -181,7 +181,7 @@
 	<Section>
 		<BetaBadge />
 	</Section>
-	{#if showLearnMore}
+	<!-- {#if showLearnMore}
 		<Section containerClass="container mx-auto mt-24">
 			<LearnMore
 				eyebrow=""
@@ -200,9 +200,9 @@
 						<div class="flex items-center gap-3 text-white">
 							<span class="text-4xl tracking-[0.05em] text-white/100"></span>
 							<Logo variant="white" imgClass="h-8 w-auto" />
-						</div>
+						</div>-->
 						<!-- <p class="text-xs uppercase tracking-[0.28em] text-white/70">What We Stand For</p> -->
-						<h2 class="text-2xl font-aeonik tracking-wide sm:text-5xl">We help teams create job postings built for the AI-driven hiring era.</h2>
+						<!--<h2 class="text-2xl font-aeonik tracking-wide sm:text-5xl">We help teams create job postings built for the AI-driven hiring era.</h2>
 						<p class="text-lg text-white/100 sm:text-2xl mt-3">
 							Make every job post discoverable, clear, and compliant.
 						</p>
@@ -210,13 +210,13 @@
 				</svelte:fragment>
 			</LearnMore>
 		</Section>
-	{/if}
+	{/if}--->
 	
 
 	<!-- What We Do Section -->
-	<!-- <Section containerClass="z-10">
+	<Section containerClass="z-10">
 		<WhatWeDo />
-	</Section> -->
+	</Section>
 
 	<!-- Call To Action Section -->
 	<Section containerClass="-my-14">
@@ -230,8 +230,8 @@
 
 	<!-- Refined Grid Section -->
 	<Section containerClass="">
-		<!-- <RefinedGrid /> -->
-		<RefinedGridV2 />
+		<RefinedGrid />
+		<!-- <RefinedGridV2 /> -->
 	</Section>
 
 	<!-- Call To Action Section -->
@@ -247,7 +247,7 @@
 		</CallToAction>
 	</Section>
 
-	<div class="container mx-auto z-10"><HowMyJobPostScore /></div>
+	<!-- <div class="container mx-auto z-10"><HowMyJobPostScore /></div> -->
 
 	<!-- <div class="container mx-auto z-10"></div> -->
 
