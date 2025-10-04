@@ -11,7 +11,6 @@
   export let duration = 1900; // ms
   export let showPercent = true;
   export let backgroundSrc = null; // optional background image
-  export let backgroundScale = 1.3; // Scale background larger than progress
 
   // Geometry based on a 100x100 viewBox
   // Scale stroke width to viewBox dimensions (100x100)

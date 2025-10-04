@@ -1,14 +1,18 @@
  import { writable } from 'svelte/store';
- import { browser } from '$app/environment';
- import { supabase } from '$lib/supabaseClient';
- import { GuestReportsAPI } from '$lib/api/reports';
- import { formatReportForDB } from '$lib/utils/reportMapper';
+import { browser } from '$app/environment';
+import { supabase } from '$lib/supabaseClient';
+import { GuestReportsAPI } from '$lib/api/reports';
+import { formatReportForDB } from '$lib/utils/reportMapper';
 
- // Using shared Supabase client from $lib/supabaseClient
+/** @typedef {import('@supabase/supabase-js').User} SupabaseUser */
+
+// Using shared Supabase client from $lib/supabaseClient
 
 // Create a store for the user
 function createUserStore() {
-  const { subscribe, set, update } = writable(null);
+  /** @type {import('svelte/store').Writable<SupabaseUser | null>} */
+  const store = writable(/** @type {SupabaseUser | null} */ (null));
+  const { subscribe, set, update } = store;
 
   return {
     subscribe,
@@ -43,6 +47,9 @@ function createUserStore() {
       return { error };
     },
     // Migrate guest reports to authenticated user account
+    /**
+     * @param {string | null | undefined} userId
+     */
     migrateGuestReports: async (userId) => {
       if (!browser || !userId) return { success: false, reportId: null };
       

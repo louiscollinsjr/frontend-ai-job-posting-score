@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import Button from '$lib/components/ui/button/button.svelte';
   import * as Dialog from '$lib/components/ui/dialog';
@@ -7,12 +7,19 @@
   
   export let open = false;
   export let jobTitle = '';
-  export let currentVersion = null;
+  export let currentVersion: { version_number: number; created_at: string } | null = null;
   export let isPublishing = false;
   
   let selectedIntegration = 'finalize';
   
-  const integrations = [
+  type Integration = {
+    value: string;
+    label: string;
+    description: string;
+    disabled?: boolean;
+  };
+  
+  const integrations: Integration[] = [
     { value: 'finalize', label: 'Finalize Version', description: 'Mark this version as complete and ready for use' }
   ];
   
@@ -48,8 +55,8 @@
         </div>
       {/if}
       
-      <div class="space-y-2">
-        <label class="text-sm font-medium">Publishing Options</label>
+      <fieldset class="space-y-2">
+        <legend class="text-sm font-medium">Publishing Options</legend>
         {#each integrations as integration}
           <label class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 {integration.disabled ? 'opacity-50 cursor-not-allowed' : ''}">
             <input 
@@ -68,7 +75,7 @@
             </div>
           </label>
         {/each}
-      </div>
+      </fieldset>
     </div>
     
     <Dialog.Footer class="flex gap-2">

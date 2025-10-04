@@ -37,6 +37,7 @@
   
     // State to track the current image index for each card
     let currentImageIndices = sections.map(() => 0);
+    /** @type {ReturnType<typeof setInterval> | undefined} */
     let intervalId;
   
     onMount(() => {

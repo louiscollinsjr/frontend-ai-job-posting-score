@@ -1,9 +1,50 @@
-<script>
-  export let src;
+<script lang="ts" context="module">
+  export type FadeDirection = 'bottom' | 'top' | 'left' | 'right';
+  export type FadeIntensity = 'none' | 'light' | 'medium' | 'strong';
+</script>
+
+<script lang="ts">
+
+  const gradientStops: Record<FadeIntensity, string[]> = {
+    light: [
+      'rgba(0,0,0,1) 0%', 
+      'rgba(0,0,0,0.9) 50%', 
+      'rgba(0,0,0,0) 100%'
+    ],
+    medium: [
+      'rgba(0,0,0,1) 0%', 
+      'rgba(0,0,0,0.7) 50%', 
+      'rgba(0,0,0,0) 100%'
+    ],
+    strong: [
+      'rgba(0,0,0,1) 0%', 
+      'rgba(0,0,0,0.2) 50%', 
+      'rgba(0,0,0,0) 100%'
+    ],
+    none: []
+  };
+
+  const gradientMap: Record<FadeDirection, (stops: string[]) => string> = {
+    bottom: (stops: string[]) => `linear-gradient(to bottom, ${stops.join(', ')})`,
+    top: (stops: string[]) => `linear-gradient(to top, ${stops.join(', ')})`,
+    left: (stops: string[]) => `linear-gradient(to left, ${stops.join(', ')})`,
+    right: (stops: string[]) => `linear-gradient(to right, ${stops.join(', ')})`
+  };
+
+  export function getMaskGradient(direction: FadeDirection, intensity: FadeIntensity): string {
+    if (intensity === 'none') {
+      return 'none';
+    }
+
+    const stops = gradientStops[intensity];
+    return gradientMap[direction](stops);
+  }
+
+  export let src: string;
   export let alt = '';
-  export let fadeDirection = 'bottom'; // Options: 'bottom', 'top', 'left', 'right'
-  export let fadeIntensity = 'medium'; // Options: 'none', 'light', 'medium', 'strong'
-  export let className = ''; // Additional classes
+  export let fadeDirection: FadeDirection = 'bottom';
+  export let fadeIntensity: FadeIntensity = 'medium';
+  export let className = '';
 </script>
 
 <div class="relative w-full h-full overflow-hidden {className}">
@@ -15,44 +56,3 @@
            -webkit-mask-image: {getMaskGradient(fadeDirection, fadeIntensity)};"
   />
 </div>
-
-<script context="module">
-  function getMaskGradient(direction, intensity) {
-    // No fade if intensity is 'none'
-    if (intensity === 'none') {
-      return 'none';
-    }
-    
-    // Define gradient stops based on intensity
-    const gradientStops = {
-      light: [
-        'rgba(0,0,0,1) 0%', 
-        'rgba(0,0,0,0.9) 50%', 
-        'rgba(0,0,0,0) 100%'
-      ],
-      medium: [
-        'rgba(0,0,0,1) 0%', 
-        'rgba(0,0,0,0.7) 50%', 
-        'rgba(0,0,0,0) 100%'
-      ],
-      strong: [
-        'rgba(0,0,0,1) 0%', 
-        'rgba(0,0,0,0.2) 50%', 
-        'rgba(0,0,0,0) 100%'
-      ]
-    };
-    
-    // Get the appropriate gradient stops for the selected intensity
-    const stops = gradientStops[intensity] || gradientStops.medium;
-    
-    // Create gradient based on direction
-    const gradientMap = {
-      bottom: `linear-gradient(to bottom, ${stops.join(', ')})`,
-      top: `linear-gradient(to top, ${stops.join(', ')})`,
-      left: `linear-gradient(to left, ${stops.join(', ')})`,
-      right: `linear-gradient(to right, ${stops.join(', ')})`,
-    };
-    
-    return gradientMap[direction] || gradientMap.bottom;
-  }
-</script>

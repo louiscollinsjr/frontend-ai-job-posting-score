@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import WhatWeDo from '$lib/components/WhatWeDo.svelte';
 	import CallToAction from '$lib/components/CallToAction.svelte';
 	import { auditStore } from '$lib/stores/audit.js';
@@ -21,12 +21,13 @@
 	import RefinedGridV2 from '$lib/components/RefinedGridV2.svelte';
 	import LearnMore from '$lib/components/LearnMore.svelte';
 	import HowMyJobPostScore from '$lib/components/HowMyJobPostScore.svelte';
+	import type { AuditResponse } from '$lib/stores/audit';
 
 	// Supports weights 400-900
 
 	// Store subscription
 	let isLoading = false;
-	let results = null;
+	let results: AuditResponse | null = null;
 	let showResults = false;
 	
 
@@ -44,7 +45,7 @@
 	// Subscribe to the store on mount (client-only)
 
 	// Handle audit form submission
-	function handleAudit(event) {
+	function handleAudit(event: CustomEvent) {
 		const { type, data, results } = event.detail;
 
 		// If results are already provided by the component, use them directly
@@ -67,7 +68,7 @@
 	}
 
 	// Handle export request
-	async function handleExport(event) {
+	async function handleExport(event: CustomEvent) {
 		const { format } = event.detail;
 		if (results) {
 			try {
@@ -269,43 +270,4 @@
 </div>
 
 <style lang="scss">
-	.single-sweep {
-		background-image: linear-gradient(
-			90deg,
-			#000000 0%,
-			#000000 35%,
-			#c679c4 40%,
-			#fa3d1d 42%,
-			#ffb005 44%,
-			#e1e1fe 46%,
-			#0358f7 48%,
-			#000000 50%,
-			#000000 100%
-		);
-		background-size: 800% 100%;
-		background-position: 100% 0;
-		will-change: background-position;
-		-webkit-background-clip: text;
-		background-clip: text;
-		-webkit-text-fill-color: transparent;
-		color: transparent;
-		filter: blur(0);
-		animation: chroma-sweep 2s ease-in-out 3s 1 forwards;
-		@supports not (background-clip: text) {
-			color: #000;
-		}
-	}
-
-	@keyframes chroma-sweep {
-		0% {
-			-webkit-text-fill-color: initial;
-			background-position: 100% 0;
-			filter: blur(0);
-		}
-		100% {
-			-webkit-text-fill-color: transparent;
-			background-position: 0 0;
-			filter: blur(0);
-		}
-	}
 </style>

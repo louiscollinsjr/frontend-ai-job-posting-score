@@ -9,23 +9,29 @@
 	const urlSchema = z
 		.string()
 		.url({ message: 'Please enter a valid URL (must include http:// or https://)' })
-		.refine((val) => val.startsWith('https://') || val.startsWith('http://'), {
+		.refine((val: string) => val.startsWith('https://') || val.startsWith('http://'), {
 			message: 'URL must start with https:// or http://'
 		});
 
 	// Lightweight debounce helper
-	function debounce(fn, delay = 200) {
-		let t;
-		return (...args) => {
-			clearTimeout(t);
+	function debounce<T extends unknown[]>(
+		fn: (...args: T) => void,
+		delay = 200
+	): (...args: T) => void {
+		let t: ReturnType<typeof setTimeout> | undefined;
+		return (...args: T) => {
+			if (t !== undefined) {
+				clearTimeout(t);
+			}
 			t = setTimeout(() => fn(...args), delay);
 		};
 	}
 
 	import { createEventDispatcher } from 'svelte';
-	import { auditJobUrl, auditJobText } from '$lib/api/audit.js';
+	import { auditJobUrl, auditJobText } from '$lib/api/audit';
+	import type { AuditResult } from '$lib/api/audit';
 	import { goto } from '$app/navigation';
-	import { auditStore } from '$lib/stores/audit.js';
+	import { auditStore } from '$lib/stores/audit';
 	import { GuestReportsAPI } from '$lib/api/reports';
 	import { user } from '$lib/stores/auth';
 	import CircleAlertIcon from '@lucide/svelte/icons/circle-alert';
@@ -35,43 +41,47 @@
 	import { MESSAGE_MODE } from '$lib/config/messaging';
 
 	// Create a dispatcher to send events to parent components
-	const dispatch = createEventDispatcher();
+	const dispatch = createEventDispatcher<{
+	audit: { type: AuditInputMode; data: string; results: AuditResult };
+}>();
 
 	// Form state variables
-	let inputType = 'url'; // Default to URL input
+	type AuditInputMode = 'url' | 'text';
+
+	let inputType: AuditInputMode = 'url'; // Default to URL input
 	let jobUrl = '';
 	let jobDescription = '';
-	let selectedFile = null;
+	let selectedFile: File | null = null;
 	let isLoading = false;
 	let isUrlValid = true;
 	let error = '';
 	let urlInputEl: HTMLInputElement | null = null;
 	let isLoggedIn = false;
-	
+
 	// Progress tracking
 	let currentStep = '';
 	let progressManager: AnalysisProgressManager | null = null;
 
 	// Subscribe to auth state
-	user.subscribe((val) => {
+	user.subscribe((val: unknown) => {
 		isLoggedIn = !!val;
 	});
 
 	// Form validation state
 	let isDescriptionValid = true;
-	const validateUrlDebounced = debounce((value) => {
+	const validateUrlDebounced = debounce((value: string) => {
 		isUrlValid = validateUrl(value);
 		error = '';
 	}, 200);
 
 	// Toggle between URL and text/file input
-	function setInputType(type) {
+	function setInputType(type: AuditInputMode) {
 		inputType = type;
 		error = ''; // Clear any errors when switching
 	}
 
 	// Validate URL format
-	function validateUrl(url) {
+	function validateUrl(url: string) {
 		const str = (url || '').trim();
 		if (!str) return false;
 		try {
@@ -83,13 +93,14 @@
 	}
 
 	// Validate text input
-	function validateDescription(text) {
+	function validateDescription(text: string) {
 		return text.trim().length > 50; // Minimum 50 characters
 	}
 
 	// Handle file upload
-	async function handleFileUpload(event) {
-		const file = event.target.files[0];
+	async function handleFileUpload(event: Event) {
+		const input = event.currentTarget as HTMLInputElement | null;
+		const file = input?.files?.[0] ?? null;
 		if (file) {
 			selectedFile = file;
 			try {
@@ -105,7 +116,7 @@
 	}
 
 	// Handle form submission
-	async function handleSubmit() {
+	async function handleSubmit(): Promise<void> {
 		if (isLoading) return; // guard against double submit
 		error = '';
 
@@ -139,7 +150,7 @@
 
 		// Send data to API
 		try {
-			let results;
+			let results: AuditResult;
 
 			if (inputType === 'url') {
 				results = await auditJobUrl(jobUrl);
@@ -178,7 +189,7 @@
 
 			// Navigate to results page
 			goto('/results');
-		} catch (e) {
+		} catch (e: unknown) {
 			error = 'An error occurred while analyzing the job posting. Please try again.';
 			console.error('Audit submission error:', e);
 			
@@ -323,7 +334,7 @@
 			</div>
 			<!-- Mobile submit button -->
 			<div
-				class="sm:hidden form-submit mt-8 sticky bottom-4 relative max-w-md mx-auto"
+				class="sm:hidden form-submit mt-8 sticky bottom-4 max-w-md mx-auto"
 				style="padding-bottom: env(safe-area-inset-bottom)">
 				<SubmitButton type="submit" {isLoading} {currentStep} showSteps={true}>
 					Get
@@ -414,7 +425,7 @@
 					{/if}
 
 					<div
-						class="form-submit mt-8 sm:mt-24 sticky bottom-4 relative max-w-md mx-auto"
+						class="form-submit mt-8 sm:mt-24 sticky bottom-4 max-w-md mx-auto"
 						style="padding-bottom: env(safe-area-inset-bottom)">
 						<SubmitButton type="submit" {isLoading} {currentStep} showSteps={true}>
 							<span class="hidden sm:inline">Get</span>
@@ -434,17 +445,4 @@
 </section>
 
 <style>
-	.cta-button {
-		box-shadow:
-			0 4px 6px -1px rgba(0, 0, 0, 0.1),
-			0 2px 4px -1px rgba(0, 0, 0, 0.06);
-		transition: all 0.3s ease;
-	}
-
-	.cta-button:hover {
-		transform: translateY(-2px);
-		box-shadow:
-			0 10px 15px -3px rgba(0, 0, 0, 0.1),
-			0 4px 6px -2px rgba(0, 0, 0, 0.05);
-	}
 </style>

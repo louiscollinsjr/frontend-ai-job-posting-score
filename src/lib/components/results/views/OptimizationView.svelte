@@ -43,7 +43,7 @@
     originalText={rewriteData.original_text || currentReport?.original_report?.text || ''}
     improvedText={rewriteData.improvedText || ''}
     reportId={rewriteData.id}
-    initialData={rewriteData.optimizationData}
+    initialData={rewriteData.optimizationData as any}
     recommendations={rewriteData.recommendations || []}
     score={rewriteData.score || 0}
   />

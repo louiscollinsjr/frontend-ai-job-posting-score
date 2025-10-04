@@ -4,7 +4,7 @@
 	// Props
 	export let showMessage = false;
 	export let messageText = '';
-	export let messageType = 'info';
+	export const messageType = 'info';
 
 	// Create dispatcher for events
 	const dispatch = createEventDispatcher();

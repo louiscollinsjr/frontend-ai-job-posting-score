@@ -218,11 +218,9 @@
     {isLoggedIn}
     rewriteLoading={isOptimizing}
     loading={false}
-    fromOptimizedSelection={fromOptimizedSelection}
     on:save={handleSave}
     on:optimize={handleOptimize}
     {downloadReport}
-    {downloadJobData}
   />
   
   <GuestSavePrompt

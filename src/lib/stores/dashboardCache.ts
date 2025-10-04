@@ -258,7 +258,7 @@ function createDashboardCache() {
         const optimizationsMap = new Map();
         if (optimizationsData) {
           // Group all optimizations by report_id
-          const groupedByReport = optimizationsData.reduce((acc, opt) => {
+          const groupedByReport = optimizationsData.reduce((acc: Record<string, any[]>, opt: any) => {
             if (!acc[opt.report_id]) {
               acc[opt.report_id] = [];
             }
@@ -267,11 +267,11 @@ function createDashboardCache() {
           }, {} as Record<string, any[]>);
           
           // For each report, find lowest and highest scores across all versions
-          Object.entries(groupedByReport).forEach(([reportId, opts]) => {
-            const scores = opts.flatMap(opt => [
+          (Object.entries(groupedByReport) as [string, any[]][]).forEach(([reportId, opts]) => {
+            const scores = opts.flatMap((opt: any) => [
               opt.original_score, 
               opt.optimized_score
-            ]).filter(score => typeof score === 'number');
+            ]).filter((score: any) => typeof score === 'number');
             
             if (scores.length > 0) {
               optimizationsMap.set(reportId, {

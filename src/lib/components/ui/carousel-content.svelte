@@ -1,8 +1,8 @@
 <script lang="ts">
-  export let class: string = ''
+  export let className: string = ''
 </script>
 
-<div class={`relative overflow-hidden ${class}`}>
+<div class={`relative overflow-hidden ${className}`}>
   <div class="flex">
     <slot />
   </div>

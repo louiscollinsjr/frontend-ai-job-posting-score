@@ -1,7 +1,9 @@
-<script>
+<script lang="ts">
+  type GaugeSize = 'sm' | 'md' | 'lg';
+
   export let score = 0;
   export let maxScore = 100;
-  export let size = 'md'; // 'sm', 'md', 'lg'
+  export let size: GaugeSize = 'md'; // 'sm', 'md', 'lg'
   export let showLabel = true;
   export let label = 'Score';
   
@@ -9,19 +11,19 @@
   $: circumference = 2 * Math.PI * 40; // radius = 40
   $: strokeDashoffset = circumference - (percentage / 100) * circumference;
   
-  $: sizeClasses = {
+  const sizeClasses: Record<GaugeSize, string> = {
     sm: 'w-16 h-16',
     md: 'w-24 h-24', 
     lg: 'w-32 h-32'
   };
   
-  $: textSizeClasses = {
+  const textSizeClasses: Record<GaugeSize, string> = {
     sm: 'text-sm',
     md: 'text-lg',
     lg: 'text-2xl'
   };
   
-  $: labelSizeClasses = {
+  const labelSizeClasses: Record<GaugeSize, string> = {
     sm: 'text-xs',
     md: 'text-xs',
     lg: 'text-sm'

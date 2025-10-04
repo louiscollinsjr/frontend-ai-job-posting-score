@@ -1,9 +1,8 @@
-<script>
-  // Props
+<script lang="ts">
   // Props
   export let score = 0; // Overall score (0-100)
-  export let categories = {}; // Categories with scores
-  export let categoryLabels = []; // Category metadata
+  export let categories: Record<string, any> = {}; // Categories with scores
+  export let categoryLabels: Array<{key: string; label: string; max: number}> = []; // Category metadata
   import Logo from '$lib/components/Logo.svelte';
   import { getScoreColorHex100, getScoreBarClass100, getTextColorClass100 } from '$lib/utils/colors';
   
@@ -12,13 +11,13 @@
   // Using shared hex color mapping for consistency across components
   
   // Function to calculate score percentage for bar width (clamped between 0-100%)
-  function getScorePercentage(score, max) {
+  function getScorePercentage(score: number, max: number): number {
     const percentage = (score / max) * 100;
     return Math.min(Math.max(percentage, 0), 100); // Clamp between 0 and 100
   }
 
   // Function to get gradient class based on percentage - matches SVG gradient colors
-  function getGradientClass(percentage) {
+  function getGradientClass(percentage: number): string {
     if (percentage >= 75) {
       return 'bg-gradient-to-r from-green-800 via-green-600 to-green-500';
     } else if (percentage >= 50) {

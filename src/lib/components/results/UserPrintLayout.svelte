@@ -1,21 +1,22 @@
-<script>
+<script lang="ts">
   import PrintExecutiveHeader from './PrintExecutiveHeader.svelte';
   import PrintCategoryBreakdown from './PrintCategoryBreakdown.svelte';
   import PrintTopImprovements from './PrintTopImprovements.svelte';
+  import type { CategoryMetric } from './PrintCategoryBreakdown.svelte';
+  import type { ImprovementGroup } from './PrintTopImprovements.svelte';
 
-  export let processedResults;
-  export let overallScore;
-  export let scoreOffset;
-  export let circumference;
-  export let overallStatus;
-  export let hasOptimizedView;
-  export let optimizedScore;
-  export let results;
-  export let getScoreBadgeClasses;
-  export let categoryMetrics;
-  export let improvementGroups;
-  export let generalRecommendations;
-  export let formattedPrintedDate;
+  export let processedResults: {
+    id: string | null;
+    job_title: string | null;
+    job_url: string | null;
+  } & Record<string, unknown>;
+  export let overallScore: number;
+  export let overallStatus: { label: string; badge?: string };
+  export let hasOptimizedView: boolean;
+  export let categoryMetrics: CategoryMetric[];
+  export let improvementGroups: ImprovementGroup[];
+  export let generalRecommendations: string[];
+  export let formattedPrintedDate: string;
 </script>
 
 <!-- Authenticated User Print Layout - Full Details -->
@@ -28,8 +29,6 @@
       reportId={processedResults.id}
       jobUrl={processedResults.job_url}
       {overallScore}
-      {scoreOffset}
-      {circumference}
       statusLabel={overallStatus.label}
     />
   </div>

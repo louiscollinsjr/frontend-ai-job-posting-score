@@ -28,6 +28,19 @@ export type Report = {
     latestImprovedText?: string;
     // Some APIs may return JSON-LD alongside the report
     json_ld?: any;
+    // Optimization data from the optimizations table
+    optimizationData?: {
+        id?: string;
+        report_id?: string;
+        version_number?: number;
+        original_text_snapshot?: string;
+        optimized_text?: string;
+        original_score?: number;
+        optimized_score?: number;
+        change_log?: any;
+        unaddressed_items?: any;
+        created_at?: string;
+    } | null;
 };
 
 // Database shape for Supabase operations. Field names match DB columns.

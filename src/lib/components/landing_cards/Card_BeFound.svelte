@@ -8,6 +8,7 @@
 
 	export let background = '';
 	
+	/** @type {HTMLElement | undefined} */
 	let cardElement;
 	let isVisible = false;
 
@@ -27,7 +28,7 @@
 
 	const TYPE_SPEED = 40;
 
-	const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+	const delay = (/** @type {number} */ ms) => new Promise((res) => setTimeout(res, ms));
 
 	async function runAnimation() {
 		// Reset for looping if needed in future
@@ -94,10 +95,6 @@
       box-shadow: 0 0 0 2px rgba(1, 158, 223, 0.1);
     }
   }
-  
-  .animate-pulse-border {
-    animation: pulse-border 3s ease-in-out infinite;
-  }
 
   .cursor {
 		display: inline-block;
@@ -159,7 +156,7 @@
                 <p class="text-sm text-gray-800">
                     {typedText}
                     {#if isTyping}
-                        <span class="cursor" />
+                        <span class="cursor"></span>
                     {/if}
                 </p>
             </div>
@@ -169,9 +166,9 @@
         {#if showThinking}
             <div class="self-start" transition:fly={{ y: 10, duration: 300, opacity: 0 }}>
                 <div class="flex items-center gap-1.5 bg-gray-100 px-3 py-2 rounded-full">
-                    <span class="dot" />
-                    <span class="dot animate-delay-150" />
-                    <span class="dot animate-delay-300" />
+                    <span class="dot"></span>
+                    <span class="dot animate-delay-150"></span>
+                    <span class="dot animate-delay-300"></span>
                 </div>
             </div>
         {/if}

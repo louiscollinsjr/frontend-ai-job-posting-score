@@ -57,7 +57,7 @@ export function getMessageMode(userContext?: {
  * Add your enterprise customer domains here
  */
 function isEnterpriseDomain(domain: string): boolean {
-  const enterpriseDomains = [
+  const enterpriseDomains: string[] = [
     // Add enterprise customer domains here
     // 'acmecorp.com',
     // 'bigcompany.io',

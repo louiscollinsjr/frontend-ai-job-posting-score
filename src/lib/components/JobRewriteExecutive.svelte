@@ -1,12 +1,15 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import Button from '$lib/components/ui/button/button.svelte';
   import { getScoreColorHex100 } from '$lib/utils/colors';
   
-  export let original_text = '';
-  export let improvedText = '';
+  // @ts-ignore - passed for future use
+  export const original_text = '';
+  // @ts-ignore - passed for future use
+  export const improvedText = '';
   export let score = 0;
-  export let jobId = '';
+  // @ts-ignore - passed for future use
+  export const jobId = '';
   
   // Mock improved score (in real implementation, this would come from API)
   $: originalScore = Math.round(score);
@@ -54,7 +57,7 @@
     'Location and remote work policy specified'
   ];
   
-  function handleFixIssue(category) {
+  function handleFixIssue(category: string) {
     // In real implementation, this would apply the specific fix
     console.log(`Applying fix for: ${category}`);
   }

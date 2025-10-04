@@ -1,19 +1,64 @@
-<script>
-  import { JobPostAnalyzer } from '$lib/services/jobAnalyzer.js';
+<script lang="ts">
+  import { JobPostAnalyzer } from '$lib/services/jobAnalyzer';
   import ScoreGauge from './ScoreGauge.svelte';
   import RecommendationItem from './RecommendationItem.svelte';
   
+  type RecommendationSeverity = 'low' | 'medium' | 'high';
+
+  interface RecommendationEntry {
+    category: string;
+    message: string;
+    severity: RecommendationSeverity;
+    type: string;
+  }
+
+  interface ReadabilityCategory {
+    score: number;
+    feedback: string[];
+    gradeLevel: number;
+  }
+
+  interface InclusivityCategory {
+    score: number;
+    issuesFound: { length: number };
+    recommendations: string[];
+  }
+
+  interface SeoCategory {
+    score: number;
+    feedback: string[];
+    keywords: string[];
+    missingKeywords: string[];
+  }
+
+  interface StructureCategory {
+    score: number;
+    feedback: string[];
+  }
+
+  interface AnalysisData {
+    overallScore: number;
+    readability: ReadabilityCategory;
+    inclusivity: InclusivityCategory;
+    seo: SeoCategory;
+    structure: StructureCategory;
+    wordCount: number;
+  }
+
   export let text = '';
   export let isCollapsed = false;
   export let realTimeAnalysis = true;
   
-  let analysis = null;
+  let analysis: AnalysisData | null = null;
+  let allRecommendations: RecommendationEntry[] = [];
   let isAnalyzing = false;
   
   // Reactive analysis with debouncing
-  let analysisTimeout;
+  let analysisTimeout: ReturnType<typeof setTimeout> | undefined;
   $: if (realTimeAnalysis && text) {
-    clearTimeout(analysisTimeout);
+    if (analysisTimeout) {
+      clearTimeout(analysisTimeout);
+    }
     analysisTimeout = setTimeout(() => {
       performAnalysis(text);
     }, 500); // 500ms debounce
@@ -22,14 +67,40 @@
     isAnalyzing = false;
   }
 
-  async function performAnalysis(textToAnalyze) {
+  async function performAnalysis(textToAnalyze: string) {
     if (!textToAnalyze || textToAnalyze.length === 0) return;
     
     isAnalyzing = true;
     try {
       const analyzer = new JobPostAnalyzer();
-      analysis = await analyzer.analyzeJobPost(textToAnalyze);
-    } catch (error) {
+      const result = await analyzer.analyzeJobPost(textToAnalyze);
+      analysis = {
+        overallScore: result.overallScore ?? 0,
+        readability: {
+          score: result.categories?.readability?.score ?? 0,
+          feedback: result.categories?.readability?.feedback ?? [],
+          gradeLevel: result.categories?.readability?.gradeLevel ?? 0
+        },
+        inclusivity: {
+          score: result.categories?.inclusivity?.score ?? 0,
+          issuesFound: {
+            length: result.categories?.inclusivity?.issuesFound?.length ?? 0
+          },
+          recommendations: result.categories?.inclusivity?.recommendations ?? []
+        },
+        seo: {
+          score: result.categories?.seo?.score ?? 0,
+          feedback: result.categories?.seo?.feedback ?? [],
+          keywords: result.categories?.seo?.keywords ?? [],
+          missingKeywords: result.categories?.seo?.missingKeywords ?? []
+        },
+        structure: {
+          score: result.categories?.structure?.score ?? 0,
+          feedback: result.categories?.structure?.feedback ?? []
+        },
+        wordCount: result.metadata?.wordCount ?? 0
+      };
+    } catch (error: unknown) {
       console.error('Analysis failed:', error);
       analysis = null;
     } finally {
@@ -37,35 +108,35 @@
     }
   }
   
-  function toggleSidebar() {
+  function toggleSidebar(): void {
     isCollapsed = !isCollapsed;
   }
   
-  function formatScoreChange(change) {
+  function formatScoreChange(change: number): string {
     if (change > 0) return `+${change}`;
     return change.toString();
   }
   
   $: allRecommendations = analysis ? [
-    ...analysis.readability.feedback.map(f => ({ 
+    ...analysis.readability.feedback.map((f): RecommendationEntry => ({ 
       category: 'Readability', 
       message: f, 
       severity: 'medium', 
       type: 'readability' 
     })),
-    ...analysis.inclusivity.recommendations.map(f => ({ 
+    ...analysis.inclusivity.recommendations.map((f): RecommendationEntry => ({ 
       category: 'Inclusivity', 
       message: f, 
       severity: 'high', 
       type: 'inclusivity' 
     })),
-    ...analysis.seo.feedback.map(f => ({ 
+    ...analysis.seo.feedback.map((f): RecommendationEntry => ({ 
       category: 'SEO', 
       message: f, 
       severity: 'low', 
       type: 'seo' 
     })),
-    ...analysis.structure.feedback.map(f => ({ 
+    ...analysis.structure.feedback.map((f): RecommendationEntry => ({ 
       category: 'Structure', 
       message: f, 
       severity: 'medium', 
@@ -79,6 +150,7 @@
   <button 
     class="absolute -left-6 top-1/2 transform -translate-y-1/2 bg-white border border-gray-200 rounded-l-lg p-2 shadow-md hover:bg-gray-50 transition-colors"
     on:click={toggleSidebar}
+    aria-label="Toggle analysis sidebar"
   >
     <svg 
       class="w-4 h-4 transition-transform duration-300 {isCollapsed ? 'rotate-180' : ''}" 
@@ -184,7 +256,6 @@
                     category={rec.category}
                     message={rec.message}
                     severity={rec.severity}
-                    type={rec.type}
                   />
                 {/each}
               </div>

@@ -3,7 +3,7 @@
   export let reportId: string | null = null;
   export let jobUrl: string | null = null;
   export let overallScore: number = 0;
-  export let statusLabel: string = '';
+  export const statusLabel: string = '';
 
   // Get score color based on overall score
   function getScoreColor(score: number): string {

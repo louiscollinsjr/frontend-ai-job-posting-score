@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" context="module">
 	export interface ImprovementGroup {
 		key: string;
 		label: string;
@@ -7,7 +7,9 @@
 		status: { label: string; badge: string };
 		suggestions: string[];
 	}
+</script>
 
+<script lang="ts">
 	export let groups: ImprovementGroup[] = [];
 	export let generalRecommendations: string[] = [];
 </script>

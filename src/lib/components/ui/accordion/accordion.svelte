@@ -8,7 +8,7 @@
 	}: AccordionPrimitive.RootProps = $props();
 
 	// DOM event typings
-	export interface $$Events {
+	type $$Events = {
 		click: MouseEvent;
 		keydown: KeyboardEvent;
 		keyup: KeyboardEvent;
@@ -17,12 +17,11 @@
 		mouseenter: MouseEvent;
 		mouseleave: MouseEvent;
 		change: Event;
-	}
+	};
 </script>
 
 <AccordionPrimitive.Root
 	bind:ref
 	bind:value={value as never}
-	data-slot="accordion"
 	{...restProps}
 />

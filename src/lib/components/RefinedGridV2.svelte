@@ -1,7 +1,15 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
 
-  const features = [
+  interface Feature {
+    title: string;
+    text: string;
+    media: string;
+    mediaType: 'image' | 'video';
+    gradient: string;
+  }
+
+  const features: Feature[] = [
     {
       title: 'Every Word Counts',
       text: `Copy and paste or attach your job listing into JobPostScore. We review it completely then evaluates for clarity, structure, and discoverability.`,
@@ -43,25 +51,25 @@
   const SLIDE_PAUSE_MS = 6000; // time to pause on each slide after the transition completes
 
   let currentIndex = 0;
-  let autoplayTimer;
+  let autoplayTimer: ReturnType<typeof setTimeout> | null = null;
 
-  function goToSlide(index) {
+  function goToSlide(index: number): void {
     currentIndex = index;
     resetAutoplay();
   }
 
-  function nextSlide() {
+  function nextSlide(): void {
     currentIndex = (currentIndex + 1) % features.length;
     resetAutoplay();
   }
 
-  function prevSlide() {
+  function prevSlide(): void {
     currentIndex = (currentIndex - 1 + features.length) % features.length;
     resetAutoplay();
   }
 
-  function resetAutoplay() {
-    if (autoplayTimer) {
+  function resetAutoplay(): void {
+    if (autoplayTimer !== null) {
       clearTimeout(autoplayTimer);
     }
 
@@ -74,7 +82,7 @@
   onMount(() => {
     resetAutoplay();
     return () => {
-      if (autoplayTimer) {
+      if (autoplayTimer !== null) {
         clearTimeout(autoplayTimer);
       }
     };
@@ -145,14 +153,13 @@
                     {#if feature.mediaType === 'video'}
                       <video
                         src={feature.media}
-                        alt={`Preview for ${feature.title}`}
                         class="w-full max-w-[980px] rounded-lg shadow-xl"
                         style="max-height: 550px; height: auto; display: block;"
                         autoplay
                         muted
                         loop
                         playsinline
-                      />
+                      ></video>
                     {:else}
                       <img
                         src={feature.media}

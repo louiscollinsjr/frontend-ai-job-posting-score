@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
@@ -6,7 +6,7 @@
 
 	// --- Props for reusability ---
 	/** @type {string} The title to display, e.g., "JobPostScore" */
-	export let title = 'JobPostScore';
+	export const title = 'JobPostScore';
 	/** @type {number} The score to start the animation from */
 	export let startScore = 40;
 	/** @type {number} The final score to animate to */
@@ -29,7 +29,7 @@
 	let scoreClasses = '';
 
 	// This function determines the color based on the score
-	function getScoreColorClasses(value) {
+	function getScoreColorClasses(value: number): string {
 		if (value < 60) {
 			return 'bg-red-100/80 text-red-700';
 		} else if (value < 80) {

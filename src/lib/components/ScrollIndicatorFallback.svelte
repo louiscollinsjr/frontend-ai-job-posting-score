@@ -1,12 +1,13 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
   import lottie from 'lottie-web';
+  import type { AnimationItem } from 'lottie-web';
 
   let scrollY = 0;
   let opacity = 1;
-  let container;
-  let animation;
+  let container: HTMLElement | null = null;
+  let animation: AnimationItem | null = null;
 
   onMount(() => {
     const updateScroll = () => {

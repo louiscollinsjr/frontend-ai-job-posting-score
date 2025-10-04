@@ -30,7 +30,7 @@
 		scrollTo="#hero"
 	>
 		<svelte:fragment slot="button">
-			<Logo variant="white" class="h-4 w-auto mr-2" />
+			<Logo variant="white" imgClass="h-4 w-auto mr-2" />
 		</svelte:fragment>
 	</CallToAction>
 </div>

@@ -62,7 +62,6 @@
                   this={feature.component} 
                   title={feature.title} 
                   text={feature.text} 
-                  images={feature.images} 
                   background={feature.background} 
                 />
               </div>

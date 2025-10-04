@@ -12,22 +12,22 @@
   // import BetaBadge from '$lib/components/BetaBadge.svelte';
   
   // Types
-  export type AppliedImprovement = {
+  type AppliedImprovement = {
     category: string;
     description: string;
     impactPoints?: number;
     applied?: boolean;
-    impact?: string;
+    impact: string;  // Made required
     scoreContribution?: string;
   };
 
-  export type PotentialImprovement = {
+  type PotentialImprovement = {
     category: string;
     description: string;
     potentialPoints?: number;
   };
 
-  export type OptimizationData = {
+  type OptimizationData = {
     originalText: string;
     optimizedText: string;
     originalScore: number;
@@ -39,7 +39,7 @@
   };
 
   // Shape we might receive directly from DB/API before mapping
-  export type RawOptimizationData = {
+  type RawOptimizationData = {
     change_log?: string | AppliedImprovement[];
     workingWell?: string[];
     original_text_snapshot?: string;
@@ -67,7 +67,7 @@
   export let originalText: string = '';
   export let improvedText: string = '';
   export let reportId: string | undefined = undefined;
-  export let initialData: OptimizationData | RawOptimizationData | null = null;
+  export let initialData: OptimizationData | RawOptimizationData | null | undefined = null;
   export let recommendations: string[] = [];
   export let score: number = 0;
   
@@ -123,7 +123,8 @@
         return {
           category: `Improvement ${index + 1}`,
           description: item,
-          applied: true
+          applied: true,
+          impact: 'Medium Impact'  // Default impact
         };
       }
       return item as AppliedImprovement;
@@ -290,12 +291,16 @@
   }
   
   // Function to convert markdown to HTML
-  function processMarkdown(text: string): string {
+  async function processMarkdown(text: string): Promise<string> {
     if (!text) return '';
-    return marked(text);
+    const result = await marked(text);
+    return result;
   }
 
   $: totalImprovementPoints = optimizationData?.appliedImprovements?.reduce((sum: number, imp: AppliedImprovement) => sum + (imp.impactPoints || 0), 0) || 0;
+
+  // Process markdown for display
+  $: processedOptimizedText = optimizationData?.optimizedText ? processMarkdown(optimizationData.optimizedText) : Promise.resolve('');
 
   // Local helper functions for score badge styling
   function clampScore(value: number | null | undefined): number {
@@ -315,6 +320,7 @@
   $: exportData = optimizationData ? {
     optimizedText: optimizationData.optimizedText,
     originalScore: optimizationData.originalScore,
+    optimizedScore: optimizationData.optimizedScore,
     scoreImprovement: optimizationData.scoreImprovement,
     appliedImprovements: optimizationData.appliedImprovements,
     workingWell: optimizationData.workingWell,
@@ -396,7 +402,13 @@
             <div class="p-6 pt-0 flex-1 overflow-y-auto">
               <div class="prose prose-sm max-w-none">
                 <div class="text-gray-800 leading-relaxed">
-                  {@html processMarkdown(optimizationData?.optimizedText || '')}
+                  {#await processedOptimizedText}
+                    <div class="text-gray-500 italic">Processing content...</div>
+                  {:then html}
+                    {@html html}
+                  {:catch error}
+                    <div class="text-red-500">Error processing content: {error.message}</div>
+                  {/await}
                 </div>
               </div>
             </div>
@@ -434,7 +446,7 @@
               </h3>
               <p class="text-sm text-gray-600 mt-1">Strong aspects from your original posting</p>
             </div>
-            <WorkingWellPanel items={optimizationData?.workingWell || []} />
+            <WorkingWellPanel items={optimizationData?.workingWell?.map(item => ({ category: 'Working Well', description: item })) || []} />
           </div>
         {/if}
           

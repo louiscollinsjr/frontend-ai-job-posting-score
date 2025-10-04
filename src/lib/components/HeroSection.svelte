@@ -1,23 +1,29 @@
-<script>
-	import AuditForm from '$lib/components/AuditForm.svelte';
-	import ScrollIndicator from '$lib/components/ScrollIndicator.svelte';
-	import GuestReportBadge from '$lib/components/GuestReportBadge.svelte';
+<script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import AuditForm from '$lib/components/AuditForm.svelte';
+	import GuestReportBadge from '$lib/components/GuestReportBadge.svelte';
+	import ScrollIndicator from '$lib/components/ScrollIndicator.svelte';
+	import type { AuditResult } from '$lib/api/audit';
+
+	type AuditInputMode = 'url' | 'text';
 
 	// Props
 	export let isLoggedIn = false;
 	export let hasGuestReports = false;
 	export let authChecked = false;
+	let shouldShowBadge = false;
 
 	// Derive a stable flag to prevent blinking
 	$: shouldShowBadge = authChecked && !isLoggedIn && hasGuestReports;
 
 	// Create dispatcher for events
-	const dispatch = createEventDispatcher();
+	const dispatch = createEventDispatcher<{
+		audit: { type: AuditInputMode; data: string; results: AuditResult };
+	}>();
 
 	// Handle audit form submission
-	function handleAudit(event) {
-		dispatch('audit', event);
+	function handleAudit(event: CustomEvent<{ type: AuditInputMode; data: string; results: AuditResult }>): void {
+		dispatch('audit', event.detail);
 	}
 </script>
 

@@ -16,7 +16,6 @@
 	let {
 		ref = $bindable(null),
 		class: className,
-		onClick,
 		children,
 		...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
@@ -30,7 +29,6 @@
 		className
 	)}
 	{...restProps}
-	on:click={onClick}
 >
 	{@render children?.()}
 </div>

@@ -1,11 +1,12 @@
-<script>
+<script lang="ts">
+  type SeverityLevel = 'low' | 'medium' | 'high';
+
   export let category = '';
   export let message = '';
-  export let severity = 'medium'; // 'low', 'medium', 'high'
+  export let severity: SeverityLevel = 'medium'; // 'low', 'medium', 'high'
   export let suggestion = '';
-  export let type = 'general'; // 'readability', 'inclusivity', 'seo', 'structure'
   
-  $: severityConfig = {
+  const severityConfig: Record<SeverityLevel, { bg: string; border: string; icon: string; color: string }> = {
     low: { 
       bg: 'bg-blue-50', 
       border: 'border-blue-200', 

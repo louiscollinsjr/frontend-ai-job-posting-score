@@ -7,6 +7,7 @@
     
     export let background = '';
     
+    /** @type {HTMLElement | undefined} */
     let cardElement;
     let visible = false;
     let hasAnimated = false; // Prevent re-triggering

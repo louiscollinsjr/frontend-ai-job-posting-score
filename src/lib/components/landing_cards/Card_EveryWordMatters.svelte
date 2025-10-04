@@ -1,16 +1,21 @@
 <!-- src/lib/components/Card_EveryWordMatters.svelte -->
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
-	import { cubicOut } from 'svelte/easing';
-	import { flip } from 'svelte/animate';
 	import Logo from '$lib/components/Logo.svelte';
 
-	export let title = '';
-	export let text = '';
-	export let active = false;
-	export let index = 0;
-	export let background = '';
+	const { title = '', text = '', background = '' } = $props<{
+		title?: string;
+		text?: string;
+		background?: string;
+	}>();
+
+	const fallbackTitle = title || 'Every Word Counts';
+	const summaryText = text ||
+		'Copy and paste or attach your job listing into JobPostScore. We review it completely then evaluates for clarity, structure, and discoverability.';
+
+	const backgroundStyle = background
+		? `background-image: url('${background}'); background-position: center; background-size: cover;`
+		: 'background: linear-gradient(to bottom right, #c3cde1, #dde3ee)';
 
 	// Animation content
 	const content = [
@@ -30,14 +35,14 @@
 	const FADE_DURATION = 500; // 0.5 seconds
 
 	// --- State Variables ---
-	let currentContentIndex = 0;
-	let displayedTitle = '';
-	let displayedBody = '';
-	let isTyping = false;
-	let isFading = false;
+	let currentContentIndex = $state(0);
+	let displayedTitle = $state('');
+	let displayedBody = $state('');
+	let isTyping = $state(false);
+	let isFading = $state(false);
 
 	// Helper function for delays
-	const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+	const delay = (ms: number) => new Promise<void>((res) => setTimeout(res, ms));
 
 	// The main animation loop
 	async function runAnimationCycle() {
@@ -84,10 +89,10 @@
 </script>
 
 <div
-	class="w-auto sm:w-full h-[450px] rounded-2xl sm:p-6 p-2 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 overflow-hidden relative mx-2 sm:mx-0 bg-[#c3cde1]"
-	style={background
-		? `background-image: url('${background}'); background-position: center; background-size: cover;`
-		: 'background: linear-gradient(to bottom right, #c3cde1, #dde3ee)'}>
+	class="w-auto sm:w-full h-[450px] rounded-2xl sm:p-6 p-2 shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-200/80 overflow-hidden relative mx-2 sm:mx-0"
+	style={backgroundStyle}
+	aria-label={`${fallbackTitle}: ${summaryText}`}
+>
 	<!-- Mock Browser Window -->
 	<div
 		class="flex h-[400px] sm:h-full flex-col overflow-hidden rounded-xl bg-white/60 shadow-inner">
@@ -105,6 +110,8 @@
 			<div
 				class="text-content-area flex-grow rounded-lg border border-gray-200 bg-gray-50/60 p-4 text-sm text-gray-700"
 				class:faded={isFading}>
+				<h3 class="sr-only">{fallbackTitle}</h3>
+				<p class="sr-only">{summaryText}</p>
 				{#if displayedTitle}
 					<p class="font-semibold text-gray-900 text-sm mb-3">{displayedTitle}</p>
 				{/if}
@@ -112,7 +119,7 @@
 					{displayedBody}
 					<!-- Blinking Cursor only shows while typing -->
 					{#if isTyping}
-						<span class="cursor" />
+						<span class="cursor"></span>
 					{/if}
 				</p>
 			</div>

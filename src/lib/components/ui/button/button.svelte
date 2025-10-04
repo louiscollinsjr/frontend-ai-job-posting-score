@@ -38,8 +38,12 @@
 			size?: ButtonSize;
 		};
 </script>
-
 <script lang="ts">
+	
+	type $$Events = {
+		click: MouseEvent;
+	};
+
 	let {
 		class: className,
 		variant = "default",
@@ -52,10 +56,6 @@
 		...restProps
 	}: ButtonProps = $props();
 
-  // Declare supported events so consumers can use on:click without TS errors
-  export interface $$Events {
-    click: MouseEvent;
-  }
 </script>
 
 {#if href}

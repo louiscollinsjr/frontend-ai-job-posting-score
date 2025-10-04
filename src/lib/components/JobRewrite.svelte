@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import { marked } from 'marked';
   import './JobRewrite.css';
@@ -6,68 +6,107 @@
   import * as Select from '$lib/components/ui/select';
   import { env } from '$env/dynamic/public';
   import DiffRenderer from './DiffRenderer.svelte';
-  import { DiffService } from '$lib/services/diffService.js';
   import PublishModal from './PublishModal.svelte';
   import AnalysisSidebar from './AnalysisSidebar.svelte';
-  
-  export let original_text = '';
-  export let improvedText = '';
-  export let score = 0; // This could be the DB total_score or a calculated score
-  export let jobId = ''; // Add required job ID prop
-  const API_BASE_URL = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
 
-  // Format score for display
-  $: formattedScore = typeof score === 'number' ? Math.round(score) : 0;
-  
-  let versions = [];
+  interface JobVersion {
+    id: string;
+    version_number: number;
+    created_at: string;
+    improved_text: string;
+    [key: string]: unknown;
+  }
+
+  interface DiffStats {
+    additions: number;
+    deletions: number;
+    totalChanges: number;
+  }
+
+  interface TextChangedDetail {
+    text: string;
+    stats?: DiffStats | null;
+  }
+
+  const { original_text = '', improvedText = '', score = 0, jobId = '' } = $props<{
+    original_text?: string;
+    improvedText?: string;
+    score?: number;
+    jobId?: string;
+  }>();
+
+  const API_BASE_URL =
+    (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
+
+  let versions = $state<JobVersion[]>([]);
   let loadingVersions = false;
-  let selectedVersion = null;
-  let isMarkdownEnabled = true; // Add a variable to control markdown rendering
-  let isSaving = false; // Add a variable to control save button state
-  let lastLoadedJobId = null; // Track jobId to fetch when it becomes available
-  let mounted = false; // SSR safety
-  let currentEditorText = ''; // Current state of the editor text
-  let diffStats = null; // Statistics about the current diff
-  let showDiffView = true; // Toggle between diff and markdown view
-  let showAnalysisSidebar = true; // Toggle analysis sidebar
+  let selectedVersionId = $state<string>('');
+  let isSaving = $state(false);
+  let lastLoadedJobId = $state<string | null>(null);
+  let mounted = $state(false);
+  let currentEditorText = $state('');
+  let diffStats = $state<DiffStats | null>(null);
+  let showDiffView = $state(true);
+  let showAnalysisSidebar = $state(true);
+  let canPublish = $state(true);
+  let showPublishModal = $state(false);
+  let isPublishing = $state(false);
+
   onMount(() => {
     mounted = true;
     if (jobId) {
       lastLoadedJobId = jobId;
-      fetchVersions();
+      void fetchVersions();
     }
   });
-  
-  // Reactively fetch versions when jobId is set/changes
-  $: if (mounted && jobId && jobId !== lastLoadedJobId) {
-    lastLoadedJobId = jobId;
-    fetchVersions();
-  }
 
-  async function fetchVersions() {
-    if (!jobId) {
-      console.error('No job ID provided');
+  $effect(() => {
+    if (mounted && jobId && jobId !== lastLoadedJobId) {
+      lastLoadedJobId = jobId;
+      void fetchVersions();
+    }
+  });
+
+  const selectedVersion = $derived.by(() =>
+    selectedVersionId ? versions.find((version) => version.id === selectedVersionId) ?? null : null
+  );
+
+  $effect(() => {
+    if (selectedVersion) {
+      currentEditorText = selectedVersion.improved_text || improvedText;
+    } else if (!currentEditorText && improvedText) {
+      currentEditorText = improvedText;
+    }
+  });
+
+  async function fetchVersions(): Promise<void> {
+    if (!jobId || typeof window === 'undefined') {
       return;
     }
+
     loadingVersions = true;
     try {
       const sessionStr =
-        localStorage.getItem('sb-zincimrcpvxtugvhimny-auth-token') ||
-        localStorage.getItem('supabase.auth.token');
+        window.localStorage.getItem('sb-zincimrcpvxtugvhimny-auth-token') ||
+        window.localStorage.getItem('supabase.auth.token');
       if (!sessionStr) throw new Error('No session found');
-      
-      const token = JSON.parse(sessionStr)?.access_token;
+
+      const token = JSON.parse(sessionStr)?.access_token as string | undefined;
+      if (!token) throw new Error('Missing access token');
 
       const response = await fetch(`${API_BASE_URL}/api/v1/job/${jobId}/versions`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         }
       });
-      
-      if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
-      
-      versions = await response.json();
-      if (versions.length > 0) selectedVersion = versions[0];
+
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+
+      const data = (await response.json()) as JobVersion[];
+      versions = data;
+      selectedVersionId = versions[0]?.id ?? '';
     } catch (error) {
       console.error('Error fetching versions:', error);
     } finally {
@@ -75,39 +114,48 @@
     }
   }
 
-  function copyToClipboard(text) {
-    navigator.clipboard.writeText(text);
+  async function copyToClipboard(text: string): Promise<void> {
+    if (typeof navigator === 'undefined') return;
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (error) {
+      console.error('Clipboard write failed:', error);
+    }
   }
-  
-  function toggleDiffView() {
+
+  function toggleDiffView(): void {
     showDiffView = !showDiffView;
   }
 
-  async function saveVersion() {
+  async function saveVersion(): Promise<void> {
     if (!jobId) {
       alert('Error: No job ID provided');
       return;
     }
-    
-    const textToSave = currentEditorText || improvedText;
-    if (!textToSave.trim()) {
+
+    const textToSave = (currentEditorText || improvedText).trim();
+    if (!textToSave) {
       alert('Error: No content to save');
       return;
     }
-    
+
     isSaving = true;
     try {
+      if (typeof window === 'undefined') throw new Error('Browser environment required');
+
       const sessionStr =
-        localStorage.getItem('sb-zincimrcpvxtugvhimny-auth-token') ||
-        localStorage.getItem('supabase.auth.token');
+        window.localStorage.getItem('sb-zincimrcpvxtugvhimny-auth-token') ||
+        window.localStorage.getItem('supabase.auth.token');
       if (!sessionStr) throw new Error('No session found');
-      const token = JSON.parse(sessionStr)?.access_token;
-      
+
+      const token = JSON.parse(sessionStr)?.access_token as string | undefined;
+      if (!token) throw new Error('Missing access token');
+
       const response = await fetch(`${API_BASE_URL}/api/v1/job/${jobId}/versions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
           improved_text: textToSave
@@ -116,59 +164,50 @@
 
       if (!response.ok) {
         let details = '';
-        try { details = await response.text(); } catch (e) { /* ignore */ }
+        try {
+          details = await response.text();
+        } catch {
+          // no-op
+        }
         throw new Error(`Failed to save version (${response.status} ${response.statusText}) ${details}`);
       }
-      
+
       alert('Version saved successfully!');
-      refreshVersions();
+      await fetchVersions();
     } catch (error) {
       console.error('Error saving version:', error);
-      alert(`Error saving version: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      alert(`Error saving version: ${errorMessage}`);
     } finally {
       isSaving = false;
     }
   }
 
-  function refreshVersions() {
-    // Implementation to fetch latest versions
-    fetchVersions();
-  }
-
-  function publishVersion() {
+  function publishVersion(): void {
     showPublishModal = true;
   }
-  
-  function handlePublish(event) {
+
+  function handlePublish(): void {
     isPublishing = true;
-    // For now, just finalize the version
     setTimeout(() => {
       isPublishing = false;
       showPublishModal = false;
       alert('Version finalized successfully!');
     }, 1000);
   }
-  
-  function handlePublishClose() {
+
+  function handlePublishClose(): void {
     showPublishModal = false;
   }
 
-  let canPublish = true; // Add a variable to control publish button state
-  let showPublishModal = false;
-  let isPublishing = false;
-
-  // Compute the markdown HTML for improved text
-  $: improvedMarkdown = marked.parse(selectedVersion ? selectedVersion.improved_text || '' : improvedText || '');
-  
-  // Initialize current editor text when improved text changes
-  $: if (improvedText) {
-    currentEditorText = selectedVersion ? selectedVersion.improved_text || improvedText : improvedText;
-  }
-  
-  // Handle text changes from diff editor
-  function handleTextChanged(event) {
+  function handleTextChanged(event: CustomEvent<TextChangedDetail>): void {
     currentEditorText = event.detail.text;
-    diffStats = event.detail.stats;
+    diffStats = event.detail.stats ?? null;
+  }
+
+  function formatVersionLabel(version: JobVersion): string {
+    const created = new Date(version.created_at);
+    return `Version #${version.version_number} - ${created.toLocaleDateString()}`;
   }
 </script>
 
@@ -184,11 +223,11 @@
         
         {#if versions.length > 0}
           <div class="w-48">
-            <Select.Root bind:value={selectedVersion}>
+            <Select.Root type="single" bind:value={selectedVersionId}>
               <Select.Trigger>
                 <span class="text-sm">
                   {#if selectedVersion}
-                    Version #{selectedVersion.version_number}
+                    {formatVersionLabel(selectedVersion)}
                   {:else}
                     Select version
                   {/if}
@@ -198,8 +237,8 @@
                 <Select.ScrollUpButton />
                 <div class="select-viewport-container p-2">
                   {#each versions as version (version.id)}
-                    <Select.Item value={version}>
-                      Version #{version.version_number} - {new Date(version.created_at).toLocaleDateString()}
+                    <Select.Item value={version.id}>
+                      {formatVersionLabel(version)}
                     </Select.Item>
                   {/each}
                 </div>
@@ -213,13 +252,13 @@
         <div class="flex bg-gray-100 rounded-lg p-1">
           <button 
             class="px-3 py-1 text-xs rounded {showDiffView ? 'bg-white shadow-sm' : 'text-gray-600'}"
-            on:click={() => showDiffView = true}
+            onclick={() => (showDiffView = true)}
           >
             Diff View
           </button>
           <button 
             class="px-3 py-1 text-xs rounded {!showDiffView ? 'bg-white shadow-sm' : 'text-gray-600'}"
-            on:click={() => showDiffView = false}
+            onclick={() => (showDiffView = false)}
           >
             Preview
           </button>
@@ -237,14 +276,14 @@
         <!-- Analysis Toggle -->
         <button 
           class="text-xs px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 transition-colors"
-          on:click={() => showAnalysisSidebar = !showAnalysisSidebar}
+          onclick={() => (showAnalysisSidebar = !showAnalysisSidebar)}
         >
           {showAnalysisSidebar ? 'Hide' : 'Show'} Analysis
         </button>
       </div>
       
       <div class="flex gap-2">
-        <Button class="text-xs" size="sm" variant="outline" on:click={() => copyToClipboard(currentEditorText)}>
+        <Button class="text-xs" size="sm" variant="outline" onclick={() => void copyToClipboard(currentEditorText)}>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -252,7 +291,7 @@
           Copy
         </Button>
         <Button 
-          on:click={saveVersion}
+          onclick={() => void saveVersion()}
           class="text-xs" 
           size="sm" 
           variant="outline" 
@@ -274,7 +313,7 @@
             Save Version
           {/if}
         </Button>
-        <Button class="text-xs" size="sm" variant="secondary" disabled={!canPublish} on:click={publishVersion}>
+        <Button class="text-xs" size="sm" variant="secondary" disabled={!canPublish} onclick={publishVersion}>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 20v-6M9 17l3-3 3 3M12 4v6M9 7l3 3 3-3"></path>
           </svg>
@@ -315,7 +354,7 @@
 <!-- Publish Modal -->
 <PublishModal 
   bind:open={showPublishModal}
-  jobTitle={`Job Post Version ${selectedVersion?.version_number || 'Current'}`}
+  jobTitle={`Job Post Version ${selectedVersion?.version_number ?? 'Current'}`}
   currentVersion={selectedVersion}
   isPublishing={isPublishing}
   on:publish={handlePublish}

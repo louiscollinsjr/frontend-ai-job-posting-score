@@ -1,16 +1,18 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { DiffService } from '$lib/services/diffService.js';
+  import { DiffService, type DiffItem, type DiffAction, type DiffStats } from '$lib/services/diffService';
   
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{
+    textChanged: { text: string; stats: DiffStats };
+  }>();
   
   export let originalText = '';
   export let improvedText = '';
   export let editable = true;
   
-  let diff = [];
+  let diff: DiffItem[] = [];
   let currentText = '';
-  let hoveredIndex = null;
+  let hoveredIndex: number | null = null;
   
   // Generate diff when inputs change
   $: {
@@ -19,7 +21,7 @@
   }
   
   // Handle accept/reject actions
-  function handleAction(index, action) {
+  function handleAction(index: number, action: DiffAction): void {
     const updatedText = DiffService.applyChange(diff, index, action);
     currentText = updatedText;
     
@@ -32,11 +34,11 @@
     });
   }
   
-  function onMouseEnter(index) {
+  function onMouseEnter(index: number): void {
     if (editable) hoveredIndex = index;
   }
   
-  function onMouseLeave() {
+  function onMouseLeave(): void {
     hoveredIndex = null;
   }
 </script>

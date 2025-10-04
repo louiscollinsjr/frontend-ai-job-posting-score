@@ -28,18 +28,30 @@
   let isOptimizing = false;
   let fromOptimizedSelection = false;
 
+  function getReportTitle(report: unknown): string | null {
+    if (!report || typeof report !== 'object') {
+      return null;
+    }
+
+    const data = report as Record<string, unknown>;
+    const candidateKeys = ['job_title', 'jobTitle', 'title'];
+    for (const key of candidateKeys) {
+      const value = data[key];
+      if (typeof value === 'string' && value.trim().length > 0) {
+        return value.trim();
+      }
+    }
+
+    return null;
+  }
+
   $: currentReport = $resultsPageStore.currentReport;
   $: showDialog = $resultsPageStore.showSaveDialog;
   $: isOptimizing = $resultsPageStore.isOptimizing;
   $: fromOptimizedSelection = $resultsPageStore.fromOptimizedSelection;
 
   // Breadcrumb navigation structure
-  $: reportIdentifier =
-    currentReport?.job_title ??
-    currentReport?.title ??
-    currentReport?.jobTitle ??
-    currentReport?.job_name ??
-    'Scorecard';
+  $: reportIdentifier = getReportTitle(currentReport) ?? 'Scorecard';
 
   $: reportLinkId = currentReport?.id ?? currentReport?.report_id ?? null;
 
@@ -228,7 +240,7 @@
             optimizedText: opt.optimized_text,
             originalScore: opt.original_score || 0,
             optimizedScore: opt.optimized_score,
-            scoreImprovement: opt.optimized_score - (opt.original_score || 0),
+            scoreImprovement: (opt.optimized_score || 0) - (opt.original_score || 0),
             appliedImprovements: Array.isArray(opt.change_log) 
               ? opt.change_log 
               : JSON.parse(opt.change_log || '[]'),

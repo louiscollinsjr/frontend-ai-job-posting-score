@@ -69,7 +69,7 @@
   let premiumSupport = false;
   let customTraining = false;
 
-  let billingCycle = 'monthly';
+  let billingCycle: 'monthly' | 'annual' = 'monthly';
 
   $: selectedPlan = plans.find(p => p.id === selectedPlanId);
   $: basePrice = selectedPlan?.price[billingCycle] ?? 0;
@@ -79,7 +79,7 @@
   $: customTrainingPrice = customTraining ? 199 : 0;
   $: total = basePrice + (usersPrice + storagePrice + premiumSupportPrice + customTrainingPrice) * (billingCycle === 'monthly' ? 1 : 12);
 
-  function selectPlan(plan) {
+  function selectPlan(plan: { id: string }) {
     selectedPlanId = plan.id;
   }
   
@@ -254,7 +254,7 @@
         <h2 class="text-lg font-semibold mb-4">Your Custom Plan</h2>
         <Card class="p-6 flex flex-col gap-2">
           <div class="flex justify-between items-center mb-2">
-            <div class="font-semibold">{selectedPlan.name} Plan ({billingCycle === 'monthly' ? 'Monthly' : 'Annual'})</div>
+            <div class="font-semibold">{selectedPlan?.name || 'Plan'} ({billingCycle === 'monthly' ? 'Monthly' : 'Annual'})</div>
             <div class="font-bold text-lg">${basePrice}</div>
           </div>
           {#if additionalUsers > 0}
@@ -351,7 +351,7 @@
   <!-- FAQ Section -->
   <div class="max-w-3xl mx-auto mb-16">
     <h2 class="text-2xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
-    <Accordion.Root class="w-full" type="single" collapsible>
+    <Accordion.Root class="w-full" type="multiple">
       <Accordion.Item value="item-1">
         <Accordion.Trigger>Why can't I see my full report on the Free plan?</Accordion.Trigger>
         <Accordion.Content>

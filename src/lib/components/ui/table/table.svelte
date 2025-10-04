@@ -10,7 +10,7 @@
 	}: WithElementRef<HTMLTableAttributes> = $props();
 
 	// DOM event typings
-	export interface $$Events {
+	type $$Events = {
 		click: MouseEvent;
 		keydown: KeyboardEvent;
 		keyup: KeyboardEvent;
@@ -18,7 +18,7 @@
 		blur: FocusEvent;
 		mouseenter: MouseEvent;
 		mouseleave: MouseEvent;
-	}
+	};
 </script>
 
 <div data-slot="table-container" class="relative w-full overflow-x-auto">

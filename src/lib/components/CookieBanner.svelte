@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   
@@ -12,24 +12,24 @@
         showBanner = true;
       } else {
         showBanner = false;
-        if (analyticsConsent === 'accepted' && window.posthog) {
-          window.posthog.opt_in_capturing();
+        if (analyticsConsent === 'accepted' && (window as any).posthog) {
+          (window as any).posthog.opt_in_capturing();
         }
       }
     }
   });
 
   // Accept analytics tracking
-  function acceptAnalytics() {
+  function acceptAnalytics(): void {
     localStorage.setItem('analytics-consent', 'accepted');
-    if (window.posthog) window.posthog.opt_in_capturing();
+    if ((window as any).posthog) (window as any).posthog.opt_in_capturing();
     showBanner = false;
   }
   
   // Decline analytics tracking
-  function declineAnalytics() {
+  function declineAnalytics(): void {
     localStorage.setItem('analytics-consent', 'declined');
-    if (window.posthog) window.posthog.opt_out_capturing();
+    if ((window as any).posthog) (window as any).posthog.opt_out_capturing();
     showBanner = false;
   }
 </script>

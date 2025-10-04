@@ -9,7 +9,7 @@
   export let onDownloadJsonLd: () => void = () => {};
   export let onViewOptimized: () => void = () => {};
   export let onOptimize: () => void = () => {};
-  export let onShowSaveDialog: () => void = () => {};
+  export const onShowSaveDialog: () => void = () => {};
 </script>
 
 {#if isLoggedIn}

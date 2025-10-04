@@ -1,9 +1,11 @@
-<script lang="ts">
+<script lang="ts" context="module">
   export interface BreadcrumbItem {
     label: string;
     href?: string;
   }
+</script>
 
+<script lang="ts">
   export let items: BreadcrumbItem[] = [];
   export let ariaLabel = 'Breadcrumb';
 </script>

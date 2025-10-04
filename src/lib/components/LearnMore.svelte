@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from "svelte";
 
   export let eyebrow = "Introducing";
@@ -15,7 +15,7 @@
 
   const dispatch = createEventDispatcher();
 
-  let videoElement;
+  let videoElement: HTMLVideoElement | null = null;
 
   $: if (videoElement) {
     videoElement.playbackRate = backgroundPlaybackRate;

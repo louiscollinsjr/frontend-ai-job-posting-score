@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" context="module">
   export interface CategoryMetric {
     key: string;
     label: string;
@@ -8,7 +8,9 @@
     status: { label: string; badge: string };
     suggestions?: string[];
   }
+</script>
 
+<script lang="ts">
   export let metrics: CategoryMetric[] = [];
 
   function getProgressBarColor(percentage: number): string {

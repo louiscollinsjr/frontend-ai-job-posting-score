@@ -1,0 +1,1076 @@
+$ vite build
+vite v6.3.5 building SSR bundle for production...
+transforming...
+4:56:16 PM [vite-plugin-svelte] src/routes/dashboard/+page.svelte:690:28 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+688:                           
+689:                           {#if reportId && activeDropdown === reportId}
+690:                             <div 
+                                      ^
+691:                               class="fixed bg-white rounded-md shadow-lg border border-gray-200 py-1 z-[9999]"
+692:                               use:positionDropdown={reportId}
+4:56:16 PM [vite-plugin-svelte] src/routes/dashboard/+page.svelte:690:28 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+688:                           
+689:                           {#if reportId && activeDropdown === reportId}
+690:                             <div 
+                                      ^
+691:                               class="fixed bg-white rounded-md shadow-lg border border-gray-200 py-1 z-[9999]"
+692:                               use:positionDropdown={reportId}
+4:56:18 PM [vite-plugin-svelte] src/routes/+page.svelte:272:19 Unused CSS selector ".single-sweep"
+https://svelte.dev/e/css_unused_selector
+270: </div>
+271: 
+272: <style lang="scss">.single-sweep {
+                                     ^
+273:   background-image: linear-gradient(90deg, #000000 0%, #000000 35%, #c679c4 40%, #fa3d1d 42%, #ffb005 44%, #e1e1fe 46%, #0358f7 48%, #000000 50%, #000000 100%);
+274:   background-size: 800% 100%;
+4:56:18 PM [vite-plugin-svelte] src/routes/+page.svelte:285:2 Unused CSS selector ".single-sweep"
+https://svelte.dev/e/css_unused_selector
+283: }
+284: @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+285:   .single-sweep {
+                    ^
+286:     color: #000;
+287:   }
+
+&#39;/bkg_white.png&#39; referenced in & didn't resolve at build time, it will remain unchanged to be resolved at runtime
+4:56:21 PM [vite-plugin-svelte] src/lib/components/AuditForm.svelte:448:1 Unused CSS selector ".cta-button"
+https://svelte.dev/e/css_unused_selector
+446: 
+447: <style>
+448:   .cta-button {
+                  ^
+449:     box-shadow:
+450:       0 4px 6px -1px rgba(0, 0, 0, 0.1),
+4:56:21 PM [vite-plugin-svelte] src/lib/components/AuditForm.svelte:455:1 Unused CSS selector ".cta-button:hover"
+https://svelte.dev/e/css_unused_selector
+453:   }
+454: 
+455:   .cta-button:hover {
+                        ^
+456:     transform: translateY(-2px);
+457:     box-shadow:
+4:56:21 PM [vite-plugin-svelte] src/lib/components/MessageNotification.svelte:7:12 Component has unused export property 'messageType'. If it is for external reference only, please consider using `export const messageType`
+https://svelte.dev/e/export_let_unused
+ 5:   export let showMessage = false;
+ 6:   export let messageText = '';
+ 7:   export let messageType = 'info';
+                            ^
+ 8: 
+ 9:   // Create dispatcher for events
+4:56:21 PM [vite-plugin-svelte] src/lib/components/AnalysisSidebar.svelte:150:2 Buttons and links should either contain text or have an `aria-label` or `aria-labelledby` attribute
+https://svelte.dev/e/a11y_consider_explicit_label
+148: <div class="analysis-sidebar fixed right-0 top-0 h-full bg-white border-l border-gray-200 shadow-lg transition-all duration-300 z-20 {isCollapsed ? 'w-12' : 'w-80'}">
+149:   <!-- Toggle Button -->
+150:   <button 
+               ^
+151:     class="absolute -left-6 top-1/2 transform -translate-y-1/2 bg-white border border-gray-200 rounded-l-lg p-2 shadow-md hover:bg-gray-50 transition-colors"
+152:     on:click={toggleSidebar}
+4:56:21 PM [vite-plugin-svelte] src/lib/components/PublishModal.svelte:52:8 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+50:       
+51:       <div class="space-y-2">
+52:         <label class="text-sm font-medium">Publishing Options</label>
+                                                                         ^
+53:         {#each integrations as integration}
+54:           <label class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 {integration.disabled ? 'opacity-50 cursor-not-allowed' : ''}">
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:449:4 Unused CSS selector ".compact-guest-print"
+https://svelte.dev/e/css_unused_selector
+447:   @media print {
+448:     /* Force everything to fit on one page for guests */
+449:     .compact-guest-print {
+                             ^
+450:       page-break-inside: avoid !important;
+451:       -moz-column-break-inside: avoid !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:512:4 Unused CSS selector ".print-header"
+https://svelte.dev/e/css_unused_selector
+510: 
+511:     /* Print Layout Styles */
+512:     .print-header {
+                      ^
+513:       margin-bottom: 16pt !important;
+514:     }
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:516:4 Unused CSS selector ".print-content"
+https://svelte.dev/e/css_unused_selector
+514:     }
+515: 
+516:     .print-content {
+                       ^
+517:       margin-bottom: 16pt !important;
+518:     }
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:521:4 Unused CSS selector ".print-authenticated-layout"
+https://svelte.dev/e/css_unused_selector
+519: 
+520:     /* Authenticated User Print Layout */
+521:     .print-authenticated-layout {
+                                    ^
+522:       width: 100% !important;
+523:     }
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:525:4 Unused CSS selector ".print-main-content"
+https://svelte.dev/e/css_unused_selector
+523:     }
+524: 
+525:     .print-main-content {
+                            ^
+526:       display: flex !important;
+527:       flex-direction: column !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:531:4 Unused CSS selector ".print-optimized-notice"
+https://svelte.dev/e/css_unused_selector
+529:     }
+530: 
+531:     .print-optimized-notice {
+                                ^
+532:       margin-bottom: 12pt !important;
+533:     }
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:535:4 Unused CSS selector ".print-category-breakdown"
+https://svelte.dev/e/css_unused_selector
+533:     }
+534: 
+535:     .print-category-breakdown {
+                                  ^
+536:       margin-bottom: 12pt !important;
+537:     }
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:539:4 Unused CSS selector ".print-improvements"
+https://svelte.dev/e/css_unused_selector
+537:     }
+538: 
+539:     .print-improvements {
+                            ^
+540:       margin-bottom: 12pt !important;
+541:     }
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:544:4 Unused CSS selector ".title-section"
+https://svelte.dev/e/css_unused_selector
+542: 
+543:     /* Row 1: Title Section */
+544:     .title-section {
+                       ^
+545:       margin-bottom: 16pt !important;
+546:     }
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:548:4 Unused CSS selector ".logo-title"
+https://svelte.dev/e/css_unused_selector
+546:     }
+547: 
+548:     .logo-title {
+                    ^
+549:       display: flex !important;
+550:       align-items: center !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:556:4 Unused CSS selector ".subtitle"
+https://svelte.dev/e/css_unused_selector
+554:     }
+555: 
+556:     .subtitle {
+                  ^
+557:       font-size: 7pt !important;
+558:       color: #6b7280 !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:568:4 Unused CSS selector ".analysis-title"
+https://svelte.dev/e/css_unused_selector
+566:     }
+567: 
+568:     .analysis-title {
+                        ^
+569:       font-size: 16pt !important;
+570:       font-weight: 600 !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:575:4 Unused CSS selector ".score-section"
+https://svelte.dev/e/css_unused_selector
+573: 
+574:     /* Row 2: Score Section */
+575:     .score-section {
+                       ^
+576:       text-align: center !important;
+577:       margin-bottom: 12pt !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:580:4 Unused CSS selector ".score-display"
+https://svelte.dev/e/css_unused_selector
+578:     }
+579: 
+580:     .score-display {
+                       ^
+581:       display: inline-flex !important;
+582:       flex-direction: column !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:592:4 Unused CSS selector ".score-number"
+https://svelte.dev/e/css_unused_selector
+590:     }
+591: 
+592:     .score-number {
+                      ^
+593:       font-size: 18pt !important;
+594:       font-weight: 700 !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:599:4 Unused CSS selector ".score-label"
+https://svelte.dev/e/css_unused_selector
+597:     }
+598: 
+599:     .score-label {
+                     ^
+600:       font-size: 6pt !important;
+601:       color: #6b7280 !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:606:4 Unused CSS selector ".job-info"
+https://svelte.dev/e/css_unused_selector
+604: 
+605:     /* Row 3: Job Info */
+606:     .job-info {
+                  ^
+607:       text-align: center !important;
+608:       margin-bottom: 8pt !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:611:4 Unused CSS selector ".job-title"
+https://svelte.dev/e/css_unused_selector
+609:     }
+610: 
+611:     .job-title {
+                   ^
+612:       font-size: 9pt !important;
+613:       font-weight: 600 !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:618:4 Unused CSS selector ".report-details"
+https://svelte.dev/e/css_unused_selector
+616:     }
+617: 
+618:     .report-details {
+                        ^
+619:       font-size: 7pt !important;
+620:       color: #6b7280 !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:625:4 Unused CSS selector ".report-id"
+https://svelte.dev/e/css_unused_selector
+623:     }
+624: 
+625:     .report-id {
+                   ^
+626:       color: #6b7280 !important;
+627:     }
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:629:4 Unused CSS selector ".job-url"
+https://svelte.dev/e/css_unused_selector
+627:     }
+628: 
+629:     .job-url {
+                 ^
+630:       color: #3b82f6 !important;
+631:       text-decoration: underline !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:637:4 Unused CSS selector ".unlock-badge"
+https://svelte.dev/e/css_unused_selector
+635:   
+636: 
+637:     .unlock-badge {
+                      ^
+638:       display: inline-block !important;
+639:       background: #1f2937 !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:649:4 Unused CSS selector ".cta-title"
+https://svelte.dev/e/css_unused_selector
+647:     }
+648: 
+649:     .cta-title {
+                   ^
+650:       font-size: 18pt !important;
+651:       font-weight: 600 !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:656:4 Unused CSS selector ".cta-description"
+https://svelte.dev/e/css_unused_selector
+654:     }
+655: 
+656:     .cta-description {
+                         ^
+657:       font-size: 9pt !important;
+658:       color: #6b7280 !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:663:4 Unused CSS selector ".cta-buttons"
+https://svelte.dev/e/css_unused_selector
+661:     }
+662: 
+663:     .cta-buttons {
+                     ^
+664:       display: flex !important;
+665:       flex-direction: column !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:670:4 Unused CSS selector ".primary-button"
+https://svelte.dev/e/css_unused_selector
+668:     }
+669: 
+670:     .primary-button {
+                        ^
+671:       background: #1f2937 !important;
+672:       color: #ffffff !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:681:4 Unused CSS selector ".secondary-button"
+https://svelte.dev/e/css_unused_selector
+679:     }
+680: 
+681:     .secondary-button {
+                          ^
+682:       background: #ffffff !important;
+683:       color: #374151 !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:692:4 Unused CSS selector ".cta-note"
+https://svelte.dev/e/css_unused_selector
+690:     }
+691: 
+692:     .cta-note {
+                  ^
+693:       font-size: 7pt !important;
+694:       color: #9ca3af !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:699:4 Unused CSS selector ".print-footer"
+https://svelte.dev/e/css_unused_selector
+697: 
+698:     /* Print Footer */
+699:     .print-footer {
+                      ^
+700:       display: flex !important;
+701:       justify-content: space-between !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:711:4 Unused CSS selector ".compact-footer"
+https://svelte.dev/e/css_unused_selector
+709: 
+710:     /* Compact footer for guest users */
+711:     .compact-footer {
+                        ^
+712:       margin-top: 16pt !important;
+713:       padding-top: 6pt !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:717:4 Unused CSS selector ".print-footer .footer-left"
+https://svelte.dev/e/css_unused_selector
+715:     }
+716: 
+717:     .print-footer .footer-left,
+                                   ^
+718:     .print-footer .footer-right {
+719:       margin: 0 !important;
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:718:4 Unused CSS selector ".print-footer .footer-right"
+https://svelte.dev/e/css_unused_selector
+716: 
+717:     .print-footer .footer-left,
+718:     .print-footer .footer-right {
+                                    ^
+719:       margin: 0 !important;
+720:     }
+4:56:21 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:722:4 Unused CSS selector ".print-footer p"
+https://svelte.dev/e/css_unused_selector
+720:     }
+721: 
+722:     .print-footer p {
+                        ^
+723:       margin: 0 !important;
+724:     }
+4:56:21 PM [vite-plugin-svelte] src/lib/components/landing_cards/Card_BeFound.svelte:162:24 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+160:                     {typedText}
+161:                     {#if isTyping}
+162:                         <span class="cursor" />
+                                                    ^
+163:                     {/if}
+164:                 </p>
+4:56:21 PM [vite-plugin-svelte] src/lib/components/landing_cards/Card_BeFound.svelte:172:20 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+170:             <div class="self-start" transition:fly={{ y: 10, duration: 300, opacity: 0 }}>
+171:                 <div class="flex items-center gap-1.5 bg-gray-100 px-3 py-2 rounded-full">
+172:                     <span class="dot" />
+                                             ^
+173:                     <span class="dot animate-delay-150" />
+174:                     <span class="dot animate-delay-300" />
+4:56:21 PM [vite-plugin-svelte] src/lib/components/landing_cards/Card_BeFound.svelte:173:20 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+171:                 <div class="flex items-center gap-1.5 bg-gray-100 px-3 py-2 rounded-full">
+172:                     <span class="dot" />
+173:                     <span class="dot animate-delay-150" />
+                                                               ^
+174:                     <span class="dot animate-delay-300" />
+175:                 </div>
+4:56:21 PM [vite-plugin-svelte] src/lib/components/landing_cards/Card_BeFound.svelte:174:20 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+172:                     <span class="dot" />
+173:                     <span class="dot animate-delay-150" />
+174:                     <span class="dot animate-delay-300" />
+                                                               ^
+175:                 </div>
+176:             </div>
+4:56:21 PM [vite-plugin-svelte] src/lib/components/landing_cards/Card_BeFound.svelte:98:2 Unused CSS selector ".animate-pulse-border"
+https://svelte.dev/e/css_unused_selector
+ 96:   }
+ 97:   
+ 98:   .animate-pulse-border {
+                            ^
+ 99:     animation: pulse-border 3s ease-in-out infinite;
+100:   }
+4:56:21 PM [vite-plugin-svelte] src/lib/components/RecommendationItem.svelte:8:13 Component has unused export property 'type'. If it is for external reference only, please consider using `export const type`
+https://svelte.dev/e/export_let_unused
+ 6:   export let severity: SeverityLevel = 'medium'; // 'low', 'medium', 'high'
+ 7:   export let suggestion = '';
+ 8:   export let type = 'general'; // 'readability', 'inclusivity', 'seo', 'structure'
+                     ^
+ 9:   
+10:   const severityConfig: Record<SeverityLevel, { bg: string; border: string; icon: string; color: string }> = {
+4:56:26 PM [vite-plugin-svelte] src/lib/components/ImageSlider.svelte:76:2 `<div>` with a mousedown handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+74:   <!-- The draggable slider handle and line -->
+75:   <div class="absolute inset-y-0 z-10 w-0.5 bg-black/50 cursor-ew-resize" style={handleStyle}>
+76:     <div
+            ^
+77:       class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-6 w-6 bg-black/100 rounded-full shadow-none backdrop-blur-sm flex items-center justify-center"
+78:       on:mousedown={startDragging}
+4:56:26 PM [vite-plugin-svelte] src/lib/components/results/ExecutiveHeaderCard.svelte:10:13 Component has unused export property 'statusLabel'. If it is for external reference only, please consider using `export const statusLabel`
+https://svelte.dev/e/export_let_unused
+ 8:   export let scoreOffset: number = 0;
+ 9:   export let circumference: number = 2 * Math.PI * 42;
+10:   export let statusLabel: string = '';
+                                    ^
+11: </script>
+12: 
+4:56:26 PM [vite-plugin-svelte] src/lib/components/results/ResultsActionPanel.svelte:12:13 Component has unused export property 'onShowSaveDialog'. If it is for external reference only, please consider using `export const onShowSaveDialog`
+https://svelte.dev/e/export_let_unused
+10:   export let onViewOptimized: () => void = () => {};
+11:   export let onOptimize: () => void = () => {};
+12:   export let onShowSaveDialog: () => void = () => {};
+                                             ^
+13: </script>
+14: 
+4:56:26 PM [vite-plugin-svelte] src/lib/components/results/OptimizedScoreNotice.svelte:6:13 Component has unused export property 'reportId'. If it is for external reference only, please consider using `export const reportId`
+https://svelte.dev/e/export_let_unused
+4:   const FALLBACK_BADGE_CLASS = 'bg-gray-100 text-gray-700';
+5: 
+6:   export let reportId: string | null = null;
+                                       ^
+7:   export let originalScore: number | null = null;
+8:   export let optimizedScore: number | null = null;
+4:56:27 PM [vite-plugin-svelte] src/lib/components/results/PrintExecutiveHeader.svelte:6:13 Component has unused export property 'statusLabel'. If it is for external reference only, please consider using `export const statusLabel`
+https://svelte.dev/e/export_let_unused
+4:   export let jobUrl: string | null = null;
+5:   export let overallScore: number = 0;
+6:   export let statusLabel: string = '';
+                                   ^
+7: 
+8:   // Get score color based on overall score
+✓ 4328 modules transformed.
+rendering chunks...
+vite v6.3.5 building for production...
+transforming...
+4:56:33 PM [vite-plugin-svelte] src/routes/dashboard/+page.svelte:690:28 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+688:                           
+689:                           {#if reportId && activeDropdown === reportId}
+690:                             <div 
+                                      ^
+691:                               class="fixed bg-white rounded-md shadow-lg border border-gray-200 py-1 z-[9999]"
+692:                               use:positionDropdown={reportId}
+4:56:33 PM [vite-plugin-svelte] src/routes/dashboard/+page.svelte:690:28 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+688:                           
+689:                           {#if reportId && activeDropdown === reportId}
+690:                             <div 
+                                      ^
+691:                               class="fixed bg-white rounded-md shadow-lg border border-gray-200 py-1 z-[9999]"
+692:                               use:positionDropdown={reportId}
+4:56:33 PM [vite-plugin-svelte] src/routes/+page.svelte:272:19 Unused CSS selector ".single-sweep"
+https://svelte.dev/e/css_unused_selector
+270: </div>
+271: 
+272: <style lang="scss">.single-sweep {
+                                     ^
+273:   background-image: linear-gradient(90deg, #000000 0%, #000000 35%, #c679c4 40%, #fa3d1d 42%, #ffb005 44%, #e1e1fe 46%, #0358f7 48%, #000000 50%, #000000 100%);
+274:   background-size: 800% 100%;
+4:56:33 PM [vite-plugin-svelte] src/routes/+page.svelte:285:2 Unused CSS selector ".single-sweep"
+https://svelte.dev/e/css_unused_selector
+283: }
+284: @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+285:   .single-sweep {
+                    ^
+286:     color: #000;
+287:   }
+
+&#39;/bkg_white.png&#39; referenced in & didn't resolve at build time, it will remain unchanged to be resolved at runtime
+4:56:33 PM [vite-plugin-svelte] src/lib/components/AnalysisSidebar.svelte:150:2 Buttons and links should either contain text or have an `aria-label` or `aria-labelledby` attribute
+https://svelte.dev/e/a11y_consider_explicit_label
+148: <div class="analysis-sidebar fixed right-0 top-0 h-full bg-white border-l border-gray-200 shadow-lg transition-all duration-300 z-20 {isCollapsed ? 'w-12' : 'w-80'}">
+149:   <!-- Toggle Button -->
+150:   <button 
+               ^
+151:     class="absolute -left-6 top-1/2 transform -translate-y-1/2 bg-white border border-gray-200 rounded-l-lg p-2 shadow-md hover:bg-gray-50 transition-colors"
+152:     on:click={toggleSidebar}
+4:56:33 PM [vite-plugin-svelte] src/lib/components/PublishModal.svelte:52:8 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+50:       
+51:       <div class="space-y-2">
+52:         <label class="text-sm font-medium">Publishing Options</label>
+                                                                         ^
+53:         {#each integrations as integration}
+54:           <label class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 {integration.disabled ? 'opacity-50 cursor-not-allowed' : ''}">
+4:56:34 PM [vite-plugin-svelte] src/lib/components/AuditForm.svelte:448:1 Unused CSS selector ".cta-button"
+https://svelte.dev/e/css_unused_selector
+446: 
+447: <style>
+448:   .cta-button {
+                  ^
+449:     box-shadow:
+450:       0 4px 6px -1px rgba(0, 0, 0, 0.1),
+4:56:34 PM [vite-plugin-svelte] src/lib/components/AuditForm.svelte:455:1 Unused CSS selector ".cta-button:hover"
+https://svelte.dev/e/css_unused_selector
+453:   }
+454: 
+455:   .cta-button:hover {
+                        ^
+456:     transform: translateY(-2px);
+457:     box-shadow:
+4:56:34 PM [vite-plugin-svelte] src/lib/components/MessageNotification.svelte:7:12 Component has unused export property 'messageType'. If it is for external reference only, please consider using `export const messageType`
+https://svelte.dev/e/export_let_unused
+ 5:   export let showMessage = false;
+ 6:   export let messageText = '';
+ 7:   export let messageType = 'info';
+                            ^
+ 8: 
+ 9:   // Create dispatcher for events
+4:56:34 PM [vite-plugin-svelte] src/lib/components/RecommendationItem.svelte:8:13 Component has unused export property 'type'. If it is for external reference only, please consider using `export const type`
+https://svelte.dev/e/export_let_unused
+ 6:   export let severity: SeverityLevel = 'medium'; // 'low', 'medium', 'high'
+ 7:   export let suggestion = '';
+ 8:   export let type = 'general'; // 'readability', 'inclusivity', 'seo', 'structure'
+                     ^
+ 9:   
+10:   const severityConfig: Record<SeverityLevel, { bg: string; border: string; icon: string; color: string }> = {
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:449:4 Unused CSS selector ".compact-guest-print"
+https://svelte.dev/e/css_unused_selector
+447:   @media print {
+448:     /* Force everything to fit on one page for guests */
+449:     .compact-guest-print {
+                             ^
+450:       page-break-inside: avoid !important;
+451:       -moz-column-break-inside: avoid !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:512:4 Unused CSS selector ".print-header"
+https://svelte.dev/e/css_unused_selector
+510: 
+511:     /* Print Layout Styles */
+512:     .print-header {
+                      ^
+513:       margin-bottom: 16pt !important;
+514:     }
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:516:4 Unused CSS selector ".print-content"
+https://svelte.dev/e/css_unused_selector
+514:     }
+515: 
+516:     .print-content {
+                       ^
+517:       margin-bottom: 16pt !important;
+518:     }
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:521:4 Unused CSS selector ".print-authenticated-layout"
+https://svelte.dev/e/css_unused_selector
+519: 
+520:     /* Authenticated User Print Layout */
+521:     .print-authenticated-layout {
+                                    ^
+522:       width: 100% !important;
+523:     }
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:525:4 Unused CSS selector ".print-main-content"
+https://svelte.dev/e/css_unused_selector
+523:     }
+524: 
+525:     .print-main-content {
+                            ^
+526:       display: flex !important;
+527:       flex-direction: column !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:531:4 Unused CSS selector ".print-optimized-notice"
+https://svelte.dev/e/css_unused_selector
+529:     }
+530: 
+531:     .print-optimized-notice {
+                                ^
+532:       margin-bottom: 12pt !important;
+533:     }
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:535:4 Unused CSS selector ".print-category-breakdown"
+https://svelte.dev/e/css_unused_selector
+533:     }
+534: 
+535:     .print-category-breakdown {
+                                  ^
+536:       margin-bottom: 12pt !important;
+537:     }
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:539:4 Unused CSS selector ".print-improvements"
+https://svelte.dev/e/css_unused_selector
+537:     }
+538: 
+539:     .print-improvements {
+                            ^
+540:       margin-bottom: 12pt !important;
+541:     }
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:544:4 Unused CSS selector ".title-section"
+https://svelte.dev/e/css_unused_selector
+542: 
+543:     /* Row 1: Title Section */
+544:     .title-section {
+                       ^
+545:       margin-bottom: 16pt !important;
+546:     }
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:548:4 Unused CSS selector ".logo-title"
+https://svelte.dev/e/css_unused_selector
+546:     }
+547: 
+548:     .logo-title {
+                    ^
+549:       display: flex !important;
+550:       align-items: center !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:556:4 Unused CSS selector ".subtitle"
+https://svelte.dev/e/css_unused_selector
+554:     }
+555: 
+556:     .subtitle {
+                  ^
+557:       font-size: 7pt !important;
+558:       color: #6b7280 !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:568:4 Unused CSS selector ".analysis-title"
+https://svelte.dev/e/css_unused_selector
+566:     }
+567: 
+568:     .analysis-title {
+                        ^
+569:       font-size: 16pt !important;
+570:       font-weight: 600 !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:575:4 Unused CSS selector ".score-section"
+https://svelte.dev/e/css_unused_selector
+573: 
+574:     /* Row 2: Score Section */
+575:     .score-section {
+                       ^
+576:       text-align: center !important;
+577:       margin-bottom: 12pt !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:580:4 Unused CSS selector ".score-display"
+https://svelte.dev/e/css_unused_selector
+578:     }
+579: 
+580:     .score-display {
+                       ^
+581:       display: inline-flex !important;
+582:       flex-direction: column !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:592:4 Unused CSS selector ".score-number"
+https://svelte.dev/e/css_unused_selector
+590:     }
+591: 
+592:     .score-number {
+                      ^
+593:       font-size: 18pt !important;
+594:       font-weight: 700 !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:599:4 Unused CSS selector ".score-label"
+https://svelte.dev/e/css_unused_selector
+597:     }
+598: 
+599:     .score-label {
+                     ^
+600:       font-size: 6pt !important;
+601:       color: #6b7280 !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:606:4 Unused CSS selector ".job-info"
+https://svelte.dev/e/css_unused_selector
+604: 
+605:     /* Row 3: Job Info */
+606:     .job-info {
+                  ^
+607:       text-align: center !important;
+608:       margin-bottom: 8pt !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:611:4 Unused CSS selector ".job-title"
+https://svelte.dev/e/css_unused_selector
+609:     }
+610: 
+611:     .job-title {
+                   ^
+612:       font-size: 9pt !important;
+613:       font-weight: 600 !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:618:4 Unused CSS selector ".report-details"
+https://svelte.dev/e/css_unused_selector
+616:     }
+617: 
+618:     .report-details {
+                        ^
+619:       font-size: 7pt !important;
+620:       color: #6b7280 !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:625:4 Unused CSS selector ".report-id"
+https://svelte.dev/e/css_unused_selector
+623:     }
+624: 
+625:     .report-id {
+                   ^
+626:       color: #6b7280 !important;
+627:     }
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:629:4 Unused CSS selector ".job-url"
+https://svelte.dev/e/css_unused_selector
+627:     }
+628: 
+629:     .job-url {
+                 ^
+630:       color: #3b82f6 !important;
+631:       text-decoration: underline !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:637:4 Unused CSS selector ".unlock-badge"
+https://svelte.dev/e/css_unused_selector
+635:   
+636: 
+637:     .unlock-badge {
+                      ^
+638:       display: inline-block !important;
+639:       background: #1f2937 !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:649:4 Unused CSS selector ".cta-title"
+https://svelte.dev/e/css_unused_selector
+647:     }
+648: 
+649:     .cta-title {
+                   ^
+650:       font-size: 18pt !important;
+651:       font-weight: 600 !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:656:4 Unused CSS selector ".cta-description"
+https://svelte.dev/e/css_unused_selector
+654:     }
+655: 
+656:     .cta-description {
+                         ^
+657:       font-size: 9pt !important;
+658:       color: #6b7280 !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:663:4 Unused CSS selector ".cta-buttons"
+https://svelte.dev/e/css_unused_selector
+661:     }
+662: 
+663:     .cta-buttons {
+                     ^
+664:       display: flex !important;
+665:       flex-direction: column !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:670:4 Unused CSS selector ".primary-button"
+https://svelte.dev/e/css_unused_selector
+668:     }
+669: 
+670:     .primary-button {
+                        ^
+671:       background: #1f2937 !important;
+672:       color: #ffffff !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:681:4 Unused CSS selector ".secondary-button"
+https://svelte.dev/e/css_unused_selector
+679:     }
+680: 
+681:     .secondary-button {
+                          ^
+682:       background: #ffffff !important;
+683:       color: #374151 !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:692:4 Unused CSS selector ".cta-note"
+https://svelte.dev/e/css_unused_selector
+690:     }
+691: 
+692:     .cta-note {
+                  ^
+693:       font-size: 7pt !important;
+694:       color: #9ca3af !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:699:4 Unused CSS selector ".print-footer"
+https://svelte.dev/e/css_unused_selector
+697: 
+698:     /* Print Footer */
+699:     .print-footer {
+                      ^
+700:       display: flex !important;
+701:       justify-content: space-between !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:711:4 Unused CSS selector ".compact-footer"
+https://svelte.dev/e/css_unused_selector
+709: 
+710:     /* Compact footer for guest users */
+711:     .compact-footer {
+                        ^
+712:       margin-top: 16pt !important;
+713:       padding-top: 6pt !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:717:4 Unused CSS selector ".print-footer .footer-left"
+https://svelte.dev/e/css_unused_selector
+715:     }
+716: 
+717:     .print-footer .footer-left,
+                                   ^
+718:     .print-footer .footer-right {
+719:       margin: 0 !important;
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:718:4 Unused CSS selector ".print-footer .footer-right"
+https://svelte.dev/e/css_unused_selector
+716: 
+717:     .print-footer .footer-left,
+718:     .print-footer .footer-right {
+                                    ^
+719:       margin: 0 !important;
+720:     }
+4:56:35 PM [vite-plugin-svelte] src/lib/components/ResultsDisplay.svelte:722:4 Unused CSS selector ".print-footer p"
+https://svelte.dev/e/css_unused_selector
+720:     }
+721: 
+722:     .print-footer p {
+                        ^
+723:       margin: 0 !important;
+724:     }
+4:56:35 PM [vite-plugin-svelte] src/lib/components/landing_cards/Card_BeFound.svelte:162:24 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+160:                     {typedText}
+161:                     {#if isTyping}
+162:                         <span class="cursor" />
+                                                    ^
+163:                     {/if}
+164:                 </p>
+4:56:35 PM [vite-plugin-svelte] src/lib/components/landing_cards/Card_BeFound.svelte:172:20 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+170:             <div class="self-start" transition:fly={{ y: 10, duration: 300, opacity: 0 }}>
+171:                 <div class="flex items-center gap-1.5 bg-gray-100 px-3 py-2 rounded-full">
+172:                     <span class="dot" />
+                                             ^
+173:                     <span class="dot animate-delay-150" />
+174:                     <span class="dot animate-delay-300" />
+4:56:35 PM [vite-plugin-svelte] src/lib/components/landing_cards/Card_BeFound.svelte:173:20 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+171:                 <div class="flex items-center gap-1.5 bg-gray-100 px-3 py-2 rounded-full">
+172:                     <span class="dot" />
+173:                     <span class="dot animate-delay-150" />
+                                                               ^
+174:                     <span class="dot animate-delay-300" />
+175:                 </div>
+4:56:35 PM [vite-plugin-svelte] src/lib/components/landing_cards/Card_BeFound.svelte:174:20 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+172:                     <span class="dot" />
+173:                     <span class="dot animate-delay-150" />
+174:                     <span class="dot animate-delay-300" />
+                                                               ^
+175:                 </div>
+176:             </div>
+4:56:35 PM [vite-plugin-svelte] src/lib/components/landing_cards/Card_BeFound.svelte:98:2 Unused CSS selector ".animate-pulse-border"
+https://svelte.dev/e/css_unused_selector
+ 96:   }
+ 97:   
+ 98:   .animate-pulse-border {
+                            ^
+ 99:     animation: pulse-border 3s ease-in-out infinite;
+100:   }
+4:56:39 PM [vite-plugin-svelte] src/lib/components/ImageSlider.svelte:76:2 `<div>` with a mousedown handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+74:   <!-- The draggable slider handle and line -->
+75:   <div class="absolute inset-y-0 z-10 w-0.5 bg-black/50 cursor-ew-resize" style={handleStyle}>
+76:     <div
+            ^
+77:       class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-6 w-6 bg-black/100 rounded-full shadow-none backdrop-blur-sm flex items-center justify-center"
+78:       on:mousedown={startDragging}
+4:56:39 PM [vite-plugin-svelte] src/lib/components/results/OptimizedScoreNotice.svelte:6:13 Component has unused export property 'reportId'. If it is for external reference only, please consider using `export const reportId`
+https://svelte.dev/e/export_let_unused
+4:   const FALLBACK_BADGE_CLASS = 'bg-gray-100 text-gray-700';
+5: 
+6:   export let reportId: string | null = null;
+                                       ^
+7:   export let originalScore: number | null = null;
+8:   export let optimizedScore: number | null = null;
+4:56:39 PM [vite-plugin-svelte] src/lib/components/results/ExecutiveHeaderCard.svelte:10:13 Component has unused export property 'statusLabel'. If it is for external reference only, please consider using `export const statusLabel`
+https://svelte.dev/e/export_let_unused
+ 8:   export let scoreOffset: number = 0;
+ 9:   export let circumference: number = 2 * Math.PI * 42;
+10:   export let statusLabel: string = '';
+                                    ^
+11: </script>
+12: 
+4:56:39 PM [vite-plugin-svelte] src/lib/components/results/ResultsActionPanel.svelte:12:13 Component has unused export property 'onShowSaveDialog'. If it is for external reference only, please consider using `export const onShowSaveDialog`
+https://svelte.dev/e/export_let_unused
+10:   export let onViewOptimized: () => void = () => {};
+11:   export let onOptimize: () => void = () => {};
+12:   export let onShowSaveDialog: () => void = () => {};
+                                             ^
+13: </script>
+14: 
+4:56:41 PM [vite-plugin-svelte] src/lib/components/results/PrintExecutiveHeader.svelte:6:13 Component has unused export property 'statusLabel'. If it is for external reference only, please consider using `export const statusLabel`
+https://svelte.dev/e/export_let_unused
+4:   export let jobUrl: string | null = null;
+5:   export let overallScore: number = 0;
+6:   export let statusLabel: string = '';
+                                   ^
+7: 
+8:   // Get score color based on overall score
+✓ 4748 modules transformed.
+rendering chunks...
+computing gzip size...
+.svelte-kit/output/client/_app/version.json                                                               0.03 kB │ gzip:   0.05 kB
+.svelte-kit/output/client/_app/immutable/assets/roboto-greek-ext-wght-normal.DnPa8eh0.woff2               4.34 kB
+.svelte-kit/output/client/_app/immutable/assets/quicksand-vietnamese-wght-normal.ei70gACF.woff2           8.84 kB
+.svelte-kit/output/client/_app/immutable/assets/playfair-display-vietnamese-wght-normal.Cabi7G8-.woff2    9.11 kB
+.svelte-kit/output/client/_app/immutable/assets/inter-vietnamese-wght-normal.CBcvBZtf.woff2              10.25 kB
+.svelte-kit/output/client/_app/immutable/assets/inter-greek-ext-wght-normal.CGAr0uHJ.woff2               11.20 kB
+.svelte-kit/output/client/_app/immutable/assets/roboto-vietnamese-wght-normal.CaxB3VTI.woff2             13.00 kB
+.svelte-kit/output/client/_app/immutable/assets/geist-cyrillic-wght-normal.CHSlOQsW.woff2                14.69 kB
+.svelte-kit/output/client/_app/immutable/assets/geist-latin-ext-wght-normal.DMtmJ5ZE.woff2               15.31 kB
+.svelte-kit/output/client/_app/immutable/assets/roboto-greek-wght-normal.DAIrzMIp.woff2                  17.63 kB
+.svelte-kit/output/client/_app/immutable/assets/inter-cyrillic-wght-normal.CMZtQduZ.woff2                18.74 kB
+.svelte-kit/output/client/_app/immutable/assets/inter-greek-wght-normal.CaVNZxsx.woff2                   19.07 kB
+.svelte-kit/output/client/_app/immutable/assets/roboto-symbols-wght-normal.Bm5C9Z0M.woff2                20.41 kB
+.svelte-kit/output/client/_app/immutable/assets/playfair-display-latin-ext-wght-normal.B3MEdh-d.woff2    21.04 kB
+.svelte-kit/output/client/_app/immutable/assets/playfair-display-cyrillic-wght-normal.5WvUvBgz.woff2     21.15 kB
+.svelte-kit/output/client/_app/immutable/assets/roboto-cyrillic-wght-normal.B1tIhOr4.woff2               22.80 kB
+.svelte-kit/output/client/_app/immutable/assets/inter-cyrillic-ext-wght-normal.B2xhLi22.woff2            25.89 kB
+.svelte-kit/output/client/_app/immutable/assets/roboto-latin-ext-wght-normal.Dqr_DJ6L.woff2              26.43 kB
+.svelte-kit/output/client/_app/immutable/assets/quicksand-latin-ext-wght-normal.uYkVrN1x.woff2           26.75 kB
+.svelte-kit/output/client/_app/immutable/assets/quicksand-latin-wght-normal.BONBXOUv.woff2               28.36 kB
+.svelte-kit/output/client/_app/immutable/assets/geist-latin-wght-normal.Dg_dQHbK.woff2                   28.40 kB
+.svelte-kit/output/client/.vite/manifest.json                                                            34.68 kB │ gzip:   3.94 kB
+.svelte-kit/output/client/_app/immutable/assets/roboto-cyrillic-ext-wght-normal.mFIB_JhL.woff2           35.57 kB
+.svelte-kit/output/client/_app/immutable/assets/playfair-display-latin-wght-normal.DaCzVAht.woff2        38.45 kB
+.svelte-kit/output/client/_app/immutable/assets/roboto-latin-wght-normal.CHnqiQTt.woff2                  40.13 kB
+.svelte-kit/output/client/_app/immutable/assets/roboto-math-wght-normal.SopRAUEK.woff2                   40.57 kB
+.svelte-kit/output/client/_app/immutable/assets/inter-latin-wght-normal.Dx4kXJAl.woff2                   48.26 kB
+.svelte-kit/output/client/_app/immutable/assets/inter-latin-ext-wght-normal.DO1Apj_S.woff2               85.07 kB
+.svelte-kit/output/client/_app/immutable/assets/13.C9ndxRhS.css                                           0.05 kB │ gzip:   0.07 kB
+.svelte-kit/output/client/_app/immutable/assets/Navbar.DOsOnhzy.css                                       0.23 kB │ gzip:   0.15 kB
+.svelte-kit/output/client/_app/immutable/assets/6.Cu7WuHP6.css                                            1.42 kB │ gzip:   0.52 kB
+.svelte-kit/output/client/_app/immutable/assets/16.Dk2qGN1-.css                                           1.77 kB │ gzip:   0.70 kB
+.svelte-kit/output/client/_app/immutable/assets/15.K38fny0j.css                                           1.95 kB │ gzip:   0.72 kB
+.svelte-kit/output/client/_app/immutable/assets/3.DYxFM0dz.css                                            3.13 kB │ gzip:   1.01 kB
+.svelte-kit/output/client/_app/immutable/assets/0.CEUmy7ET.css                                          148.21 kB │ gzip:  23.33 kB
+.svelte-kit/output/client/_app/immutable/chunks/BCXhwfLj.js                                               0.04 kB │ gzip:   0.06 kB
+.svelte-kit/output/client/_app/immutable/chunks/BlAAsBqx.js                                               0.05 kB │ gzip:   0.07 kB
+.svelte-kit/output/client/_app/immutable/nodes/15.DOxNtMYK.js                                             0.07 kB │ gzip:   0.08 kB
+.svelte-kit/output/client/_app/immutable/entry/start.Boa5pN90.js                                          0.08 kB │ gzip:   0.09 kB
+.svelte-kit/output/client/_app/immutable/chunks/DCitVVZS.js                                               0.20 kB │ gzip:   0.18 kB
+.svelte-kit/output/client/_app/immutable/chunks/QKexVdZx.js                                               0.22 kB │ gzip:   0.18 kB
+.svelte-kit/output/client/_app/immutable/chunks/ClKzX-57.js                                               0.22 kB │ gzip:   0.20 kB
+.svelte-kit/output/client/_app/immutable/chunks/CW7w-WZF.js                                               0.23 kB │ gzip:   0.16 kB
+.svelte-kit/output/client/_app/immutable/chunks/Bfc47y5P.js                                               0.23 kB │ gzip:   0.15 kB
+.svelte-kit/output/client/_app/immutable/chunks/DptSgscJ.js                                               0.32 kB │ gzip:   0.23 kB
+.svelte-kit/output/client/_app/immutable/chunks/DkXNM6FC.js                                               0.38 kB │ gzip:   0.30 kB
+.svelte-kit/output/client/_app/immutable/nodes/2.CvyMOdOb.js                                              0.43 kB │ gzip:   0.27 kB
+.svelte-kit/output/client/_app/immutable/chunks/B79nO8gL.js                                               0.48 kB │ gzip:   0.34 kB
+.svelte-kit/output/client/_app/immutable/chunks/B2BKmU99.js                                               0.52 kB │ gzip:   0.34 kB
+.svelte-kit/output/client/_app/immutable/chunks/DzlpQhB6.js                                               0.59 kB │ gzip:   0.38 kB
+.svelte-kit/output/client/_app/immutable/chunks/wFVfNqPN.js                                               0.62 kB │ gzip:   0.41 kB
+.svelte-kit/output/client/_app/immutable/chunks/D6AKGPQa.js                                               0.63 kB │ gzip:   0.41 kB
+.svelte-kit/output/client/_app/immutable/chunks/BYMojh70.js                                               0.63 kB │ gzip:   0.43 kB
+.svelte-kit/output/client/_app/immutable/chunks/_2JM-1Au.js                                               0.63 kB │ gzip:   0.39 kB
+.svelte-kit/output/client/_app/immutable/chunks/CyZupR64.js                                               0.66 kB │ gzip:   0.43 kB
+.svelte-kit/output/client/_app/immutable/nodes/11.CJSw-D6i.js                                             0.67 kB │ gzip:   0.41 kB
+.svelte-kit/output/client/_app/immutable/chunks/D6-XlEtG.js                                               0.73 kB │ gzip:   0.38 kB
+.svelte-kit/output/client/_app/immutable/nodes/1.CtiWMABq.js                                              0.83 kB │ gzip:   0.45 kB
+.svelte-kit/output/client/_app/immutable/chunks/CDFEQom9.js                                               0.86 kB │ gzip:   0.51 kB
+.svelte-kit/output/client/_app/immutable/chunks/B26qZVl3.js                                               1.00 kB │ gzip:   0.49 kB
+.svelte-kit/output/client/_app/immutable/chunks/CmkiZ6g1.js                                               1.05 kB │ gzip:   0.60 kB
+.svelte-kit/output/client/_app/immutable/chunks/CWfOpXBC.js                                               1.11 kB │ gzip:   0.63 kB
+.svelte-kit/output/client/_app/immutable/chunks/CMFK0eEm.js                                               1.11 kB │ gzip:   0.64 kB
+.svelte-kit/output/client/_app/immutable/chunks/BDEyZxwm.js                                               1.13 kB │ gzip:   0.65 kB
+.svelte-kit/output/client/_app/immutable/chunks/ckwbz45p.js                                               1.14 kB │ gzip:   0.67 kB
+.svelte-kit/output/client/_app/immutable/chunks/lr2Ut13k.js                                               1.24 kB │ gzip:   0.64 kB
+.svelte-kit/output/client/_app/immutable/nodes/12.xg4b3Ue0.js                                             1.32 kB │ gzip:   0.79 kB
+.svelte-kit/output/client/_app/immutable/chunks/Di2m00nP.js                                               1.53 kB │ gzip:   0.79 kB
+.svelte-kit/output/client/_app/immutable/chunks/CLIwR9Mg.js                                               1.58 kB │ gzip:   0.83 kB
+.svelte-kit/output/client/_app/immutable/chunks/COvS98zD.js                                               1.64 kB │ gzip:   0.81 kB
+.svelte-kit/output/client/_app/immutable/nodes/14.-UnYvvnS.js                                             1.81 kB │ gzip:   0.76 kB
+.svelte-kit/output/client/_app/immutable/nodes/17.CyCItMLn.js                                             2.00 kB │ gzip:   0.90 kB
+.svelte-kit/output/client/_app/immutable/chunks/D6v5rTfU.js                                               2.01 kB │ gzip:   1.08 kB
+.svelte-kit/output/client/_app/immutable/chunks/BMLCGG9k.js                                               2.03 kB │ gzip:   1.05 kB
+.svelte-kit/output/client/_app/immutable/chunks/C-YFYyTY.js                                               2.13 kB │ gzip:   1.12 kB
+.svelte-kit/output/client/_app/immutable/chunks/Bk8p4eDJ.js                                               2.38 kB │ gzip:   1.09 kB
+.svelte-kit/output/client/_app/immutable/chunks/BRBmW9lL.js                                               2.56 kB │ gzip:   1.09 kB
+.svelte-kit/output/client/_app/immutable/chunks/DQ8EVmr2.js                                               2.76 kB │ gzip:   1.01 kB
+.svelte-kit/output/client/_app/immutable/chunks/B4vUMYd3.js                                               2.83 kB │ gzip:   1.62 kB
+.svelte-kit/output/client/_app/immutable/chunks/C1iXyWCN.js                                               3.09 kB │ gzip:   1.37 kB
+.svelte-kit/output/client/_app/immutable/chunks/I0yzHPlC.js                                               3.24 kB │ gzip:   1.64 kB
+.svelte-kit/output/client/_app/immutable/chunks/D3kIdagc.js                                               3.58 kB │ gzip:   1.05 kB
+.svelte-kit/output/client/_app/immutable/nodes/10.BKPMpoZ5.js                                             3.59 kB │ gzip:   1.65 kB
+.svelte-kit/output/client/_app/immutable/chunks/DOFDIJoA.js                                               3.72 kB │ gzip:   1.48 kB
+.svelte-kit/output/client/_app/immutable/chunks/D_W0t1V4.js                                               3.96 kB │ gzip:   1.50 kB
+.svelte-kit/output/client/_app/immutable/nodes/8.DLm6eyFe.js                                              4.06 kB │ gzip:   2.00 kB
+.svelte-kit/output/client/_app/immutable/chunks/DmW8y-ND.js                                               4.33 kB │ gzip:   2.03 kB
+.svelte-kit/output/client/_app/immutable/chunks/CStgqgoW.js                                               4.56 kB │ gzip:   2.20 kB
+.svelte-kit/output/client/_app/immutable/nodes/4.CqgIG6Mp.js                                              5.04 kB │ gzip:   2.30 kB
+.svelte-kit/output/client/_app/immutable/nodes/6.HIzg4fs5.js                                              6.10 kB │ gzip:   2.21 kB
+.svelte-kit/output/client/_app/immutable/nodes/7.BhGC6dyw.js                                              7.04 kB │ gzip:   2.83 kB
+.svelte-kit/output/client/_app/immutable/chunks/CBPsxAU0.js                                               8.20 kB │ gzip:   3.09 kB
+.svelte-kit/output/client/_app/immutable/chunks/DwjZQAx4.js                                               9.04 kB │ gzip:   2.89 kB
+.svelte-kit/output/client/_app/immutable/entry/app.Cmmq0TiB.js                                           10.07 kB │ gzip:   3.56 kB
+.svelte-kit/output/client/_app/immutable/nodes/9.br39ELFv.js                                             11.25 kB │ gzip:   3.91 kB
+.svelte-kit/output/client/_app/immutable/chunks/DkY8GSMQ.js                                              11.43 kB │ gzip:   4.70 kB
+.svelte-kit/output/client/_app/immutable/chunks/BIYEvhdV.js                                              16.73 kB │ gzip:   6.68 kB
+.svelte-kit/output/client/_app/immutable/chunks/aGzT-_H7.js                                              22.15 kB │ gzip:   8.63 kB
+.svelte-kit/output/client/_app/immutable/chunks/DTQMxZcH.js                                              24.77 kB │ gzip:   7.94 kB
+.svelte-kit/output/client/_app/immutable/chunks/BFrr7kBG.js                                              26.48 kB │ gzip:   8.63 kB
+.svelte-kit/output/client/_app/immutable/chunks/DM07Bv7T.js                                              27.36 kB │ gzip:   9.37 kB
+.svelte-kit/output/client/_app/immutable/nodes/13.BEzks8tv.js                                            30.72 kB │ gzip:   9.68 kB
+.svelte-kit/output/client/_app/immutable/nodes/5.t-IR7aY6.js                                             30.97 kB │ gzip:  10.13 kB
+.svelte-kit/output/client/_app/immutable/chunks/CZoWxu5r.js                                              32.54 kB │ gzip:  12.64 kB
+.svelte-kit/output/client/_app/immutable/chunks/JZDE-hX4.js                                              37.21 kB │ gzip:  11.64 kB
+.svelte-kit/output/client/_app/immutable/chunks/ByTpzS9S.js                                              42.25 kB │ gzip:  13.20 kB
+.svelte-kit/output/client/_app/immutable/chunks/B-AjyEzp.js                                              42.80 kB │ gzip:  13.53 kB
+.svelte-kit/output/client/_app/immutable/nodes/16.B4BNak0G.js                                            78.73 kB │ gzip:  23.13 kB
+.svelte-kit/output/client/_app/immutable/nodes/3.D51Gi-0c.js                                            102.09 kB │ gzip:  29.46 kB
+.svelte-kit/output/client/_app/immutable/chunks/D8h59SUN.js                                             113.94 kB │ gzip:  31.04 kB
+.svelte-kit/output/client/_app/immutable/chunks/BAArC69z.js                                             159.30 kB │ gzip:  53.22 kB
+.svelte-kit/output/client/_app/immutable/nodes/0.p01EWtvA.js                                            188.67 kB │ gzip:  62.71 kB
+.svelte-kit/output/client/_app/immutable/chunks/CBrSDip1.js                                             202.30 kB │ gzip:  47.70 kB
+.svelte-kit/output/client/_app/immutable/chunks/DsD9a3Bk.js                                             801.74 kB │ gzip: 247.02 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 21.26s
+.svelte-kit/output/server/_app/immutable/assets/roboto-greek-ext-wght-normal.DnPa8eh0.woff2               4.34 kB
+.svelte-kit/output/server/_app/immutable/assets/quicksand-vietnamese-wght-normal.ei70gACF.woff2           8.84 kB
+.svelte-kit/output/server/_app/immutable/assets/playfair-display-vietnamese-wght-normal.Cabi7G8-.woff2    9.11 kB
+.svelte-kit/output/server/_app/immutable/assets/inter-vietnamese-wght-normal.CBcvBZtf.woff2              10.25 kB
+.svelte-kit/output/server/_app/immutable/assets/inter-greek-ext-wght-normal.CGAr0uHJ.woff2               11.20 kB
+.svelte-kit/output/server/_app/immutable/assets/roboto-vietnamese-wght-normal.CaxB3VTI.woff2             13.00 kB
+.svelte-kit/output/server/_app/immutable/assets/geist-cyrillic-wght-normal.CHSlOQsW.woff2                14.69 kB
+.svelte-kit/output/server/_app/immutable/assets/geist-latin-ext-wght-normal.DMtmJ5ZE.woff2               15.31 kB
+.svelte-kit/output/server/_app/immutable/assets/roboto-greek-wght-normal.DAIrzMIp.woff2                  17.63 kB
+.svelte-kit/output/server/_app/immutable/assets/inter-cyrillic-wght-normal.CMZtQduZ.woff2                18.74 kB
+.svelte-kit/output/server/_app/immutable/assets/inter-greek-wght-normal.CaVNZxsx.woff2                   19.07 kB
+.svelte-kit/output/server/_app/immutable/assets/roboto-symbols-wght-normal.Bm5C9Z0M.woff2                20.41 kB
+.svelte-kit/output/server/.vite/manifest.json                                                            20.98 kB
+.svelte-kit/output/server/_app/immutable/assets/playfair-display-latin-ext-wght-normal.B3MEdh-d.woff2    21.04 kB
+.svelte-kit/output/server/_app/immutable/assets/playfair-display-cyrillic-wght-normal.5WvUvBgz.woff2     21.15 kB
+.svelte-kit/output/server/_app/immutable/assets/roboto-cyrillic-wght-normal.B1tIhOr4.woff2               22.80 kB
+.svelte-kit/output/server/_app/immutable/assets/inter-cyrillic-ext-wght-normal.B2xhLi22.woff2            25.89 kB
+.svelte-kit/output/server/_app/immutable/assets/roboto-latin-ext-wght-normal.Dqr_DJ6L.woff2              26.43 kB
+.svelte-kit/output/server/_app/immutable/assets/quicksand-latin-ext-wght-normal.uYkVrN1x.woff2           26.75 kB
+.svelte-kit/output/server/_app/immutable/assets/quicksand-latin-wght-normal.BONBXOUv.woff2               28.36 kB
+.svelte-kit/output/server/_app/immutable/assets/geist-latin-wght-normal.Dg_dQHbK.woff2                   28.40 kB
+.svelte-kit/output/server/_app/immutable/assets/roboto-cyrillic-ext-wght-normal.mFIB_JhL.woff2           35.57 kB
+.svelte-kit/output/server/_app/immutable/assets/playfair-display-latin-wght-normal.DaCzVAht.woff2        38.45 kB
+.svelte-kit/output/server/_app/immutable/assets/roboto-latin-wght-normal.CHnqiQTt.woff2                  40.13 kB
+.svelte-kit/output/server/_app/immutable/assets/roboto-math-wght-normal.SopRAUEK.woff2                   40.57 kB
+.svelte-kit/output/server/_app/immutable/assets/inter-latin-wght-normal.Dx4kXJAl.woff2                   48.26 kB
+.svelte-kit/output/server/_app/immutable/assets/inter-latin-ext-wght-normal.DO1Apj_S.woff2               85.07 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.C9ndxRhS.css                                        0.05 kB
+.svelte-kit/output/server/_app/immutable/assets/Navbar.DOsOnhzy.css                                       0.23 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.4CBD3t91.css                                        0.75 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.Cu7WuHP6.css                                        1.42 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.K38fny0j.css                                        1.95 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.Fl5kDjFn.css                                        3.13 kB
+.svelte-kit/output/server/_app/immutable/assets/_layout.CEUmy7ET.css                                    148.21 kB
+.svelte-kit/output/server/entries/pages/_layout.ts.js                                                     0.08 kB
+.svelte-kit/output/server/chunks/utils.js                                                                 0.15 kB
+.svelte-kit/output/server/entries/pages/guest-reports/_page.ts.js                                         0.16 kB
+.svelte-kit/output/server/entries/pages/dashboard/_page.server.js                                         0.20 kB
+.svelte-kit/output/server/chunks/supabaseClient.js                                                        0.24 kB
+.svelte-kit/output/server/internal.js                                                                     0.35 kB
+.svelte-kit/output/server/chunks/BetaBadge.js                                                             0.36 kB
+.svelte-kit/output/server/chunks/shared-server.js                                                         0.37 kB
+.svelte-kit/output/server/entries/pages/news/_layout.svelte.js                                            0.46 kB
+.svelte-kit/output/server/chunks/alert.js                                                                 0.55 kB
+.svelte-kit/output/server/chunks/stores.js                                                                0.55 kB
+.svelte-kit/output/server/entries/fallbacks/error.svelte.js                                               0.61 kB
+.svelte-kit/output/server/entries/pages/login/_page.svelte.js                                             0.61 kB
+.svelte-kit/output/server/chunks/card.js                                                                  0.66 kB
+.svelte-kit/output/server/chunks/auth.js                                                                  0.87 kB
+.svelte-kit/output/server/entries/pages/rewrite/_page.svelte.js                                           0.90 kB
+.svelte-kit/output/server/chunks/client.js                                                                1.06 kB
+.svelte-kit/output/server/entries/pages/guest-reports/_page.svelte.js                                     1.16 kB
+.svelte-kit/output/server/chunks/Logo.js                                                                  1.29 kB
+.svelte-kit/output/server/entries/pages/json-ld/_page.svelte.js                                           1.29 kB
+.svelte-kit/output/server/entries/pages/news/_page.svelte.js                                              1.31 kB
+.svelte-kit/output/server/entries/pages/auth/callback/_page.svelte.js                                     1.60 kB
+.svelte-kit/output/server/chunks/dialog.js                                                                1.71 kB
+.svelte-kit/output/server/entries/pages/privacy/_page.svelte.js                                           1.76 kB
+.svelte-kit/output/server/chunks/Breadcrumbs.js                                                           1.78 kB
+.svelte-kit/output/server/entries/pages/terms/_page.svelte.js                                             1.95 kB
+.svelte-kit/output/server/chunks/MagicLinkLogin.js                                                        2.36 kB
+.svelte-kit/output/server/chunks/button.js                                                                2.85 kB
+.svelte-kit/output/server/chunks/resultsPage.js                                                           3.08 kB
+.svelte-kit/output/server/entries/pages/legal/_page.svelte.js                                             3.49 kB
+.svelte-kit/output/server/chunks/audit2.js                                                                4.05 kB
+.svelte-kit/output/server/chunks/events.js                                                                4.26 kB
+.svelte-kit/output/server/chunks/audit.js                                                                 4.85 kB
+.svelte-kit/output/server/chunks/presence-layer.js                                                        5.68 kB
+.svelte-kit/output/server/entries/pages/enterprise/_page.svelte.js                                        6.34 kB
+.svelte-kit/output/server/chunks/exports.js                                                               8.22 kB
+.svelte-kit/output/server/entries/pages/learn-more/_page.svelte.js                                       11.00 kB
+.svelte-kit/output/server/chunks/checkbox.js                                                             13.67 kB
+.svelte-kit/output/server/chunks/internal.js                                                             14.60 kB
+.svelte-kit/output/server/chunks/Icon.js                                                                 19.44 kB
+.svelte-kit/output/server/entries/pages/_layout.svelte.js                                                25.89 kB
+.svelte-kit/output/server/entries/pages/dashboard/_page.svelte.js                                        33.55 kB
+.svelte-kit/output/server/entries/pages/pricing/_page.svelte.js                                          41.56 kB
+.svelte-kit/output/server/entries/pages/_page.svelte.js                                                  43.51 kB
+.svelte-kit/output/server/chunks/x.js                                                                    46.75 kB
+.svelte-kit/output/server/chunks/index.js                                                                47.63 kB
+.svelte-kit/output/server/chunks/Navbar.svelte_svelte_type_style_lang.js                                 67.70 kB
+.svelte-kit/output/server/entries/pages/results/_page.svelte.js                                          90.98 kB
+.svelte-kit/output/server/index.js                                                                      106.64 kB
+✓ built in 38.94s
+
+Run npm run preview to preview your production build locally.
+
+> Using @sveltejs/adapter-vercel
+  Warning: The following modules failed to locate dependencies that may (or may not) be required for your app to work:
+  node_modules/ws/lib/buffer-util.js
+    - [1m[36mbufferutil[39m[22m
+  node_modules/ws/lib/validation.js
+    - [1m[36mutf-8-validate[39m[22m
+  ✔ done

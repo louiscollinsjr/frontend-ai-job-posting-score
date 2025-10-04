@@ -1,28 +1,45 @@
-<script>
-  import { createEventDispatcher } from 'svelte';
+<script lang="ts">
   import { goto } from '$app/navigation';
-  import { auditStore } from '$lib/stores/audit.js';
-  import { auditJobUrl, auditJobText, auditJobFile } from '$lib/api/audit.js';
-  
-  const dispatch = createEventDispatcher();
-  
+  import { auditStore } from '$lib/stores/audit';
+  import {
+    auditJobUrl,
+    auditJobText,
+    auditJobFile,
+    type AuditResult
+  } from '$lib/api/audit';
+
+  type ChatSender = 'system' | 'user';
+
+  interface ChatMessage {
+    text: string;
+    sender: ChatSender;
+    timestamp: Date;
+    isError?: boolean;
+  }
+
+  const INITIAL_MESSAGE: ChatMessage = {
+    text: 'Paste a job posting URL, description text, or upload a PDF/DOCX file to analyze',
+    sender: 'system',
+    timestamp: new Date()
+  };
+
   // Chat messages array
-  let messages = [
-    { 
-      text: 'Paste a job posting URL, description text, or upload a PDF/DOCX file to analyze', 
-      sender: 'system',
-      timestamp: new Date() 
-    }
-  ];
-  
+  let messages: ChatMessage[] = [INITIAL_MESSAGE];
+
   // Form state
   let inputValue = '';
   let isLoading = false;
-  let error = null;
-  let file = null;
-  
+  let error: string | null = null;
+  let file: File | null = null;
+
+  const VALID_FILE_TYPES = [
+    'application/pdf',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ] as const;
+  type ValidFileType = (typeof VALID_FILE_TYPES)[number];
+
   // Detect if input is URL
-  function isUrl(text) {
+  function isUrl(text: string): boolean {
     try {
       new URL(text);
       return true;
@@ -30,86 +47,92 @@
       return false;
     }
   }
-  
+
+  function appendMessage(message: ChatMessage): void {
+    messages = [...messages, message];
+  }
+
   // Handle file upload
-  function handleFileUpload(e) {
-    const files = e.detail.files;
-    if (!files.length) return;
-    
-    const uploadedFile = files[0];
-    const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    
-    if (!validTypes.includes(uploadedFile.type)) {
+  function handleFileUpload(event: Event): void {
+    const input = event.currentTarget as HTMLInputElement | null;
+    const uploadedFile = input?.files?.[0] ?? null;
+    if (!uploadedFile) return;
+
+    if (!VALID_FILE_TYPES.includes(uploadedFile.type as ValidFileType)) {
       error = 'Please upload a PDF or DOCX file';
+      appendMessage({
+        text: error,
+        sender: 'system',
+        timestamp: new Date(),
+        isError: true
+      });
       return;
     }
-    
+
     file = uploadedFile;
-    messages = [...messages, {
+    appendMessage({
       text: `Uploaded file: ${uploadedFile.name}`,
       sender: 'user',
       timestamp: new Date()
-    }];
+    });
   }
-  
+
+  async function runAudit(): Promise<AuditResult> {
+    if (file) {
+      return auditJobFile(file);
+    }
+    if (isUrl(inputValue)) {
+      return auditJobUrl(inputValue);
+    }
+    return auditJobText(inputValue);
+  }
+
   // Submit analysis
-  async function submitAnalysis() {
+  async function submitAnalysis(): Promise<void> {
     if (!inputValue && !file) return;
-    
+
     isLoading = true;
     error = null;
-    
+
     try {
-      let results;
-      
-      if (file) {
-        // Handle file upload
-        results = await auditJobFile(file);
-      } else if (isUrl(inputValue)) {
-        // Handle URL
-        results = await auditJobUrl(inputValue);
-      } else {
-        // Handle text
-        results = await auditJobText(inputValue);
-      }
-      
+      const results = await runAudit();
+
       // Update store and navigate
-      auditStore.update(state => ({
+      auditStore.update((state) => ({
         ...state,
         results,
         isLoading: false,
         showResults: true,
         error: null
       }));
-      
+
       goto('/results');
-      
-    } catch (err) {
-      error = err.message || 'Analysis failed. Please try again.';
-      messages = [...messages, {
+    } catch (err: unknown) {
+      error = err instanceof Error ? err.message : 'Analysis failed. Please try again.';
+      appendMessage({
         text: error,
         sender: 'system',
         isError: true,
         timestamp: new Date()
-      }];
+      });
     } finally {
       isLoading = false;
       inputValue = '';
       file = null;
     }
   }
-  
+
   // Handle input submission
-  function handleSubmit() {
+  function handleSubmit(): void {
     if (!inputValue.trim()) return;
-    
-    messages = [...messages, {
+
+    appendMessage({
       text: inputValue,
       sender: 'user',
       timestamp: new Date()
-    }];
-    
-    submitAnalysis();
+    });
+
+    void submitAnalysis();
   }
 </script>
 

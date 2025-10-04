@@ -6,7 +6,7 @@
   export let onDownloadReport;
 
   // Get score color based on overall score
-  function getScoreColor(score) {
+  function getScoreColor(/** @type {number} */ score) {
     if (score >= 85) return '#10b981'; // green-500
     if (score >= 60) return '#f59e0b'; // amber-500
     if (score >= 40) return '#ef4444'; // orange-500

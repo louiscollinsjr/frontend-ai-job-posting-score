@@ -1,22 +1,28 @@
-<script>
+<script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { browser } from '$app/environment';
 
 	let sliderPosition = 50; // Initial position at 50%
 	let isDragging = false;
-	let container; // This will be bound to the main container div
+	let container: HTMLDivElement | null = null; // This will be bound to the main container div
 
 	// Reactive styles that update whenever sliderPosition changes
 	$: handleStyle = `left: ${sliderPosition}%;`;
 	$: beforeImageStyle = `clip-path: inset(0 ${100 - sliderPosition}% 0 0);`;
 
-	const handleMove = (e) => {
+	const handleMove = (e: MouseEvent | TouchEvent) => {
 		if (!isDragging || !container) return;
 
 		// Get the bounding box of the container
 		const rect = container.getBoundingClientRect();
 		// Determine clientX from either mouse or touch event
-		const clientX = e.clientX ?? e.touches[0].clientX;
+		const clientX =
+			'touches' in e
+				? e.touches[0]?.clientX
+				: 'clientX' in e
+					? e.clientX
+					: undefined;
+		if (clientX === undefined) return;
 		// Calculate the new position as a percentage
 		let newPosition = ((clientX - rect.left) / rect.width) * 100;
 
@@ -71,6 +77,9 @@
 			class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-6 w-6 bg-black/100 rounded-full shadow-none backdrop-blur-sm flex items-center justify-center"
 			on:mousedown={startDragging}
 			on:touchstart={startDragging}
+			role="button"
+			aria-label="Drag to compare images"
+			tabindex="0"
 		>
 			<!-- Arrows Icon -->
 			<svg class="w-4 h-4 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">

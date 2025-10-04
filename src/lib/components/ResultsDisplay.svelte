@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { goto } from '$app/navigation';
   import Logo from '$lib/components/Logo.svelte';
@@ -14,17 +14,16 @@
 
   const dispatch = createEventDispatcher();
   // Safe defaults to avoid runtime ReferenceErrors when props not provided by parent
-  export let printPageSize = 'letter'; // 'a4' | 'letter'
+  export let printPageSize: 'a4' | 'letter' = 'letter';
   export let loading = false;
   export let isLoggedIn = false;
-  export let results = null;
-  export let categoryLabels = [];
+  export let results: any = null;
+  export let categoryLabels: Array<{key: string; label: string; max: number}> = [];
   export let rewriteLoading = false;
-
 
   const circleRadius = 42;
 
-  function getScoreBadgeClasses(score) {
+  function getScoreBadgeClasses(score: number | null): string {
     const val = clampPercentage(score ?? 0);
     if (val >= 85) return 'bg-emerald-100 text-emerald-900 ';
     if (val >= 60) return 'bg-amber-100 text-amber-500 ';
@@ -32,12 +31,12 @@
     return 'bg-rose-100 text-rose-900 ';
   }
 
-  function clampPercentage(value) {
+  function clampPercentage(value: number): number {
     if (Number.isNaN(value) || value === null || value === undefined) return 0;
     return Math.min(Math.max(value, 0), 100);
   }
 
-  function getCategoryStatusDetails(percentage) {
+  function getCategoryStatusDetails(percentage: number): { label: string; badge: string } {
     if (percentage >= 85) {
       return { label: 'Leading', badge: 'bg-green-100 text-green-700' };
     }
@@ -50,31 +49,30 @@
     return { label: 'Critical', badge: 'bg-red-100 text-red-700' };
   }
 
-  function getStatusToneClass(percentage) {
+  function getStatusToneClass(percentage: number): string {
     if (percentage >= 85) return 'print:text-emerald-700 text-emerald-700';
     if (percentage >= 60) return 'print:text-amber-700 text-amber-700';
     if (percentage >= 45) return 'print:text-orange-700 text-orange-700';
     return 'print:text-rose-700 text-rose-700';
   }
 
-  function formatScoreDelta(delta) {
+  function formatScoreDelta(delta: number | null): string {
     if (delta === null || delta === undefined) return '';
     if (delta > 0) return `+${delta}`;
     if (delta < 0) return `${delta}`;
     return '±0';
   }
 
-  const MAX_PRIORITY_ITEMS = 5;
+  const MAX_PRIORITY_ITEMS = 10;
 
   export let downloadReport = () => {};
-  export let downloadJobData = () => {};
   
   // SaveReportDialog state
   let showSaveDialog = false;
   
   // Handle save report dialog submission
 
-  function handleSaveReportSubmit(event) {
+  function handleSaveReportSubmit(event: { detail: { email: string; report: any } }): void {
     const { email, report } = event.detail;
     console.log('Save report submitted:', { email, report });
     // You can dispatch this to parent component for handling
@@ -131,10 +129,10 @@
     : DEFAULT_CATEGORY_LABELS;
 
   // Helper to resolve keys from camelCase to snake_case in DB if necessary
-  const toSnakeCase = (str) => str.replace(/[A-Z]/g, (m) => '_' + m.toLowerCase());
+  const toSnakeCase = (str: string): string => str.replace(/[A-Z]/g, (m: string) => '_' + m.toLowerCase());
 
   // Normalize a category object to always have an array suggestions field
-  function normalizeCategory(val) {
+  function normalizeCategory(val: any): any {
     if (!val || typeof val !== 'object') return null;
     let suggestions = val.suggestions;
     if (typeof suggestions === 'string') {
@@ -147,7 +145,7 @@
   // Build a categories map that always uses camelCase keys expected by UI
   $: resolvedCategories = (() => {
     const src = processedResults?.categories || {};
-    const out = {};
+    const out: Record<string, any> = {};
     for (const cat of effectiveCategoryLabels) {
       const k = cat.key;
       const snake = toSnakeCase(k);
@@ -185,7 +183,7 @@
   $: hasOptimizedView = Boolean(results?.hasRewrite && optimizedScore !== null);
 
   $: categoryMetrics = effectiveCategoryLabels.map((cat) => {
-    const data = resolvedCategories?.[cat.key];
+    const data = (resolvedCategories as Record<string, any>)?.[cat.key];
     const rawScore = data?.score ?? 0;
     const safeMax = cat.max || 100;
     const percentage = clampPercentage((rawScore / safeMax) * 100);
@@ -201,8 +199,8 @@
 
   $: improvementGroups = effectiveCategoryLabels
     .map((cat) => {
-      const suggestions = resolvedCategories?.[cat.key]?.suggestions ?? [];
-      const score = resolvedCategories?.[cat.key]?.score ?? 0;
+      const suggestions = (resolvedCategories as Record<string, any>)?.[cat.key]?.suggestions ?? [];
+      const score = (resolvedCategories as Record<string, any>)?.[cat.key]?.score ?? 0;
       const max = cat.max || 100;
       const percentage = clampPercentage((score / max) * 100);
       return {
@@ -221,7 +219,7 @@
 
   $: prioritizedImprovementItems = improvementGroups
     .flatMap((group) =>
-      group.suggestions.map((text, index) => ({
+      group.suggestions.map((text: string, index: number) => ({
         category: group.label,
         text,
         ratio: group.max ? group.score / group.max : 0,
@@ -233,14 +231,14 @@
       return a.ratio - b.ratio;
     });
 
-  $: generalImprovementItems = generalRecommendations.map((text, index) => ({
+  $: generalImprovementItems = generalRecommendations.map((text: string, index: number) => ({
     category: 'General',
     text,
     ratio: 1,
     index
   }));
 
-  $: scoreDelta = hasOptimizedView ? optimizedScore - overallScore : null;
+  $: scoreDelta = hasOptimizedView && optimizedScore !== null ? optimizedScore - overallScore : null;
 
   $: printPriorityItems = (() => {
     const prioritized = prioritizedImprovementItems
@@ -259,7 +257,7 @@
     return [...prioritized, ...fallback];
   })();
 
-  const DATE_FORMAT_OPTIONS = { year: 'numeric', month: 'short', day: 'numeric' };
+  const DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
 
   $: formattedGeneratedDate = (() => {
     const source =
@@ -338,26 +336,26 @@
                   <div class="space-y-6">
                     {#if hasOptimizedView}
                       <OptimizedScoreNotice
-                        reportId={results.id}
+                        reportId={results?.id || ''}
                         originalScore={overallScore}
-                        optimizedScore={optimizedScore}
+                        optimizedScore={optimizedScore || 0}
                         badgeClassGetter={getScoreBadgeClasses}
                         heading="You're viewing the original scorecard and analysis."
                         description="This keeps the category breakdown aligned with the initial score before optimization."
                         improvementLabel="Change"
-                        linkHref={`/results?report=${results.id}&view=optimized`}
+                        linkHref={`/results?report=${results?.id || ''}&view=optimized`}
                         linkLabel="View optimized report"
                       />
                     {/if}
                     <CategoryBreakdownPanel metrics={categoryMetrics} />
                     <ResultsActionPanel
                       isLoggedIn={isLoggedIn}
-                      hasRewrite={results?.hasRewrite}
+                      hasRewrite={results?.hasRewrite || false}
                       rewriteLoading={rewriteLoading}
                       loading={loading}
                       onDownloadReport={downloadReport}
-                      onDownloadJsonLd={() => goto(`/json-ld?report=${results.id}`)}
-                      onViewOptimized={() => goto(`/results?report=${results.id}&view=optimized`)}
+                      onDownloadJsonLd={() => goto(`/json-ld?report=${results?.id || ''}`)}
+                      onViewOptimized={() => goto(`/results?report=${results?.id || ''}&view=optimized`)}
                       onOptimize={() => dispatch('optimize')}
                       onShowSaveDialog={() => (showSaveDialog = true)}
                     />
@@ -390,18 +388,13 @@
           <UserPrintLayout
             {processedResults}
             {overallScore}
-        {scoreOffset}
-        {circumference}
-        {overallStatus}
-        {hasOptimizedView}
-        {optimizedScore}
-        {results}
-        {getScoreBadgeClasses}
-        {categoryMetrics}
-        {improvementGroups}
-        {generalRecommendations}
-        {formattedPrintedDate}
-      />
+            {overallStatus}
+            {hasOptimizedView}
+            {categoryMetrics}
+            {improvementGroups}
+            {generalRecommendations}
+            {formattedPrintedDate}
+          />
     {:else}
       <GuestPrintLayout
         {processedResults}
@@ -448,354 +441,5 @@
   /* Specific page settings for guest users to ensure single page */
   @page :first {
     margin: 6mm;
-  }
-
-  @media print {
-    /* Force everything to fit on one page for guests */
-    .compact-guest-print {
-      page-break-inside: avoid !important;
-      break-inside: avoid !important;
-      page-break-before: avoid !important;
-      page-break-after: avoid !important;
-    }
-  }
-
-  @media print {
-    /* Ensure colors are preserved when printing and force light mode */
-    :global(html), :global(body) {
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-      background: #ffffff !important;
-      color: #1a1a1a !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      font-size: 10pt !important;
-      line-height: 1.3 !important;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-    }
-
-    :global(.results-page),
-    :global(.results-page-container) {
-      background: #ffffff !important;
-      margin: 0 !important;
-      padding: 0 !important;
-    }
-
-    /* Constrain printable width per selected paper size */
-    :global(#print-root.print-a4) {
-      width: 190mm !important;
-      max-width: 190mm !important;
-    }
-    :global(#print-root.print-letter) {
-      width: 7.5in !important;
-      max-width: 7.5in !important;
-    }
-    :global(#print-root) {
-      margin: 0 auto !important;
-      padding: 12mm !important;
-      overflow: visible;
-    }
-
-    /* Guest-specific print root sizing */
-    :global(.guest-print-root) {
-      padding: 8mm !important;
-    }
-
-    :global(#print-content) {
-      width: 100% !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      transform: none !important;
-      display: block !important;
-    }
-
-    :global(#screen-content) {
-      display: none !important;
-    }
-
-    /* Print Layout Styles */
-    .print-header {
-      margin-bottom: 16pt !important;
-    }
-
-    .print-content {
-      margin-bottom: 16pt !important;
-    }
-
-    /* Authenticated User Print Layout */
-    .print-authenticated-layout {
-      width: 100% !important;
-    }
-
-    .print-main-content {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 16pt !important;
-    }
-
-    .print-optimized-notice {
-      margin-bottom: 12pt !important;
-    }
-
-    .print-category-breakdown {
-      margin-bottom: 12pt !important;
-    }
-
-    .print-improvements {
-      margin-bottom: 12pt !important;
-    }
-
-    /* Row 1: Title Section */
-    .title-section {
-      margin-bottom: 16pt !important;
-    }
-
-    .logo-title {
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      gap: 6pt !important;
-      margin-bottom: 4pt !important;
-    }
-
-    .subtitle {
-      font-size: 7pt !important;
-      color: #6b7280 !important;
-      margin: 0 !important;
-      font-style: italic !important;
-    }
-
-    :global(.compact-logo) {
-      height: 18pt !important;
-      width: auto !important;
-    }
-
-    .analysis-title {
-      font-size: 16pt !important;
-      font-weight: 600 !important;
-      color: #1a1a1a !important;
-    }
-
-    /* Row 2: Score Section */
-    .score-section {
-      text-align: center !important;
-      margin-bottom: 12pt !important;
-    }
-
-    .score-display {
-      display: inline-flex !important;
-      flex-direction: column !important;
-      align-items: center !important;
-      justify-content: center !important;
-      width: 70pt !important;
-      height: 70pt !important;
-      border: 3pt solid #ef4444 !important;
-      border-radius: 50% !important;
-      background: #ffffff !important;
-    }
-
-    .score-number {
-      font-size: 18pt !important;
-      font-weight: 700 !important;
-      color: #1a1a1a !important;
-      line-height: 1 !important;
-    }
-
-    .score-label {
-      font-size: 6pt !important;
-      color: #6b7280 !important;
-      margin-top: 1pt !important;
-    }
-
-    /* Row 3: Job Info */
-    .job-info {
-      text-align: center !important;
-      margin-bottom: 8pt !important;
-    }
-
-    .job-title {
-      font-size: 9pt !important;
-      font-weight: 600 !important;
-      color: #374151 !important;
-      margin: 0 0 4pt 0 !important;
-    }
-
-    .report-details {
-      font-size: 7pt !important;
-      color: #6b7280 !important;
-      margin: 0 !important;
-      line-height: 1.3 !important;
-    }
-
-    .report-id {
-      color: #6b7280 !important;
-    }
-
-    .job-url {
-      color: #3b82f6 !important;
-      text-decoration: underline !important;
-      font-size: 6pt !important;
-    }
-
-  
-
-    .unlock-badge {
-      display: inline-block !important;
-      background: #1f2937 !important;
-      color: #ffffff !important;
-      font-size: 6pt !important;
-      font-weight: 600 !important;
-      padding: 3pt 8pt !important;
-      border-radius: 12pt !important;
-      margin-bottom: 8pt !important;
-      letter-spacing: 0.5pt !important;
-    }
-
-    .cta-title {
-      font-size: 18pt !important;
-      font-weight: 600 !important;
-      color: #1a1a1a !important;
-      margin: 8pt 0 6pt 0 !important;
-    }
-
-    .cta-description {
-      font-size: 9pt !important;
-      color: #6b7280 !important;
-      margin: 0 0 16pt 0 !important;
-      line-height: 1.4 !important;
-    }
-
-    .cta-buttons {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 8pt !important;
-      margin-bottom: 12pt !important;
-    }
-
-    .primary-button {
-      background: #1f2937 !important;
-      color: #ffffff !important;
-      border: none !important;
-      border-radius: 20pt !important;
-      padding: 8pt 20pt !important;
-      font-size: 9pt !important;
-      font-weight: 600 !important;
-      cursor: pointer !important;
-    }
-
-    .secondary-button {
-      background: #ffffff !important;
-      color: #374151 !important;
-      border: 1pt solid #d1d5db !important;
-      border-radius: 20pt !important;
-      padding: 8pt 20pt !important;
-      font-size: 9pt !important;
-      font-weight: 600 !important;
-      cursor: pointer !important;
-    }
-
-    .cta-note {
-      font-size: 7pt !important;
-      color: #9ca3af !important;
-      margin: 0 !important;
-    }
-
-    /* Print Footer */
-    .print-footer {
-      display: flex !important;
-      justify-content: space-between !important;
-      align-items: center !important;
-      padding-top: 8pt !important;
-      border-top: 1pt solid #e5e7eb !important;
-      font-size: 7pt !important;
-      color: #6b7280 !important;
-      margin-top: 12pt !important;
-    }
-
-    /* Compact footer for guest users */
-    .compact-footer {
-      margin-top: 16pt !important;
-      padding-top: 6pt !important;
-      font-size: 6pt !important;
-    }
-
-    .print-footer .footer-left,
-    .print-footer .footer-right {
-      margin: 0 !important;
-    }
-
-    .print-footer p {
-      margin: 0 !important;
-    }
-
-    /* No Data State */
-    .no-data {
-      text-align: center !important;
-      padding: 40pt 0 !important;
-    }
-
-    :global(.logo-large) {
-      height: 32pt !important;
-      margin-bottom: 8pt !important;
-    }
-
-    .no-data p {
-      font-size: 9pt !important;
-      color: #6b7280 !important;
-    }
-
-    /* Ensure components print properly */
-    :global(.print\:block) {
-      display: block !important;
-    }
-
-    :global(.print\:hidden) {
-      display: none !important;
-    }
-
-    /* Override any screen-only styles for print */
-    :global(.max-w-3xl) {
-      max-width: 100% !important;
-    }
-
-    :global(.rounded-2xl),
-    :global(.rounded-3xl) {
-      border-radius: 8pt !important;
-    }
-
-    :global(.border-dashed) {
-      border-style: solid !important;
-    }
-
-    :global(.bg-gray-50),
-    :global(.bg-gray-100) {
-      background-color: #f9fafb !important;
-    }
-
-    /* Ensure text sizes are appropriate for print */
-    :global(.text-3xl) {
-      font-size: 16pt !important;
-    }
-
-    :global(.text-4xl) {
-      font-size: 18pt !important;
-    }
-
-    :global(.text-xl) {
-      font-size: 12pt !important;
-    }
-
-    :global(.text-base) {
-      font-size: 10pt !important;
-    }
-
-    :global(.text-sm) {
-      font-size: 9pt !important;
-    }
-
-    :global(.text-xs) {
-      font-size: 8pt !important;
-    }
-
   }
 </style>

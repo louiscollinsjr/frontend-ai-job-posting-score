@@ -10,7 +10,8 @@
   export let justLogo = false;
   
   let isLoggedIn = false;
-  let userEmail = '';
+  /** @type {string | undefined} */
+  let userEmail;
   
   // Navbar scroll behavior variables
   let navbarVisible = true;

@@ -3,6 +3,22 @@
  * Provides functionality to generate structured diffs between original and improved text
  */
 
+export type DiffType = 'equal' | 'addition' | 'deletion';
+
+export interface DiffItem {
+  type: DiffType;
+  value: string;
+}
+
+export type DiffAction = 'accept' | 'reject';
+
+export interface DiffStats {
+  additions: number;
+  deletions: number;
+  unchanged: number;
+  totalChanges: number;
+}
+
 export class DiffService {
   /**
    * Generate a diff between original and improved text
@@ -10,7 +26,7 @@ export class DiffService {
    * @param {string} improvedText - The improved text
    * @returns {Array} Array of diff objects with type and value
    */
-  static generateDiff(originalText, improvedText) {
+  static generateDiff(originalText: string, improvedText: string): DiffItem[] {
     if (!originalText || !improvedText) {
       return [{ type: 'equal', value: improvedText || originalText || '' }];
     }
@@ -26,12 +42,14 @@ export class DiffService {
    * Compute diff using dynamic programming approach
    * @private
    */
-  static _computeDiff(original, improved) {
+  static _computeDiff(original: string[], improved: string[]): DiffItem[] {
     const m = original.length;
     const n = improved.length;
     
     // Create DP table
-    const dp = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
+    const dp: number[][] = Array(m + 1)
+      .fill(null)
+      .map(() => Array(n + 1).fill(0));
     
     // Fill DP table - Longest Common Subsequence
     for (let i = 1; i <= m; i++) {
@@ -45,7 +63,7 @@ export class DiffService {
     }
     
     // Backtrack to build diff
-    const result = [];
+    const result: DiffItem[] = [];
     let i = m, j = n;
     
     while (i > 0 || j > 0) {
@@ -69,11 +87,11 @@ export class DiffService {
    * Merge continuous changes of the same type for better UX
    * @private
    */
-  static _mergeContinuousChanges(diff) {
+  static _mergeContinuousChanges(diff: DiffItem[]): DiffItem[] {
     if (!diff.length) return diff;
     
-    const merged = [];
-    let current = { ...diff[0] };
+    const merged: DiffItem[] = [];
+    let current: DiffItem = { ...diff[0] };
     
     for (let i = 1; i < diff.length; i++) {
       const next = diff[i];
@@ -97,8 +115,8 @@ export class DiffService {
    * @param {string} action - 'accept' or 'reject'
    * @returns {string} The updated text
    */
-  static applyChange(diff, changeIndex, action) {
-    const updatedDiff = [...diff];
+  static applyChange(diff: DiffItem[], changeIndex: number, action: DiffAction): string {
+    const updatedDiff: DiffItem[] = [...diff];
     const change = updatedDiff[changeIndex];
     
     if (!change) return this._diffToText(updatedDiff);
@@ -128,7 +146,7 @@ export class DiffService {
    * Convert diff array back to text
    * @private
    */
-  static _diffToText(diff) {
+  static _diffToText(diff: DiffItem[]): string {
     return diff
       .filter(item => item.type !== 'deletion')
       .map(item => item.value)
@@ -140,8 +158,8 @@ export class DiffService {
    * @param {Array} diff - The diff array
    * @returns {Object} Statistics about additions, deletions, and unchanged text
    */
-  static getDiffStats(diff) {
-    const stats = {
+  static getDiffStats(diff: DiffItem[]): DiffStats {
+    const stats: DiffStats = {
       additions: 0,
       deletions: 0,
       unchanged: 0,
@@ -149,7 +167,8 @@ export class DiffService {
     };
 
     diff.forEach(item => {
-      const wordCount = item.value.trim().split(/\s+/).length;
+      const trimmedValue = item.value.trim();
+      const wordCount = trimmedValue ? trimmedValue.split(/\s+/).length : 0;
       
       if (item.type === 'addition') {
         stats.additions += wordCount;

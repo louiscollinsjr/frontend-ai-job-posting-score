@@ -7,7 +7,7 @@
   export let overallScore: number = 0;
   export let scoreOffset: number = 0;
   export let circumference: number = 2 * Math.PI * 42;
-  export let statusLabel: string = '';
+  export const statusLabel: string = '';
 </script>
 
 <section class="mx-auto flex flex-col items-center gap-8 border-b border-gray-950/5 px-6 py-8 text-center text-gray-900">

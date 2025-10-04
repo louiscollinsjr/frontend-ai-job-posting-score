@@ -1,4 +1,12 @@
 <script>
+  /**
+   * @typedef {Object} WorkingWellItem
+   * @property {string} category - The category name
+   * @property {string} description - The description text
+   * @property {number} [score] - Optional score value
+   */
+
+  /** @type {WorkingWellItem[]} */
   export let items = [];
 </script>
 

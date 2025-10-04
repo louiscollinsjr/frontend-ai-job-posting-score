@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import { env } from '$env/dynamic/public';
@@ -6,10 +6,10 @@
   import * as Alert from '$lib/components/ui/alert';
   import Breadcrumbs from '$lib/components/navigation/Breadcrumbs.svelte';
 
-  let reportId = null;
-  let jsonLdData = null;
+  let reportId: string | null = null;
+  let jsonLdData: any = null;
   let loading = true;
-  let error = null;
+  let error: string | null = null;
 
   const API_BASE_URL = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
 
@@ -23,23 +23,23 @@
     }
   });
 
-  async function fetchJsonLd() {
+  async function fetchJsonLd(): Promise<void> {
     try {
       const response = await fetch(`${API_BASE_URL}/api/v1/generate-jsonld/${reportId}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch JSON-LD: ${response.status}`);
       }
       jsonLdData = await response.json();
-    } catch (err) {
-      error = err.message;
+    } catch (err: unknown) {
+      error = err instanceof Error ? err.message : 'Unknown error occurred';
       console.error('Error fetching JSON-LD:', err);
     } finally {
       loading = false;
     }
   }
 
-  function downloadJsonLd() {
-    if (!jsonLdData) return;
+  function downloadJsonLd(): void {
+    if (!jsonLdData || !reportId) return;
     
     const jsonString = JSON.stringify(jsonLdData, null, 2);
     const blob = new Blob([jsonString], { type: 'application/ld+json' });
@@ -53,7 +53,7 @@
     URL.revokeObjectURL(url);
   }
 
-  function copyToClipboard() {
+  function copyToClipboard(): void {
     if (!jsonLdData) return;
     
     const jsonString = JSON.stringify(jsonLdData, null, 2);

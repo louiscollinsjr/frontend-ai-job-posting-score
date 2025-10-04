@@ -13,7 +13,7 @@
 	}: WithoutChildrenOrChild<CheckboxPrimitive.RootProps> = $props();
 
 	// DOM event typings
-	export interface $$Events {
+	type $$Events = {
 		click: MouseEvent;
 		keydown: KeyboardEvent;
 		keyup: KeyboardEvent;
@@ -22,7 +22,7 @@
 		mouseenter: MouseEvent;
 		mouseleave: MouseEvent;
 		change: Event;
-	}
+	};
 </script>
 
 <CheckboxPrimitive.Root

@@ -1,8 +1,15 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import Button from '$lib/components/ui/button/button.svelte';
-  
-  export let improvement = {};
+
+  interface ImprovementItem {
+    impact: string;
+    summary?: string;
+    description?: string;
+    reasoning?: string;
+  }
+
+  export let improvement: ImprovementItem = {} as ImprovementItem;
   
   const dispatch = createEventDispatcher();
   

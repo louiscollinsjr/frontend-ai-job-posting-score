@@ -1,5 +1,5 @@
 <script lang="ts">
-  export interface CategoryMetric {
+  interface CategoryMetric {
     key: string;
     label: string;
     score: number;

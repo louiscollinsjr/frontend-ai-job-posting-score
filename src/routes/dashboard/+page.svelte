@@ -14,34 +14,47 @@
   import { optimizeJob } from '$lib/api/audit.js';
   import Breadcrumbs from '$lib/components/navigation/Breadcrumbs.svelte';
   import { dashboardCache } from '$lib/stores/dashboardCache';
+  import type { Report } from '$lib/types/report';
 
   type BreadcrumbItem = {
     label: string;
     href?: string;
   };
   
+  type Pagination = {
+    currentPage: number;
+    totalPages: number;
+    totalReports: number;
+  };
+  
+  type ReportOptimization = {
+    lowestScore: number;
+    highestScore: number;
+    hasOptimizations: boolean;
+  };
+  
   // Data comes from server (page info) and client-side fetching
-  export let data;
+  export let data: { page: number; limit?: number };
   
   // Client-side data state
-  let reports = [];
-  let pagination = { currentPage: data.page, totalPages: 1, totalReports: 0 };
-  let reportsWithRewrites = [];
-  let reportOptimizations = new Map();
-  let reportError = null;
+  let reports: Report[] = [];
+  let pagination: Pagination = { currentPage: data.page, totalPages: 1, totalReports: 0 };
+  let reportsWithRewrites: string[] = [];
+  let reportOptimizations = new Map<string, ReportOptimization>();
+  let reportError: string | null = null;
   let userEmail = '';
   let isAuthenticated = false;
   let authChecked = false;
   let initialLoad = true;
   
-  let selectedReports = [];
-  let activeDropdown = null;
+  let selectedReports: string[] = [];
+  let activeDropdown: string | null = null;
   let loading = false;
   let dropdownPosition = { top: 0, left: 0 };
-  let currentUserId = null;
-  let reportsChannel = null;
+  let currentUserId: string | null = null;
+  let reportsChannel: any = null;
   let realtimeSubscribed = false;
-  let authSubscription = null;
+  let authSubscription: any = null;
 
   const API_BASE_URL = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
   const dashboardBreadcrumbs: BreadcrumbItem[] = [{ label: 'My JobPostScore' }];
@@ -94,39 +107,43 @@
     }
   }
 
-  onMount(async () => {
+  onMount(() => {
     console.log('[DEBUG] Dashboard onMount called');
     document.addEventListener('click', handleClickOutside);
     
-    loading = true;
-    await checkAuthAndFetchData();
-    
-    // Re-fetch when auth state changes
-    try {
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-        console.log('[DEBUG] Auth state change:', event);
-        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-          try {
-            isAuthenticated = !!session;
-            userEmail = session?.user?.email || userEmail;
-            currentUserId = session?.user?.id || currentUserId;
-            if (session?.access_token) {
-              loading = true;
-              const pageNum = Number($page.url.searchParams.get('page') || '1');
-              const pageData = await dashboardCache.loadPage(pageNum, session.access_token, true);
-              if (pageData) {
-                reports = pageData.reports;
-                pagination = pageData.pagination;
+    async function initializeDashboard() {
+      loading = true;
+      await checkAuthAndFetchData();
+      
+      // Re-fetch when auth state changes
+      try {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+          console.log('[DEBUG] Auth state change:', event);
+          if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+            try {
+              isAuthenticated = !!session;
+              userEmail = session?.user?.email || userEmail;
+              currentUserId = session?.user?.id || currentUserId;
+              if (session?.access_token) {
+                loading = true;
+                const pageNum = Number($page.url.searchParams.get('page') || '1');
+                const pageData = await dashboardCache.loadPage(pageNum, session.access_token, true);
+                if (pageData) {
+                  reports = pageData.reports;
+                  pagination = pageData.pagination;
+                }
+                setupRealtime();
               }
-              setupRealtime();
+            } catch (e) {
+              console.warn('Auth change handler failed:', e);
             }
-          } catch (e) {
-            console.warn('Auth change handler failed:', e);
           }
-        }
-      });
-      authSubscription = subscription;
-    } catch {}
+        });
+        authSubscription = subscription;
+      } catch {}
+    }
+    
+    initializeDashboard();
     
     return () => {
       document.removeEventListener('click', handleClickOutside);
@@ -238,13 +255,13 @@
   }
 
   // Helper function to calculate overall score from report data
-  function calculateOverallScore(report) {
+  function calculateOverallScore(report: any): number {
     if (report.overallScore) return report.overallScore;
     
     if (report.categories && Array.isArray(report.categories)) {
-      const scores = report.categories.map(cat => cat.score || 0);
+      const scores = report.categories.map((cat: any) => cat.score || 0);
       if (scores.length > 0) {
-        return Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
+        return Math.round(scores.reduce((sum: number, score: number) => sum + score, 0) / scores.length);
       }
     }
     
@@ -252,13 +269,13 @@
   }
   
   // Normalization helpers
-  function getTitle(r) {
+  function getTitle(r: any): string {
     return r.title || r.job_title || r.jobTitle || r.jobtitle || 'Untitled';
   }
-  function getCompany(r) {
+  function getCompany(r: any): string {
     return r.company || r.company_name || r.companyName || 'N/A';
   }
-  function getDate(r) {
+  function getDate(r: any): string {
     const d = r.date || r.created_at || r.createdAt || r.savedat;
     try {
       return d ? new Date(d).toLocaleDateString() : 'N/A';
@@ -266,7 +283,7 @@
       return 'N/A';
     }
   }
-  function getScore(r) {
+  function getScore(r: any): number {
     const dbScore = r.totalscore ?? r.total_score;
     if (typeof dbScore === 'number') return dbScore;
     const apiScore = r.overallScore ?? r.score;
@@ -276,15 +293,14 @@
     return calculateOverallScore(r) ?? 0;
   }
 
-  function dateValue(item) {
+  function dateValue(item: any): number {
     const dateStr = item?.savedat || item?.created_at || item?.createdAt;
     if (!dateStr) return 0;
     const t = new Date(dateStr).getTime();
     return Number.isFinite(t) ? t : 0;
   }
 
-  // Report action functions
-  function openScorecard(reportId, { fromOptimized = false } = {}) {
+  function openScorecard(reportId: string, { fromOptimized = false } = {}): void {
     if (!reportId) return;
     const params = new URLSearchParams({ report: reportId });
     if (fromOptimized) {
@@ -293,25 +309,27 @@
     goto(`/results?${params.toString()}`);
   }
 
-  function viewReport(reportId) {
+  // Report action functions
+  function viewReport(reportId: string): void {
     openScorecard(reportId);
   }
 
-  async function optimizeReport(reportId) {
+  async function optimizeReport(reportId: string): Promise<void> {
     loading = true;
     try {
       await optimizeJob(reportId);
       toast.success('Optimization started! Redirecting to results...');
       goto(`/results?report=${reportId}`);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error optimizing report:', error);
-      toast.error(`Optimization failed: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      toast.error(`Optimization failed: ${errorMessage}`);
     } finally {
       loading = false;
     }
   }
 
-  async function deleteReport(reportId) {
+  async function deleteReport(reportId: string): Promise<void> {
     if (!confirm('Are you sure you want to delete this report?')) {
       return;
     }
@@ -331,7 +349,7 @@
       const pageNum = Number($page.url.searchParams.get('page') || '1');
       dashboardCache.invalidatePage(pageNum);
       window.location.reload();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error deleting report:', error);
       toast.error('Failed to delete report');
     } finally {
@@ -339,15 +357,15 @@
     }
   }
 
-  function viewRewriteHistory(reportId) {
+  function viewRewriteHistory(reportId: string): void {
     goto(`/rewrite-history?report=${reportId}`);
   }
 
-  function viewJsonLd(reportId) {
+  function viewJsonLd(reportId: string): void {
     goto(`/json-ld?report=${reportId}`);
   }
 
-  function toggleSelectReport(reportId) {
+  function toggleSelectReport(reportId: string): void {
     if (selectedReports.includes(reportId)) {
       selectedReports = selectedReports.filter(id => id !== reportId);
     } else {
@@ -355,11 +373,11 @@
     }
   }
 
-  function toggleSelectAll() {
+  function toggleSelectAll(): void {
     if (selectedReports.length === reports.length) {
       selectedReports = [];
     } else {
-      selectedReports = reports.map(report => report.id);
+      selectedReports = reports.map(report => report.id).filter((id): id is string => id !== undefined);
     }
   }
 
@@ -390,13 +408,13 @@
     }
   }
 
-  function handleClickOutside(event) {
-    if (activeDropdown && !event.target.closest('[data-dropdown-trigger]')) {
+  function handleClickOutside(event: MouseEvent): void {
+    if (activeDropdown && event.target && !(event.target as HTMLElement).closest('[data-dropdown-trigger]')) {
       activeDropdown = null;
     }
   }
 
-  function toggleDropdown(reportId, event) {
+  function toggleDropdown(reportId: string, event: Event): void {
     event?.preventDefault();
     event?.stopPropagation();
     
@@ -407,7 +425,7 @@
     }
   }
 
-  function positionDropdown(node, reportId) {
+  function positionDropdown(node: HTMLElement, reportId: string): void {
     if (activeDropdown === reportId) {
       const trigger = document.querySelector(`[data-dropdown-trigger="${reportId}"]`);
       if (trigger) {
@@ -418,7 +436,7 @@
     }
   }
 
-  function handleReportChange(payload) {
+  function handleReportChange(payload: any): void {
     try {
       const evt = payload.eventType;
       const newRow = payload.new || {};
@@ -536,44 +554,56 @@
 
                 <Table.Body class="text-xs">
                   {#each reports as report}
-                    <Table.Row class="hover:bg-gray-50">
-                      <Table.Cell class="p-4">
+                    <Table.Row
+                      class="group cursor-pointer transition-colors duration-150 ease-in-out hover:bg-gray-50"
+                      on:click={() => report.id && openScorecard(report.id)}
+                    >
+                      {@const reportId = report.id ?? report.report_id ?? null}
+                      <Table.Cell class="w-8">
                         <Checkbox.Root 
-                          checked={selectedReports.includes(report.id)}
-                          on:click={(e) => { e.stopPropagation(); toggleSelectReport(report.id); }}
+                          checked={reportId ? selectedReports.includes(reportId) : false}
+                          on:click={(e) => { e.stopPropagation(); if (reportId) toggleSelectReport(reportId); }}
                         />
                       </Table.Cell>
                       <Table.Cell class="font-normal text-[10px] w-auto">
-                        <a href={`/results?report=${report.id}`} class="block py-3 -my-3 hover:underline cursor-pointer">
-                          {getTitle(report)}
-                        </a>
+                        {#if reportId}
+                          <a href={`/results?report=${reportId}`} class="block py-3 -my-3 hover:underline cursor-pointer">
+                            {getTitle(report)}
+                          </a>
+                        {:else}
+                          <span class="block py-3 -my-3 text-gray-500">{getTitle(report)}</span>
+                        {/if}
                       </Table.Cell>
                       <Table.Cell class="text-[10px] w-28 whitespace-nowrap">
-                        <a href={`/results?report=${report.id}`} class="block py-3 -my-3 hover:underline cursor-pointer">
-                          {getDate(report)}
-                        </a>
+                        {#if reportId}
+                          <a href={`/results?report=${reportId}`} class="block py-3 -my-3 hover:underline cursor-pointer">
+                            {getDate(report)}
+                          </a>
+                        {:else}
+                          <span class="block py-3 -my-3 text-gray-500">{getDate(report)}</span>
+                        {/if}
                       </Table.Cell>
                       <Table.Cell class="text-center w-32 py-4">
-                        {#if reportOptimizations.has(report.id)}
+                        {#if reportId && reportOptimizations.has(reportId)}
                           <!-- Show score range for reports with optimizations -->
-                          {@const optimization = reportOptimizations.get(report.id)}
-                          {@const improvement = optimization.highestScore - optimization.lowestScore}
+                          {@const optimization = reportOptimizations.get(reportId)}
+                          {@const improvement = optimization ? optimization.highestScore - optimization.lowestScore : 0}
                           <div class="flex flex-row gap-1 items-center justify-center">
                             <!-- Original score (lowest) - always show in red/yellow to indicate "before" -->
                             <a 
-                              href={`/results?report=${report.id}`} 
+                              href={`/results?report=${reportId}`} 
                               class="inline-flex items-center px-2.5 py-1 rounded-sm text-[9px] cursor-pointer hover:opacity-80 transition-opacity
-                                {optimization.lowestScore >= 60 ? 'bg-yellow-400 text-black' : 
-                                optimization.lowestScore >= 40 ? 'bg-red-400 text-white' :
+                                {optimization && optimization.lowestScore >= 60 ? 'bg-yellow-400 text-black' : 
+                                optimization && optimization.lowestScore >= 40 ? 'bg-red-400 text-white' :
                                 'bg-red-600 text-white'}"
                               on:click={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();
-                                openScorecard(report.id);
+                                openScorecard(reportId);
                               }}
-                              title="Original score: {optimization.lowestScore}"
+                              title="Original score: {optimization?.lowestScore ?? 0}"
                             >
-                              {optimization.lowestScore}
+                              {optimization?.lowestScore ?? 0}
                             </a>
                             <!-- Arrow indicator for improvement -->
                             {#if improvement > 0}
@@ -583,27 +613,28 @@
                             {/if}
                             <!-- Optimized score (highest) - show in green/yellow to indicate "after" improvement -->
                             <a 
-                              href={`/results?report=${report.id}&from=optimized`} 
+                              href={`/results?report=${reportId}&from=optimized`} 
                               class="inline-flex items-center px-2.5 py-1 rounded-sm text-[9px] cursor-pointer hover:opacity-80 transition-opacity
-                                {optimization.highestScore >= 85 ? 'bg-green-600 text-white' : 
-                                optimization.highestScore >= 70 ? 'bg-green-500 text-white' : 
-                                optimization.highestScore >= 60 ? 'bg-yellow-300 text-black' : 
-                                optimization.highestScore >= 50 ? 'bg-yellow-400 text-black' :
+                                {optimization && optimization.highestScore >= 85 ? 'bg-green-600 text-white' : 
+                                optimization && optimization.highestScore >= 70 ? 'bg-green-500 text-white' : 
+                                optimization && optimization.highestScore >= 60 ? 'bg-yellow-300 text-black' : 
+                                optimization && optimization.highestScore >= 50 ? 'bg-yellow-400 text-black' :
                                 'bg-orange-400 text-white'}"
                               on:click={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();
-                                openScorecard(report.id, { fromOptimized: true });
+                                openScorecard(reportId, { fromOptimized: true });
                               }}
-                              title="Optimized score: {optimization.highestScore} (+{improvement})"
+                              title="Optimized score: {optimization?.highestScore ?? 0} (+{improvement})"
                             >
-                              {optimization.highestScore}
+                              {optimization?.highestScore ?? 0}
                             </a>
                           </div>
                         {:else}
                           <!-- Show single score for reports without optimizations -->
+                          {#if reportId}
                           <a 
-                            href={`/results?report=${report.id}`} 
+                            href={`/results?report=${reportId}`} 
                             class="inline-flex items-center px-2.5 py-1 rounded-sm text-[10px] cursor-pointer hover:opacity-80 transition-opacity
                               {getScore(report) >= 85 ? 'bg-green-500 text-white' : 
                               getScore(report) >= 60 ? 'bg-yellow-300 text-black' : 
@@ -612,11 +643,16 @@
                             on:click={(e) => {
                               e.stopPropagation();
                               e.preventDefault();
-                              openScorecard(report.id);
+                              openScorecard(reportId);
                             }}
                           >
                             {getScore(report)}
                           </a>
+                          {:else}
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-sm text-[10px] bg-gray-200 text-gray-600">
+                              {getScore(report)}
+                            </span>
+                          {/if}
                         {/if}
                       </Table.Cell>
                       <Table.Cell class="text-right w-10">
@@ -633,7 +669,8 @@
                           <button
                             class="h-8 w-8 p-0 inline-flex items-center justify-center rounded-md border border-input bg-background text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
                             data-dropdown-trigger={report.id}
-                            on:click={(e) => toggleDropdown(report.id, e)}
+                            id="dropdown-button-{reportId}"
+                            on:click={(e) => reportId && toggleDropdown(reportId, e)}
                             on:mousedown|stopPropagation
                             on:keydown|stopPropagation
                           >
@@ -650,40 +687,35 @@
                             </svg>
                           </button>
                           
-                          {#if activeDropdown === report.id}
+                          {#if reportId && activeDropdown === reportId}
                             <div 
                               class="fixed bg-white rounded-md shadow-lg border border-gray-200 py-1 z-[9999]"
-                              use:positionDropdown={report.id}
+                              use:positionDropdown={reportId}
+                              role="menu"
+                              aria-labelledby="dropdown-button-{reportId}"
+                              tabindex="-1"
                               on:click|stopPropagation
+                              on:keydown={(e) => { if (e.key === 'Escape') activeDropdown = null; }}
                             >
                               <button 
                                 class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
-                                on:click={() => { openScorecard(report.id); activeDropdown = null; }}
+                                on:click={() => { openScorecard(reportId); activeDropdown = null; }}
                               >
                                 <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                                 View Post
                               </button>
-                              {#if reportOptimizations.has(report.id)}
+                              {#if reportOptimizations.has(reportId)}
                               <button 
                                 class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
-                                on:click={() => { openScorecard(report.id, { fromOptimized: true }); activeDropdown = null; }}
+                                on:click={() => { openScorecard(reportId, { fromOptimized: true }); activeDropdown = null; }}
                               >
                                 <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                 View Optimized Post
                               </button>
                               {/if}
-                              <!-- {#if reportsWithRewrites && reportsWithRewrites.includes(report.id)}
-                                <button 
-                                  class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
-                                  on:click={() => { viewRewriteHistory(report.id); activeDropdown = null; }}
-                                >
-                                  <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                  Previous Rewrites
-                                </button>
-                              {/if} -->
                               <button 
                                 class="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 rounded-sm flex items-center"
-                                on:click={() => { viewJsonLd(report.id); activeDropdown = null; }}
+                                on:click={() => { viewJsonLd(reportId); activeDropdown = null; }}
                               >
                                 <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                                 View JSON-LD
@@ -691,7 +723,7 @@
                               <div class="my-1 h-px bg-gray-100"></div>
                               <button 
                                 class="w-full text-left px-2 py-1.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 rounded-sm flex items-center"
-                                on:click={() => { deleteReport(report.id); activeDropdown = null; }}
+                                on:click={() => { deleteReport(reportId); activeDropdown = null; }}
                               >
                                 <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                                 Delete

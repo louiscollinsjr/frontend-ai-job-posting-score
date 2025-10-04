@@ -1,59 +1,61 @@
 <!-- src/lib/components/Card_KnowExactlyWhereYouStand.svelte -->
-<script>
-	import { onMount } from 'svelte';
-	import { cubicOut } from 'svelte/easing';
-	import { fade, slide } from 'svelte/transition';
-	import { quadInOut } from 'svelte/easing';
+<script lang="ts">
+    import { onMount } from 'svelte';
+    import { fade } from 'svelte/transition';
 
-	export let background = '';
+    export let background = '';
 
-	// --- Component Data ---
-	// This data would typically be passed in as props.
-	const jobScore = 85;
+    // --- Component Data ---
+    // This data would typically be passed in as props.
+    const jobScore: number = 85;
 
-	const breakdownCategories = [
-		{ label: 'Clarity & Readability', score: 85 },
-		{ label: 'Prompt Alignment', score: 82 },
-		{ label: 'Structured Data Presence', score: 5 },
-		{ label: 'Recency & Freshness', score: 35 },
-		{ label: 'Keyword Targeting', score: 95 },
-		{ label: 'Compensation Transparency', score: 0 },
-		{ label: 'Page Context & Cleanliness', score: 68 }
-	];
+    const breakdownCategories: { label: string; score: number }[] = [
+        { label: 'Clarity & Readability', score: 85 },
+        { label: 'Prompt Alignment', score: 82 },
+        { label: 'Structured Data Presence', score: 5 },
+        { label: 'Recency & Freshness', score: 35 },
+        { label: 'Keyword Targeting', score: 95 },
+        { label: 'Compensation Transparency', score: 0 },
+        { label: 'Page Context & Cleanliness', score: 68 }
+    ];
 
-	// Animation state
-	let currentIndex = 0;
-	const visibleItems = 4; // Number of items to show at once
-	const animationDuration = 1000; // ms
-	const pauseDuration = 3000; // ms between animations
-	let interval;
+    // Animation state
+    let currentIndex = 0;
+    const visibleItems = 4; // Number of items to show at once
+    const animationDuration: number = 1000; // ms
+    const pauseDuration: number = 3000; // ms between animations
+    let interval: ReturnType<typeof setInterval> | null = null;
 
-	// Function to handle auto-scrolling
-	function startAutoScroll() {
-		interval = setInterval(() => {
-			currentIndex = (currentIndex + 1) % (breakdownCategories.length - visibleItems + 1);
-		}, pauseDuration + animationDuration);
-	}
+    // Function to handle auto-scrolling
+    function startAutoScroll(): void {
+        interval = setInterval(() => {
+            currentIndex = (currentIndex + 1) % Math.max(1, breakdownCategories.length - visibleItems + 1);
+        }, pauseDuration + animationDuration);
+    }
 
-	// Start and clean up the auto-scroll
-	onMount(() => {
-		startAutoScroll();
-		return () => clearInterval(interval);
-	});
+    // Start and clean up the auto-scroll
+    onMount(() => {
+        startAutoScroll();
+        return () => {
+            if (interval !== null) {
+                clearInterval(interval);
+            }
+        };
+    });
 
-	// --- UI Logic ---
-	const radius = 52;
-	const circumference = 2 * Math.PI * radius;
-	const offset = circumference - (jobScore / 100) * circumference;
+    // --- UI Logic ---
+    const radius: number = 52;
+    const circumference: number = 2 * Math.PI * radius;
+    const offset: number = circumference - (jobScore / 100) * circumference;
 
-	// Helper function to determine progress bar color based on score
-	function getBarColor(score) {
-		if (score >= 80) return 'bg-green-500'; // Excellent
-		if (score >= 60) return 'bg-yellow-400'; // Good
-		if (score >= 30) return 'bg-orange-400'; // Needs Improvement
-		if (score > 0) return 'bg-red-500'; // Poor
-		return 'bg-gray-200'; // None
-	}
+    // Helper function to determine progress bar color based on score
+    function getBarColor(score: number): string {
+        if (score >= 80) return 'bg-green-500'; // Excellent
+        if (score >= 60) return 'bg-yellow-400'; // Good
+        if (score >= 30) return 'bg-orange-400'; // Needs Improvement
+        if (score > 0) return 'bg-red-500'; // Poor
+        return 'bg-gray-200'; // None
+    }
 </script>
 
 <div

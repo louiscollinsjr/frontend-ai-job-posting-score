@@ -7,7 +7,7 @@
   import { formatReportForDB } from '$lib/utils/reportMapper';
   import { GuestReportsAPI } from '$lib/api/reports';
   
-  let error = null;
+  let error: string | null = null;
   let processingReport = false;
   let currentUser = null;
   
@@ -18,7 +18,7 @@
   // Format logic is centralized in $lib/utils/reportMapper
 
   // Function to associate guest report with user account
-  async function associateGuestReport(userId) {
+  async function associateGuestReport(userId: string): Promise<boolean | string> {
     try {
       // Check if there's a guest report using GuestReportsAPI
       console.log('[Auth Callback] Checking for guest reports in localStorage');
@@ -68,7 +68,7 @@
         console.log('[Auth Callback] Not running in browser, skipping DB save.');
         return false;
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('[Auth Callback] Error associating guest report:', err);
       return false;
     } finally {
@@ -76,73 +76,78 @@
     }
   }
   
-  onMount(async () => {
+  onMount(() => {
     const unsubUser = user.subscribe((val) => {
       currentUser = val;
     });
-    try {
-      const href = window.location.href;
-      const hash = window.location.hash || '';
-      let sessionEstablished = false;
-      let userId: string | null = null;
+    
+    async function handleAuth() {
+      try {
+        const href = window.location.href;
+        const hash = window.location.hash || '';
+        let sessionEstablished = false;
+        let userId: string | null = null;
 
-      // 1) Try implicit flow (tokens in hash fragment)
-      if (hash.includes('access_token') && hash.includes('refresh_token')) {
-        const hashParams = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash);
-        const access_token = hashParams.get('access_token');
-        const refresh_token = hashParams.get('refresh_token');
-        if (access_token && refresh_token) {
-          const { data, error: authError } = await supabase.auth.setSession({
-            access_token,
-            refresh_token
-          });
-          if (authError) throw authError;
+        // 1) Try implicit flow (tokens in hash fragment)
+        if (hash.includes('access_token') && hash.includes('refresh_token')) {
+          const hashParams = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash);
+          const access_token = hashParams.get('access_token');
+          const refresh_token = hashParams.get('refresh_token');
+          if (access_token && refresh_token) {
+            const { data, error: authError } = await supabase.auth.setSession({
+              access_token,
+              refresh_token
+            });
+            if (authError) throw authError;
+            userId = data?.session?.user?.id ?? null;
+            sessionEstablished = true;
+          }
+        }
+
+        // 2) Fallback to PKCE/code flow (code/state in query string)
+        if (!sessionEstablished) {
+          const { data, error: pkceError } = await supabase.auth.exchangeCodeForSession(href);
+          if (pkceError) throw pkceError;
           userId = data?.session?.user?.id ?? null;
           sessionEstablished = true;
         }
-      }
 
-      // 2) Fallback to PKCE/code flow (code/state in query string)
-      if (!sessionEstablished) {
-        const { data, error: pkceError } = await supabase.auth.exchangeCodeForSession(href);
-        if (pkceError) throw pkceError;
-        userId = data?.session?.user?.id ?? null;
-        sessionEstablished = true;
-      }
-
-      if (!sessionEstablished) {
-        throw new Error('Could not establish session from URL.');
-      }
-
-      // Remove hash fragment (access_token/refresh_token) from URL for security
-      try {
-        window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
-      } catch {}
-
-      // Ensure we have a user id
-      if (!userId) {
-        const { data: userData, error: userErr } = await supabase.auth.getUser();
-        if (userErr || !userData?.user) throw userErr ?? new Error('No user in session');
-        userId = userData.user.id;
-      }
-
-      // After successful auth, check for guest report
-      const hasGuestReport = await associateGuestReport(userId);
-
-      // Redirect based on whether we had a guest report
-      if (hasGuestReport) {
-        if (typeof hasGuestReport === 'string' && hasGuestReport.length > 0) {
-          await goto(`/results?report=${hasGuestReport}`);
-        } else {
-          await goto('/results?from=guest-login');
+        if (!sessionEstablished) {
+          throw new Error('Could not establish session from URL.');
         }
-      } else {
-        await goto('/dashboard');
+
+        // Remove hash fragment (access_token/refresh_token) from URL for security
+        try {
+          window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+        } catch {}
+
+        // Ensure we have a user id
+        if (!userId) {
+          const { data: userData, error: userErr } = await supabase.auth.getUser();
+          if (userErr || !userData?.user) throw userErr ?? new Error('No user in session');
+          userId = userData.user.id;
+        }
+
+        // After successful auth, check for guest report
+        const hasGuestReport = await associateGuestReport(userId);
+
+        // Redirect based on whether we had a guest report
+        if (hasGuestReport) {
+          if (typeof hasGuestReport === 'string' && hasGuestReport.length > 0) {
+            await goto(`/results?report=${hasGuestReport}`);
+          } else {
+            await goto('/results?from=guest-login');
+          }
+        } else {
+          await goto('/dashboard');
+        }
+      } catch (err: unknown) {
+        error = 'Failed to process authentication. Please try again.';
+        console.error('Auth callback error:', err);
       }
-    } catch (err) {
-      error = 'Failed to process authentication. Please try again.';
-      console.error('Auth callback error:', err);
     }
+    
+    handleAuth();
     
     return () => {
       unsubUser(); // Clean up subscription

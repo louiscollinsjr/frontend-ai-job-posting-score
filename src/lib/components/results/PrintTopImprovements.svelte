@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" context="module">
   export interface ImprovementGroup {
     key: string;
     label: string;
@@ -7,26 +7,12 @@
     status: { label: string; badge: string };
     suggestions: string[];
   }
+</script>
 
+<script lang="ts">
   export let groups: ImprovementGroup[] = [];
   export let generalRecommendations: string[] = [];
 </script>
-
-<style>
-  .two-column-grid {
-    display: grid;
-    grid-template-columns: 1fr 1px 1fr;
-    gap: 2rem;
-    align-items: start;
-  }
-  
-  .column-divider {
-    width: 1px;
-    background-color: #e5e7eb;
-    min-height: 100px;
-    justify-self: center;
-  }
-</style>
 
 <div class="my-10 print:mt-0 print:pt-8">
   <!-- Header -->
