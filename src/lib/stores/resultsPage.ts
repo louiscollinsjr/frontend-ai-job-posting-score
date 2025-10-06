@@ -141,8 +141,9 @@ export const currentView = derived(
       if (!$store.currentReport) return 'empty';
       
       // Handle view mode based on URL parameter and data availability
-      if ($store.requestedView === 'optimized' && $store.currentReport.hasRewrite && $store.rewriteData) {
-        return 'optimization';
+      if ($store.requestedView === 'optimized') {
+        if ($store.rewriteData) return 'optimization';
+        if ($store.currentReport?.hasRewrite) return 'optimization';
       }
       
       // Default to results view (original score)
