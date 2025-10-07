@@ -91,6 +91,14 @@ export async function auditJobUrl(url: string): Promise<AuditResult> {
       headers,
       body: JSON.stringify({ url, useV2Pipeline: true })
     }, 150000); // 150 second timeout for V2 pipeline (accounts for cold start + browser + LLM)
+    if (response.status === 408) {
+      const timeoutPayload = await response.json().catch(() => null);
+      throw Object.assign(new Error('Request timed out. Please check if your report was generated.'), {
+        code: 408,
+        payload: timeoutPayload
+      });
+    }
+
     // Handle anti-bot response from backend
     if (response.status === 403) {
       let payload: ErrorPayload | null = null;
@@ -118,6 +126,9 @@ export async function auditJobUrl(url: string): Promise<AuditResult> {
   } catch (error) {
     const err = error as unknown;
     console.error('Error auditing job URL:', err);
+    if (err instanceof Error && (err as any).code === 408) {
+      throw err;
+    }
     const aborted = err instanceof DOMException && err.name === 'AbortError';
     const message = err instanceof Error ? err.message : 'Failed to analyze job posting URL. Please try again.';
     throw new Error(aborted ? 'Request timed out. Please try again.' : message);
@@ -143,6 +154,14 @@ export async function auditJobText(text: string): Promise<AuditResult> {
       headers,
       body: JSON.stringify({ text, useV2Pipeline: true })
     }, 150000); // 150 second timeout for V2 pipeline (accounts for cold start + LLM)
+    if (response.status === 408) {
+      const timeoutPayload = await response.json().catch(() => null);
+      throw Object.assign(new Error('Request timed out. Please check if your report was generated.'), {
+        code: 408,
+        payload: timeoutPayload
+      });
+    }
+
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
     }
@@ -150,6 +169,9 @@ export async function auditJobText(text: string): Promise<AuditResult> {
   } catch (error) {
     const err = error as unknown;
     console.error('Error auditing job text:', err);
+    if (err instanceof Error && (err as any).code === 408) {
+      throw err;
+    }
     const aborted = err instanceof DOMException && err.name === 'AbortError';
     throw new Error(aborted ? 'Request timed out. Please try again.' : 'Failed to analyze job description. Please try again.');
   }
