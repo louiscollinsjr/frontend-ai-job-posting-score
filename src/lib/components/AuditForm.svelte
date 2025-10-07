@@ -204,7 +204,7 @@
 	}
 </script>
 
-<section class="audit-form-container rounded-xl p-2 mb-0 md:p-8 mx-auto font-aeonik">
+<section class="audit-form-container rounded-xl p-2 mb-0 md:p-8 mx-auto font-aeonik max-w-[800px]">
 	<div class="mb-8">
 		<!-- Modern Switch-Style Toggle -->
 		<div class="mb-6">
@@ -213,7 +213,7 @@
 				<div class="grid grid-cols-2 gap-2 max-w-md mx-auto">
 					<button
 						type="button"
-						class="h-10 rounded-full bg-black text-white text-sm font-aeonik"
+						class="h-10 rounded-xl bg-black text-white text-sm font-aeonik"
 						on:click={() => {
 							setInputType('url');
 							setTimeout(() => urlInputEl?.focus(), 0);
@@ -222,7 +222,7 @@
 					</button>
 					<label
 						for="mobile-file-upload"
-						class="h-10 rounded-full bg-gray-200 text-gray-900 text-sm font-aeonik flex items-center justify-center cursor-pointer">
+						class="h-8 rounded-xl bg-gray-200 text-gray-900 text-sm font-aeonik flex items-center justify-center cursor-pointer">
 						Upload File
 					</label>
 					<input
@@ -239,11 +239,11 @@
 			<div class="w-full mx-auto relative mb-6 sm:mb-12 hidden sm:block">
 				<!-- Custom Switch Toggle -->
 				<div
-					class="flex items-center justify-center p-2 bg-gray-200 rounded-full shadow-inners h-12 sm:h-16 max-w-md mx-auto">
+					class="flex items-center justify-center p-2 bg-gray-200 rounded-lg cursor-pointer transition-shadow-inners h-12 sm:h-12 max-w-md mx-auto">
 					<div class="relative w-full flex justify-between items-center">
 						<!-- Track and Thumb -->
 						<div
-							class="absolute h-10 sm:h-12 w-1/2 rounded-full bg-black transition-transform duration-300 ease-in-out"
+							class="absolute h-10 sm:h-10 w-1/2 rounded-lg bg-black transition-transform duration-300 ease-in-out"
 							style="transform: translateX({inputType === 'url' ? '0%' : '100%'});">
 						</div>
 
@@ -348,7 +348,7 @@
 					out:fade={{ duration: 200 }}>
 					{#if inputType === 'url'}
 						<div class="form-control">
-							<label for="job-url" class="block text-base sm:text-xl font-medium text-gray-700 mb-2"
+							<label for="job-url" class="block text-base sm:text-base font-medium text-gray-700 mb-2"
 								>Paste Job Posting URL to Get Your Score</label>
 							<input
 								type="text"

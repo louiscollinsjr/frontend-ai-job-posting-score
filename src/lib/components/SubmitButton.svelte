@@ -10,7 +10,7 @@
   export let showSteps: boolean = false;
 
   // Base classes for the button, includes 'relative' for the glow effect
-  const baseClass = 'relative mx-auto cta-button w-full text-lg sm:text-2xl text-center flex items-center justify-center gap-2 bg-black hover:bg-gray-700 transition-colors duration-300 text-white py-2 px-8 rounded-full font-aeonik tracking-wider font-normal mt-12';
+  const baseClass = 'relative mx-auto cta-button w-full text-lg sm:text-2xl text-center flex items-center justify-center gap-2 bg-black hover:bg-gray-700 transition-colors duration-300 text-white py-2 px-8 rounded-lg font-aeonik tracking-wider font-normal mt-12';
 
   // If className is provided, use it completely. Otherwise, use baseClass.
   $: finalClass = className || baseClass;
@@ -28,7 +28,7 @@
   {#if glow}
     <span
       aria-hidden="true"
-      class="glow pointer-events-none absolute -inset-0.5 -z-10 rounded-full"
+      class="glow pointer-events-none absolute -inset-0.5 -z-10 rounded-lg"
     ></span>
   {/if}
 
@@ -59,7 +59,7 @@
     100% { background-position: 100% 100%; }
   }
   .glow {
-    border-radius: 9999px;
+    
     background: linear-gradient(
       to left,
       #fa3d1d 0%,
