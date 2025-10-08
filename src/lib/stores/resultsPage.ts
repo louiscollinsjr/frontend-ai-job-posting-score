@@ -60,7 +60,16 @@ function createResultsPageStore() {
     
     // Report management
     setCurrentReport: (report: Report | null) =>
-      update(state => ({ ...state, currentReport: report })),
+      update(state => {
+        const nextState = { ...state, currentReport: report };
+        const currentReportId = report?.id || report?.report_id || null;
+        const rewriteId = state.rewriteData?.id || null;
+        if (rewriteId && currentReportId && rewriteId !== currentReportId) {
+          nextState.rewriteData = null;
+          nextState.requestedView = 'original';
+        }
+        return nextState;
+      }),
     
     setRewriteData: (data: RewriteData | null) =>
       update(state => ({ ...state, rewriteData: data })),
@@ -141,9 +150,12 @@ export const currentView = derived(
       if (!$store.currentReport) return 'empty';
       
       // Handle view mode based on URL parameter and data availability
+      const currentReportId = $store.currentReport?.id || $store.currentReport?.report_id;
+      const rewriteId = $store.rewriteData?.id;
+
       if ($store.requestedView === 'optimized') {
-        if ($store.rewriteData) return 'optimization';
-        if ($store.currentReport?.hasRewrite) return 'optimization';
+        if (rewriteId && currentReportId && rewriteId === currentReportId) return 'optimization';
+        if ($store.currentReport?.hasRewrite && rewriteId === currentReportId) return 'optimization';
       }
       
       // Default to results view (original score)

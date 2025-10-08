@@ -32,6 +32,7 @@
 	import type { AuditResult } from '$lib/api/audit';
 	import { goto } from '$app/navigation';
 	import { auditStore } from '$lib/stores/audit';
+	import { resultsPageStore } from '$lib/stores/resultsPage';
 	import { GuestReportsAPI } from '$lib/api/reports';
 	import { user } from '$lib/stores/auth';
 	import CircleAlertIcon from '@lucide/svelte/icons/circle-alert';
@@ -178,6 +179,10 @@
 				showResults: true,
 				error: null
 			}));
+
+			// Reset optimization view state for fresh audit results
+			resultsPageStore.setRewriteData(null);
+			resultsPageStore.setRequestedView('original');
 
 			// Save to guest cache if not logged in
 			if (!isLoggedIn) {
