@@ -69,7 +69,7 @@
 
 <div class="container mx-auto px-4 py-8 pt-32 max-w-7xl">
   <Breadcrumbs items={[
-    { label: 'My JobPostScore', href: '/dashboard' },
+    { label: 'Dashboard', href: '/dashboard' },
     { label: 'JSON-LD' }
   ]} />
   <div class="mb-8">

@@ -57,7 +57,7 @@
   let authSubscription: any = null;
 
   const API_BASE_URL = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim()) || 'https://ai-audit-api.fly.dev';
-  const dashboardBreadcrumbs: BreadcrumbItem[] = [{ label: 'My JobPostScore' }];
+  const dashboardBreadcrumbs: BreadcrumbItem[] = [{ label: 'Dasboard' }];
 
   // Reactive statement to load data when page URL changes (using cache)
   $: if ($page.url.searchParams.get('page') && authChecked && isAuthenticated && !initialLoad) {

@@ -52,7 +52,7 @@
     //   disabled: false
     // },
     {
-      title: "My JobPostScore",
+      title: "Dashboard",
       url: "/dashboard",
       disabled: !isLoggedIn  // This will now update reactively when isLoggedIn changes
     },
