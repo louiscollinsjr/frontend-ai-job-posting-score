@@ -104,19 +104,19 @@
     } else if (!Array.isArray(changeLogArray)) {
       changeLogArray = [];
     }
-    
+
     let unaddressedArray = raw.potentialImprovements || raw.unaddressed_items;
     if (typeof unaddressedArray === 'string') {
       unaddressedArray = JSON.parse(unaddressedArray || '[]');
     } else if (!Array.isArray(unaddressedArray)) {
       unaddressedArray = [];
     }
-    
+
     console.log('[JobOptimizationExecutive] Parsed arrays:', {
       changeLogArray,
       unaddressedArray
     });
-    
+
     // Convert string arrays to proper improvement objects
     const appliedImprovements: AppliedImprovement[] = changeLogArray.map((item: any, index: number) => {
       if (typeof item === 'string') {
@@ -140,10 +140,18 @@
       return item as PotentialImprovement;
     }).filter((item: PotentialImprovement) => item.description && item.description.trim().length > 0);
 
-    const originalScore = typeof raw.original_score === 'number' ? raw.original_score : score || 0;
-    const optimizedScore = typeof raw.optimized_score === 'number' ? raw.optimized_score : originalScore + 10;
-    const origText = (raw.original_text_snapshot as string | undefined) ?? originalText ?? '';
-    const optText = (raw.optimized_text as string | undefined) ?? improvedText ?? '';
+    const originalScore = typeof raw.original_score === 'number'
+      ? raw.original_score
+      : typeof raw.originalScore === 'number'
+        ? raw.originalScore
+        : score || 0;
+    const optimizedScore = typeof raw.optimized_score === 'number'
+      ? raw.optimized_score
+      : typeof raw.optimizedScore === 'number'
+        ? raw.optimizedScore
+        : originalScore;
+    const origText = (raw.original_text_snapshot as string | undefined) ?? raw.originalText ?? originalText ?? '';
+    const optText = (raw.optimized_text as string | undefined) ?? raw.optimizedText ?? improvedText ?? '';
 
     const result = {
       originalText: origText,
@@ -216,6 +224,8 @@
         const raw = await response.json();
         const transformed = transformInitialData(raw as any);
         optimizationData = transformed;
+      } else if (response.status !== 404) {
+        console.error('Failed to load cached optimization:', response.status, await response.text());
       }
     } catch (err: unknown) {
       console.log('No cached optimization found, will need to optimize when text is available');
