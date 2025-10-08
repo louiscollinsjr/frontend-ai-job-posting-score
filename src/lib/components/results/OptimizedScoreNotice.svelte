@@ -3,7 +3,6 @@
 
   const FALLBACK_BADGE_CLASS = 'bg-gray-100 text-gray-700';
 
-  export let reportId: string | null = null;
   export let originalScore: number | null = null;
   export let optimizedScore: number | null = null;
   export let badgeClassGetter: (score: number | null) => string = () => FALLBACK_BADGE_CLASS;

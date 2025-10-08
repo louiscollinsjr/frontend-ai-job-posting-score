@@ -442,7 +442,6 @@
           />
         {/if} -->
         <OptimizedScoreNotice 
-          reportId={reportId ?? null}
           originalScore={optimizationData?.originalScore ?? null}
           optimizedScore={optimizationData?.optimizedScore ?? null}
           badgeClassGetter={getScoreBadgeClasses}
