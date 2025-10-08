@@ -144,7 +144,7 @@
       ? raw.original_score
       : typeof raw.originalScore === 'number'
         ? raw.originalScore
-        : score || 0;
+        : (typeof score === 'number' ? score : 0);
     const optimizedScore = typeof raw.optimized_score === 'number'
       ? raw.optimized_score
       : typeof raw.optimizedScore === 'number'

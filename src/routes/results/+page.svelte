@@ -230,17 +230,35 @@
       if (report && report.optimizationData) {
         console.log('[DEBUG] Found report.optimizationData:', report.optimizationData);
         const opt = report.optimizationData;
+
+        const parseScore = (value: unknown): number | null => {
+          if (typeof value === 'number') {
+            return Number.isFinite(value) ? value : null;
+          }
+          if (typeof value === 'string') {
+            const parsed = Number(value);
+            return Number.isFinite(parsed) ? parsed : null;
+          }
+          return null;
+        };
+
+        const originalScoreValue = parseScore(opt?.original_score);
+        const optimizedScoreValue = parseScore(opt?.optimized_score);
+        const originalScore = originalScoreValue ?? 0;
+        const optimizedScore = optimizedScoreValue ?? originalScore;
+        const scoreImprovement = optimizedScore - originalScore;
+
         const rewriteData = {
           original_text: opt.original_text_snapshot || '',
           improvedText: opt.optimized_text || '',
-          score: opt.optimized_score || 0,
+          score: optimizedScore,
           id: id,
           optimizationData: {
             originalText: opt.original_text_snapshot || report?.job_body,
             optimizedText: opt.optimized_text,
-            originalScore: opt.original_score || 0,
-            optimizedScore: opt.optimized_score,
-            scoreImprovement: (opt.optimized_score || 0) - (opt.original_score || 0),
+            originalScore,
+            optimizedScore,
+            scoreImprovement,
             appliedImprovements: Array.isArray(opt.change_log) 
               ? opt.change_log 
               : JSON.parse(opt.change_log || '[]'),
