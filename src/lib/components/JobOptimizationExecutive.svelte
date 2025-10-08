@@ -140,16 +140,23 @@
       return item as PotentialImprovement;
     }).filter((item: PotentialImprovement) => item.description && item.description.trim().length > 0);
 
-    const originalScore = typeof raw.original_score === 'number'
-      ? raw.original_score
-      : typeof raw.originalScore === 'number'
-        ? raw.originalScore
-        : (typeof score === 'number' ? score : 0);
-    const optimizedScore = typeof raw.optimized_score === 'number'
-      ? raw.optimized_score
-      : typeof raw.optimizedScore === 'number'
-        ? raw.optimizedScore
-        : originalScore;
+    const parseScore = (value: unknown, fallback: number): number => {
+      if (typeof value === 'number' && Number.isFinite(value)) return value;
+      if (typeof value === 'string') {
+        const parsed = Number(value.trim());
+        if (Number.isFinite(parsed)) return parsed;
+      }
+      return fallback;
+    };
+
+    const originalScore = parseScore(
+      raw.original_score ?? raw.originalScore,
+      typeof score === 'number' && Number.isFinite(score) ? score : 0
+    );
+    const optimizedScore = parseScore(
+      raw.optimized_score ?? raw.optimizedScore,
+      originalScore
+    );
     const origText = (raw.original_text_snapshot as string | undefined) ?? raw.originalText ?? originalText ?? '';
     const optText = (raw.optimized_text as string | undefined) ?? raw.optimizedText ?? improvedText ?? '';
 
