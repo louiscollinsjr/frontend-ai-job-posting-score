@@ -149,14 +149,31 @@
       return fallback;
     };
 
+    console.log('[JobOptimizationExecutive] Score parsing inputs:', {
+      raw_original_score: raw.original_score,
+      raw_originalScore: raw.originalScore,
+      raw_optimized_score: raw.optimized_score,
+      raw_optimizedScore: raw.optimizedScore,
+      componentScore: score
+    });
+
     const originalScore = parseScore(
       raw.original_score ?? raw.originalScore,
+      typeof raw.originalScore === 'number' && Number.isFinite(raw.originalScore) ? raw.originalScore : 
       typeof score === 'number' && Number.isFinite(score) ? score : 0
     );
     const optimizedScore = parseScore(
       raw.optimized_score ?? raw.optimizedScore,
+      typeof raw.optimizedScore === 'number' && Number.isFinite(raw.optimizedScore) ? raw.optimizedScore :
       originalScore
     );
+
+    console.log('[JobOptimizationExecutive] Parsed scores:', {
+      originalScore,
+      optimizedScore,
+      scoreImprovement: optimizedScore - originalScore
+    });
+
     const origText = (raw.original_text_snapshot as string | undefined) ?? raw.originalText ?? originalText ?? '';
     const optText = (raw.optimized_text as string | undefined) ?? raw.optimizedText ?? improvedText ?? '';
 
