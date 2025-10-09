@@ -119,6 +119,8 @@
         score: result.new_score,
         id: reportId,
         optimizationData: {
+          originalScore: result.original_score,
+          optimizedScore: result.optimized_score,
           change_log: result.change_log,
           unaddressed_items: result.unaddressed_items
         }
