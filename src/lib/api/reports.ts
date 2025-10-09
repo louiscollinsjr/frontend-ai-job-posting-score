@@ -65,7 +65,13 @@ export class ReportsAPI {
       latestImprovedText: latestOptimization?.optimized_text || reports.improved_text,
       rewriteVersion: latestOptimization?.version_number || 0,  // 0 if no optimizations
       lastRewriteDate: latestOptimization?.created_at || reports.savedat,
-      optimizationData: latestOptimization || null
+      optimizationData: latestOptimization ? {
+        ...latestOptimization,
+        originalScore: latestOptimization.original_score,
+        optimizedScore: latestOptimization.optimized_score,
+        originalText: latestOptimization.original_text_snapshot,
+        optimizedText: latestOptimization.optimized_text
+      } : null
     };
 
     if (import.meta.env.DEV && latestOptimization) {
