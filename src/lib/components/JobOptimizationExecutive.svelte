@@ -157,15 +157,14 @@
       componentScore: score
     });
 
+    // Priority: 1) Database optimization scores, 2) Component scores, 3) Default 0
     const originalScore = parseScore(
       raw.original_score ?? raw.originalScore,
-      typeof raw.originalScore === 'number' && Number.isFinite(raw.originalScore) ? raw.originalScore : 
       typeof score === 'number' && Number.isFinite(score) ? score : 0
     );
     const optimizedScore = parseScore(
       raw.optimized_score ?? raw.optimizedScore,
-      typeof raw.optimizedScore === 'number' && Number.isFinite(raw.optimizedScore) ? raw.optimizedScore :
-      originalScore
+      originalScore // Fallback to original score if optimized score is missing
     );
 
     console.log('[JobOptimizationExecutive] Parsed scores:', {
