@@ -140,34 +140,17 @@
       return item as PotentialImprovement;
     }).filter((item: PotentialImprovement) => item.description && item.description.trim().length > 0);
 
-    const parseScore = (value: unknown, fallback: number): number => {
-      if (typeof value === 'number' && Number.isFinite(value)) return value;
-      if (typeof value === 'string') {
-        const parsed = Number(value.trim());
-        if (Number.isFinite(parsed)) return parsed;
-      }
-      return fallback;
-    };
-
-    console.log('[JobOptimizationExecutive] Score parsing inputs:', {
-      raw_original_score: raw.original_score,
-      raw_originalScore: raw.originalScore,
-      raw_optimized_score: raw.optimized_score,
-      raw_optimizedScore: raw.optimizedScore,
+    // Use clean optimization data from database - no complex parsing needed
+    console.log('[JobOptimizationExecutive] Using clean optimization data:', {
+      originalScore: raw.originalScore,
+      optimizedScore: raw.optimizedScore,
       componentScore: score
     });
 
-    // Priority: 1) Database optimization scores, 2) Component scores, 3) Default 0
-    const originalScore = parseScore(
-      raw.original_score ?? raw.originalScore,
-      typeof score === 'number' && Number.isFinite(score) ? score : 0
-    );
-    const optimizedScore = parseScore(
-      raw.optimized_score ?? raw.optimizedScore,
-      originalScore // Fallback to original score if optimized score is missing
-    );
+    const originalScore = raw.originalScore ?? 0;
+    const optimizedScore = raw.optimizedScore ?? originalScore;
 
-    console.log('[JobOptimizationExecutive] Parsed scores:', {
+    console.log('[JobOptimizationExecutive] Final scores:', {
       originalScore,
       optimizedScore,
       scoreImprovement: optimizedScore - originalScore
