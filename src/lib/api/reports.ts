@@ -36,6 +36,7 @@ export class ReportsAPI {
     // Load optimization data (handle gracefully)
     let latestOptimization = null;
     try {
+      console.log('[ReportsAPI] Querying optimizations for report_id:', reportId);
       const { data, error } = await supabase
         .from('optimizations')
         .select('*')
@@ -48,8 +49,13 @@ export class ReportsAPI {
         if (import.meta.env.DEV) {
           console.log('[ReportsAPI] Found optimization data:', latestOptimization);
         }
-      } else if (import.meta.env.DEV && error) {
-        console.warn('Could not query optimizations table:', error.message);
+      } else if (import.meta.env.DEV) {
+        if (error) {
+          console.warn('Could not query optimizations table:', error.message);
+        } else {
+          console.log('[ReportsAPI] No optimization data found for report:', reportId);
+          console.log('[ReportsAPI] Query result - data:', data, 'error:', error);
+        }
       }
     } catch (err: unknown) {
       if (import.meta.env.DEV) {
