@@ -141,6 +141,8 @@
     }).filter((item: PotentialImprovement) => item.description && item.description.trim().length > 0);
 
     // Use clean optimization data from database - no complex parsing needed
+    console.log('[JobOptimizationExecutive] Raw optimization data keys:', Object.keys(raw));
+    console.log('[JobOptimizationExecutive] Raw optimization data:', raw);
     console.log('[JobOptimizationExecutive] Using clean optimization data:', {
       originalScore: raw.originalScore,
       optimizedScore: raw.optimizedScore,
