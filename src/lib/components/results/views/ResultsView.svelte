@@ -124,18 +124,30 @@
         }
       });
 
-      // Update current report with optimization data and set hasRewrite flag
+      console.log('[ResultsView] Full optimization API response:', result);
+      console.log('[ResultsView] Score fields from API response:', {
+        original_score: result.original_score,
+        optimized_score: result.optimized_score,
+        new_score: result.new_score,
+        id: result.id,
+        report_id: result.report_id
+      });
+      
+      // Update current report with optimization data from API response
       resultsPageStore.setCurrentReport({
         ...currentReport,
-        hasRewrite: true, // ✅ Set flag to enable optimized view
+        hasRewrite: true, // Set flag to enable optimized view
         improved_text: result.rewritten_text,
         latestImprovedText: result.rewritten_text,
         rewriteVersion: result.version_number || 1,
         optimizationData: {
-          original_score: currentReport.total_score,
-          optimized_score: result.new_score,
+          originalScore: result.original_score, // Use score from API response
+          optimizedScore: result.optimized_score, // Use score from API response
+          originalText: currentReport.job_body,
+          optimizedText: result.rewritten_text,
           change_log: result.change_log,
-          unaddressed_items: result.unaddressed_items
+          unaddressed_items: result.unaddressed_items,
+          workingWell: []
         }
       });
 
