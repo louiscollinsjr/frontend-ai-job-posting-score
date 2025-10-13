@@ -42,7 +42,7 @@
         <span class="text-base sm:text-lg">{displayText}</span>
       </div>
       {#if showSteps && currentStep}
-        <span class="text-xs sm:text-sm text-white/70 mt-2 animate-pulse">This usually takes 40-70 seconds...</span>
+        <span class="text-xs sm:text-sm text-white/70 mt-2 animate-pulse">This can take up to 30 seconds...</span>
       {/if}
     {:else}
       <span class="flex items-center justify-center gap-2">

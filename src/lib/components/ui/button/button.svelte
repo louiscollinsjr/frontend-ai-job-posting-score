@@ -39,10 +39,13 @@
 		};
 </script>
 <script lang="ts">
-	
+	import { createEventDispatcher } from "svelte";
+
 	type $$Events = {
 		click: MouseEvent;
 	};
+
+	const dispatch = createEventDispatcher<$$Events>();
 
 	let {
 		class: className,
@@ -56,6 +59,14 @@
 		...restProps
 	}: ButtonProps = $props();
 
+	function handleClick(event: MouseEvent) {
+		if (disabled) {
+			event.preventDefault();
+			return;
+		}
+		dispatch("click", event);
+	}
+
 </script>
 
 {#if href}
@@ -67,6 +78,7 @@
 		aria-disabled={disabled}
 		role={disabled ? "link" : undefined}
 		tabindex={disabled ? -1 : undefined}
+		onclick={handleClick}
 		{...restProps}
 	>
 		{@render children?.()}
@@ -78,6 +90,7 @@
 		class={cn(buttonVariants({ variant, size }), className)}
 		{type}
 		{disabled}
+		onclick={handleClick}
 		{...restProps}
 	>
 		{@render children?.()}
