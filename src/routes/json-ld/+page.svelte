@@ -39,27 +39,40 @@
   }
 
   function downloadJsonLd(): void {
-    if (!jsonLdData || !reportId) return;
-    
-    const jsonString = JSON.stringify(jsonLdData, null, 2);
-    const blob = new Blob([jsonString], { type: 'application/ld+json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `job-posting-${reportId}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    if (!jsonLdData || !reportId) {
+      return;
+    }
+
+    try {
+      const jsonString = JSON.stringify(jsonLdData, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/ld+json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `job-posting-${reportId}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error downloading JSON-LD:', err);
+      alert('Unable to download JSON-LD. Please try again.');
+    }
   }
 
-  function copyToClipboard(): void {
-    if (!jsonLdData) return;
-    
-    const jsonString = JSON.stringify(jsonLdData, null, 2);
-    navigator.clipboard.writeText(jsonString).then(() => {
+  async function copyToClipboard(): Promise<void> {
+    if (!jsonLdData) {
+      return;
+    }
+
+    try {
+      const jsonString = JSON.stringify(jsonLdData, null, 2);
+      await navigator.clipboard.writeText(jsonString);
       alert('JSON-LD copied to clipboard!');
-    });
+    } catch (err) {
+      console.error('Error copying JSON-LD:', err);
+      alert('Unable to copy JSON-LD. Please try again.');
+    }
   }
 </script>
 

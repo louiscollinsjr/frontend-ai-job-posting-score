@@ -47,6 +47,8 @@
 
 	const dispatch = createEventDispatcher<$$Events>();
 
+	type ClickHandler = (event: MouseEvent) => void;
+
 	let {
 		class: className,
 		variant = "default",
@@ -56,14 +58,18 @@
 		type = "button",
 		disabled,
 		children,
+		onclick: onClickProp,
+		onClick,
 		...restProps
-	}: ButtonProps = $props();
+	}: ButtonProps & { onclick?: ClickHandler; onClick?: ClickHandler } = $props();
 
 	function handleClick(event: MouseEvent) {
 		if (disabled) {
 			event.preventDefault();
 			return;
 		}
+		onClickProp?.(event);
+		onClick?.(event);
 		dispatch("click", event);
 	}
 
