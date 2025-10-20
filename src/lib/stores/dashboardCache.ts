@@ -42,6 +42,43 @@ function createDashboardCache() {
     prefetching: new Set()
   });
 
+  const fetchPageData = async (pageNum: number, accessToken: string): Promise<CachedPage> => {
+    const apiUrl = `${API_BASE_URL}/api/v1/reports?page=${pageNum}&limit=${PAGE_SIZE}`;
+    const response = await fetch(apiUrl, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`API returned ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    let reports: Report[] = [];
+    let pagination: PaginationInfo = {
+      currentPage: pageNum,
+      totalPages: 1,
+      totalReports: 0
+    };
+
+    if (Array.isArray(data)) {
+      reports = data;
+      pagination.totalReports = data.length;
+    } else if (data.reports) {
+      reports = data.reports;
+      pagination = data.pagination || pagination;
+    }
+
+    return {
+      reports,
+      pagination,
+      timestamp: Date.now()
+    };
+  };
+
   return {
     subscribe,
     
@@ -64,43 +101,7 @@ function createDashboardCache() {
       update(s => ({ ...s, loading: true, error: null }));
       
       try {
-        const apiUrl = `${API_BASE_URL}/api/v1/reports?page=${pageNum}&limit=${PAGE_SIZE}`;
-        const response = await fetch(apiUrl, {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`API returned ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        // Normalize response
-        let reports: Report[] = [];
-        let pagination: PaginationInfo = {
-          currentPage: pageNum,
-          totalPages: 1,
-          totalReports: 0
-        };
-        
-        if (Array.isArray(data)) {
-          reports = data;
-          pagination.totalReports = data.length;
-        } else if (data.reports) {
-          reports = data.reports;
-          pagination = data.pagination || pagination;
-        }
-        
-        // Cache the page
-        const cachedPage: CachedPage = {
-          reports,
-          pagination,
-          timestamp: Date.now()
-        };
-        
+        const cachedPage = await fetchPageData(pageNum, accessToken);
         update(s => {
           const newPages = new Map(s.pages);
           newPages.set(pageNum, cachedPage);
@@ -114,7 +115,7 @@ function createDashboardCache() {
         });
         
         // Prefetch adjacent pages in background
-        this.prefetchAdjacentPages(pageNum, accessToken, pagination.totalPages);
+        this.prefetchAdjacentPages(pageNum, accessToken, cachedPage.pagination.totalPages);
         
         return cachedPage;
       } catch (error) {
@@ -169,43 +170,7 @@ function createDashboardCache() {
      */
     async fetchPageInBackground(pageNum: number, accessToken: string) {
       try {
-        const apiUrl = `${API_BASE_URL}/api/v1/reports?page=${pageNum}&limit=${PAGE_SIZE}`;
-        const response = await fetch(apiUrl, {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`API returned ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        // Normalize response
-        let reports: Report[] = [];
-        let pagination: PaginationInfo = {
-          currentPage: pageNum,
-          totalPages: 1,
-          totalReports: 0
-        };
-        
-        if (Array.isArray(data)) {
-          reports = data;
-          pagination.totalReports = data.length;
-        } else if (data.reports) {
-          reports = data.reports;
-          pagination = data.pagination || pagination;
-        }
-        
-        // Cache the page
-        const cachedPage: CachedPage = {
-          reports,
-          pagination,
-          timestamp: Date.now()
-        };
-        
+        const cachedPage = await fetchPageData(pageNum, accessToken);
         update(s => {
           const newPages = new Map(s.pages);
           newPages.set(pageNum, cachedPage);
