@@ -1,7 +1,8 @@
 import { supabase } from '../supabaseClient';
 import { env } from '$env/dynamic/public';
 
-type RequestTarget = RequestInfo | URL;
+type RequestTarget = Parameters<typeof fetch>[0];
+type RequestOptions = NonNullable<Parameters<typeof fetch>[1]>;
 
 export interface AuditHighlight {
   text: string;
@@ -53,13 +54,13 @@ const API_BASE_URL = (env.PUBLIC_API_BASE_URL && env.PUBLIC_API_BASE_URL.trim())
 
 // Helper: fetch with timeout + abort to avoid hanging requests
 /**
- * @param {RequestInfo | URL} resource
- * @param {RequestInit} [options]
+ * @param {RequestTarget} resource
+ * @param {RequestOptions} [options]
  * @param {number} [timeoutMs=30000]
  */
 async function fetchWithTimeout(
   resource: RequestTarget,
-  options: RequestInit = {},
+  options: RequestOptions = {},
   timeoutMs = 30000
 ): Promise<Response> {
   const controller = new AbortController();
