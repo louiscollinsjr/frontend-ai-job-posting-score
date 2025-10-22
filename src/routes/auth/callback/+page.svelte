@@ -77,23 +77,33 @@
   }
   
   onMount(() => {
+    console.log('[Auth Callback] Component mounted, starting auth flow');
+    
     const unsubUser = user.subscribe((val) => {
       currentUser = val;
+      console.log('[Auth Callback] User store updated:', val ? `User ID: ${val.id}` : 'No user');
     });
     
     async function handleAuth() {
       try {
+        console.log('[Auth Callback] handleAuth() started');
         const href = window.location.href;
         const hash = window.location.hash || '';
+        console.log('[Auth Callback] Current URL:', href);
+        console.log('[Auth Callback] Hash fragment:', hash ? 'Present' : 'None');
+        
         let sessionEstablished = false;
         let userId: string | null = null;
 
         // 1) Try implicit flow (tokens in hash fragment)
+        console.log('[Auth Callback] Checking for implicit flow tokens in hash');
         if (hash.includes('access_token') && hash.includes('refresh_token')) {
+          console.log('[Auth Callback] Implicit flow tokens detected');
           const hashParams = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash);
           const access_token = hashParams.get('access_token');
           const refresh_token = hashParams.get('refresh_token');
           if (access_token && refresh_token) {
+            console.log('[Auth Callback] Setting session via implicit flow');
             const { data, error: authError } = await supabase.auth.setSession({
               access_token,
               refresh_token
@@ -101,55 +111,79 @@
             if (authError) throw authError;
             userId = data?.session?.user?.id ?? null;
             sessionEstablished = true;
+            console.log('[Auth Callback] Implicit flow session established, userId:', userId);
           }
+        } else {
+          console.log('[Auth Callback] No implicit flow tokens found');
         }
 
         // 2) Fallback to PKCE/code flow (code/state in query string)
         if (!sessionEstablished) {
+          console.log('[Auth Callback] Attempting PKCE/code flow');
           const { data, error: pkceError } = await supabase.auth.exchangeCodeForSession(href);
           if (pkceError) throw pkceError;
           userId = data?.session?.user?.id ?? null;
           sessionEstablished = true;
+          console.log('[Auth Callback] PKCE flow session established, userId:', userId);
         }
 
         if (!sessionEstablished) {
+          console.error('[Auth Callback] Failed to establish session');
           throw new Error('Could not establish session from URL.');
         }
+
+        console.log('[Auth Callback] Session established successfully');
 
         // Remove hash fragment (access_token/refresh_token) from URL for security
         try {
           window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
-        } catch {}
+          console.log('[Auth Callback] Cleaned URL hash fragment');
+        } catch (e) {
+          console.warn('[Auth Callback] Failed to clean URL hash:', e);
+        }
 
         // Ensure we have a user id
         if (!userId) {
+          console.log('[Auth Callback] No userId from session, fetching user data');
           const { data: userData, error: userErr } = await supabase.auth.getUser();
           if (userErr || !userData?.user) throw userErr ?? new Error('No user in session');
           userId = userData.user.id;
+          console.log('[Auth Callback] Retrieved userId from getUser():', userId);
         }
 
         // After successful auth, check for guest report
+        console.log('[Auth Callback] Starting guest report migration check for userId:', userId);
         const hasGuestReport = await associateGuestReport(userId);
+        console.log('[Auth Callback] Guest report migration result:', hasGuestReport);
 
         // Redirect based on whether we had a guest report
         if (hasGuestReport) {
           if (typeof hasGuestReport === 'string' && hasGuestReport.length > 0) {
+            console.log('[Auth Callback] Redirecting to results with migrated report ID:', hasGuestReport);
             await goto(`/results?report=${hasGuestReport}`);
           } else {
+            console.log('[Auth Callback] Redirecting to results with guest-login flag');
             await goto('/results?from=guest-login');
           }
         } else {
+          console.log('[Auth Callback] No guest report found, redirecting to dashboard');
           await goto('/dashboard');
         }
       } catch (err: unknown) {
         error = 'Failed to process authentication. Please try again.';
-        console.error('Auth callback error:', err);
+        console.error('[Auth Callback] Fatal error in handleAuth():', err);
+        if (err instanceof Error) {
+          console.error('[Auth Callback] Error message:', err.message);
+          console.error('[Auth Callback] Error stack:', err.stack);
+        }
       }
     }
     
+    console.log('[Auth Callback] Invoking handleAuth()');
     handleAuth();
     
     return () => {
+      console.log('[Auth Callback] Component unmounting, cleaning up subscriptions');
       unsubUser(); // Clean up subscription
     };
   });
