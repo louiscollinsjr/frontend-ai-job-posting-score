@@ -105,7 +105,7 @@
       changeLogArray = [];
     }
 
-    let unaddressedArray = raw.potentialImprovements || raw.unaddressed_items;
+    let unaddressedArray = raw.potentialImprovements || raw.potential_improvements || raw.unaddressed_items;
     if (typeof unaddressedArray === 'string') {
       unaddressedArray = JSON.parse(unaddressedArray || '[]');
     } else if (!Array.isArray(unaddressedArray)) {
