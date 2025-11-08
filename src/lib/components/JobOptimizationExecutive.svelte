@@ -2,6 +2,15 @@
   import { onMount } from 'svelte';
   import { env } from '$env/dynamic/public';
   import { marked } from 'marked';
+
+  // Configure marked for better rendering
+  marked.setOptions({
+    breaks: true, // Convert \n to <br>
+    gfm: true, // GitHub Flavored Markdown
+    sanitize: false, // Allow HTML (safe in this context)
+    smartLists: true, // Better list behavior
+    smartypants: true // Smart punctuation
+  });
   import Button from '$lib/components/ui/button/button.svelte';
   import WorkingWellPanel from './WorkingWellPanel.svelte';
   import ImprovementCard from './ImprovementCard.svelte';
