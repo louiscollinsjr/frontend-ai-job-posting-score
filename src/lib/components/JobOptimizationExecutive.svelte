@@ -94,7 +94,11 @@
       change_log: raw.change_log,
       change_log_type: typeof raw.change_log,
       unaddressed_items: raw.unaddressed_items,
-      unaddressed_items_type: typeof raw.unaddressed_items
+      unaddressed_items_type: typeof raw.unaddressed_items,
+      potentialImprovements: raw.potentialImprovements,
+      potential_improvements: raw.potential_improvements,
+      potential_improvements_type: typeof raw.potential_improvements,
+      all_keys: Object.keys(raw)
     });
     
     // Parse arrays from possible JSON strings or use appliedImprovements/potentialImprovements if they exist
