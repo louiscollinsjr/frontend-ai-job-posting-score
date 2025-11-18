@@ -82,7 +82,7 @@
 
   <!-- Job Information -->
   {#if jobTitle}
-    <div class="space-y-1 text-sms text-gray-600">
+    <div class="space-y-1 text-sms text-gray-600 print:text-[8px] print:w-2/3">
       <p class="font-semibold text-gray-700">{jobTitle}</p>
       {#if reportId}
         <p class="text-gray-500">JobPostScore ID: {reportId}</p>

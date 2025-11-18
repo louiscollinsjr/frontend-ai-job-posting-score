@@ -17,6 +17,7 @@
 		"@fontsource/tiro-bangla": "^5.1.1",
 		"@supabase/supabase-js": "^2.50.0",
 		"@tailwindcss/container-queries": "^0.1.1",
+		"caniuse-lite": "^1.0.30001754",
 		"docx": "^9.5.1",
 		"html2canvas": "^1.4.1",
 		"jspdf": "^3.0.3",

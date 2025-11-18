@@ -14,11 +14,17 @@ interface PaginationInfo {
   totalReports: number;
 }
 
+interface ReportOptimization {
+  lowestScore: number;
+  highestScore: number;
+  hasOptimizations: boolean;
+}
+
 interface CachedPage {
   reports: Report[];
   pagination: PaginationInfo;
   timestamp: number;
-  optimizations?: Map<string, any>;
+  optimizations: Map<string, ReportOptimization>;
 }
 
 interface CacheStore {
@@ -72,16 +78,32 @@ function createDashboardCache() {
       pagination = data.pagination || pagination;
     }
 
+    const optimizationsMap = new Map<string, ReportOptimization>();
+    const optimizations = !Array.isArray(data) ? data.optimizations : undefined;
+    if (optimizations && typeof optimizations === 'object') {
+      Object.entries(optimizations).forEach(([reportId, value]) => {
+        if (!value || typeof value !== 'object') return;
+        const lowestScore = Number((value as Record<string, unknown>).lowestScore);
+        const highestScore = Number((value as Record<string, unknown>).highestScore);
+        const hasOptimizations = Boolean((value as Record<string, unknown>).hasOptimizations);
+        optimizationsMap.set(reportId, {
+          lowestScore: Number.isFinite(lowestScore) ? lowestScore : 0,
+          highestScore: Number.isFinite(highestScore) ? highestScore : 0,
+          hasOptimizations
+        });
+      });
+    }
+
     return {
       reports,
       pagination,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      optimizations: optimizationsMap
     };
   };
 
   return {
     subscribe,
-    
     /**
      * Load a specific page (from cache or API)
      */
@@ -191,77 +213,6 @@ function createDashboardCache() {
           newPrefetching.delete(pageNum);
           return { ...s, prefetching: newPrefetching };
         });
-      }
-    },
-    
-    /**
-     * Load optimization data for cached reports
-     */
-    async loadOptimizations(pageNum: number, supabase: any) {
-      const state = get({ subscribe });
-      const page = state.pages.get(pageNum);
-      
-      if (!page || page.optimizations) {
-        return; // Already loaded or page doesn't exist
-      }
-      
-      console.log(`[Cache] Loading optimizations for page ${pageNum}`);
-      
-      try {
-        const reportIds = page.reports.map(r => r.id);
-        
-        if (reportIds.length === 0) {
-          return;
-        }
-        
-        const { data: optimizationsData } = await supabase
-          .from('optimizations')
-          .select('report_id, original_score, optimized_score, version_number')
-          .in('report_id', reportIds);
-        
-        // Group by report_id and calculate min/max scores
-        const optimizationsMap = new Map();
-        if (optimizationsData) {
-          // Group all optimizations by report_id
-          const groupedByReport = optimizationsData.reduce((acc: Record<string, any[]>, opt: any) => {
-            if (!acc[opt.report_id]) {
-              acc[opt.report_id] = [];
-            }
-            acc[opt.report_id].push(opt);
-            return acc;
-          }, {} as Record<string, any[]>);
-          
-          // For each report, find lowest and highest scores across all versions
-          (Object.entries(groupedByReport) as [string, any[]][]).forEach(([reportId, opts]) => {
-            const scores = opts.flatMap((opt: any) => [
-              opt.original_score, 
-              opt.optimized_score
-            ]).filter((score: any) => typeof score === 'number');
-            
-            if (scores.length > 0) {
-              optimizationsMap.set(reportId, {
-                lowestScore: Math.min(...scores),
-                highestScore: Math.max(...scores),
-                hasOptimizations: true
-              });
-            }
-          });
-        }
-        
-        // Update cache with optimizations
-        update(s => {
-          const newPages = new Map(s.pages);
-          const updatedPage = newPages.get(pageNum);
-          if (updatedPage) {
-            updatedPage.optimizations = optimizationsMap;
-            newPages.set(pageNum, updatedPage);
-          }
-          return { ...s, pages: newPages };
-        });
-        
-        console.log(`[Cache] Loaded ${optimizationsMap.size} optimizations for page ${pageNum}`);
-      } catch (error) {
-        console.error('[Cache] Failed to load optimizations:', error);
       }
     },
     

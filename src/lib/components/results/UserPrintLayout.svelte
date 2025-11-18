@@ -54,14 +54,14 @@
     {/if}
     
     <!-- Main Content Grid -->
-    <div class="print:grid print:grid-cols-2 print:gap-6 print:mb-8">
+    <div class="print:grid print:grid-cols-2 print:gap-6 print:mb-8 ">
       <!-- Left Column: Category Breakdown -->
       <div class="print:space-y-4 col-span-2">
         <PrintCategoryBreakdown metrics={categoryMetrics} />
       </div>
       
       <!-- Right Column: Top Improvements -->
-      <div class="print:space-y-4">
+      <div class="print:space-y-4  print:w-full col-span-2">
         <PrintTopImprovements groups={improvementGroups} generalRecommendations={generalRecommendations} />
       </div>
     </div>

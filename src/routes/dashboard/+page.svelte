@@ -66,23 +66,17 @@
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.access_token) {
         const pageNum = Number($page.url.searchParams.get('page') || '1');
-        const pageData = await dashboardCache.loadPage(pageNum, session.access_token);
-        
-        if (pageData) {
-          reports = pageData.reports;
-          pagination = pageData.pagination;
+        try {
+          const pageData = await dashboardCache.loadPage(pageNum, session.access_token);
           
-          // Load optimizations if not already loaded
-          if (!pageData.optimizations) {
-            dashboardCache.loadOptimizations(pageNum, supabase).then(() => {
-              const updated = dashboardCache.getCurrentPageData();
-              if (updated?.optimizations) {
-                reportOptimizations = updated.optimizations;
-              }
-            });
-          } else {
-            reportOptimizations = pageData.optimizations;
+          if (pageData) {
+            reports = pageData.reports;
+            pagination = pageData.pagination;
+            reportOptimizations = pageData.optimizations ?? new Map();
           }
+        } catch (fetchError) {
+          console.error('[DEBUG] Failed to load reports data on page change:', fetchError);
+          reportError = fetchError instanceof Error ? fetchError.message : 'Failed to load reports. Please try again.';
         }
       }
     })();
@@ -97,10 +91,15 @@
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.access_token) {
           const pageNum = Number($page.url.searchParams.get('page') || '1');
-          const pageData = await dashboardCache.loadPage(pageNum, session.access_token);
-          if (pageData) {
-            reports = pageData.reports;
-            pagination = pageData.pagination;
+          try {
+            const pageData = await dashboardCache.loadPage(pageNum, session.access_token);
+            if (pageData) {
+              reports = pageData.reports;
+              pagination = pageData.pagination;
+            }
+          } catch (fetchError) {
+            console.error('[DEBUG] Failed to load reports data on route change:', fetchError);
+            reportError = fetchError instanceof Error ? fetchError.message : 'Failed to load reports. Please try again.';
           }
         }
       })();
@@ -127,13 +126,18 @@
               if (session?.access_token) {
                 loading = true;
                 const pageNum = Number($page.url.searchParams.get('page') || '1');
-                const pageData = await dashboardCache.loadPage(pageNum, session.access_token, true);
-                if (pageData) {
-                  reports = pageData.reports;
-                  pagination = pageData.pagination;
+                try {
+                  const pageData = await dashboardCache.loadPage(pageNum, session.access_token, true);
+                  if (pageData) {
+                    reports = pageData.reports;
+                    pagination = pageData.pagination;
+                  }
+                } catch (fetchError) {
+                  console.error('[DEBUG] Failed to load reports data on auth change:', fetchError);
+                  reportError = fetchError instanceof Error ? fetchError.message : 'Failed to load reports. Please try again.';
                 }
-                setupRealtime();
               }
+              setupRealtime();
             } catch (e) {
               console.warn('Auth change handler failed:', e);
             }
@@ -186,19 +190,19 @@
       // Load page from cache (or fetch if not cached)
       const pageNum = Number($page.url.searchParams.get('page') || '1');
       console.log('[Cache] Loading page from cache:', pageNum);
-      const pageData = await dashboardCache.loadPage(pageNum, session.access_token);
       
-      if (pageData) {
-        reports = pageData.reports;
-        pagination = pageData.pagination;
+      try {
+        const pageData = await dashboardCache.loadPage(pageNum, session.access_token);
         
-        // Load optimizations in parallel (non-blocking)
-        dashboardCache.loadOptimizations(pageNum, supabase).then(() => {
-          const updated = dashboardCache.getCurrentPageData();
-          if (updated?.optimizations) {
-            reportOptimizations = updated.optimizations;
-          }
-        });
+        if (pageData) {
+          reports = pageData.reports;
+          pagination = pageData.pagination;
+          reportOptimizations = pageData.optimizations ?? new Map();
+        }
+      } catch (fetchError) {
+        console.error('[DEBUG] Failed to load reports data:', fetchError);
+        reportError = fetchError instanceof Error ? fetchError.message : 'Failed to load reports. Please try again.';
+        // Don't redirect to login - user is authenticated, just show error
       }
       
       initialLoad = false;
@@ -235,10 +239,15 @@
             // Reload current page
             const { data: { session } } = await supabase.auth.getSession();
             if (session?.access_token) {
-              const pageData = await dashboardCache.loadPage(pageNum, session.access_token, true);
-              if (pageData) {
-                reports = pageData.reports;
-                pagination = pageData.pagination;
+              try {
+                const pageData = await dashboardCache.loadPage(pageNum, session.access_token, true);
+                if (pageData) {
+                  reports = pageData.reports;
+                  pagination = pageData.pagination;
+                }
+              } catch (fetchError) {
+                console.error('[Realtime] Failed to load reports data:', fetchError);
+                // Don't show error toast for realtime updates, just log it
               }
             }
             

@@ -330,7 +330,7 @@
               statusLabel={overallStatus.label}
             />
 
-            <div class="px-2 py-10">
+            <div class="px-2 py-10 ">
               {#if isLoggedIn}
                 <div class="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
                   <div class="space-y-6">
